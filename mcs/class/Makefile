@@ -25,7 +25,7 @@ net_1_1_java_SUBDIRS = \
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting
 
-common_dirs := \
+net_2_0_dirs := \
 	corlib				\
 	System				\
 	System.XML			\
@@ -33,11 +33,8 @@ common_dirs := \
 	Mono.Posix			\
 	System.Core			\
 	Mono.Security			\
-	System				\
 	System.Security			\
 	System.Configuration		\
-	System				\
-	System.XML			\
 	I18N				\
 	$(resgen_dir)			\
 	System.Drawing			\
@@ -52,16 +49,13 @@ common_dirs := \
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
 	System.Web			\
-	Mono.Web			\
 	System.Web.Services		\
-	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
 	System.Data.OracleClient	\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	System.Design			\
 	PEAPI				\
 	Npgsql				\
 	Commons.Xml.Relaxng		\
@@ -81,18 +75,14 @@ common_dirs := \
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
 	CustomMarshalers		\
-	OpenSystem.C			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
 	Mono.Debugger.Soft		\
-	SystemWebTestShim
-
-net_2_0_dirs := \
+	SystemWebTestShim			\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
-	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
 	System.IdentityModel		\
@@ -110,15 +100,15 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	System.Dynamic			\
 	Mono.CSharp			\
-	System.Net				\
+	System.Net			\
 	System.Json
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
-	System.Web.Extensions.Design_1.0	\
+	System.Web.Extensions.Design_1.0\
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
-	System.ServiceModel.Web \
+	System.ServiceModel.Web 	\
 	System.Data.Services.Client	\
 	System.Data.Services		\
 	System.Web.Mvc \
@@ -177,8 +167,7 @@ monotouch_runtime_dirs := \
 monotouch_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	Mono.Dynamic.Interpreter \
-	System.Core
+	Mono.Dynamic.Interpreter
 
 net_4_0_dirs := \
 	System.Numerics		\
@@ -187,7 +176,6 @@ net_4_0_dirs := \
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Activation \
-	System.ServiceModel \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
@@ -211,7 +199,7 @@ net_4_0_dirs := \
 	System.Data.Services \
 	System.Json.Microsoft \
 	monodoc
-	
+
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
 
@@ -249,7 +237,7 @@ xbuild_4_0_dirs := \
 	$(xbuild_2_0_dirs)	\
 	Microsoft.Build
 
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
+net_2_0_SUBDIRS := $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs) $(monotouch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
@@ -257,13 +245,13 @@ mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 xammac_SUBDIRS := $(mobile_dirs) $(xammac_dirs)
 net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
-net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
+net_4_0_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
+net_4_5_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
+SUBDIRS = $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_4_0_dirs)
 
@@ -293,7 +281,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 # Files needed to bootstrap C# compiler
-basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll
+basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:

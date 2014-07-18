@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlTableRowCollection" FullName="System.Web.UI.HtmlControls.HtmlTableRowCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class HtmlTableRowCollection : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -17,8 +18,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> class to programmatically manage a collection of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects that represent the rows in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control. This class is commonly used to add, remove, or modify the contents of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+      <block subset="none" type="note">
+        <para>An <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control contains a <see cref="P:System.Web.UI.HtmlControls.HtmlTable.Rows" /> property that represents a collection of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects. Each <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> represents an individual row in the table. An <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> contains a <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Cells" /> property that represents a collection of <see cref="T:System.Web.UI.HtmlControls.HtmlTableCell" /> objects. These objects, in turn, represent the individual cells of the table. To retrieve an individual cell, first get the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object, representing the row containing the cell, from the <see cref="P:System.Web.UI.HtmlControls.HtmlTable.Rows" /> collection of the <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control. You can then get the <see cref="T:System.Web.UI.HtmlControls.HtmlTableCell" /> object, representing the cell in the row, from the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Cells" /> collection of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects that represent the rows of an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -31,9 +41,16 @@
         <Parameter Name="row" Type="System.Web.UI.HtmlControls.HtmlTableRow" />
       </Parameters>
       <Docs>
-        <param name="row">To be added: an object of type 'HtmlTableRow'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to add the specified <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object to the end of an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection. To insert an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> in the middle of the collection, use the <see cref="M:System.Web.UI.HtmlControls.HtmlTableRowCollection.Insert(System.Int32,System.Web.UI.HtmlControls.HtmlTableRow)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object to the end of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,8 +65,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove all <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection and reset the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRowCollection.Count" /> property to 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,10 +90,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to copy the contents of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection into the specified <see cref="T:System.Array" /> object, starting at the specified index in the array.</para>
+          <block subset="none" type="note">
+            <para>The <paramref name="array" /> parameter must be a zero-based <see cref="T:System.Array" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the items from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection to the specified <see cref="T:System.Array" /> object, starting at the specified index in the array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based <see cref="T:System.Array" /> that receives the copied items from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index in the specified array to receive the items. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,9 +118,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRowCollection.Count" /> property to determine the number of rows contained in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection. The <see cref="P:System.Web.UI.HtmlControls.HtmlTableRowCollection.Count" /> property is commonly used when iterating through the collection to determine the upper bound.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,9 +141,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create an <see cref="T:System.Collections.IEnumerator" />-implemented object that can be iterated through to get each item in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+          <para>Use the <see cref="P:System.Collections.IEnumerator.Current" /> property to get the current element in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to move to the next item in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to the initial position.</para>
+          <block subset="none" type="note">
+            <para>You must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method after creating an <see cref="T:System.Collections.IEnumerator" />-implemented object, or after using the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to the first item in the collection. Otherwise, the item represented by the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> objects in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,10 +176,18 @@
         <Parameter Name="row" Type="System.Web.UI.HtmlControls.HtmlTableRow" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="row">To be added: an object of type 'HtmlTableRow'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.HtmlControls.HtmlTableRowCollection.Insert(System.Int32,System.Web.UI.HtmlControls.HtmlTableRow)" /> method to add the specified <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object to an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection at the specified index. If you simply want to append an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> to the end of the collection, use the <see cref="M:System.Web.UI.HtmlControls.HtmlTableRowCollection.Add(System.Web.UI.HtmlControls.HtmlTableRow)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object to the specified location in the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> at which to add the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" />. </param>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> to add to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,9 +201,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false to indicate that the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection can be written to in all cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +223,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is derived from <see cref="T:System.Collections.ICollection" /> and is overridden to always return false to indicate that access to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection is not synchronized (not thread safe).</para>
+          <para>For more information on the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRowCollection.IsSynchronized" /> property, see the <see cref="P:System.Collections.ICollection.IsSynchronized" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,9 +269,19 @@
         <Parameter Name="row" Type="System.Web.UI.HtmlControls.HtmlTableRow" />
       </Parameters>
       <Docs>
-        <param name="row">To be added: an object of type 'HtmlTableRow'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove the specified <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+          <block subset="none" type="note">
+            <para>If you specify an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> that does not exist in the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />, no item is removed from the collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> to remove from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,9 +298,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object at the specified index from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection. The index number is zero-based. Therefore, the first item in the collection has an index value of 0.</para>
+          <block subset="none" type="note">
+            <para>If you specify an index that is outside the range of index values, an exception is raised.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object at the specified index from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> to remove from the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -228,9 +324,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned in this implementation is the current instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> class.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.HtmlControls.HtmlTableCellCollection.SyncRoot" /> property, see the <see cref="P:System.Collections.ICollection.SyncRoot" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that can be used to synchronize access to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRowCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

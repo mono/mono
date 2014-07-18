@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsAuthenticationEventHandler" FullName="System.Web.Security.WindowsAuthenticationEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void WindowsAuthenticationEventHandler(object sender, WindowsAuthenticationEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.WindowsAuthenticationEventHandler" /> delegate is defined for the <see cref="E:System.Web.Security.WindowsAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.WindowsAuthenticationModule" /> class. You can access the <see cref="E:System.Web.Security.WindowsAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.WindowsAuthenticationModule" /> class by specifying a subroutine named <system>WindowsAuthentication_OnAuthenticate</system> in the Global.asax file for your ASP.NET application. The <see cref="E:System.Web.Security.WindowsAuthenticationModule.Authenticate" /> event is raised during the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event.</para>
+      <para>The <see cref="T:System.Web.Security.WindowsAuthenticationModule" /> constructs a <see cref="T:System.Web.Security.WindowsAuthenticationEventArgs" /> object using the Windows identity supplied by IIS and the current <see cref="T:System.Web.HttpContext" /> and passes it to the <system>WindowsAuthentication_OnAuthenticate</system> event.</para>
+      <para>You can use the <see cref="P:System.Web.Security.WindowsAuthenticationEventArgs.User" /> property of the <see cref="T:System.Web.Security.WindowsAuthenticationEventArgs" /> object supplied to the <system>WindowsAuthentication_OnAuthenticate</system> event to set the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> to a custom <see cref="T:System.Security.Principal.IPrincipal" /> object. If you do not specify a value for the <see cref="P:System.Web.Security.WindowsAuthenticationEventArgs.User" /> property during the <system>WindowsAuthentication_OnAuthenticate</system> event, the Windows identity supplied by IIS is used as the identity for the current request. If IIS uses anonymous authentication, then the <see cref="P:System.Web.Security.WindowsAuthenticationEventArgs.Identity" /> property of the <see cref="T:System.Web.Security.WindowsAuthenticationEventArgs" /> object is set to the identity returned by the <see cref="M:System.Security.Principal.WindowsIdentity.GetAnonymous" /> method.</para>
+      <para>The <system>WindowsAuthentication_OnAuthenticate</system> event is only raised when the authentication <see cref="P:System.Web.Configuration.AuthenticationSection.Mode" /> is set to <see cref="F:System.Web.Configuration.AuthenticationMode.Windows" /> and the <see cref="T:System.Web.Security.WindowsAuthenticationModule" /> is an active HTTP module for the application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <system>WindowsAuthentication_OnAuthenticate</system> event of a <see cref="T:System.Web.Security.WindowsAuthenticationModule" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

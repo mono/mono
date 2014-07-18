@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpWriter" FullName="System.Web.HttpWriter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class HttpWriter : System.IO.TextWriter" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.Web.HttpResponse.Write(System.String)" /> methods of the intrinsic <see cref="T:System.Web.HttpResponse" /> object make internal calls to an <see cref="T:System.Web.HttpWriter" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a <see cref="T:System.IO.TextWriter" /> object that is accessed through the intrinsic <see cref="T:System.Web.HttpResponse" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -26,8 +33,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends all buffered output to the HTTP output stream and closes the socket connection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +52,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Text.Encoding" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Text.Encoding" /> object for the <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +72,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends all buffered output to the HTTP output stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +91,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.IO.Stream" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.IO.Stream" /> object to enable HTTP output directly from the <see cref="T:System.IO.Stream" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,9 +113,13 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="ch">a <see cref="T:System.Char" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a single character to the HTTP output stream.</para>
+        </summary>
+        <param name="ch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to send to the HTTP output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +136,13 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an <see cref="T:System.Object" /> to the HTTP output stream.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to send to the HTTP output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +159,13 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a string to the HTTP output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to send to the HTTP output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,11 +184,17 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">a <see cref="T:System.Char[]" /></param>
-        <param name="index">a <see cref="T:System.Int32" /></param>
-        <param name="count">a <see cref="T:System.Int32" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a stream of characters with the specified starting position and number of characters to the HTTP output stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The memory buffer containing the characters to send to the HTTP output stream </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer position of the first character to send. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to send beginning at the position specified by <paramref name="index" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,11 +213,17 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added: an object of type 'byte []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a stream of bytes with the specified starting position and number of bytes to the HTTP output stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The memory buffer containing the bytes to send to the HTTP output stream. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer position of the first byte to send. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send, beginning at the byte position specified by <paramref name="index" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,8 +238,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a carriage return + line feed (CRLF) pair of characters to the HTTP output stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -215,11 +261,17 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a string with the specified starting position and number of characters to the HTTP output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to send to the HTTP output stream. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character position of the first byte to send. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to send, beginning at the character position specified by <paramref name="index" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -25,9 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class ContentWrapperAttribute : Attribute
 	{
 		public ContentWrapperAttribute (Type contentWrapper)
@@ -36,7 +34,8 @@ namespace System.Windows.Markup
 		}
 		
 		public Type ContentWrapper { get; private set; }
-#if !NET_2_1
+
+#if !__MOBILE__
 		public override Object TypeId {
 			get { return this; }
 		}

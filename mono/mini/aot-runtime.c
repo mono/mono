@@ -37,6 +37,7 @@
 #include <sys/wait.h>  /* for WIFEXITED, WEXITSTATUS */
 #endif
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -1549,6 +1550,8 @@ get_arm_bl_target (guint32 *ins_addr)
 		offset = (((int)ins & 0xffffff) << 8) >> 8;
 		return (char*)ins_addr + (offset * 4) + 8;
 	}
+#elif defined(TARGET_ARM64)
+	return mono_arch_get_call_target (((guint8*)ins_addr) + 4);
 #else
 	g_assert_not_reached ();
 	return NULL;
@@ -1675,8 +1678,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		align_int64 = align;
 	}
 #else
-	align_double = __alignof__ (double);
-	align_int64 = __alignof__ (gint64);
+	align_double = MONO_ABI_ALIGNOF (double);
+	align_int64 = MONO_ABI_ALIGNOF (gint64);
 #endif
 
 	/* Sanity check */
@@ -1778,7 +1781,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 			/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
 			void *addr = NULL;
 
-#ifdef TARGET_ARM
+#if defined(TARGET_ARM) || defined(TARGET_ARM64)
 			addr = get_arm_bl_target ((guint32*)amodule->method_addresses + i);
 #elif defined(TARGET_X86) || defined(TARGET_AMD64)
 			addr = mono_arch_get_call_target ((guint8*)amodule->method_addresses + (i * 5) + 5);
@@ -2289,11 +2292,11 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain,
 		mono_domain_alloc0_lock_free (domain, MONO_SIZEOF_JIT_INFO + (sizeof (MonoJitExceptionInfo) * (ei_len + nested_len)) + extra_size);
 
 	jinfo->code_size = code_len;
-	jinfo->used_regs = mono_cache_unwind_info (info.unw_info, info.unw_info_len);
+	jinfo->unwind_info = mono_cache_unwind_info (info.unw_info, info.unw_info_len);
 	jinfo->d.method = method;
 	jinfo->code_start = code;
 	jinfo->domain_neutral = 0;
-	/* This signals that used_regs points to a normal cached unwind info */
+	/* This signals that unwind_info points to a normal cached unwind info */
 	jinfo->from_aot = 0;
 	jinfo->num_clauses = ei_len + nested_len;
 
@@ -2375,7 +2378,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 {
 	int i, buf_len, num_clauses, len;
 	MonoJitInfo *jinfo;
-	guint used_int_regs, flags;
+	guint unwind_info, flags;
 	gboolean has_generic_jit_info, has_dwarf_unwind_info, has_clauses, has_seq_points, has_try_block_holes, has_arch_eh_jit_info;
 	gboolean from_llvm, has_gc_map;
 	guint8 *p;
@@ -2398,13 +2401,10 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 	has_arch_eh_jit_info = (flags & 128) != 0;
 
 	if (has_dwarf_unwind_info) {
-		guint32 offset;
-
-		offset = decode_value (p, &p);
-		g_assert (offset < (1 << 30));
-		used_int_regs = offset;
+		unwind_info = decode_value (p, &p);
+		g_assert (unwind_info < (1 << 30));
 	} else {
-		used_int_regs = decode_value (p, &p);
+		unwind_info = decode_value (p, &p);
 	}
 	if (has_generic_jit_info)
 		generic_info_size = sizeof (MonoGenericJitInfo);
@@ -2496,17 +2496,28 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		}
 
 		jinfo->code_size = code_len;
-		jinfo->used_regs = used_int_regs;
+		jinfo->unwind_info = unwind_info;
 		jinfo->d.method = method;
 		jinfo->code_start = code;
 		jinfo->domain_neutral = 0;
 		jinfo->from_aot = 1;
 	}
 
+	/*
+	 * Set all the 'has' flags, the mono_jit_info_get () functions depends on this to
+	 * compute the addresses of data blocks.
+	 */
+	if (has_generic_jit_info)
+		jinfo->has_generic_jit_info = 1;
+	if (has_arch_eh_jit_info)
+		jinfo->has_arch_eh_info = 1;
+	if (has_try_block_holes)
+		jinfo->has_try_block_holes = 1;
+
 	if (has_try_block_holes) {
 		MonoTryBlockHoleTableJitInfo *table;
 
-		jinfo->has_try_block_holes = 1;
+		g_assert (jinfo->has_try_block_holes);
 
 		table = mono_jit_info_get_try_block_hole_table_info (jinfo);
 		g_assert (table);
@@ -2523,7 +2534,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 	if (has_arch_eh_jit_info) {
 		MonoArchEHJitInfo *eh_info;
 
-		jinfo->has_arch_eh_info = 1;
+		g_assert (jinfo->has_arch_eh_info);
 
 		eh_info = mono_jit_info_get_arch_eh_info (jinfo);
 		eh_info->stack_size = decode_value (p, &p);
@@ -2541,7 +2552,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		MonoGenericJitInfo *gi;
 		int len;
 
-		jinfo->has_generic_jit_info = 1;
+		g_assert (jinfo->has_generic_jit_info);
 
 		gi = mono_jit_info_get_generic_jit_info (jinfo);
 		g_assert (gi);
@@ -2686,7 +2697,8 @@ mono_aot_get_unwind_info (MonoJitInfo *ji, guint32 *unwind_info_len)
 		mono_aot_unlock ();
 	}
 
-	p = amodule->unwind_info + ji->used_regs;
+	/* The upper 16 bits of ji->unwind_info might contain the epilog offset */
+	p = amodule->unwind_info + (ji->unwind_info & 0xffff);
 	*unwind_info_len = decode_value (p, &p);
 	return p;
 }
@@ -2769,13 +2781,15 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 	MonoJitInfo *jinfo;
 	guint8 *code, *ex_info, *p;
 	guint32 *table;
-	int nmethods = amodule->info.nmethods;
+	int nmethods;
 	gint32 *code_offsets;
 	int offsets_len, i;
 	gboolean async;
 
 	if (!amodule)
 		return NULL;
+
+	nmethods = amodule->info.nmethods;
 
 	if (domain != mono_get_root_domain ())
 		/* FIXME: */
@@ -3349,10 +3363,10 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 				method = mono_get_method (image, token, NULL);
 			if (method) {
 				char *name = mono_method_full_name (method, TRUE);
-				printf ("LAST AOT METHOD: %s.\n", name);
+				g_print ("LAST AOT METHOD: %s.\n", name);
 				g_free (name);
 			} else {
-				printf ("LAST AOT METHOD: %p %d\n", code, method_index);
+				g_print ("LAST AOT METHOD: %p %d\n", code, method_index);
 			}
 		}
 	}
@@ -3880,16 +3894,24 @@ find_aot_module (guint8 *code)
 }
 
 void
-mono_aot_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr)
 {
+	MonoAotModule *amodule;
+
 	/*
 	 * Since AOT code is only used in the root domain, 
 	 * mono_domain_get () != mono_get_root_domain () means the calling method
 	 * is AppDomain:InvokeInDomain, so this is the same check as in 
 	 * mono_method_same_domain () but without loading the metadata for the method.
 	 */
-	if (mono_domain_get () == mono_get_root_domain ())
-		mono_arch_patch_plt_entry (code, got, regs, addr);
+	if (mono_domain_get () == mono_get_root_domain ()) {
+		if (!got) {
+			amodule = find_aot_module (code);
+			if (amodule)
+				got = amodule->got;
+		}
+		mono_arch_patch_plt_entry (plt_entry, got, regs, addr);
+	}
 }
 
 /*
@@ -3968,7 +3990,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	/* Patch the PLT entry with target which might be the actual method not a trampoline */
 	plt_entry = mono_aot_get_plt_entry (code);
 	g_assert (plt_entry);
-	mono_aot_patch_plt_entry (plt_entry, module->got, NULL, target);
+	mono_aot_patch_plt_entry (code, plt_entry, module->got, NULL, target);
 
 	return target;
 #else
@@ -4378,10 +4400,14 @@ get_new_trampoline_from_page (int tramp_type)
 		page = (TrampolinePage*)addr;
 		page->next = trampoline_pages [tramp_type];
 		trampoline_pages [tramp_type] = page;
+#ifdef TARGET_ARM64
+		page->trampolines = (void*)(taddr + amodule->info.tramp_page_code_offsets [tramp_type]);
+#else
 		page->trampolines = (void*)(taddr + trampolines_pages_code_offsets [tramp_type]);
-		page->trampolines_end = (void*)(taddr + psize);
+#endif
+		page->trampolines_end = (void*)(taddr + psize - 64);
 		code = page->trampolines;
-		page->trampolines += 8;
+		page->trampolines += specific_trampoline_size;
 		mono_aot_page_unlock ();
 		return code;
 	}
@@ -4879,7 +4905,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 }
 
 void
-mono_aot_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr)
 {
 }
 

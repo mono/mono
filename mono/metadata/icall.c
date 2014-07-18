@@ -75,6 +75,7 @@
 #include <mono/metadata/mono-ptr-array.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/runtime.h>
+#include <mono/metadata/file-mmap.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/strtod.h>
 #include <mono/utils/monobitset.h>
@@ -126,17 +127,12 @@ mono_double_ParseImpl (char *ptr, double *result)
 
 	MONO_ARCH_SAVE_REGS;
 
-#ifdef __arm__
-	if (*ptr)
-		*result = strtod (ptr, &endptr);
-#else
 	if (*ptr){
 		/* mono_strtod () is not thread-safe */
 		EnterCriticalSection (&mono_strtod_mutex);
 		*result = mono_strtod (ptr, &endptr);
 		LeaveCriticalSection (&mono_strtod_mutex);
 	}
-#endif
 
 	if (!*ptr || (endptr && *endptr))
 		return FALSE;
@@ -1265,6 +1261,8 @@ get_caller_no_reflection (MonoMethod *m, gint32 no, gint32 ilo, gboolean managed
 static MonoReflectionType *
 type_from_name (const char *str, MonoBoolean ignoreCase)
 {
+	MonoMethod *m, *dest;
+
 	MonoType *type = NULL;
 	MonoAssembly *assembly = NULL;
 	MonoTypeNameParse info;
@@ -1280,31 +1278,37 @@ type_from_name (const char *str, MonoBoolean ignoreCase)
 		return NULL;
 	}
 
-	if (info.assembly.name) {
-		assembly = mono_assembly_load (&info.assembly, NULL, NULL);
+
+	/*
+	 * We must compute the calling assembly as type loading must happen under a metadata context.
+	 * For example. The main assembly is a.exe and Type.GetType is called from dir/b.dll. Without
+	 * the metadata context (basedir currently) set to dir/b.dll we won't be able to load a dir/c.dll.
+	 */
+	m = mono_method_get_last_managed ();
+	dest = m;
+
+	mono_stack_walk_no_il (get_caller_no_reflection, &dest);
+	if (!dest)
+		dest = m;
+
+	/*
+	 * FIXME: mono_method_get_last_managed() sometimes returns NULL, thus
+	 *        causing ves_icall_System_Reflection_Assembly_GetCallingAssembly()
+	 *        to crash.  This only seems to happen in some strange remoting
+	 *        scenarios and I was unable to figure out what's happening there.
+	 *        Dec 10, 2005 - Martin.
+	 */
+
+	if (dest) {
+		assembly = dest->klass->image->assembly;
+		type_resolve = TRUE;
 	} else {
-		MonoMethod *m = mono_method_get_last_managed ();
-		MonoMethod *dest = m;
-
-		mono_stack_walk_no_il (get_caller_no_reflection, &dest);
-		if (!dest)
-			dest = m;
-
-		/*
-		 * FIXME: mono_method_get_last_managed() sometimes returns NULL, thus
-		 *        causing ves_icall_System_Reflection_Assembly_GetCallingAssembly()
-		 *        to crash.  This only seems to happen in some strange remoting
-		 *        scenarios and I was unable to figure out what's happening there.
-		 *        Dec 10, 2005 - Martin.
-		 */
-
-		if (dest) {
-			assembly = dest->klass->image->assembly;
-			type_resolve = TRUE;
-		} else {
-			g_warning (G_STRLOC);
-		}
+		g_warning (G_STRLOC);
 	}
+
+	if (info.assembly.name)
+		assembly = mono_assembly_load (&info.assembly, assembly ? assembly->basedir : NULL, NULL);
+
 
 	if (assembly) {
 		/* When loading from the current assembly, AppDomain.TypeResolve will not be called yet */
@@ -6460,12 +6464,11 @@ ves_icall_System_Environment_GetEnvironmentVariableNames (void)
 ICALL_EXPORT void
 ves_icall_System_Environment_InternalSetEnvironmentVariable (MonoString *name, MonoString *value)
 {
-	MonoError error;
 #ifdef HOST_WIN32
-
 	gunichar2 *utf16_name, *utf16_value;
 #else
 	gchar *utf8_name, *utf8_value;
+	MonoError error;
 #endif
 
 	MONO_ARCH_SAVE_REGS;
@@ -6723,7 +6726,7 @@ ICALL_EXPORT void
 ves_icall_System_Environment_BroadcastSettingChange (void)
 {
 #ifdef HOST_WIN32
-	SendMessageTimeout (HWND_BROADCAST, WM_SETTINGCHANGE, NULL, L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
+	SendMessageTimeout (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
 #endif
 }
 
@@ -7571,8 +7574,8 @@ custom_attrs_get_by_type (MonoObject *obj, MonoReflectionType *attr_type)
 		mono_class_init_or_throw (attr_class);
 
 	res = mono_reflection_get_custom_attrs_by_type (obj, attr_class, &error);
-	if (!mono_error_ok (&error))
-		mono_error_raise_exception (&error);
+	mono_error_raise_exception (&error);
+
 	if (mono_loader_get_last_error ()) {
 		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
 		g_assert_not_reached ();

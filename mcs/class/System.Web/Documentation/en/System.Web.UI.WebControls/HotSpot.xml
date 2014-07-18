@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HotSpot" FullName="System.Web.UI.WebControls.HotSpot">
   <TypeSignature Language="C#" Value="public abstract class HotSpot : System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -18,9 +19,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You cannot directly create instances of the abstract <see cref="T:System.Web.UI.WebControls.HotSpot" /> class. Instead, this class is inherited by the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" />, <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" />, and <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> classes to provide the common basic functionality for a hot spot. You must derive from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class to create a custom hot spot class that represents a unique shape that you define. However, you can define most shapes using the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" />, <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" />, and <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> classes.</para>
+      <para>When a <see cref="T:System.Web.UI.WebControls.HotSpot" /> in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked, the page either navigates to a URL, generates a postback to the server, or does nothing. The <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specifies this behavior. To navigate to a URL, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Navigate. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to. To post back to the server, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.PostBack. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is clicked. If you want the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to have no behavior set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Inactive.</para>
+      <para>Alternately, you can use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the containing <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to specify a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's behavior. For more information, see <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the basic functionality common to all hot spot shapes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,9 +37,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by derived class constructors to initialize state in this type. The <see cref="T:System.Web.UI.WebControls.HotSpot" /> class is abstract and therefore cannot be instantiated directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,10 +66,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.AccessKey" /> property to specify the keyboard shortcut for a <see cref="T:System.Web.UI.WebControls.HotSpot" /> region. This allows you to navigate quickly to the region by pressing the ALT key and the key for the specified character on the keyboard. For example, setting the access key of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> region to the string "D" indicates that the user can navigate to the control by pressing ALT+D.</para>
+          <para>Only a single character string is allowed for the <see cref="P:System.Web.UI.WebControls.HotSpot.AccessKey" /> property. If you attempt to set this property to a value that is neither null, <see cref="F:System.String.Empty" />, nor a single character string, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only in Internet Explorer 4.0 and later.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the access key that allows you to quickly navigate to the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +107,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.AlternateText" /> property to specify the text to display for a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the image specified by the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property is unavailable.</para>
+          <para>When an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is rendered to a browser that does not support images, instead of displaying an image, it renders a hyperlink for each <see cref="T:System.Web.UI.WebControls.HotSpot" /> in the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. The control retrieves the text to display for each hyperlink from the <see cref="P:System.Web.UI.WebControls.HotSpot.AlternateText" /> property for each <see cref="T:System.Web.UI.WebControls.HotSpot" />. When a user clicks one of the hyperlinks, it behaves like a <see cref="T:System.Web.UI.WebControls.HotSpot" /> by either navigating to a specified URL, generating a postback to the server, or doing nothing.</para>
+          <para>When the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control renders to a browser that supports the ToolTips feature, the value of the <see cref="P:System.Web.UI.WebControls.HotSpot.AlternateText" /> property is displayed as a ToolTip for the <see cref="T:System.Web.UI.WebControls.HotSpot" />.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alternate text to display for a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the image is unavailable or renders to a browser that does not support images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,10 +133,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, the <see cref="M:System.Web.UI.WebControls.HotSpot.GetCoordinates" /> method returns the string representation of the coordinates of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a string that represents the coordinates of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the coordinates of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,10 +166,81 @@
         <ReturnType>System.Web.UI.WebControls.HotSpotMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to specify the behavior of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. This property is set using one of the <see cref="T:System.Web.UI.WebControls.HotSpotMode" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> uses the behavior set by the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property. If the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control does not define the behavior, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects navigate to a URL.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Inactive</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> does not have any behavior.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Navigate </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> navigates to a URL. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PostBack </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> generates a postback to the server. </para>
+              </description>
+            </item>
+          </list>
+          <para>You can specify <see cref="T:System.Web.UI.WebControls.HotSpot" /> behavior on either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property of the control or on the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specified on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object takes precedence over the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+          <para>If you specify HotSpotMode.NotSet for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of an individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> gets its behavior from the containing <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property. In this scenario, if the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property is either not set to a value or is set to HotSpotMode.NotSet, the default behavior is to navigate to a URL.</para>
+          <para>If you specify HotSpotMode.Navigate for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object navigates to a URL when the hot spot region is clicked. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to.</para>
+          <para>If you specify HotSpotMode.PostBack for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object generates a post back to the server when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the <see cref="T:System.Web.UI.WebControls.HotSpot" />. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data on when a postback event occurs. When a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event is raised. To programmatically control the actions performed when a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event.</para>
+          <para>To cause all <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to have the same behavior, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to HotSpotMode.NotSet or do not specify a value for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property.</para>
+          <para>To specify different behaviors for <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to either HotSpotMode.Navigate, HotSpotMode.PostBack, or HotSpotMode.Inactive.</para>
+          <block subset="none" type="note">
+            <para>If an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects it contains is either not set to a value or set to HotSpotMode.NotSet, by default the behavior is HotSpotMode.Navigate.</para>
+          </block>
+          <para>If you specify HotSpotMode.Inactive for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object does not have any behavior when it is clicked. You can use this value to create an inactive hot spot within a larger active hot spot. This option is provided to allow you to create more complex hot-spot zones within an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. </para>
+          <para>To create an inactive area within an active hot spot, you must specify the inactive hot spot before the active hot spot in the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. For example, the following <see cref="T:System.Web.UI.WebControls.ImageMap" /> defines an active ring by specifying an inactive circular hot spot within a larger active circular hot spot:</para>
+          <code>&lt;asp:ImageMap ID="SaturnImage" 
+  ImageUrl="~/saturn.PNG" 
+  runat="server" OnClick="SaturnImage_Click"&gt;
+  &lt;asp:CircleHotSpot AlternateText="planet" HotSpotMode=PostBack
+    PostBackValue="planet" Radius=40 X=100 Y=100 /&gt;
+  &lt;asp:CircleHotSpot HotSpotMode=Inactive 
+    Radius=60 X=100 Y=100 /&gt;
+  &lt;asp:CircleHotSpot AlternateText="rings" HotSpotMode=PostBack
+    PostBackValue="rings" Radius=80 X=100 Y=100 /&gt;
+&lt;/asp:ImageMap&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the behavior of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,10 +253,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.HotSpot.IsTrackingViewState" /> member is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is tracking its view-state changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,10 +278,19 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code. However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.LoadViewState(System.Object)" /> method is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+          <para>This method restores view-state information for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.HotSpot.SaveViewState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's previously saved view state to the object.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to restore. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,9 +306,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.HotSpot.MarkupName" /> member is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+          <para>When overridden in a derived class, the <see cref="P:System.Web.UI.WebControls.HotSpot.MarkupName" /> property gets a string that represents the name of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's shape. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the string representation for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's shape.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NavigateUrl">
@@ -205,10 +342,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is clicked. This property has an effect only when the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property is set to HotSpotMode.Navigate, to navigate to a URL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to navigate to when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -232,10 +375,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. This property has an effect only when the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property is set to HotSpotMode.PostBack, to generate a postback to the server.</para>
+          <para>To programmatically control the actions performed when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to pass in the event data when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -249,10 +399,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.SaveViewState" /> member is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control's life cycle. For more information, see <format type="text/html"><a href="de0d8a1c-b1bc-48e1-b246-26e32289a82f">ASP.NET Application Life Cycle Overview</a></format>. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in a hidden HTML input element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's ViewState property. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's view state. If no view state is associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -268,9 +429,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="P:System.Web.UI.WebControls.HotSpot.IsTrackingViewState" /> member to determine whether a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is tracking view-state changes. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.HotSpot.System#Web#UI#IStateManager#IsTrackingViewState" /> member is an explicit interface member implementation. It can be used only when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is tracking its view-state changes.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -286,9 +454,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.HotSpot.LoadViewState(System.Object)" /> member to restore the view state for a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.System#Web#UI#IStateManager#LoadViewState(System.Object)" /> member is an explicit interface member implementation. It can be used only when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's previously saved view state to the object.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains the saved view state values for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to restore. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -302,9 +478,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.HotSpot.SaveViewState" /> method to save the view state for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.System#Web#UI#IStateManager#SaveViewState" /> method is an explicit interface member implementation. It can be used only when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's view state since the last time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's view state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -318,8 +504,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.HotSpot.TrackViewState" /> method to start tracking view-state changes for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.System#Web#UI#IStateManager#TrackViewState" /> method is an explicit interface member implementation. It can be used only when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region to track changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TabIndex">
@@ -334,10 +527,24 @@
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.TabIndex" /> property to specify or determine the tab index of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> region on the Web Forms page. </para>
+          <para>When you press the TAB key, the order in which the Web server controls receive focus is determined by the <see cref="P:System.Web.UI.WebControls.HotSpot.TabIndex" /> property of each control. When a page is initially loaded, the first item that receives focus when the TAB key is pressed is the address bar. Next, the controls on the Web Forms page are tabbed to in ascending order, based on the value of the <see cref="P:System.Web.UI.WebControls.HotSpot.TabIndex" /> property of each control, starting with the smallest positive, nonzero value. If multiple controls share the same tab index, the controls will receive focus in the order they are declared on the Web Forms page. Finally, controls that have a tab index of zero are tabbed to in the order they are declared.</para>
+          <block subset="none" type="note">
+            <para>Only controls with a nonzero tab index will render the tabindex attribute.</para>
+          </block>
+          <para>You can remove a <see cref="T:System.Web.UI.WebControls.HotSpot" /> region from the tab order by setting the <see cref="P:System.Web.UI.WebControls.HotSpot.TabIndex" /> property to a negative value.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only in Internet Explorer 4.0 and later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tab index of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> region.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -361,10 +568,78 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HotSpot.Target" /> property to specify the frame or window that displays the Web page linked to when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object that navigates to a URL is clicked. This property has an effect only when the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property is set to HotSpotMode.Navigate, to navigate to a URL. If this property is not set, the browser or window with focus refreshes when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is clicked.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.HotSpot.Target" /> property renders as a target attribute. The target attribute on ANCHOR elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.HotSpot.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> must be XHTML 1.1 compliant. For more information, refer to the topic <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+          </block>
+          <block subset="none" type="note">
+            <para> We strongly recommend that, when creating accessible Web pages, you avoid using the <see cref="P:System.Web.UI.WebControls.HotSpot.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.HotSpot.Target" /> value must begin with a letter in the range of A to Z (case-insensitive), except for the following special values, which begin with an underscore. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search </para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine whether the _search value is supported.  For example, Internet Explorer 5.0 or later supports the _search target value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame in which to display the Web page content linked to when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object that navigates to a URL is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -378,10 +653,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.ToString" /> method returns a string that represents the current <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. For example, if the current <see cref="T:System.Web.UI.WebControls.HotSpot" /> is an instance of the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> class, calling this method returns the string "CircleHotSpot".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.String" /> representation of this instance of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Web.UI.WebControls.HotSpot" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -395,9 +679,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.HotSpot.TrackViewState" /> member is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+          <para>This method is called automatically by ASP.NET when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object is initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to track changes to its view state so they can be stored in the object's <see cref="T:System.Web.UI.StateBag" /> object. This object is accessible through the <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -418,10 +709,19 @@
         <ReturnType>System.Web.UI.StateBag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.HotSpot.ViewState" /> member is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+          <para>A server control's view state is the accumulation of all its property values. In order to preserve these values across HTTP requests, ASP.NET server controls use the <see cref="P:System.Web.UI.WebControls.HotSpot.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class, to store the property values. The values are then passed as a variable to a hidden HTML element when subsequent requests are processed. For more information about saving server control view state, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+          <para>View state is enabled for all server controls by default, but there are circumstances in which you will want to disable it. For more information, see <format type="text/html"><a href="f882bf1b-a009-4312-ac06-74370ffabc0b">Performance Overview</a></format>.</para>
+          <para>For information about dictionaries and how to use them, see <format type="text/html"><a href="60CC581F-1DB5-445B-BA04-A173396BF872">Collections and Data Structures</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of state information that allows you to save and restore the view state of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object across multiple requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

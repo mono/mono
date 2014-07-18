@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PaddingConverter" FullName="System.Windows.Forms.PaddingConverter">
   <TypeSignature Language="C#" Value="public class PaddingConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter to convert <see cref="T:System.Windows.Forms.Padding" /> values to and from various other representations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.PaddingConverter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanConvertFrom">
@@ -39,11 +46,19 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="sourceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether this converter can convert an object of one type to the type of this converter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object can perform the conversion; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
+        <param name="sourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type you wish to convert from.</param>
       </Docs>
     </Member>
     <Member MemberName="CanConvertTo">
@@ -61,10 +76,17 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether this converter can convert the object to the specified type, using the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A T:System.Type that represents the type you want to convert to. </param>
       </Docs>
     </Member>
     <Member MemberName="ConvertFrom">
@@ -129,11 +151,19 @@
         <Parameter Name="propertyValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="propertyValues">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type that this <see cref="T:System.ComponentModel.TypeConverter" /> is associated with, using the specified context, given a set of property values for the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the given <see cref="T:System.Collections.IDictionary" />, or null if the object cannot be created. This method always returns null.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
+        <param name="propertyValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of new property values. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCreateInstanceSupported">
@@ -149,10 +179,11 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
     </Member>
     <Member MemberName="GetProperties">

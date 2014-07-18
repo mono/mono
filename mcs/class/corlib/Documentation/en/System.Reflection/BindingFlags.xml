@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BindingFlags" FullName="System.Reflection.BindingFlags" FullNameSP="System_Reflection_BindingFlags" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable BindingFlags extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum BindingFlags" />
@@ -22,19 +23,266 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies flags
-      that control the binding and the invocation processes conducted by reflection.</para>
-    </summary>
     <remarks>
-      <para>This enumeration is used by reflection classes such as <see cref="T:System.Reflection.Binder" />,
-<see cref="T:System.Reflection.Module" />, and <see cref="T:System.Reflection.ConstructorInfo" /> . <see cref="T:System.Reflection.BindingFlags" /> values are used to control binding in methods in 
-   classes that find
-   and invoke, create, get, and set
-   members and
-   types.</para>
-      <para>To specify multiple <see cref="T:System.Reflection.BindingFlags" /> values, use the bitwise 'OR' operator.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These BindingFlags control binding for a great many classes in the System, System.Reflection, and System.Runtime namespaces that invoke, create, get, set, and find members and types.</para>
+      <para>BindingFlags are used in the following <see cref="T:System.Type" /> methods and other places such as <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> : </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetMembers" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetEvents" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetConstructor(System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetConstructors" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetMethod(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetMethods" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetField(System.String,System.Reflection.BindingFlags)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetFields" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetEvent(System.String)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetProperty(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetProperties(System.Reflection.BindingFlags)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.GetMember(System.String)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Type.FindMembers(System.Reflection.MemberTypes,System.Reflection.BindingFlags,System.Reflection.MemberFilter,System.Object)" /> </para>
+        </item>
+      </list>
+      <para>InvokeMember and GetMethod are especially important.</para>
+      <para>The binding flags can be categorized by how they identify a type member, as listed in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Identified by Accessibility</para>
+            </term>
+            <description>
+              <para>Identified by Binding Argument</para>
+            </description>
+            <description>
+              <para>Identified by Operation</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.DeclaredOnly" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.FlattenHierarchy" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.IgnoreCase" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.IgnoreReturn" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.Instance" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.NonPublic" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.Public" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.Static" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.ExactBinding" />
+            </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.OptionalParamBinding" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.CreateInstance" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.GetField" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.SetField" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.GetProperty" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.SetProperty" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.InvokeMethod" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.PutDispProperty" /> </para>
+            <para>
+              <see cref="F:System.Reflection.BindingFlags.PutRefDispProperty" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>You must specify Instance or Static along with Public or NonPublic or no members will be returned.</para>
+      </block>
+      <para>The following table lists the coercions performed by the default <see cref="M:System.Reflection.Binder.ChangeType(System.Object,System.Type,System.Globalization.CultureInfo)" />. This table applies especially to the ExactBinding binding flag.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Source Type </para>
+            </term>
+            <description>
+              <para>Target Type </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Any type </para>
+          </term>
+          <description>
+            <para>Its base type. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Any type </para>
+          </term>
+          <description>
+            <para>The interface it implements. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Char </para>
+          </term>
+          <description>
+            <para>UInt16, UInt32, Int32, UInt64, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Byte </para>
+          </term>
+          <description>
+            <para>Char, UInt16, Int16, UInt32, Int32, UInt64, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SByte </para>
+          </term>
+          <description>
+            <para>Int16, Int32, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>UInt16 </para>
+          </term>
+          <description>
+            <para>UInt32, Int32, UInt64, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Int16 </para>
+          </term>
+          <description>
+            <para>Int32, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>UInt32 </para>
+          </term>
+          <description>
+            <para>UInt64, Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Int32 </para>
+          </term>
+          <description>
+            <para>Int64, Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>UInt64 </para>
+          </term>
+          <description>
+            <para>Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Int64 </para>
+          </term>
+          <description>
+            <para>Single, Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Single </para>
+          </term>
+          <description>
+            <para>Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Non-reference </para>
+          </term>
+          <description>
+            <para>By-reference. </para>
+          </description>
+        </item>
+      </list>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies flags that control binding and the way in which the search for members and types is conducted by reflection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateInstance">
@@ -53,11 +301,11 @@
       <Parameters />
       <MemberValue>CreateInstance</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that
-      an instance of a type will be created.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that Reflection should create an instance of the specified type. Calls the constructor that matches the given arguments. The supplied member name is ignored. If the type of lookup is not specified, (Instance | Public) will apply. It is not possible to call a type initializer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -77,11 +325,11 @@
       <Parameters />
       <MemberValue>DeclaredOnly</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that only the members declared on a type will be searched when binding. When this
-      field is specified, inherited members will not be searched.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that only members declared at the level of the supplied type's hierarchy should be considered. Inherited members are not considered.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -99,8 +347,11 @@
       </ReturnValue>
       <MemberValue>Default</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies no binding flag.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExactBinding">
@@ -119,19 +370,16 @@
       <Parameters />
       <MemberValue>ExactBinding</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reflection models the accessibility rules of the common type system. For example, if the caller is in the same assembly, the caller does not need special permissions for internal members. Otherwise, the caller needs <see cref="T:System.Security.Permissions.ReflectionPermission" />. This is consistent with lookup of members that are protected, private, and so on.</para>
+          <para>The general principle is that <see cref="M:System.Reflection.Binder.ChangeType(System.Object,System.Type,System.Globalization.CultureInfo)" /> should perform only widening coercions, which never lose data. An example of a widening coercion is coercing a value that is a 32-bit signed integer to a value that is a 64-bit signed integer. This is distinguished from a narrowing coercion, which may lose data. An example of a narrowing coercion is coercing a 64-bit signed integer to a 32-bit signed integer.</para>
+          <para>The default binder ignores this flag, while custom binders can implement the semantics of this flag.</para>
+        </remarks>
         <summary>
-          <para>Specifies that, when binding to a method, the types of
-      the arguments passed to the binder are required to be the same
-      as the types of
-      
-      the corresponding parameters in the method
-      signature.</para>
-          <para>
-            <block subset="none" type="note">Custom binders are allowed to ignore this
-      flag. This flag is provided as a hint for custom binders.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that types of the supplied arguments must exactly match the types of the corresponding formal parameters. Reflection throws an exception if the caller supplies a non-null Binder object, since that implies that the caller is supplying BindToXXX implementations that will pick the appropriate method.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -149,8 +397,11 @@
       </ReturnValue>
       <MemberValue>FlattenHierarchy</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that public and protected static members up the hierarchy should be returned. Private static members in inherited classes are not returned. Static members include fields, methods, events, and properties. Nested types are not returned.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetField">
@@ -169,11 +420,11 @@
       <Parameters />
       <MemberValue>GetField</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the value of a field will be returned.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the specified field should be returned.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -193,13 +444,11 @@
       <Parameters />
       <MemberValue>GetProperty</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the value of a property will be returned 
-      by invoking the <see langword="get" /> accessor of a <see cref="T:System.Reflection.PropertyInfo" />
-      instance that reflects that property.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the specified property should be returned.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -219,11 +468,11 @@
       <Parameters />
       <MemberValue>IgnoreCase</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that a member name will be handled in a case-insensitive
-      manner when binding.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the case of the member name should not be considered when binding.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -241,8 +490,11 @@
       </ReturnValue>
       <MemberValue>IgnoreReturn</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used in COM interop to specify that the return value of the member can be ignored.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Instance">
@@ -261,11 +513,11 @@
       <Parameters />
       <MemberValue>Instance</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that instance members will be included in the binding search.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that instance members are to be included in the search.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -285,10 +537,11 @@
       <Parameters />
       <MemberValue>InvokeMethod</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that a method will be invoked.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a method is to be invoked. This must not be a constructor or a type initializer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -308,12 +561,11 @@
       <Parameters />
       <MemberValue>NonPublic</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that non-public (i.e. family and private) members will be 
-      included in the binding search if the search has the permission required to bind non-public members.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that non-public members are to be included in the search.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -333,13 +585,14 @@
       <Parameters />
       <MemberValue>OptionalParamBinding</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameters with default values are used only in calls where trailing arguments are omitted. They must be the last arguments.</para>
+        </remarks>
         <summary>
-          <para> Specifies that the set of members whose parameter count
-      matches the number of arguments supplied to the binding method are to be returned
-      by the binding method. <block subset="none" type="note">This flag is used in conjunction with methods that have parameters with default values
-      and with methods that have variable arguments. </block></para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the set of members whose parameter count matches the number of supplied arguments. This binding flag is used for methods with parameters that have default values and methods with variable arguments (varargs). This flag should only be used with <see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -359,11 +612,11 @@
       <Parameters />
       <MemberValue>Public</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that public members will be included in the binding search.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that public members are to be included in the search.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -381,8 +634,11 @@
       </ReturnValue>
       <MemberValue>PutDispProperty</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the PROPPUT member on a COM object should be invoked. PROPPUT specifies a property-setting function that uses a value. Use PutDispProperty if a property has both PROPPUT and PROPPUTREF and you need to distinguish which one is called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PutRefDispProperty">
@@ -399,8 +655,11 @@
       </ReturnValue>
       <MemberValue>PutRefDispProperty</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the PROPPUTREF member on a COM object should be invoked. PROPPUTREF specifies a property-setting function that uses a reference instead of a value. Use PutRefDispProperty if a property has both PROPPUT and PROPPUTREF and you need to distinguish which one is called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetField">
@@ -419,11 +678,11 @@
       <Parameters />
       <MemberValue>SetField</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the value of a field will be set.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the specified field should be set.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -443,12 +702,11 @@
       <Parameters />
       <MemberValue>SetProperty</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the value of a property will be set by invoking the 
-   <see langword="set" /> accessor of a <see cref="T:System.Reflection.PropertyInfo" /> instance that reflects that 
-      property. </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the specified property should be set. For COM properties, specifying this binding flag is equivalent to specifying PutDispProperty and PutRefDispProperty.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -468,11 +726,11 @@
       <Parameters />
       <MemberValue>Static</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that static members will be included in the binding search.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that static members are to be included in the search.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -492,13 +750,11 @@
       <Parameters />
       <MemberValue>SuppressChangeType</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the system will not change the types of
-      parameters when binding with the default binder.</para>
-          <block subset="none" type="note">Custom binders are allowed to ignore this flag. This flag is provided
-      as a hint for custom binders.</block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not implemented.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGroup" FullName="System.Security.Policy.CodeGroup">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class CodeGroup" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit CodeGroup extends System.Object" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Code groups are the building blocks of code access security policy. Each policy level consists of a root code group that can have child code groups. Each child code group can have their own child code groups; this behavior extends to any number of levels, forming a tree. Each code group has a membership condition that determines if a given assembly belongs to it based on the evidence for that assembly.</para>
+      <para>Only those code groups whose membership conditions match a given assembly's evidence will be applied. If a matching code group has child code groups, then those children whose membership conditions also match the supplied evidence will likewise be applied.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all implementations of code groups must derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,10 +46,18 @@
         <Parameter Name="policy" Type="System.Security.Policy.PolicyStatement" />
       </Parameters>
       <Docs>
-        <param name="membershipCondition">To be added: an object of type 'IMembershipCondition'</param>
-        <param name="policy">To be added: an object of type 'PolicyStatement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a basic code group and should be called from the constructors of custom code groups. You can add child code groups using the <see cref="M:System.Security.Policy.CodeGroup.AddChild(System.Security.Policy.CodeGroup)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Policy.CodeGroup" />.</para>
+        </summary>
+        <param name="membershipCondition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A membership condition that tests evidence to determine whether this code group applies policy. </param>
+        <param name="policy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy statement for the code group in the form of a permission set and attributes to grant code that matches the membership condition. </param>
       </Docs>
     </Member>
     <Member MemberName="AddChild">
@@ -60,9 +76,13 @@
         <Parameter Name="group" Type="System.Security.Policy.CodeGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added: an object of type 'CodeGroup'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a child code group to the current code group.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code group to be added as a child. This new child code group is added to the end of the list. </param>
       </Docs>
     </Member>
     <Member MemberName="AttributeString">
@@ -78,9 +98,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation is not localized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the attributes of the policy statement for the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Children">
@@ -96,9 +122,19 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of child code groups is significant for certain code groups.</para>
+          <block subset="none" type="note">
+            <para>The return value is a copy of the child code list. Do not use the returned list to add a child code group; instead, use the <see cref="M:System.Security.Policy.CodeGroup.AddChild(System.Security.Policy.CodeGroup)" /> method.</para>
+            <para />
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an ordered list of the child code groups of a code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -115,9 +151,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CodeGroup'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method makes a deep copy of the code group, so that copies of all objects the code group contains are also made.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, makes a deep copy of the current code group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An equivalent copy of the current code group, including its membership conditions and child code groups.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateXml">
@@ -137,10 +182,20 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="element">To be added: an object of type 'Security.SecurityElement'</param>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Security.Policy.CodeGroup.ToXml" /> cannot be overridden. If you need to serialize members specific to a particular implementation of <see cref="T:System.Security.Policy.CodeGroup" />, you must override <see cref="M:System.Security.Policy.CodeGroup.CreateXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> and serialize your members there. When the code group is serialized, <see cref="M:System.Security.Policy.CodeGroup.ToXml" /> calls <see cref="M:System.Security.Policy.CodeGroup.CreateXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> and adds your serialization to the <see cref="T:System.Security.SecurityElement" /> created by <see cref="M:System.Security.Policy.CodeGroup.ToXml" />.</para>
+          <para>The XML created using this method is deserialized by the <see cref="M:System.Security.Policy.CodeGroup.ParseXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, serializes properties and internal state specific to a derived code group and adds the serialization to the specified <see cref="T:System.Security.SecurityElement" />.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to which to add the serialization. </param>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level within which the code group exists. </param>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -156,9 +211,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the description of the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -177,10 +235,21 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two code groups are equivalent if they have the same <see cref="P:System.Security.Policy.CodeGroup.Name" />, <see cref="P:System.Security.Policy.CodeGroup.Description" />, and <see cref="P:System.Security.Policy.CodeGroup.MembershipCondition" />.</para>
+          <para>This method tests the top-level code group only, not its child code groups.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified code group is equivalent to the current code group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code group is equivalent to the current code group; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code group to compare with the current code group. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -200,11 +269,23 @@
         <Parameter Name="compareChildren" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cg">To be added: an object of type 'CodeGroup'</param>
-        <param name="compareChildren">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two code groups are equivalent if they have the same <see cref="P:System.Security.Policy.CodeGroup.Name" />, <see cref="P:System.Security.Policy.CodeGroup.Description" />, and <see cref="P:System.Security.Policy.CodeGroup.MembershipCondition" />.</para>
+          <para>If the <paramref name="compareChildren" /> parameter is true, this method will only return true if the current code group and all its child code groups are equivalent to the specified code group and all its child code groups.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified code group is equivalent to the current code group, checking the child code groups as well, if specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code group is equivalent to the current code group; otherwise, false.</para>
+        </returns>
+        <param name="cg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code group to compare with the current code group. </param>
+        <param name="compareChildren">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to compare child code groups, as well; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -223,9 +304,13 @@
         <Parameter Name="e" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Security.SecurityElement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a given state from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -245,10 +330,18 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Security.SecurityElement'</param>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy level context is provided for resolution of named permission sets.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a given state and policy level from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level within which the code group exists. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -265,9 +358,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code of the current code group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current code group.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MembershipCondition">
@@ -283,9 +382,15 @@
         <ReturnType>System.Security.Policy.IMembershipCondition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A membership condition tests evidence and returns a Boolean value that tells whether there is a match.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code group's membership condition.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MergeLogic">
@@ -301,9 +406,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the merge logic for the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -319,9 +427,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParseXml">
@@ -341,10 +452,20 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Security.SecurityElement'</param>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Security.Policy.CodeGroup.FromXml(System.Security.SecurityElement)" /> cannot be overridden. If you need to deserialize members specific to a particular implementation of <see cref="T:System.Security.Policy.CodeGroup" />, you must override <see cref="M:System.Security.Policy.CodeGroup.ParseXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> and deserialize your members there. When the code group is deserialized, <see cref="M:System.Security.Policy.CodeGroup.FromXml(System.Security.SecurityElement)" /> calls <see cref="M:System.Security.Policy.CodeGroup.ParseXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> and reconstructs your members from the <see cref="T:System.Security.SecurityElement" />.</para>
+          <para>This method deserializes XML created using <see cref="M:System.Security.Policy.CodeGroup.CreateXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reconstructs properties and internal state specific to a derived code group from the specified <see cref="T:System.Security.SecurityElement" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level within which the code group exists. </param>
       </Docs>
     </Member>
     <Member MemberName="PermissionSetName">
@@ -360,9 +481,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be null if the code group contains an unnamed permission set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the named permission set for the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PolicyStatement">
@@ -378,9 +505,16 @@
         <ReturnType>System.Security.Policy.PolicyStatement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy statement applies to code in assemblies when evidence matches the membership condition.</para>
+          <para>This property can also be set by passing a policy statement to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the policy statement associated with the code group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveChild">
@@ -399,9 +533,16 @@
         <Parameter Name="group" Type="System.Security.Policy.CodeGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added: an object of type 'CodeGroup'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only immediate child code groups can be removed with this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified child code group.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code group to be removed as a child. </param>
       </Docs>
     </Member>
     <Member MemberName="Resolve">
@@ -420,10 +561,22 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PolicyStatement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given evidence for an assembly to be loaded, this method evaluates the code group by checking the membership condition against the specified evidence. If there is a match, this method returns a policy statement for the code group, including evaluation of child code groups.</para>
+          <para>For a <see cref="T:System.Security.Policy.UnionCodeGroup" />, all child code groups whose membership condition match the specified evidence are also resolved, and all resulting policy statements are combined with the policy statement of the parent union code group. Each child code group type determines how all child groups under it are applied, depending on how the <see cref="M:System.Security.Policy.CodeGroup.Resolve(System.Security.Policy.Evidence)" /> methods of these child groups work.</para>
+          <para>The .NET Framework security system uses <see cref="M:System.Security.Policy.CodeGroup.Resolve(System.Security.Policy.Evidence)" /> on the policy levels to determine which permissions to grant to loaded code from the resulting policy statements and the code request on the assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resolves policy for the code group and its descendants for a set of evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A policy statement that consists of the permissions granted by the code group with optional attributes, or null if the code group does not apply (the membership condition does not match the specified evidence).</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="ResolveMatchingCodeGroups">
@@ -442,10 +595,20 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CodeGroup'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method has the same evaluation characteristics as <see cref="M:System.Security.Policy.CodeGroup.Resolve(System.Security.Policy.Evidence)" />. The code group that is returned contains child code groups, which in turn can have child code groups as necessary to reflect the complete set of code groups that were matched by the evidence provided.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resolves matching code groups.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeGroup" /> that is the root of the tree of matching code groups.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -462,9 +625,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -483,10 +652,20 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy level context is provided for resolution of named permission sets.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object, its current state, and the policy level within which the code exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level within which the code group exists. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Services.Description" FullName="System.Web.Services.Description" FullNameSP="System.Web.Services.Description" Maintainer="Mono">
   <Docs>
-    <summary>
-    </summary>
     <remarks>
       <para>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Services.Description" /> namespace consists of the classes that enable you to publicly describe an XML Web service by using the Web Services Description Language (WSDL). Each class in this namespace corresponds to a specific element in the WSDL specification, and the class hierarchy corresponds to the XML structure of a valid WSDL document. For more information about WSDL, see the specification at the W3C Web site (http://www.w3.org/TR/wsdl/).</para>
+    </summary>
   </Docs>
 </Namespace>

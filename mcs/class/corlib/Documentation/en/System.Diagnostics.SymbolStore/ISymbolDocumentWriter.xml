@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolDocumentWriter" FullName="System.Diagnostics.SymbolStore.ISymbolDocumentWriter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolDocumentWriter" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolDocumentWriter" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A document is defined by a URL and a document type GUID. Optionally, the document source can be stored in the symbol store.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the <unmanagedCodeEntityReference>ISymUnmanagedDocumentWriter</unmanagedCodeEntityReference> interface, which is one of the unmanaged symbol store interfaces that provide an alternate way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a document referenced by a symbol store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SetCheckSum">
@@ -37,10 +47,18 @@
         <Parameter Name="checkSum" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="algorithmId">To be added: an object of type 'Guid'</param>
-        <param name="checkSum">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the checksum for the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets checksum information.</para>
+        </summary>
+        <param name="algorithmId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID representing the algorithm ID. </param>
+        <param name="checkSum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The checksum. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSource">
@@ -59,9 +77,16 @@
         <Parameter Name="source" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of unsigned bytes is used instead of character data to accommodate a wider variety of sources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the raw source for a document in the symbol store.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document source represented as unsigned bytes. </param>
       </Docs>
     </Member>
   </Members>

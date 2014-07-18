@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CurrencyManager" FullName="System.Windows.Forms.CurrencyManager">
   <TypeSignature Language="C#" Value="public class CurrencyManager : System.Windows.Forms.BindingManagerBase" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.CurrencyManager" /> derives from the <see cref="T:System.Windows.Forms.BindingManagerBase" /> class. Use the <see cref="T:System.Windows.Forms.BindingContext" /> to return either a <see cref="T:System.Windows.Forms.CurrencyManager" /> or a <see cref="T:System.Windows.Forms.PropertyManager" />. The actual object returned depends on the data source and data member passed to the <see cref="P:System.Windows.Forms.BindingContext.Item(System.Object)" /> property of the <see cref="T:System.Windows.Forms.BindingContext" />. If the data source is an object that can return only a single property (instead of a list of objects), the type will be a <see cref="T:System.Windows.Forms.PropertyManager" />. For example, if you specify a <see cref="T:System.Windows.Forms.TextBox" /> as the data source, a <see cref="T:System.Windows.Forms.PropertyManager" /> will be returned. If, on the other hand, the data source is an object that implements the <see cref="T:System.Collections.IList" />, <see cref="T:System.ComponentModel.IListSource" />, or <see cref="T:System.ComponentModel.IBindingList" /> interface, a <see cref="T:System.Windows.Forms.CurrencyManager" /> will be returned.</para>
+      <para>The <see cref="P:System.Windows.Forms.BindingManagerBase.Current" /> property returns the current item in the underlying list. To change the current item, set the <see cref="P:System.Windows.Forms.BindingManagerBase.Position" /> property to a new value. The value must be greater than 0 and must be less than the value of the <see cref="P:System.Windows.Forms.BindingManagerBase.Count" /> property.</para>
+      <para>If the underlying data source implements the <see cref="T:System.ComponentModel.IBindingList" /> interface, and the <see cref="P:System.ComponentModel.IBindingList.AllowNew" /> property is set to true, you can use the <see cref="M:System.Windows.Forms.CurrencyManager.AddNew" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a list of <see cref="T:System.Windows.Forms.Binding" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddNew">
@@ -22,8 +31,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supported only if the data source implements the <see cref="T:System.ComponentModel.IBindingList" /> interface and the data source allows adding rows (<see cref="P:System.ComponentModel.IBindingList.AllowNew" /> is true).</para>
+          <block subset="none" type="note">
+            <para>This property was designed to allow complex-bound controls, such as the <see cref="T:System.Windows.Forms.DataGrid" /> control, to add new items to list.</para>
+          </block>
+          <para>You typically use this property only if you are creating your own control that incorporates the <see cref="T:System.Windows.Forms.CurrencyManager" />. Otherwise, to add items if the data source is a <see cref="T:System.Data.DataView" />, use the <see cref="M:System.Data.DataView.AddNew" /> method of the <see cref="T:System.Data.DataView" /> class. If the data source is a <see cref="T:System.Data.DataTable" />, use the <see cref="M:System.Data.DataTable.NewRow" /> method and add the row to the <see cref="T:System.Data.DataRowCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the underlying list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,8 +57,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supported only if the objects contained by the data source implement the <see cref="T:System.ComponentModel.IEditableObject" /> interface. If the objects contained within the data source do not implement the <see cref="T:System.ComponentModel.IEditableObject" /> interface, changes made to the data will not be discarded.</para>
+          <block subset="none" type="note">
+            <para>This property was designed to be used by complex data-bound controls, such as the <see cref="T:System.Windows.Forms.DataGrid" /> control, to cancel edits. For example, when the user presses the ESC key, the <see cref="M:System.Windows.Forms.CurrencyManager.CancelCurrentEdit" /> method is called on the <see cref="T:System.Windows.Forms.CurrencyManager" /> for the <see cref="T:System.Windows.Forms.DataGrid" />. Unless you are creating a control that requires this same functionality, you should not use this method. Instead, use the <see cref="M:System.Data.DataRowView.CancelEdit" /> method of the <see cref="T:System.Data.DataRowView" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels the current edit operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if there is no list, or the list is empty.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +100,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the count property to determine when the end of a list has been reached. Because the <see cref="T:System.Windows.Forms.CurrencyManager" /> maintains a 0-based array of items, the end of the list is always <see cref="P:System.Windows.Forms.CurrencyManager.Count" /> minus one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items in the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,9 +122,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to get the current item, you must know its data type in order to cast it correctly. For example, if the data source is a <see cref="T:System.Data.DataView" /> or <see cref="T:System.Data.DataTable" />, you must cast the current item as a <see cref="T:System.Data.DataRowView" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current item in the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,8 +145,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supported only if the objects contained by the data source implement the <see cref="T:System.ComponentModel.IEditableObject" /> or <see cref="T:System.ComponentModel.ICancelAddNew" /> interfaces.</para>
+          <block subset="none" type="note">
+            <para>This property was designed to be used by complex data-bound controls, such as the <see cref="T:System.Windows.Forms.DataGridView" /> control. Unless you are creating a control that requires this same functionality, you should not use this method. Instead, if the data source is either a <see cref="T:System.Data.DataView" /> or <see cref="T:System.Data.DataTable" />, use the <see cref="M:System.Data.DataRowView.EndEdit" /> method of the <see cref="T:System.Data.DataRowView" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the current edit operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -117,8 +169,11 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the data type of the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +188,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> for the <see cref="T:System.Windows.Forms.CurrencyManager" /> is used to specify a column in the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the property descriptor collection for the underlying list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> for the list.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,10 +220,20 @@
         <Parameter Name="listAccessors" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="M:System.Windows.Forms.CurrencyManager.GetListName(System.Collections.ArrayList)" /> method to be successful, the underlying list must be of type <see cref="T:System.ComponentModel.ITypedList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the list supplying the data for the binding using the specified set of bound properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a <see cref="T:System.String" /> containing name of the list supplying the data for the binding; otherwise, an <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ArrayList" /> of properties to be found in the data source.</param>
       </Docs>
     </Member>
     <Member MemberName="ItemChanged">
@@ -169,8 +243,20 @@
         <ReturnType>System.Windows.Forms.ItemChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.CurrencyManager.ItemChanged" /> event will occur when the user calls the <see cref="M:System.Windows.Forms.BindingManagerBase.ResumeBinding" /> or <see cref="M:System.Windows.Forms.BindingManagerBase.SuspendBinding" /> method.</para>
+          <para>The <see cref="E:System.Windows.Forms.CurrencyManager.ItemChanged" /> event occurs only when the item itself has been changed in some manner. For example, if the value of an item is changed from 10 to 42, the event will occur. This should not be confused with the <see cref="E:System.Windows.Forms.BindingManagerBase.PositionChanged" /> event where the item has been changed to a new item.</para>
+          <para>The event will also occur if the underlying data changes. For example, if you change the value of a <see cref="T:System.Data.DataRowView" />, the <see cref="E:System.Windows.Forms.CurrencyManager.ItemChanged" /> event will occur.</para>
+          <block subset="none" type="note">
+            <para>If you are creating your own control that uses the <see cref="T:System.Windows.Forms.CurrencyManager" />, you should use the <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> instead of the <see cref="E:System.Windows.Forms.CurrencyManager.ItemChanged" /> event. The <see cref="P:System.ComponentModel.ListChangedEventArgs.ListChangedType" /> property of the <see cref="T:System.ComponentModel.ListChangedEventArgs" /> enables you to determine the type of action that has occurred.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the current item has been altered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +270,24 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by the <see cref="P:System.Windows.Forms.CurrencyManager.List" /> property can be cast to any type that implements the <see cref="T:System.Collections.IList" /> interface. This will be commonly used when you know the type of the underlying list. For example, if you are data-bound to a <see cref="T:System.Data.DataSet" />, the underlying list is a <see cref="T:System.Data.DataView" /> (which implements <see cref="T:System.Collections.IList" />). Other classes that implement the interface (this is not a complete list) include <see cref="T:System.Array" />, <see cref="T:System.Collections.ArrayList" />, and <see cref="T:System.Collections.CollectionBase" />.</para>
+          <para>How you use the <see cref="P:System.Windows.Forms.CurrencyManager.List" /> property depends on the class that implements the <see cref="T:System.Collections.IList" /> interface. For example, you can use the <see cref="P:System.Windows.Forms.CurrencyManager.List" /> property to determine the name of the list. If the data source implements the <see cref="T:System.ComponentModel.ITypedList" /> interface, you can use the <see cref="M:System.ComponentModel.ITypedList.GetListName(System.ComponentModel.PropertyDescriptor[])" /> method to return the name of the current table. This is shown in the C# code below: </para>
+          <para />
+          <code> private void PrintCurrentListName(DataGrid myDataGrid){ 
+    CurrencyManager myCM = (CurrencyManager) 
+    BindingContext[myDataGrid.DataSource, myDataGrid.DataMember]; 
+    IList myList = myCM.List; 
+    ITypedList thisList = (ITypedList) myList; 
+    Console.WriteLine(thisList.GetListName(null)); 
+ }</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list for this <see cref="T:System.Windows.Forms.CurrencyManager" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,8 +304,16 @@
         <ReturnType>System.ComponentModel.ListChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.CurrencyManager.ListChanged" /> event is thrown by the <see cref="T:System.Windows.Forms.CurrencyManager" /> class when changes to an item are made using methods such as <see cref="M:System.Windows.Forms.CurrencyManager.EndCurrentEdit" />, <see cref="M:System.Windows.Forms.CurrencyManager.CancelCurrentEdit" />, and <see cref="M:System.Windows.Forms.CurrencyManager.Refresh" />. This event can also occur when the data source is edited directly if it implements the <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+          <para>The associated OnListChanged method is a private method in this class.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the list changes or an item in the list changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="listposition">
@@ -214,8 +323,14 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Windows.Forms.CurrencyManager.Count" /> property is greater than 0, the <see cref="F:System.Windows.Forms.CurrencyManager.listposition" /> field is a number between 0 and <see cref="P:System.Windows.Forms.CurrencyManager.Count" /> minus 1. If <see cref="P:System.Windows.Forms.CurrencyManager.Count" /> is 0, <see cref="F:System.Windows.Forms.CurrencyManager.listposition" /> is -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the current position of the <see cref="T:System.Windows.Forms.CurrencyManager" /> in the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,8 +344,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata of the <see cref="P:System.Windows.Forms.CurrencyManager.List" /> consists of the schema of the underlying <see cref="P:System.Windows.Forms.Binding.DataSource" />. The <see cref="E:System.Windows.Forms.CurrencyManager.MetaDataChanged" /> event is raised when that schema has changed. For example, the <see cref="E:System.Windows.Forms.CurrencyManager.MetaDataChanged" /> event is raised when a <see cref="T:System.Data.DataColumn" /> is programmatically added to a <see cref="T:System.Data.DataTable" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the metadata of the <see cref="P:System.Windows.Forms.CurrencyManager.List" /> has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -251,9 +373,10 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnCurrentItemChanged">
@@ -269,9 +392,10 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnItemChanged">
@@ -284,9 +408,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.ItemChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CurrencyManager.OnItemChanged(System.Windows.Forms.ItemChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CurrencyManager.ItemChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.ItemChangedEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -306,9 +438,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CurrencyManager.OnMetaDataChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CurrencyManager.MetaDataChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnPositionChanged">
@@ -321,9 +461,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CurrencyManager.OnPositionChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingManagerBase.PositionChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,9 +485,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An important property of the <see cref="T:System.Windows.Forms.CurrencyManager" /> class is the <see cref="P:System.Windows.Forms.CurrencyManager.Position" /> property. In a list of items, you can view only one item out of the entire list. To determine which item is viewed, set the <see cref="P:System.Windows.Forms.CurrencyManager.Position" /> to a number between 0 (the beginning of the list) and <see cref="P:System.Windows.Forms.CurrencyManager.Count" /> minus 1 (the end of the list).</para>
+          <para>Therefore, the <see cref="P:System.Windows.Forms.CurrencyManager.Position" /> determines the currency, or place in the list, of all controls bound to the same <see cref="T:System.Windows.Forms.CurrencyManager" />. For example, imagine a list consisting of two columns called "FirstName" and "LastName". Two <see cref="T:System.Windows.Forms.TextBox" /> controls are bound to the same list; the first control is bound to the first column, and the second control is bound to the second column. When the <see cref="P:System.Windows.Forms.CurrencyManager.Position" /> of the common <see cref="T:System.Windows.Forms.CurrencyManager" /> is set to the third position, both controls display the appropriate values for that position in the list. In other words, if the item at position three consists of the first name "John" and the last name "Smith", the bound controls will display "John" and "Smith". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the position you are at within the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -354,8 +509,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.CurrencyManager.Refresh" /> method when the data source does not support notification when it is changed (for example, if it is an <see cref="T:System.Array" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces a repopulation of the data-bound list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -372,9 +533,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.CurrencyManager.RemoveAt(System.Int32)" /> method was designed to allow complex controls, such as the <see cref="T:System.Windows.Forms.DataGrid" /> control, to remove items from the list. You should not use this method to actually remove items. Instead, use the <see cref="M:System.Data.DataView.Delete(System.Int32)" /> method of the <see cref="T:System.Data.DataView" /> class to delete items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to remove from the list. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,8 +557,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.CurrencyManager.SuspendBinding" /> and <see cref="M:System.Windows.Forms.CurrencyManager.ResumeBinding" /> are two methods that allow the temporary suspension and resumption of in a simple data binding scenario. You would typically suspend data binding if the user must be allowed to make several edits to data fields before validation occurs. For example, if one field must be changed in accordance with a second, but where validating the first field would cause the second field to be in error.</para>
+          <block subset="none" type="note">
+            <para>Using <see cref="M:System.Windows.Forms.CurrencyManager.SuspendBinding" /> prevents changes from being pushed into the data source until <see cref="M:System.Windows.Forms.CurrencyManager.ResumeBinding" /> is called but does not prevent changes in the data source from affecting the bound controls. Controls that use complex data binding, such as the <see cref="T:System.Windows.Forms.DataGridView" /> control, update their values based on change events such as the <see cref="E:System.Windows.Forms.CurrencyManager.ListChanged" /> event. Calling this method will not prevent these events from occurring. For this reason, <see cref="M:System.Windows.Forms.CurrencyManager.SuspendBinding" /> and <see cref="M:System.Windows.Forms.CurrencyManager.ResumeBinding" /> are designed for use with simple-bound controls, such as a <see cref="T:System.Windows.Forms.TextBox" />. Alternatively, you can use these methods in a complex binding scenario if you suppress <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events by setting the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumes data binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -405,8 +583,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.CurrencyManager.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> methods allow the temporary suspension and resumption of data binding in a simple binding scenario. You would typically suspend data binding if the user must make several edits to data fields before validation occurs. For example, if one field must be changed in accordance with a second, but where validating the first field would cause the second field to be in error.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> prevents changes from being applied to the data source until <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> is called, but does not actually prevent any events from occurring. Controls that use complex data binding, such as the <see cref="T:System.Windows.Forms.DataGridView" /> control, update their values based on change events, such as the <see cref="E:System.Windows.Forms.CurrencyManager.ListChanged" /> event. Therefore, calling <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> will not prevent complex-bound controls from receiving events to update the data source. For this reason, <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> are designed for use with simple-bound controls, such as the <see cref="T:System.Windows.Forms.TextBox" /> control. Alternatively, you can use these methods in a complex binding scenario if you suppress <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events by setting the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends data binding to prevents changes from updating the bound data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -421,8 +609,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the status of the binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

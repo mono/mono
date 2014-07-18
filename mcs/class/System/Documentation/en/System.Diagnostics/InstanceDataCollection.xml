@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InstanceDataCollection" FullName="System.Diagnostics.InstanceDataCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class InstanceDataCollection : System.Collections.DictionaryBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit InstanceDataCollection extends System.Collections.DictionaryBase" />
@@ -16,8 +17,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.InstanceDataCollection" /> class represents a collection containing all the instance data for a counter. This collection is contained in the <see cref="T:System.Diagnostics.InstanceDataCollectionCollection" /> when using the <see cref="M:System.Diagnostics.PerformanceCounterCategory.ReadCategory" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a strongly typed collection of <see cref="T:System.Diagnostics.InstanceData" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,9 +46,13 @@
         <Parameter Name="counterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.InstanceDataCollection" /> class, using the specified performance counter (which defines a performance instance).</para>
+        </summary>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the counter, which often describes the quantity that is being counted. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -60,10 +71,20 @@
         <Parameter Name="instanceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instanceName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="instanceName" /> parameter is case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a performance instance with a specified name (identified by one of the indexed <see cref="T:System.Diagnostics.InstanceData" /> objects) exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the instance exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="instanceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the instance to find in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -83,10 +104,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="instances">To be added: an object of type 'InstanceData []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the items in the collection to the specified one-dimensional array at the specified index.</para>
+        </summary>
+        <param name="instances">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the values copied from the collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index value at which to add the new instances. </param>
       </Docs>
     </Member>
     <Member MemberName="CounterName">
@@ -102,9 +128,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the performance counter whose instance data you want to get.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -142,9 +171,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.ICollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each software component creates keys for its objects and counters when it is installed and writes counter data while it is executing. You can access this data as you would access any other registry data. However, although you use the registry to collect performance data, the data is not stored in the registry database. Instead, the system collects the data from the appropriate system object managers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object and counter registry keys for the objects associated with this instance data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Values">
@@ -160,9 +195,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.ICollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw counter values that comprise the instance data for the counter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

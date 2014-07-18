@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolViolationException" FullName="System.Net.ProtocolViolationException" FullNameSP="System_Net_ProtocolViolationException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable ProtocolViolationException extends System.InvalidOperationException" />
   <TypeSignature Language="C#" Value="public class ProtocolViolationException : InvalidOperationException" />
@@ -17,17 +18,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Represents errors that occur due to violating the rules of a network
- protocol.</para>
-    </summary>
     <remarks>
-      <para>A <see cref="T:System.Net.ProtocolViolationException" /> is thrown by types
- derived from <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> to indicate that an error has occurred as defined by the rules of the underlying
- protocol. For example, the <see cref="T:System.Net.HttpWebRequest" /> type throws a
-<see cref="T:System.Net.ProtocolViolationException" /> when an application 
- attempts to send content without specifying the content length.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Net.ProtocolViolationException" /> is thrown by descendants of <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> to indicate an error using the underlying protocol. For example, the <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.HttpWebResponse" /> classes throw a <see cref="T:System.Net.ProtocolViolationException" /> to indicate an error using HTTP.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an error is made while using a network protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,17 +41,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" /> class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.Net.ProtocolViolationException.Message" /> property of the
-   new instance to a system-supplied message that describes the error, such as
-   "Protocol error occurred." This message takes into account the current system
-   culture.</para>
-          <para>The <see cref="!:System.Net.ProtocolViolationException.InnerException" /> property of the new instance is
-initialized to <see langword="null" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Exception.Message" /> property is initialized to a system-supplied message that describes the error. The <see cref="P:System.Exception.InnerException" /> property is initialized to null.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -72,19 +67,16 @@ initialized to <see langword="null" />.</para>
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.Net.ProtocolViolationException.Message" /> property
-   of the new instance using <paramref name="message" />. If <paramref name="message" /> is
-<see langword="null" />, the <see cref="!:System.Net.ProtocolViolationException.Message" /> property is initialized to the system-supplied 
-   message provided by the constructor that takes no arguments. </para>
-          <para> The <see cref="!:System.Net.ProtocolViolationException.InnerException" /> property of the new
-instance is initialized to <see langword="null" />. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" /> class with the <see cref="P:System.Exception.Message" /> property set to the value of the <paramref name="message" /> parameter. If <paramref name="message" /> is a null reference, the Message property is initialized to a system-supplied message. The InnerException property is initialized to null.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" /> class with the specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message string. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -102,10 +94,18 @@ instance is initialized to <see langword="null" />. </para>
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="streamingContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface for the <see cref="T:System.Net.ProtocolViolationException" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.ProtocolViolationException" /> class from the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> instances.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that contains the information that is required to deserialize the <see cref="T:System.Net.ProtocolViolationException" />. </param>
+        <param name="streamingContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the source of the serialized stream that is associated with the new <see cref="T:System.Net.ProtocolViolationException" />. </param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -124,10 +124,18 @@ instance is initialized to <see langword="null" />. </para>
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="streamingContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any objects included in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> are automatically tracked and serialized by the formatter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data required to serialize the target object.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        <param name="streamingContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that specifies the destination for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -149,8 +157,11 @@ instance is initialized to <see langword="null" />. </para>
       <Docs>
         <param name="info">To be added.</param>
         <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes this instance into the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

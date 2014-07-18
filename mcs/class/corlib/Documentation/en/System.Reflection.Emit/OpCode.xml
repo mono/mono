@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OpCode" FullName="System.Reflection.Emit.OpCode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct OpCode" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit OpCode extends System.ValueType" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes a Microsoft intermediate language (MSIL) instruction.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
@@ -39,10 +43,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the given object is equal to this Opcode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of Opcode and is equal to this object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to this object. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -60,11 +71,18 @@
         <Parameter Name="obj" Type="System.Reflection.Emit.OpCode" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the current instance is equal to the specified <see cref="T:System.Reflection.Emit.OpCode" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="obj" /> is equal to the value of the current instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.OpCode" /> to compare to the current instance.</param>
       </Docs>
     </Member>
     <Member MemberName="FlowControl">
@@ -80,9 +98,12 @@
         <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FlowControl'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The flow control characteristics of the Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -99,9 +120,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the generated hash code for this Opcode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -117,9 +144,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -138,12 +168,20 @@
         <Parameter Name="b" Type="System.Reflection.Emit.OpCode" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.Emit.OpCode" /> structures are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> is equal to <paramref name="b" />; otherwise, false.</para>
+        </returns>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.OpCode" /> to compare to <paramref name="b" />.</param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.OpCode" /> to compare to <paramref name="a" />.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -162,12 +200,20 @@
         <Parameter Name="b" Type="System.Reflection.Emit.OpCode" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.Emit.OpCode" /> structures are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> is not equal to <paramref name="b" />; otherwise, false.</para>
+        </returns>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.OpCode" /> to compare to <paramref name="b" />.</param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.OpCode" /> to compare to <paramref name="a" />.</param>
       </Docs>
     </Member>
     <Member MemberName="OpCodeType">
@@ -183,9 +229,12 @@
         <ReturnType>System.Reflection.Emit.OpCodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OpCodeType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OperandType">
@@ -201,9 +250,12 @@
         <ReturnType>System.Reflection.Emit.OperandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperandType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand type of an Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -219,9 +271,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StackBehaviourPop">
@@ -237,9 +292,12 @@
         <ReturnType>System.Reflection.Emit.StackBehaviour</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StackBehaviour'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>How the Microsoft intermediate language (MSIL) instruction pops the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StackBehaviourPush">
@@ -255,9 +313,12 @@
         <ReturnType>System.Reflection.Emit.StackBehaviour</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StackBehaviour'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>How the Microsoft intermediate language (MSIL) instruction pushes operand onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -274,9 +335,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns this Opcode as a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> containing the name of this Opcode.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -292,9 +359,12 @@
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'short'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the immediate operand of the Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

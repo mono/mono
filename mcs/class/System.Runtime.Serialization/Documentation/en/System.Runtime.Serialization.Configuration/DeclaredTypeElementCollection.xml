@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DeclaredTypeElementCollection" FullName="System.Runtime.Serialization.Configuration.DeclaredTypeElementCollection">
   <TypeSignature Language="C#" Value="public sealed class DeclaredTypeElementCollection : System.Configuration.ConfigurationElementCollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DeclaredTypeElementCollection extends System.Configuration.ConfigurationElementCollection" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to handle the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt; Element</a></format>, specifically, to allow the addition of types to the collection of known types.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the XML elements used to configure XML serialization using the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Configuration.DeclaredTypeElementCollection" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -46,9 +56,13 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.DeclaredTypeElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified configuration element.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.DeclaredTypeElement" /> to add.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -63,8 +77,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the collection of all items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -81,10 +98,17 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value if the collection contains the item specified by its type name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified item; otherwise, false.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the configuration element to search for.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateNewElement">
@@ -138,10 +162,17 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.DeclaredTypeElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the specified configuration element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified configuration element; otherwise, -1.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.DeclaredTypeElement" /> to find.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -198,9 +229,13 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.DeclaredTypeElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified configuration element from the collection.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.DeclaredTypeElement" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -217,9 +252,13 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the configuration element specified by its key.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type name (that functions as a key) of the configuration element to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -236,9 +275,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the configuration element at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the configuration element to remove.</param>
       </Docs>
     </Member>
   </Members>

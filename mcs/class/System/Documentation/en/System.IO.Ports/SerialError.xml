@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerialError" FullName="System.IO.Ports.SerialError">
   <TypeSignature Language="C#" Value="public enum SerialError" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SerialError extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration can be useful when handling the <see cref="E:System.IO.Ports.SerialPort.ErrorReceived" /> event to detect and respond to errors when communicating data through a <see cref="T:System.IO.Ports.SerialPort" />. You examine the type of error by retrieving the <see cref="P:System.IO.Ports.SerialErrorReceivedEventArgs.EventType" /> property of the <see cref="T:System.IO.Ports.SerialErrorReceivedEventArgs" /> class. The <see cref="P:System.IO.Ports.SerialErrorReceivedEventArgs.EventType" /> property contains one of the values from the <see cref="T:System.IO.Ports.SerialError" /> enumeration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies errors that occur on the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Frame">
@@ -27,8 +34,11 @@
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hardware detected a framing error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Overrun">
@@ -43,8 +53,11 @@
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character-buffer overrun has occurred. The next character is lost.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RXOver">
@@ -59,8 +72,11 @@
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An input buffer overflow has occurred. There is either no room in the input buffer, or a character was received after the end-of-file (EOF) character.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RXParity">
@@ -75,8 +91,11 @@
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hardware detected a parity error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TXFull">
@@ -91,8 +110,11 @@
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application tried to transmit a character, but the output buffer was full.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

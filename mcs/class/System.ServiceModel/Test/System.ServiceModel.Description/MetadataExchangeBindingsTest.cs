@@ -69,7 +69,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, b.GetProperty<MessageVersion> (new BindingParameterCollection ()), "#6");
 
 			var host = new ServiceHost (typeof (MetadataExchange));
-			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), CreateUri ("http://localhost:8080"));
+			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), CreateUri ("http://localhost:30158"));
 			host.Open ();
 			try {
 				// it still does not rewrite MessageVersion.None. It's rather likely ServiceMetadataExtension which does overwriting.
@@ -96,7 +96,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual(Uri.UriSchemeHttps, b.Scheme, "#8");
 
 			var host = new ServiceHost(typeof(MetadataExchange));
-			host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpsBinding(), CreateUri("https://localhost:8080"));
+			host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpsBinding(), CreateUri("https://localhost:30158"));
 			host.Open();
 			try
 			{

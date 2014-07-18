@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AtomPub10CategoriesDocumentFormatter" FullName="System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter">
   <TypeSignature Language="C#" Value="public class AtomPub10CategoriesDocumentFormatter : System.ServiceModel.Syndication.CategoriesDocumentFormatter, System.Xml.Serialization.IXmlSerializable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AtomPub10CategoriesDocumentFormatter extends System.ServiceModel.Syndication.CategoriesDocumentFormatter implements class System.Xml.Serialization.IXmlSerializable" />
@@ -19,8 +20,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class that serializes a <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance to and from Atom 1.0 format.
+</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +37,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,9 +55,13 @@
         <Parameter Name="documentToWrite" Type="System.ServiceModel.Syndication.CategoriesDocument" />
       </Parameters>
       <Docs>
-        <param name="documentToWrite">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter" /> class with the specified <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.</para>
+        </summary>
+        <param name="documentToWrite">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -64,10 +76,15 @@
         <Parameter Name="referencedDocumentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="inlineDocumentType">To be added.</param>
-        <param name="referencedDocumentType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter" /> class with the specified <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.</para>
+        </summary>
+        <param name="inlineDocumentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> that can be serialized into an &lt;atom:categories&gt; element within a service document and the set of categories are specified within the element.</param>
+        <param name="referencedDocumentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" /> that can be serialized into an &lt;atom:categories&gt; element within a service document and the set of categories are referenced using an URI.</param>
       </Docs>
     </Member>
     <Member MemberName="CanRead">
@@ -84,10 +101,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid Atom 1.0 categories document. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the <see cref="T:System.Xml.XmlReader" /> contains a valid Atom 1.0 categories document.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInlineCategoriesDocument">
@@ -102,9 +126,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> that can be serialized into a &lt;atom:categories&gt; element within a service document and contains the set of categories within the element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns an <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> that can be serialized into a &lt;atom:categories&gt; element within a service document.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateReferencedCategoriesDocument">
@@ -119,9 +151,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" /> that can be serialized into a &lt;atom:categories&gt; element within a service document and contains a URI reference to the set of categories within the element. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" /> that can be serialized into a &lt;atom:categories&gt; element within a service document.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadFrom">
@@ -138,9 +178,13 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an Atom 1.0 &lt;atom:categories&gt; element from the specified <see cref="T:System.Xml.XmlReader" /> instance.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.GetSchema">
@@ -155,9 +199,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method to return your own schema.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -174,9 +227,13 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> use to read the XML document.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.WriteXml">
@@ -193,9 +250,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the XML node.</param>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -209,9 +270,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo1 supports Atom 1.0 and RSS 2.0 syndication versions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the syndication version used by the formatter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -228,9 +295,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />associated with the <see cref="T:System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter" /> to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
       </Docs>
     </Member>
   </Members>

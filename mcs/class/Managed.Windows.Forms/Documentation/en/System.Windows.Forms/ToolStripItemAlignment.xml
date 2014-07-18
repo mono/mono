@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripItemAlignment" FullName="System.Windows.Forms.ToolStripItemAlignment">
   <TypeSignature Language="C#" Value="public enum ToolStripItemAlignment" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the alignment of a <see cref="T:System.Windows.Forms.ToolStripItem" /> in a <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Left">
@@ -20,8 +24,11 @@
         <ReturnType>System.Windows.Forms.ToolStripItemAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="T:System.Windows.Forms.ToolStripItem" /> is to be anchored toward the left or top end of the <see cref="T:System.Windows.Forms.ToolStrip" />, depending on the <see cref="T:System.Windows.Forms.ToolStrip" /> orientation. If the value of <see cref="T:System.Windows.Forms.RightToLeft" /> is Yes, items marked as <see cref="F:System.Windows.Forms.ToolStripItemAlignment.Left" /> are aligned to the right side of the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>System.Windows.Forms.ToolStripItemAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="T:System.Windows.Forms.ToolStripItem" /> is to be anchored toward the right or bottom end of the <see cref="T:System.Windows.Forms.ToolStrip" />, depending on the <see cref="T:System.Windows.Forms.ToolStrip" /> orientation. If the value of <see cref="T:System.Windows.Forms.RightToLeft" /> is Yes, items marked as <see cref="F:System.Windows.Forms.ToolStripItemAlignment.Right" /> are aligned to the left side of the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

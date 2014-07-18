@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AppDomainFactory" FullName="System.Web.Hosting.AppDomainFactory">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class AppDomainFactory : System.Web.Hosting.IAppDomainFactory" />
   <AssemblyInfo>
@@ -17,8 +18,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates a new <see cref="T:System.AppDomain" /> instance for the Web application. This class cannot be inherited. This class was used by earlier versions of the .NET Framework than version 2.0, which uses the <see cref="T:System.Web.Hosting.AppManagerAppDomainFactory" /> class instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Hosting.AppDomainFactory" /> class. This class was used by earlier versions of the .NET Framework than version 2.0, which uses the <see cref="T:System.Web.Hosting.AppManagerAppDomainFactory" /> class instead.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,15 +57,27 @@
         <Parameter Name="iZone" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="module">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="appId">To be added: an object of type 'string'</param>
-        <param name="appPath">To be added: an object of type 'string'</param>
-        <param name="strUrlOfAppOrigin">To be added: an object of type 'string'</param>
-        <param name="iZone">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new application domain for the specified Web application. This class was used by earlier versions of the .NET Framework than version 2.0, which uses the <see cref="T:System.Web.Hosting.AppManagerAppDomainFactory" /> class instead.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new application domain.</para>
+        </returns>
+        <param name="module">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module containing the Web application.</param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the Web application.</param>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the Web application.</param>
+        <param name="appPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the Web application's files.</param>
+        <param name="strUrlOfAppOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of origin for the Web application.</param>
+        <param name="iZone">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zone of origin for the Web application.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

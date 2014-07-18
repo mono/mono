@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlParameterCollection" FullName="System.Data.SqlClient.SqlParameterCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SqlParameterCollection : System.Data.Common.DbParameterCollection" />
   <AssemblyInfo>
@@ -22,8 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If the command contains an ad hoc SQL statement, as opposed to a stored-procedure name, the number of the parameters in the collection must be equal to the number of parameter placeholders within the command text, or SQL Server raises an error. With a stored procedure, all the parameters declared in the stored procedure without a default value must be provided. Parameters declared with a default value are optional. This lets you specify a value other than the default.</para>
+      <para>For more information with additional sample code demonstrating how to use parameters, see <format type="text/html"><a href="b623f810-d871-49a5-b0f5-078cc3c34db6">Commands and Parameters (ADO.NET)</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of parameters associated with a <see cref="T:System.Data.SqlClient.SqlCommand" /> and their respective mappings to columns in a <see cref="T:System.Data.DataSet" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -36,10 +44,17 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlParameter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'SqlParameter'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlParameter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> object to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlParameter" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,10 +71,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> object to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,11 +104,19 @@
         <Parameter Name="sqlDbType" Type="System.Data.SqlDbType" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="sqlDbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlParameter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Data.SqlClient.SqlParameter" /> to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> given the parameter name and the data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="sqlDbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,11 +134,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlParameter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> object to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+          <para>Use caution when you are using this overload of the SqlParameterCollection.Add method to specify integer parameter values. Because this overload takes a <paramref name="value" /> of type <see cref="T:System.Object" />, you must convert the integral value to an <see cref="T:System.Object" /> type when the value is zero, as the following C# example demonstrates.</para>
+          <code>parameters.Add("@pname", Convert.ToInt32(0));</code>
+          <para>If you do not perform this conversion, the compiler assumes that you are trying to call the SqlParameterCollection.Add (string, SqlDbType) overload.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.SqlClient.SqlParameter" /> to add to the collection.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,12 +176,24 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="sqlDbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlParameter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is useful when you are adding a parameter of a variable-length data type such as varchar or binary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Data.SqlClient.SqlParameter" /> to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />, given the specified parameter name, <see cref="T:System.Data.SqlDbType" /> and size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="sqlDbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlDbType" /> of the <see cref="T:System.Data.SqlClient.SqlParameter" /> to add to the collection. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size as an <see cref="T:System.Int32" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -160,13 +213,23 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="sqlDbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="sourceColumn">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlParameter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Data.SqlClient.SqlParameter" /> to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> with the parameter name, the data type, and the column length.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="sqlDbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column length.</param>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column (<see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" />) if this <see cref="T:System.Data.SqlClient.SqlParameter" /> is used in a call to <see cref="Overload:System.Data.Common.DbDataAdapter.Update" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,9 +249,13 @@
         <Parameter Name="values" Type="System.Array" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an array of values to the end of the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> values to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -204,9 +271,13 @@
         <Parameter Name="values" Type="System.Data.SqlClient.SqlParameter[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an array of <see cref="T:System.Data.SqlClient.SqlParameter" /> values to the end of the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlParameter" /> values to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddWithValue">
@@ -223,11 +294,24 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlParameterCollection.AddWithValue(System.String,System.Object)" /> replaces the SqlParameterCollection.Add method that takes a <see cref="T:System.String" /> and an <see cref="T:System.Object" />. The overload of Add that takes a string and an object was deprecated because of possible ambiguity with the SqlParameterCollection.Add overload that takes a <see cref="T:System.String" /> and a <see cref="T:System.Data.SqlDbType" /> enumeration value where passing an integer with the string could be interpreted as being either the parameter value or the corresponding <see cref="T:System.Data.SqlDbType" /> value. Use <see cref="M:System.Data.SqlClient.SqlParameterCollection.AddWithValue(System.String,System.Object)" /> whenever you want to add a parameter by specifying its name and value.</para>
+          <para>For <see cref="T:System.Data.SqlDbType" /> Xml enumeration values, you can use a string, an XML value, an <see cref="T:System.Xml.XmlReader" /> derived type instance, or a <see cref="T:System.Data.SqlTypes.SqlXml" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a value to the end of the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlClient.SqlParameter" /> object.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be added. Use <see cref="F:System.DBNull.Value" /> instead of null, to indicate a null value.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -238,8 +322,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the <see cref="T:System.Data.SqlClient.SqlParameter" /> objects from the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -259,10 +346,17 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlParameter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> is in this <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> contains the value; otherwise false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlParameter" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -275,10 +369,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is in this <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> contains the value; otherwise false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -295,10 +396,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified parameter name is in this <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> contains the value; otherwise false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,10 +424,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the elements of the current <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> to the specified one-dimensional <see cref="T:System.Array" /> starting at the specified destination <see cref="T:System.Array" /> index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit integer that represents the index in the <see cref="T:System.Array" /> at which copying starts.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -340,10 +453,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the elements of the current <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> to the specified <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> starting at the specified destination index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> that is the destination of the elements copied from the current <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit integer that represents the index in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> at which copying starts.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -353,9 +471,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an Integer that contains the number of elements in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />. Read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,9 +491,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -430,10 +557,17 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlParameter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location of the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> that is a <see cref="T:System.Data.SqlClient.SqlParameter" /> within the collection. Returns -1 when the object does not exist in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlParameter" /> to find. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -446,10 +580,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location of the specified <see cref="T:System.Object" /> within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the specified <see cref="T:System.Object" /> that is a <see cref="T:System.Data.SqlClient.SqlParameter" /> within the collection. Returns -1 when the object does not exist in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -466,10 +607,17 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location of the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> with the specified case-sensitive name. Returns -1 when the object does not exist in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</para>
+        </returns>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the <see cref="T:System.Data.SqlClient.SqlParameter" /> to find.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -490,10 +638,15 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlParameter" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Data.SqlClient.SqlParameter" /> object into the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which value should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlParameter" /> object to be inserted in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -507,10 +660,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an <see cref="T:System.Object" /> into the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which value should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to be inserted in the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -527,9 +685,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> has a fixed size. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -542,9 +703,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> is read-only. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -557,9 +721,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> is synchronized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -631,9 +798,13 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlParameter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlParameter" /> object to remove from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -646,9 +817,13 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Data.SqlClient.SqlParameter" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,9 +840,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Data.SqlClient.SqlParameter" /> from the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the <see cref="T:System.Data.SqlClient.SqlParameter" /> object to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -684,9 +863,13 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Data.SqlClient.SqlParameter" /> from the <see cref="T:System.Data.SqlClient.SqlParameterCollection" /> at the specified parameter name.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.SqlClient.SqlParameter" /> to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -743,9 +926,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the <see cref="T:System.Data.SqlClient.SqlParameterCollection" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -758,9 +944,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection is synchronized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -773,9 +962,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -788,9 +980,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection has a fixed size. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -803,9 +998,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection is read-only. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">

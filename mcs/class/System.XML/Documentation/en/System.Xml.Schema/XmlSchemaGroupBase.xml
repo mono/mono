@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaGroupBase" FullName="System.Xml.Schema.XmlSchemaGroupBase">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlSchemaGroupBase : System.Xml.Schema.XmlSchemaParticle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlSchemaGroupBase extends System.Xml.Schema.XmlSchemaParticle" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class for <see cref="T:System.Xml.Schema.XmlSchemaAll" />, <see cref="T:System.Xml.Schema.XmlSchemaChoice" />, or <see cref="T:System.Xml.Schema.XmlSchemaSequence" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaGroupBase" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Items">
@@ -52,9 +59,12 @@
         <ReturnType>System.Xml.Schema.XmlSchemaObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaObjectCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection is used to add new elements to the compositor.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

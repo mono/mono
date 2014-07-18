@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypedDataSetSchemaImporterExtension" FullName="System.Data.Design.TypedDataSetSchemaImporterExtension">
   <TypeSignature Language="C#" Value="public class TypedDataSetSchemaImporterExtension : System.Xml.Serialization.Advanced.SchemaImporterExtension" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Expands upon the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> to provide additional functionality for typed datasets.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands upon the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> to provide additional functionality for typed datasets and generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Design.TypedDataSetSchemaImporterExtension" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,17 +73,37 @@
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <param name="importer">To be added.</param>
-        <param name="compileUnit">To be added.</param>
-        <param name="mainNamespace">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Expands upon the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> to provide additional functionality for typed datasets and generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates internal type mapping information for an element defined in an XML schema document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> representing the name of the typed dataset class.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />XMLSchemaType</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that represents the root class for the Xml schema object model hierarchy and serves as a base class for classes such as the XmlSchema class.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchema" /> class that represents a collection of XML schemas.</param>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> that generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to contain the generated code.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />CodeNamespace</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.CodeGenerationOptions" /> that specifies various options to use when generating .NET Framework types for use with an XML Web service.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
       </Docs>
     </Member>
     <Member MemberName="ImportSchemaType">
@@ -94,18 +127,39 @@
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="namespaceName">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <param name="importer">To be added.</param>
-        <param name="compileUnit">To be added.</param>
-        <param name="mainNamespace">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Expands upon the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> to provide additional functionality for typed datasets and generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates internal type mapping information for an element defined in an XML schema document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> representing the name of the typed dataset class.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the name of the schema to import.</param>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the namespace of the XML schema.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that represents the root class for the XML schema object model hierarchy and serves as a base class for classes such as the XmlSchema class.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchema" /> class that represents a collection of XML schemas.</param>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> that generates internal mappings to .NET Framework types for XML schema element declarations, including literal XSD message parts in a WSDL document.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to contain the generated code.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeNamespace" /> that contains the generated dataset.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.CodeGenerationOptions" /> that specifies various options to use when generating .NET Framework types for use with an XML Web service.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
       </Docs>
     </Member>
   </Members>

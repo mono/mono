@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -67,9 +68,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -78,29 +83,29 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
-      <Name>System\System-net_4_5-2</Name>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
-      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Security\System.Security-net_4_5.csproj">
+    <ProjectReference Include="../System.Security/System.Security-net_4_5.csproj">
       <Project>{B55E59B2-31CA-438B-ADB8-4B9A9A547830}</Project>
-      <Name>System.Security\System.Security-net_4_5</Name>
+      <Name>System.Security-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
+    <ProjectReference Include="../System.Runtime.Serialization/System.Runtime.Serialization-net_4_5.csproj">
       <Project>{08FF4C26-9C12-433D-AE90-43370046387A}</Project>
-      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
+      <Name>System.Runtime.Serialization-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_5.csproj">
+    <ProjectReference Include="../System.IdentityModel/System.IdentityModel-net_4_5.csproj">
       <Project>{F056C062-E467-4989-9366-440E8CD23C0C}</Project>
-      <Name>System.IdentityModel\System.IdentityModel-net_4_5</Name>
+      <Name>System.IdentityModel-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

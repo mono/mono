@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripDropDownItemAccessibleObject" FullName="System.Windows.Forms.ToolStripDropDownItemAccessibleObject">
   <TypeSignature Language="C#" Value="public class ToolStripDropDownItemAccessibleObject : System.Windows.Forms.ToolStripItem.ToolStripItemAccessibleObject" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information that accessibility applications use to adjust the user interface of a <see cref="T:System.Windows.Forms.ToolStripDropDown" /> for users with impairments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +27,13 @@
         <Parameter Name="item" Type="System.Windows.Forms.ToolStripDropDownItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripDropDownItemAccessibleObject" /> class with the specified <see cref="T:System.Windows.Forms.ToolStripDropDownItem" />. </para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripDropDownItem" /> that owns this <see cref="T:System.Windows.Forms.ToolStripDropDownItemAccessibleObject" />.</param>
       </Docs>
     </Member>
     <Member MemberName="DoDefaultAction">
@@ -39,8 +47,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clients can retrieve the object's default action by inspecting an object's <see cref="P:System.Windows.Forms.AccessibleObject.DefaultAction" /> property. A client can use automation (if supported) instead of <see cref="M:System.Windows.Forms.AccessibleObject.DoDefaultAction" /> to perform an object's default action. However, <see cref="M:System.Windows.Forms.AccessibleObject.DoDefaultAction" /> provides an easy way to perform an object's most commonly used action.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the default action associated with this accessible object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetChild">
@@ -56,10 +70,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the accessible child control corresponding to the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that represents the accessible child control corresponding to the specified index.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the accessible child control.</param>
       </Docs>
     </Member>
     <Member MemberName="GetChildCount">
@@ -73,9 +94,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the number of children belonging to an accessible object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of children belonging to an accessible object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Role">
@@ -88,9 +115,15 @@
         <ReturnType>System.Windows.Forms.AccessibleRole</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The role of the object helps describe the function of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the role of this accessible object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

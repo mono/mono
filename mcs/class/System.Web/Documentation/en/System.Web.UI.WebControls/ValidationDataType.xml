@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidationDataType" FullName="System.Web.UI.WebControls.ValidationDataType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ValidationDataType" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ValidationDataType" /> enumeration represents the different data types that the <see cref="T:System.Web.UI.WebControls.CompareValidator" /> and <see cref="T:System.Web.UI.WebControls.RangeValidator" /> controls can validate. When you specify a data type for validation control and the input control being validated passes validation, the value of the input control can be parsed to the specified data type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the validation data types used by the <see cref="T:System.Web.UI.WebControls.CompareValidator" /> and <see cref="T:System.Web.UI.WebControls.RangeValidator" /> controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Currency">
@@ -25,8 +32,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A monetary data type. The value is treated as a <see cref="T:System.Decimal" />. However, currency and grouping symbols are still allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +52,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A date data type. Only numeric dates are allowed. The time portion cannot be specified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +72,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double precision floating point number data type. The value is treated as a <see cref="T:System.Double" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +92,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer data type. The value is treated as a <see cref="T:System.Int32" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,8 +112,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string data type. The value is treated as a <see cref="T:System.String" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

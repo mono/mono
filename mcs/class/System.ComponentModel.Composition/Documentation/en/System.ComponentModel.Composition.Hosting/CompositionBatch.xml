@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompositionBatch" FullName="System.ComponentModel.Composition.Hosting.CompositionBatch">
   <TypeSignature Language="C#" Value="public class CompositionBatch" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CompositionBatch extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> objects which will be added or removed from the container in a single transactional composition.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionBatch" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +46,15 @@
         <Parameter Name="partsToRemove" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.ComposablePart&gt;" />
       </Parameters>
       <Docs>
-        <param name="partsToAdd">To be added.</param>
-        <param name="partsToRemove">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionBatch" /> class with the specified parts for addition and removal.</para>
+        </summary>
+        <param name="partsToAdd">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> objects to add.</param>
+        <param name="partsToRemove">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> objects to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="AddExport">
@@ -59,10 +71,17 @@
         <Parameter Name="export" Type="System.ComponentModel.Composition.Primitives.Export" />
       </Parameters>
       <Docs>
-        <param name="export">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified export to the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionBatch" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The part added.</para>
+        </returns>
+        <param name="export">
+          <attribution license="cc4" from="Microsoft" modified="false" />The export to add to the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionBatch" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="AddPart">
@@ -79,9 +98,13 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePart" />
       </Parameters>
       <Docs>
-        <param name="part">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified part to the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionBatch" /> object.</para>
+        </summary>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to add.</param>
       </Docs>
     </Member>
     <Member MemberName="PartsToAdd">
@@ -95,9 +118,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ComponentModel.Composition.Primitives.ComposablePart&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> objects to be added.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PartsToRemove">
@@ -111,9 +137,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ComponentModel.Composition.Primitives.ComposablePart&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> objects to be removed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemovePart">
@@ -130,9 +159,13 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePart" />
       </Parameters>
       <Docs>
-        <param name="part">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Puts the specified part on the list of parts to remove.</para>
+        </summary>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to be removed.</param>
       </Docs>
     </Member>
   </Members>

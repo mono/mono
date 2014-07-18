@@ -438,6 +438,7 @@ namespace Mono.DocTest {
 		///  <para><c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})</c>.</para>
 		/// <para><see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" /></para>
 		/// </remarks>
+		/// <exception name="Whatever">text!</exception>
 		/// <exception invalid="foo">text!</exception>
 		public void Process (List<int> list)
 		{

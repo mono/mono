@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContainerControl" FullName="System.Windows.Forms.ContainerControl">
   <TypeSignature Language="C#" Value="public class ContainerControl : System.Windows.Forms.ScrollableControl, System.Windows.Forms.IContainerControl" />
   <AssemblyInfo>
@@ -14,8 +15,20 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.ContainerControl" /> represents a control that can function as a container for other controls and provides focus management. Controls that inherit from this class can track the active control they contain, even when the focus moves somewhere within a different container.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.ContainerControl" /> objects provide a logical boundary for contained controls. The container control can capture the TAB key press and move focus to the next control in the collection.</para>
+      <block subset="none" type="note">
+        <para>The container control does not receive focus; the focus is always set to the first child control in the collection of contained controls.</para>
+      </block>
+      <para>You do not typically inherit directly from the <see cref="T:System.Windows.Forms.ContainerControl" /> class. <see cref="T:System.Windows.Forms.Form" />, <see cref="T:System.Windows.Forms.UserControl" />, and <see cref="T:System.Windows.Forms.UpDownBase" /> classes inherit from <see cref="T:System.Windows.Forms.ContainerControl" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides focus-management functionality for controls that can function as a container for other controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +36,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ContainerControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +62,16 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ContainerControl.ActiveControl" /> property activates or retrieves the active control on the container control.</para>
+          <para>In order to receive a valid value from this property, the object that calls it must either contain or be contained in the control it is calling. If one form tries to call another form's <see cref="P:System.Windows.Forms.ContainerControl.ActiveControl" /> properties, it will receive an undefined value. In this case, you need to define your own communication mechanism between the forms to pass this data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the active control on the container control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,10 +109,17 @@
         <ReturnType>System.Drawing.SizeF</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" /> property represents the DPI or font setting of the screen that the control was scaled to or designed for. Specifically, at design time this property will be set by the Windows Forms designer to the value your monitor is currently using. Then, when the form loads at run time, if the <see cref="P:System.Windows.Forms.ContainerControl.CurrentAutoScaleDimensions" /> property is different from the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" />, the <see cref="M:System.Windows.Forms.ContainerControl.PerformAutoScale" /> method will be called to perform scaling of the control and all of its children. Afterwards, <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" /> will be updated to reflect the new scaling size.</para>
+          <para>For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the dimensions that the control was designed to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +146,17 @@
         <ReturnType>System.Drawing.SizeF</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleFactor" /> property represents the scaling factor between the <see cref="P:System.Windows.Forms.ContainerControl.CurrentAutoScaleDimensions" /> and <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" /> properties. This value is calculated when it is required. For example, if <see cref="P:System.Windows.Forms.ContainerControl.CurrentAutoScaleDimensions" /> is (192, 144) and <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" /> is (96, 96) then the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleFactor" /> is (2.0, 1.5).</para>
+          <para>For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the scaling factor between the current and design-time automatic scaling dimensions. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,10 +180,17 @@
         <ReturnType>System.Windows.Forms.AutoScaleMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleMode" /> property specifies the current automatic scaling mode of this control. Scaling by <see cref="F:System.Windows.Forms.AutoScaleMode.Font" /> is useful if you want to have a control or form stretch or shrink according to the size of the fonts in the operating system, and should be used when the absolute size of the control or form does not matter. Scaling by <see cref="F:System.Windows.Forms.AutoScaleMode.Dpi" /> is useful when you want to size a control or form relative to the screen. For example, you may want to use dots per inch (DPI) scaling on a control displaying a chart or other graphic so that it always occupies a certain percentage of the screen. </para>
+          <para>For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the automatic scaling mode of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,9 +217,16 @@
         <ReturnType>System.Windows.Forms.AutoValidate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> will differ for each control. For more details on implicit validation, see <format type="text/html"><a href="4ec07681-1dee-4bf9-be5e-718f635a33a1">User Input Validation in Windows Forms (Windows Forms)</a></format>.</para>
+          <para>Setting this property to a new value will raise the <see cref="E:System.Windows.Forms.ContainerControl.AutoValidateChanged" /> event. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether controls in this container will be automatically validated when the focus changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoValidateChanged">
@@ -196,8 +247,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingContext">
@@ -231,9 +288,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the dnprdnlong and later, IME functionality is handled by the framework and native IME support for individual controls is disabled. </para>
+          <para>A user control that derives from the <see cref="T:System.Windows.Forms.ContainerControl" /> class can enable native IME support by overriding this property to return true. However, the application is then responsible for making sure that there are no conflicts between the native IME and the Windows Forms IME. This scenario is not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.Control.ImeMode" /> property can be set to an active value, to enable IME support.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateParams">
@@ -243,9 +307,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the required creation parameters when the control handle is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -267,10 +334,27 @@
         <ReturnType>System.Drawing.SizeF</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ContainerControl.CurrentAutoScaleDimensions" /> property represents the reference dimensions on the current screen. In contrast, the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" /> property represents the design-time reference dimensions of the design environment for the current control, while the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleFactor" /> property is the ratio of the two.</para>
+          <para>The interpretation of the dimension value depends on the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleMode" /> property in the following ways:</para>
+          <list type="bullet">
+            <item>
+              <para>If the mode is <see cref="F:System.Windows.Forms.AutoScaleMode.Dpi" />, this property represents the resolution of the screen, in dots per inch.</para>
+            </item>
+            <item>
+              <para>If the mode is <see cref="F:System.Windows.Forms.AutoScaleMode.Font" />, this property represents the average font character size in pixels. </para>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleMode" /> property is set to <see cref="F:System.Windows.Forms.AutoScaleMode.None" />, <see cref="P:System.Windows.Forms.ContainerControl.CurrentAutoScaleDimensions" /> is set equal to <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleDimensions" />.</para>
+          <para>For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current run-time dimensions of the screen.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -308,9 +392,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ContainerControl.OnAutoValidateChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ContainerControl.AutoValidateChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnCreateControl">
@@ -339,10 +431,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changing the font used by a <see cref="T:System.Windows.Forms.ContainerControl" /> will cause the layout to be recalculated and reapplied to the contained controls if the <see cref="P:System.Windows.Forms.ContainerControl.AutoScaleMode" /> property has a value of <see cref="F:System.Windows.Forms.AutoScaleMode.Font" />.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ContainerControl.OnFontChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -366,9 +467,13 @@
         <Parameter Name="e" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Layout" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.LayoutEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnParentChanged">
@@ -405,9 +510,12 @@
         <ReturnType>System.Windows.Forms.Form</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the form that the container control is assigned to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -425,8 +533,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An explicit call to the <see cref="M:System.Windows.Forms.ContainerControl.PerformAutoScale" /> method is typically only required after programmatic changes to the layout during run time. <see cref="M:System.Windows.Forms.ContainerControl.PerformAutoScale" /> is implicitly called from the <see cref="M:System.Windows.Forms.ContainerControl.OnLayout(System.Windows.Forms.LayoutEventArgs)" /> method.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.ContainerControl.PerformAutoScale" /> is recursive; each child control, if it is a container, will have its version of this method called when the container's version executes. </para>
+          <para>For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs scaling of the container control and its children.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessCmdKey">
@@ -525,10 +642,20 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="forward">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control with its <see cref="P:System.Windows.Forms.Control.TabStop" /> property set to false cannot be selected, so the next available control will be selected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the next available control and makes it the active control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a control is selected; otherwise, false.</para>
+        </returns>
+        <param name="forward">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cycle forward through the controls in the <see cref="T:System.Windows.Forms.ContainerControl" />; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -570,10 +697,20 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="control" /> parameter must be a child of the container control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activates the specified control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control is successfully activated; otherwise, false.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to activate.</param>
       </Docs>
     </Member>
     <Member MemberName="UpdateDefaultButton">
@@ -584,8 +721,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ContainerControl" /> class does not provide an implementation for the <see cref="M:System.Windows.Forms.ContainerControl.UpdateDefaultButton" /> method. Classes that inherit this method must implement <see cref="M:System.Windows.Forms.ContainerControl.UpdateDefaultButton" /> to update the default button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden by a derived class, updates which button is the default button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -600,9 +743,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Windows.Forms.ContainerControl.Validate" /> method validates the last child control that is not validated and its ancestors up through, but not including, the current container control. This overloaded version always performs validation, regardless of the value of the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property of the control's parent. Therefore use it to unconditionally force validation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies the value of the control losing focus by causing the <see cref="E:System.Windows.Forms.Control.Validating" /> and <see cref="E:System.Windows.Forms.Control.Validated" /> events to occur, in that order. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation is successful; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -622,10 +774,28 @@
         <Parameter Name="checkAutoValidate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="checkAutoValidate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Windows.Forms.ContainerControl.Validate" /> method validates the last child control that is not validated and its ancestors up through, but not including, the current container control. This overloaded version performs validation based on the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>If the <paramref name="checkAutoValidate" /> parameter is true, validation always occurs for child controls that are not validated. </para>
+            </item>
+            <item>
+              <para>If the <paramref name="checkAutoValidate" /> parameter is false, validation occurs only if the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property of the control's parent is enabled.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies the value of the control that is losing focus; conditionally dependent on whether automatic validation is turned on. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation is successful; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
+        <param name="checkAutoValidate">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the value of the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property is used to determine if validation should be performed; if false, validation is unconditionally performed.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateChildren">
@@ -647,9 +817,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren" /> will descend a control's hierarchy and examine each control to see if it supports validation. If the control can be selected by the user and its <see cref="P:System.Windows.Forms.Control.CausesValidation" /> property is true, <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren" /> will cause the <see cref="E:System.Windows.Forms.Control.Validating" /> event to occur. If any of the controls cancel the <see cref="E:System.Windows.Forms.Control.Validating" /> event, this method will return false; otherwise, it will return true.</para>
+          <para>If a control is bound to a data source, and the <see cref="E:System.Windows.Forms.Control.Validating" /> event occurs, it will cause the control to push its current data back to the data source. </para>
+          <para>Calling <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren" /> is equivalent to calling <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" /> with a <see cref="T:System.Windows.Forms.ValidationConstraints" /> of <see cref="F:System.Windows.Forms.ValidationConstraints.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes all of the child controls within a control that support validation to validate their data. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the children validated successfully; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidateChildren">
@@ -673,10 +855,25 @@
         <Parameter Name="validationConstraints" Type="System.Windows.Forms.ValidationConstraints" />
       </Parameters>
       <Docs>
-        <param name="validationConstraints">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" /> will examine all the children of the current control, causing the <see cref="E:System.Windows.Forms.Control.Validating" /> event to occur on a control if it meets the criteria spelled out by <see cref="T:System.Windows.Forms.ValidationConstraints" />. </para>
+          <para>You may use several <see cref="T:System.Windows.Forms.ValidationConstraints" /> parameters at once by combining them with a bitwise OR operator. Combining parameters with a bitwise OR operator will result in a logical AND operation. For example, calling ValidateChildren(ValidationConstraints.ImmediateChildren | ValidationConstraints.Enabled) will only raise the <see cref="E:System.Windows.Forms.Control.Validating" /> event on controls that are both immediate children of the container AND are enabled.</para>
+          <para>Regardless of which parameters you specify for this method, a control must have its <see cref="P:System.Windows.Forms.Control.CausesValidation" /> property set to true in order for its <see cref="E:System.Windows.Forms.Control.Validating" /> event to occur. You should also set the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property of the control or of the control's container to false if you want validation to happen only when you call <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" />, and not when the user shifts focus from the control. </para>
+          <para>If a control is bound to a data source, and the <see cref="E:System.Windows.Forms.Control.Validating" /> event occurs, it will cause the control to push its current data back to the data source. </para>
+          <para>You cannot achieve the opposite effect of a <see cref="T:System.Windows.Forms.ValidationConstraints" /> parameter by applying a bitwise negation operator. For example, if you supply the negative value of the <see cref="F:System.Windows.Forms.ValidationConstraints.Visible" /> field to <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" />, it will not validate all children that are not visible on the container. Supplying any negative parameter to <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" /> will have no effect on the container or its children.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes all of the child controls within a control that support validation to validate their data. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the children validated successfully; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
+        <param name="validationConstraints">
+          <attribution license="cc4" from="Microsoft" modified="false" />Places restrictions on which controls have their <see cref="E:System.Windows.Forms.Control.Validating" /> event raised.</param>
       </Docs>
     </Member>
     <Member MemberName="WndProc">

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ButtonType" FullName="System.Web.UI.WebControls.ButtonType">
   <TypeSignature Language="C#" Value="public enum ButtonType" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ButtonType" /> enumeration is used to represent the different types of buttons (such as command button, image button, link button, and so on) that can be rendered on an ASP.NET page. It is commonly used by properties such as the <see cref="P:System.Web.UI.WebControls.ButtonFieldBase.ButtonType" /> property of the <see cref="T:System.Web.UI.WebControls.ButtonFieldBase" /> class to indicate which button type is being used by the parent control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the different types of buttons that can be rendered in a Web Forms page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Button">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A command button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A button that displays an image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hyperlink-style button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

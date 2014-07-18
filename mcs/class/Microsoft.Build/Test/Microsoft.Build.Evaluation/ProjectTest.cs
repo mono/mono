@@ -173,6 +173,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void BuildCSharpTargetBuild ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -254,6 +258,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void CreateProjectInstance ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -270,6 +278,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void LoadCaseInsensitive ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -297,6 +309,32 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			proj.Build (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
 			Assert.IsTrue (sw.ToString ().Contains ("This will be written"), "#1");
 			Assert.IsFalse (sw.ToString ().Contains ("This should not be written"), "#2");
+		}
+
+		[Test]
+		public void Choose ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Choose>
+    <When Condition="" '$(DebugSymbols)' != '' "">
+      <PropertyGroup>
+        <DebugXXX>True</DebugXXX>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DebugXXX>False</DebugXXX>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.Choose.proj";
+			var proj = new Project (root);
+			var p = proj.GetProperty ("DebugXXX");
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual ("False", p.EvaluatedValue, "#2");
 		}
 	}
 }

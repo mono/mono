@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ArrangedElementCollection" FullName="System.Windows.Forms.Layout.ArrangedElementCollection">
   <TypeSignature Language="C#" Value="public class ArrangedElementCollection : System.Collections.IList" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> class represents a collection of objects arranged on a design surface or inside a parent <see cref="T:System.Windows.Forms.ContainerControl" />. </para>
+      <para>There are no publicly defined constructors in <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> because it is designed to be used only internally within the dnprdnshort. However, classes derived from <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" />, such as <see cref="T:System.Windows.Forms.Control.ControlCollection" />, are available to the developer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CopyTo">
@@ -29,11 +37,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the specified array must be compatible with the source collection. </para>
+          <para>This method uses the <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" /> method to copy the elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire contents of this collection to a compatible one-dimensional <see cref="T:System.Array" />, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current collection. The array must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +63,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When required, the capacity of the collection will dynamically increase to accept more elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,11 +88,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instances are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> is equal to the current <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> to compare with the current <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -83,10 +113,27 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically the enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads could still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can follow one of the following strategies:</para>
+          <list type="bullet">
+            <item>
+              <para>Lock the collection during the entire enumeration using a <see cref="T:System.Threading.Monitor" />.</para>
+            </item>
+            <item>
+              <para>Catch and handle the exceptions that result from changes made by other threads.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for the entire collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the entire collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,10 +147,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +169,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only collection does not allow the addition, removal, or modification of elements after the collection is created.</para>
+          <para>A read-only collection is simply a collection with a wrapper that prevents modifying the collection. If changes are made to the underlying collection, the read-only collection reflects those changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,9 +195,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="P:System.Collections.ICollection.IsSynchronized" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -150,9 +216,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="P:System.Collections.ICollection.SyncRoot" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -168,10 +240,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.Add(System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to add to the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -185,8 +267,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.Clear" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -202,10 +290,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.Contains(System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> is found in the <see cref="T:System.Collections.IList" />; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -221,10 +319,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.IndexOf(System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -241,10 +349,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)" /> method.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to insert into the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -257,9 +373,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="P:System.Collections.IList.IsFixedSize" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -294,9 +416,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.Remove(System.Object)" /> method.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to remove from the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -312,9 +441,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" /> method.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove.</param>
       </Docs>
     </Member>
   </Members>

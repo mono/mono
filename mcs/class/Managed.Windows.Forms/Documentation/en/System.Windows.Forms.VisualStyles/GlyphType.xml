@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GlyphType" FullName="System.Windows.Forms.VisualStyles.GlyphType">
   <TypeSignature Language="C#" Value="public enum GlyphType" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.GlyphType" /> values represent the return values of the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method when it is called with an argument value of <see cref="F:System.Windows.Forms.VisualStyles.EnumProperty.GlyphType" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of glyph for elements with a bitmap background.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FontGlyph">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.GlyphType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The glyph is a font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.GlyphType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The glyph is a bitmap.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.GlyphType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element does not include a glyph.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

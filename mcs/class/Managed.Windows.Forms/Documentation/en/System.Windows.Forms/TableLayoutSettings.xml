@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableLayoutSettings" FullName="System.Windows.Forms.TableLayoutSettings">
   <TypeSignature Language="C#" Value="public sealed class TableLayoutSettings : System.Windows.Forms.LayoutSettings, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -13,9 +14,27 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TableLayoutSettings" /> class collects and manages the characteristics associated with the table layout scheme. This class is used internally by the <see cref="T:System.Windows.Forms.TableLayoutPanel" /> and <see cref="T:System.Windows.Forms.ToolStrip" /> classes, as well as the table layout engine. The <see cref="T:System.Windows.Forms.TableLayoutSettings" /> class is used by the layout engine to determine how to lay out the container's child controls.</para>
+      <para>The <see cref="T:System.Windows.Forms.TableLayoutSettings" /> class manages the following information:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Windows.Forms.TableLayoutPanelGrowStyle" /> being used.</para>
+        </item>
+        <item>
+          <para>The maximum number of columns and rows in the layout.</para>
+        </item>
+        <item>
+          <para>The collection of styles used for the contained columns and rows. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Collects the characteristics associated with table layouts.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ColumnCount">
@@ -25,10 +44,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.TableLayoutSettings.ColumnCount" /> property does not allocate the columns or any backing memory. This allocation occurs when the columns are created.</para>
+          <para>Setting this property causes the table to undergo another layout operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of columns allowed in the table layout.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,9 +80,15 @@
         <ReturnType>System.Windows.Forms.TableLayoutColumnStyleCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.TableLayoutSettings.ColumnStyles" /> property to access the style properties of specific columns. The order of the styles in a <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> matches the order of the corresponding columns in the layout table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of styles used to determine the look and feel of the table layout columns. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetCellPosition">
@@ -77,10 +109,17 @@
         <Parameter Name="control" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> that represents the row and the column of the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> that represents the cell position.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetColumn">
@@ -101,10 +140,17 @@
         <Parameter Name="control" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column position of the specified child control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column position of the specified child control.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetColumnSpan">
@@ -120,10 +166,17 @@
         <Parameter Name="control" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns that the cell containing the child control spans.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of columns that the cell containing the child control spans.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRow">
@@ -144,10 +197,17 @@
         <Parameter Name="control" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row position of the specified child control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row position of the specified child control.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRowSpan">
@@ -163,10 +223,17 @@
         <Parameter Name="control" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows that the cell containing the child control spans.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows that the cell containing the child control spans.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GrowStyle">
@@ -176,10 +243,16 @@
         <ReturnType>System.Windows.Forms.TableLayoutPanelGrowStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TableLayoutSettings.GrowStyle" /> property determines how the layout engine should add a new cell to a full table. This property can be set to <see cref="F:System.Windows.Forms.TableLayoutPanelGrowStyle.AddRows" /> to indicate that rows should be added, <see cref="F:System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns" /> to indicate that columns should be added, or <see cref="F:System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize" /> to disallow expansion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating how the table layout should expand to accommodate new cells when all existing cells are occupied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,10 +270,24 @@
         <ReturnType>System.Windows.Forms.Layout.LayoutEngine</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TableLayoutSettings.LayoutEngine" /> property is typically used in two contexts:</para>
+          <list type="bullet">
+            <item>
+              <para>A container that uses a table layout.</para>
+            </item>
+            <item>
+              <para>A control contained within a table layout container, such as a button contained in a cell of a <see cref="T:System.Windows.Forms.TableLayoutPanel" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current table layout engine.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -213,10 +300,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.TableLayoutSettings.RowCount" /> property does not allocate the rows or any backing memory. This allocation occurs when the rows are created.</para>
+          <para>Setting this property causes the table to undergo another layout operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of rows allowed in the table layout.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -242,9 +336,15 @@
         <ReturnType>System.Windows.Forms.TableLayoutRowStyleCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.TableLayoutSettings.RowStyles" /> property to access the style properties of specific rows. The order of the styles in a <see cref="T:System.Windows.Forms.TableLayoutRowStyleCollection" /> matches the order of the corresponding rows in the layout table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of styles used to determine the look and feel of the table layout rows.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetCellPosition">
@@ -266,10 +366,15 @@
         <Parameter Name="cellPosition" Type="System.Windows.Forms.TableLayoutPanelCellPosition" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="cellPosition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> that represents the row and the column of the cell.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
+        <param name="cellPosition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />  that represents the cell position.</param>
       </Docs>
     </Member>
     <Member MemberName="SetColumn">
@@ -286,10 +391,15 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="column">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the column position for the specified child control.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column position for the specified child control.</param>
       </Docs>
     </Member>
     <Member MemberName="SetColumnSpan">
@@ -306,10 +416,15 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the number of columns that the cell containing the child control spans.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of columns that the cell containing the child control spans.</param>
       </Docs>
     </Member>
     <Member MemberName="SetRow">
@@ -326,10 +441,15 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the row position of the specified child control.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row position of the specified child control.</param>
       </Docs>
     </Member>
     <Member MemberName="SetRowSpan">
@@ -346,10 +466,15 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the number of rows that the cell containing the child control spans.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control contained within a cell.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows that the cell containing the child control spans.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -366,10 +491,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.TableLayoutSettings" /> instance is cast to an <see cref="T:System.Runtime.Serialization.ISerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" />.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be populated with serialization information. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination context of the serialization.</param>
       </Docs>
     </Member>
   </Members>

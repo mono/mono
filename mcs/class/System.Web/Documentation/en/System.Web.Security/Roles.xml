@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Roles" FullName="System.Web.Security.Roles">
   <TypeSignature Language="C#" Value="public static class Roles" />
   <AssemblyInfo>
@@ -9,9 +10,73 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET role management enables you to manage authorization for your application based on groups of users, referred to as roles. By assigning users to roles, you can control access to different parts or features of your Web application based on role instead of, or in addition to, specifying authorization based on user name. For example, an employee application might have roles such as Managers, Employees, Directors, and so on, where different privileges are specified for each role.</para>
+      <para>Users can belong to more than one role. For example, if your site is a discussion forum, some users might be in the role of both Members and Moderators. You might define each role to have different privileges on the site, and a user who is in both roles would then have both sets of privileges.</para>
+      <para>To enable role management for your ASP.NET application, use the <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> element of the system.web section in the Web.config file for your application, as shown in the following example.</para>
+      <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="SqlServices" connectionString="Data Source=localhost;Initial Catalog=aspnetdb;Integrated Security=SSPI;" /&gt;
+  &lt;/connectionStrings&gt;
+
+  &lt;system.web&gt;
+    &lt;authentication mode="Forms" &gt;
+      &lt;forms loginUrl="login.aspx"
+      name=".ASPXFORMSAUTH" /&gt;
+    &lt;/authentication&gt;
+
+  &lt;roleManager defaultProvider="SqlProvider" 
+    enabled="true"
+    cacheRolesInCookie="true"
+    cookieName=".ASPROLES"
+    cookieTimeout="30"
+    cookiePath="/"
+    cookieRequireSSL="false"
+    cookieSlidingExpiration="true"
+    cookieProtection="All" &gt;
+    &lt;providers&gt;
+      &lt;add
+        name="SqlProvider"
+        type="System.Web.Security.SqlRoleProvider"
+        connectionStringName="SqlServices"
+        applicationName="SampleApplication" /&gt;
+      &lt;/providers&gt;
+    &lt;/roleManager&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+      <para>You can specify authorization rules in the configuration file for your Web application or programmatically in your code. For example, the following <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section from a Web.config file requires users to log on (by denying anonymous users), and then allows only users in the Administrators role to have access.</para>
+      <code>&lt;authorization&gt;
+  &lt;deny users="?" /&gt;
+  &lt;allow roles="Administrators" /&gt;
+  &lt;deny users="*" /&gt;
+&lt;/authorization&gt;</code>
+      <para>If you use the authorization section in your application's Web.config file to specify authorization based on roles, users of your application must supply an authenticated user identity. You can authenticate users by using either Windows or Forms authentication. Anonymous users cannot be assigned to a role. Roles can be used independently of, or in conjunction with, the ASP.NET <see cref="T:System.Web.Security.Membership" /> classes.</para>
+      <para>To verify role membership programmatically, you can use the <see cref="T:System.Web.Security.Roles" /> class or the <see cref="P:System.Web.UI.Page.User" /> property with the <see cref="M:System.Web.Security.Roles.IsUserInRole(System.String)" /> method, or you can use the <see cref="P:System.Web.UI.Page.User" /> property with the <see cref="M:System.Security.Principal.IPrincipal.IsInRole(System.String)" /> method. For sample code that programmatically checks role membership, see the Example section in this topic.</para>
+      <para>The <see cref="T:System.Web.Security.Roles" /> class also enables you to create and delete roles and to add users to or remove users from roles. </para>
+      <block subset="none" type="note">
+        <para>If you have configured your application to use the <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> class, you cannot modify roles or role membership. The <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> class verifies membership in Windows security groups only. In this case, you must use Windows user account management rather than ASP.NET roles to create and delete groups and manage group membership.</para>
+      </block>
+      <para>You can store role information in several data sources. </para>
+      <list type="bullet">
+        <item>
+          <para>You can use the <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> class to retrieve role information based on membership in Windows groups. </para>
+        </item>
+        <item>
+          <para>You can store role information in a SQL Server database by using the <see cref="T:System.Web.Security.SqlRoleProvider" /> class.</para>
+        </item>
+        <item>
+          <para>If you have existing role information, or want to store role information in and retrieve role information from a data source other than Windows, an Authorization Store, or SQL Server, you can implement a custom role provider by creating a class that inherits the <see cref="T:System.Web.Security.RoleProvider" /> abstract class. For more information, see <format type="text/html"><a href="851671ce-bf9b-43f2-aba4-bc9d28b11c7d">Implementing a Role Provider</a></format>.</para>
+        </item>
+      </list>
+      <para>If a user's browser accepts cookies, you can store role information for that user in a cookie on the user's computer. On each page request, ASP.NET reads the role information for that user from the cookie. This can improve application performance by reducing the amount of communication required with the data source to retrieve role information. If the role information for a user is too long to store in a cookie, ASP.NET stores just the most recently used role information in the cookie and then looks up additional role information in the data source as required. If the user's browser does not support cookies or cookies are disabled, role information is not cached in a cookie.</para>
+      <para>You can improve the reliability of the role names cached in a cookie by specifying a <see cref="P:System.Web.Security.Roles.CookieProtectionValue" /> property when you configure ASP.NET roles. The default <see cref="P:System.Web.Security.Roles.CookieProtectionValue" /> is All, which encrypts role names in the cookie and validates that the cookie contents have not been altered.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages user membership in roles for authorization checking in an ASP.NET application. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddUsersToRole">
@@ -25,11 +90,22 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.AddUsersToRole(System.String[],System.String)" /> method calls the default role provider to associate the specified users with the specified role at the data source.</para>
+          <para>If your application uses the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.SqlRoleProvider.AddUsersToRoles(System.String[],System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is already in a specified role, the transaction is rolled back and no updates are performed.</para>
+          <block subset="none" type="note">
+            <para>User names and role names cannot contain commas.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified users to the specified role.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to add to the specified role. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,11 +122,22 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.AddUsersToRoles(System.String[],System.String[])" /> method calls the default role provider to associate the specified users with the specified roles at the data source.</para>
+          <para>If your application uses the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.SqlRoleProvider.AddUsersToRoles(System.String[],System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is already in a specified role, the transaction is rolled back and no updates are performed.</para>
+          <block subset="none" type="note">
+            <para>User names and role names cannot contain commas.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified users to the specified roles.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to add to the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,11 +154,21 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.AddUserToRole(System.String,System.String)" /> method calls the default role provider to associate the specified user with the specified role at the data source.</para>
+          <block subset="none" type="note">
+            <para>User names and role names cannot contain commas.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified user to the specified role.</para>
+        </summary>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to add to the specified role.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,11 +185,22 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.AddUserToRoles(System.String,System.String[])" /> method calls the default role provider to associate the specified user with the specified roles at the data source.</para>
+          <para>If your application uses the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.Roles.AddUserToRoles(System.String,System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is already in a specified role, the transaction is rolled back and no updates are performed.</para>
+          <block subset="none" type="note">
+            <para>User names and role names cannot contain commas.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified user to the specified roles.</para>
+        </summary>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to add to the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +213,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.ApplicationName" /> property is used by the <see cref="T:System.Web.Security.Roles" /> class to associate users and roles with different applications. This enables multiple applications to use the same data source to store user and role information without running into conflicts between duplicate user names or duplicate role names. Multiple ASP.NET applications can use the same data source by specifying the same value in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property. You can set the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property programmatically, or you can set it declaratively in the configuration file for the Web application by using the applicationName attribute.</para>
+          <para>If your Web application is using the <see cref="T:System.Web.Security.SqlRoleProvider" /> class and a value is not specified for the applicationName attribute in the configuration file, the <see cref="P:System.Web.HttpRequest.ApplicationPath" /> property value for the current <see cref="P:System.Web.HttpContext.Request" /> property is used.</para>
+          <block subset="none" type="note">
+            <para>Because a single default role provider instance is used for all of the requests served by an <see cref="T:System.Web.HttpApplication" /> object, you can have multiple requests executing concurrently and attempting to set the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property value. The <see cref="P:System.Web.Security.Roles.ApplicationName" /> property is not thread safe for multiple writes, and changing the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property value can result in unexpected behavior for multiple users of an application. You should avoid writing code to allow users to set the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property, unless required. An example of an application where setting the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property may be required is an administrative application that manages role data for multiple applications. Such an application should be a single-user application and not a Web application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application to store and retrieve role information for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -121,10 +239,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> property is set to true in the Web.config file, role information for each user is stored in a cookie. When role management checks to see whether a user is in a particular role, the roles cookie is checked before the role provider is called to check the list of roles at the data source. The cookie is dynamically updated to cache the most recently validated role names.</para>
+          <para>You can improve the reliability of the role names cached in a cookie by specifying a <see cref="P:System.Web.Security.Roles.CookieProtectionValue" /> property when you configure ASP.NET roles. The default <see cref="P:System.Web.Security.Roles.CookieProtectionValue" /> is All, which encrypts role names in the cookie and validates that the cookie contents have not been altered.</para>
+          <block subset="none" type="note">
+            <para>Because role names can be cached apart from the data source, it is possible that changes to role management at the data source would not be reflected in the cached values. In this case, the user must close and re-open their browser to clear the cached cookie value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current user's roles are cached in a cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,10 +265,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify the name of the cookie where roles are cached for your application by setting the cookieName attribute in the Web.config file for your ASP.NET application. This is useful when you want to uniquely identify a cookie for your application or when a cookie is shared across multiple applications, such as a domain cookie.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the cookie where role names are cached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +287,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify the path of the cookie where roles are cached for your application by setting the cookiePath attribute in the Web.config file for your ASP.NET application. For more information on cookie paths, see <see cref="P:System.Web.HttpCookie.Path" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the cached role names cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +309,16 @@
         <ReturnType>System.Web.Security.CookieProtection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify the protection of the cookie where roles are cached for your application by setting the cookieProtection attribute in the Web.config file for your ASP.NET application. The cookieProtection attribute takes a <see cref="T:System.Web.Security.CookieProtection" /> enumeration value that indicates whether the role names are encrypted, validated, both, or neither.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates how role names cached in a cookie are protected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -185,10 +331,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify whether SSL (Secure Sockets Layer) is required to return the role names cookie to the server in your application by setting the cookieRequireSSL attribute in the Web.config file for your ASP.NET application. For more information, see <see cref="P:System.Web.HttpCookie.Secure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the role names cookie requires SSL in order to be returned to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -201,10 +353,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify whether role names cookie expiration date and time will be reset with each response by using the cookieSlidingExpiration attribute in the Web.config file for your ASP.NET application. If true, the cookie expiration will initially be set to the current date and time plus the <see cref="P:System.Web.Security.Roles.CookieTimeout" /> in minutes. While the user continues to actively use the ASP.NET application, the expiration date and time of the cookie will be automatically refreshed if there is less than half of the <see cref="P:System.Web.Security.Roles.CookieTimeout" /> remaining. For more information, see the <see cref="P:System.Web.HttpCookie.Expires" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the role names cookie expiration date and time will be reset periodically.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,10 +375,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.CookieTimeout" /> property is used when the <see cref="P:System.Web.Security.Roles.CookieSlidingExpiration" /> property is true and specifies the time-to-live in minutes for the roles cookie. To set the <see cref="P:System.Web.Security.Roles.CookieTimeout" /> value, add the cookieTimeout attribute to the <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> element in the Web.config file for the ASP.NET application and specify an integer value.</para>
+          <para>If <see cref="P:System.Web.Security.Roles.CookieSlidingExpiration" /> is false, this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of minutes before the roles cookie expires.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -233,10 +398,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.CreatePersistentCookie" /> property value is set in the configuration for an ASP.NET application using the createPersistentCookie attribute of the <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> configuration element.</para>
+          <para>When false, the role-names cookie is a session cookie, that is, the cookie is lost when the browser is closed. When true, the role-names cookie is a persistent cookie that is available across multiple browser sessions. The persistent cookie expiration date and time are set to the current date and time plus the <see cref="P:System.Web.Security.Roles.CookieTimeout" /> value in minutes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the role-names cookie is session-based or persistent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -253,9 +425,18 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.CreateRole(System.String)" /> method adds a role name to the data source. <see cref="M:System.Web.Security.Roles.CreateRole(System.String)" /> calls the <see cref="M:System.Web.Security.RoleProvider.CreateRole(System.String)" /> method of the default role provider to add the specified role to the data source.</para>
+          <block subset="none" type="note">
+            <para>Role names cannot contain commas.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new role to the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -269,9 +450,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.DeleteCookie" /> method clears the contents of the cookie that is used to cache role names. For more information on caching role names, see <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the cookie where role names are cached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -288,10 +475,20 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.DeleteRole(System.String)" /> method removes a role name from the data source. <see cref="M:System.Web.Security.Roles.DeleteRole(System.String)" /> calls the <see cref="M:System.Web.Security.RoleProvider.DeleteRole(System.String,System.Boolean)" /> method of the default role provider to remove the specified role from the data source.</para>
+          <para>If the role identified by the <paramref name="roleName" /> parameter has one or more members, then an exception will be thrown and the role will not be deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a role from the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="roleName" /> was deleted from the data source; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -309,11 +506,22 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <param name="throwOnPopulatedRole">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.DeleteRole(System.String,System.Boolean)" /> method removes a role name from the data source. <see cref="M:System.Web.Security.Roles.DeleteRole(System.String,System.Boolean)" /> calls the <see cref="M:System.Web.Security.RoleProvider.DeleteRole(System.String,System.Boolean)" /> method of the default role provider to remove the specified role from the data source.</para>
+          <para>If <paramref name="throwOnPopulatedRole" /> is true, then an exception will be thrown and the role will not be deleted if the role identified by the <paramref name="roleName" /> parameter has one or more members. If <paramref name="throwOnPopulatedRole" /> is false, then the role will be deleted whether it is empty or not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a role from the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="roleName" /> was deleted from the data source; otherwise; false.</para>
+        </returns>
+        <param name="throwOnPopulatedRole">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, throws an exception if <paramref name="roleName" /> has one or more members.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -326,10 +534,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.Domain" /> property value is set in the configuration for an ASP.NET application using the domain attribute of the <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> configuration element.</para>
+          <para>If no value is specified in the configuration for the domain attribute, the <see cref="P:System.Web.Security.Roles.Domain" /> property returns null and the role-names cookie domain defaults to the behavior of the <see cref="T:System.Web.HttpCookie" /> <see cref="P:System.Web.HttpCookie.Domain" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the domain of the role-names cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -342,10 +557,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether role management is enabled for the current Web application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -363,11 +581,23 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <param name="usernameToMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.Roles.FindUsersInRole(System.String,System.String)" /> returns a list of users in a role where the user name contains a match of the supplied <paramref name="usernameToMatch" /> for the configured applicationName. For example, if the <paramref name="usernameToMatch" /> parameter is set to "user," then the users "user1," "user2," "user3," and so on are returned. Users are returned in alphabetical order by user name.</para>
+          <para>The <see cref="T:System.Web.Security.SqlRoleProvider" /> performs its search using a LIKE clause against the <paramref name="usernameToMatch" /> parameter. Any wildcards that are supported by SQL Server in LIKE clauses can be used in the <paramref name="usernameToMatch" /> parameter value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of users in a specified role where the user name contains the specified user name to match.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users whose user name matches <paramref name="usernameToMatch" /> and who are members of the specified role.</para>
+        </returns>
+        <param name="usernameToMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -381,10 +611,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.GetAllRoles" /> method calls the <see cref="M:System.Web.Security.RoleProvider.GetAllRoles" /> method of the default role provider to get a list of all the roles from the data source for an application. Only the roles for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property are retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all the roles for the application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles stored in the data source for the application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -398,10 +637,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.GetRolesForUser" /> method calls the <see cref="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)" /> method of the default role provider to retrieve from the data source the roles that the currently logged-on user is in. The currently logged-on user is identified by the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" />, or by <see cref="P:System.Threading.Thread.CurrentPrincipal" /> for non-HTTP hosting environments. If no user is logged on, an exception will be thrown. Only the roles for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property are retrieved.</para>
+          <para>If <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true, then the results of the <see cref="M:System.Web.Security.Roles.GetRolesForUser" /> method may be returned from the role cache rather than the specified role provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the roles that the currently logged-on user is in.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the currently logged-on user is in.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -417,11 +666,22 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.GetRolesForUser(System.String)" /> method calls the <see cref="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)" /> method of the default role provider to retrieve from the data source the roles that the user is in. Only the roles for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property are retrieved.</para>
+          <para>If <paramref name="username" /> is equal to the current logged-on user and <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true, the results of the <see cref="M:System.Web.Security.Roles.GetRolesForUser(System.String)" /> method may be returned from the role cache rather than the specified <see cref="P:System.Web.Security.Roles.Provider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the roles that a user is in.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the specified user is in.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user to return a list of roles for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -438,10 +698,19 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.GetUsersInRole(System.String)" /> method calls the <see cref="M:System.Web.Security.RoleProvider.GetUsersInRole(System.String)" /> method of the default role provider to retrieve the user names associated with a role from the data source. Only the roles for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property are retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of users in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users who are members of the specified role.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -458,10 +727,20 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.IsUserInRole(System.String)" /> method calls the <see cref="M:System.Web.Security.RoleProvider.IsUserInRole(System.String,System.String)" /> method of the default role provider to determine whether the currently logged-on user is associated with a role from the data source for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property. The currently logged-on user is identified by the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" />, or by <see cref="P:System.Threading.Thread.CurrentPrincipal" /> for non-HTTP hosting environments. If no user is logged on, an exception will be thrown. Only the roles for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property are retrieved.</para>
+          <para>If <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true, then <paramref name="roleName" /> may be checked against the roles cache rather than the specified role provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the currently logged-on user is in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the currently logged-on user is in the specified role; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -478,12 +757,23 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.IsUserInRole(System.String,System.String)" /> method calls the <see cref="M:System.Web.Security.RoleProvider.IsUserInRole(System.String,System.String)" /> method of the default role provider to determine whether a user name is associated with a role from the data source for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property.</para>
+          <para>If <paramref name="username" /> is equal to the current logged-on user and the <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> property value is true, <paramref name="roleName" /> may be checked against the role cache rather than the specified <see cref="P:System.Web.Security.Roles.Provider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified user is in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified user is in the specified role; otherwise, false.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -496,10 +786,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.MaxCachedResults" /> property is set using the maxCachedResults configuration attribute. The value of the maxCachedResults configuration attribute must be set to an integer value greater than zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum number of role names to be cached for a user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -512,10 +808,18 @@
         <ReturnType>System.Web.Security.RoleProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.Provider" /> property enables you to directly reference the default role provider for an application. This is commonly used to access custom members of the role provider that are not part of the <see cref="T:System.Web.Security.RoleProvider" /> abstract class.</para>
+          <para>For example, the <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> class includes an overload of the <see cref="M:System.Web.Security.WindowsTokenRoleProvider.IsUserInRole(System.String,System.Security.Principal.WindowsBuiltInRole)" /> method that enables you to determine whether a user is in a common Windows role by using a <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> enumeration value. A reference to the <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> class for an application can be obtained by using the <see cref="P:System.Web.Security.Roles.Provider" /> property and can be cast as a <see cref="T:System.Web.Security.WindowsTokenRoleProvider" /> in order to refer to the <see cref="M:System.Web.Security.WindowsTokenRoleProvider.IsUserInRole(System.String,System.Security.Principal.WindowsBuiltInRole)" /> overload.</para>
+          <para>If multiple role providers are configured for an application, you can access different role providers using the <see cref="P:System.Web.Security.Roles.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default role provider for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -528,10 +832,47 @@
         <ReturnType>System.Web.Security.RoleProviderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Roles.Providers" /> property references all the role providers enabled for an application, including any providers added in the Web.config file. You can control which role providers are available for an application by using the providers element of the <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> section in the Web.config file for your application.</para>
+          <para>The following example shows a <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> section that removes any existing providers (such as those specified in the Machine.config file) and adds a <see cref="T:System.Web.Security.SqlRoleProvider" /> instance as the role provider for the application.</para>
+          <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="SqlServices" connectionString="Data Source=MySqlServer;Integrated Security=SSPI;Initial Catalog=aspnetdb;" /&gt;
+  &lt;/connectionStrings&gt;
+
+  &lt;system.web&gt;
+    &lt;roleManager defaultProvider="SqlProvider" 
+      enabled="true"
+      cacheRolesInCookie="true"
+      cookieName=".ASPROLES"
+      cookieTimeout="30"
+      cookiePath="/"
+      cookieRequireSSL="false"
+      cookieSlidingExpiration="true"
+      cookieProtection="Encrypted"&gt;
+
+      &lt;providers&gt;
+        &lt;clear/&gt;
+        &lt;add
+          name="SqlProvider"
+          type="System.Web.Security.SqlRoleProvider"
+          connectionStringName="SqlServices"
+          applicationName="MyApplication" /&gt;
+         &lt;/providers&gt;
+
+    &lt;/roleManager&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+          <para>You can obtain a strongly typed reference to a provider from the <see cref="P:System.Web.Security.Roles.Providers" /> collection by indexing the role provider by name and casting it as the desired type.</para>
+          <para>You can obtain a reference to the default provider for an application using the <see cref="P:System.Web.Security.Roles.Provider" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the role providers for the ASP.NET application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -548,11 +889,18 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.RemoveUserFromRole(System.String,System.String)" /> method calls the default role provider to remove the specified user from the specified role at the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified user from the specified role.</para>
+        </summary>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user to remove from the specified role.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -569,11 +917,19 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.RemoveUserFromRoles(System.String,System.String[])" /> method calls the default role provider to remove the specified user from the specified roles at the data source.</para>
+          <para>If the application is configured to use the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.Roles.RemoveUserFromRoles(System.String,System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is not in a specified role, the transaction is rolled back and no updates are performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified user from the specified roles.</para>
+        </summary>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user to remove from the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -590,11 +946,19 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.RemoveUsersFromRole(System.String[],System.String)" /> method calls the default role provider to remove the specified users from the specified role at the data source.</para>
+          <para>If the application uses the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.SqlRoleProvider.RemoveUsersFromRoles(System.String[],System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is not in a specified role, the transaction is rolled back and no updates are performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified users from the specified role.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to remove from the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -611,11 +975,19 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.RemoveUsersFromRoles(System.String[],System.String[])" /> method calls the default role provider to remove the specified users from the specified roles at the data source.</para>
+          <para>If the application uses the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, the database updates that are performed during the call to the <see cref="M:System.Web.Security.SqlRoleProvider.RemoveUsersFromRoles(System.String[],System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is not in a specified role, the transaction is rolled back and no updates are performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified user names from the specified roles.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to remove from the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -632,10 +1004,19 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.Roles.RoleExists(System.String)" /> method calls the RoleExists method of the default role provider to determine whether a role name exists in the data source for the application that is specified in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified role name already exists in the role data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role name already exists in the data source; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

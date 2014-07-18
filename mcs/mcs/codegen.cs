@@ -155,6 +155,12 @@ namespace Mono.CSharp
 			get { return member_context.IsStatic; }
 		}
 
+		public bool IsStaticConstructor {
+			get {
+				return member_context.IsStatic && (flags & Options.ConstructorScope) != 0;
+			}
+		}
+
 		public bool IsAnonymousStoreyMutateRequired {
 			get {
 				return CurrentAnonymousMethod != null &&
@@ -172,6 +178,12 @@ namespace Mono.CSharp
 		public ModuleContainer Module {
 			get {
 				return member_context.Module;
+			}
+		}
+
+		public bool NotifyEvaluatorOnStore {
+			get {
+				return Module.Evaluator != null && Module.Evaluator.ModificationListener != null;
 			}
 		}
 
@@ -203,6 +215,10 @@ namespace Mono.CSharp
 				return epilogue_expressions;
 			}
 		}
+
+		public LocalVariable AsyncThrowVariable { get; set; }
+
+		public List<TryFinally> TryFinallyUnwind { get; set; }
 
 		#endregion
 
@@ -380,9 +396,9 @@ namespace Mono.CSharp
 		//
 		// Creates temporary field in current async storey
 		//
-		public StackFieldExpr GetTemporaryField (TypeSpec type)
+		public StackFieldExpr GetTemporaryField (TypeSpec type, bool initializedFieldRequired = false)
 		{
-			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
+			var f = AsyncTaskStorey.AddCapturedLocalVariable (type, initializedFieldRequired);
 			var fexpr = new StackFieldExpr (f);
 			fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null);
 			return fexpr;
@@ -518,8 +534,16 @@ namespace Mono.CSharp
 				type = EnumSpec.GetUnderlyingType (type);
 
 			switch (type.BuiltinType) {
-			case BuiltinTypeSpec.Type.Byte:
 			case BuiltinTypeSpec.Type.Bool:
+				//
+				// Workaround MSIL limitation. Load bool element as single bit,
+				// bool array can actually store any byte value
+				//
+				ig.Emit (OpCodes.Ldelem_U1);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.And);
+				break;
+			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldelem_U1);
 				break;
 			case BuiltinTypeSpec.Type.SByte:
@@ -734,8 +758,12 @@ namespace Mono.CSharp
 				ig.Emit (OpCodes.Ldind_U1);
 				break;
 			case BuiltinTypeSpec.Type.SByte:
+				ig.Emit (OpCodes.Ldind_I1);
+				break;
 			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.And);
 				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:
@@ -1036,7 +1064,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStruct)) {
+			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStructOrEnum)) {
 				ec.Emit (OpCodes.Constrained, InstanceExpression.Type);
 			}
 
@@ -1076,7 +1104,7 @@ namespace Mono.CSharp
 			//
 			// Push the instance expression
 			//
-			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
+			if ((instance_type.IsStructOrEnum && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
 				instance_type.IsGenericParameter || declaringType.IsNullableType) {
 				//
 				// If the expression implements IMemoryLocation, then
@@ -1098,7 +1126,7 @@ namespace Mono.CSharp
 				return ReferenceContainer.MakeType (ec.Module, instance_type);
 			}
 
-			if (instance_type.IsEnum || instance_type.IsStruct) {
+			if (instance_type.IsStructOrEnum) {
 				instance.Emit (ec);
 				ec.Emit (OpCodes.Box, instance_type);
 				return ec.BuiltinTypes.Object;

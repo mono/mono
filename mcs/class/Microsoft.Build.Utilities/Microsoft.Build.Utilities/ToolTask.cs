@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -39,12 +37,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Utilities;
+using System.Threading;
 
 using SCS = System.Collections.Specialized;
 
 namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
+#if NET_4_0
+		, ICancelableTask
+#endif	
 	{
 		int			exitCode;
 		int			timeout;
@@ -54,6 +56,9 @@ namespace Microsoft.Build.Utilities
 		MessageImportance	standardOutputLoggingImportance;
 		StringBuilder toolOutput;
 		bool typeLoadException;
+#if NET_4_0
+		ManualResetEvent canceled;
+#endif
 
 		protected ToolTask ()
 			: this (null, null)
@@ -74,6 +79,9 @@ namespace Microsoft.Build.Utilities
 			this.HelpKeywordPrefix = helpKeywordPrefix;
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
+#if NET_4_0
+			canceled = new ManualResetEvent (false);
+#endif
 		}
 
 		[MonoTODO]
@@ -244,33 +252,38 @@ namespace Microsoft.Build.Utilities
 				singleLine.StartsWith ("Compilation failed"))
 				return;
 
-			Match match = CscErrorRegex.Match (singleLine);
-			if (!match.Success) {
+			var result = MSBuildErrorParser.TryParseLine (singleLine);
+			if (result == null) {
 				Log.LogMessage (importance, singleLine);
 				return;
 			}
 
-			string filename = match.Result ("${file}") ?? "";
-			string line = match.Result ("${line}");
-			int lineNumber = !string.IsNullOrEmpty (line) ? Int32.Parse (line) : 0;
+			string filename = result.Origin ?? GetType ().Name.ToUpper ();
 
-			string col = match.Result ("${column}");
-			int columnNumber = 0;
-			if (!string.IsNullOrEmpty (col))
-				columnNumber = col.IndexOf ("+") >= 0 ? -1 : Int32.Parse (col);
-
-			string category = match.Result ("${level}");
-			string code = match.Result ("${number}");
-			string text = match.Result ("${message}");
-
-			if (String.Compare (category, "warning", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogWarning (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
-			} else if (String.Compare (category, "error", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogError (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
+			if (result.IsError) {
+				Log.LogError (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			} else {
-				Log.LogMessage (importance, singleLine);
+				Log.LogWarning (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			}
 		}
 
@@ -458,29 +471,33 @@ namespace Microsoft.Build.Utilities
 			set { toolPath  = value; }
 		}
 
-		// Keep in sync with mcs/class/System/Microsoft.CSharp/CSharpCodeCompiler.cs
-		const string ErrorRegexPattern = @"
-			^
-			(\s*(?<file>[^\(]+)                         # filename (optional)
-			 (\((?<line>\d*)(,(?<column>\d*[\+]*))?\))? # line+column (optional)
-			 :\s+)?
-			(?<level>\w+)                               # error|warning
-			\s+
-			(?<number>[^:]*\d)                          # CS1234
-			:
-			\s*
-			(?<message>.*)$";
-
-		static Regex errorRegex;
-		static Regex CscErrorRegex {
+#if NET_4_0
+		protected ManualResetEvent ToolCanceled {
 			get {
-				if (errorRegex == null)
-					errorRegex = new Regex (ErrorRegexPattern,
-							RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
-				return errorRegex;
+				return canceled;
 			}
 		}
+
+		public virtual void Cancel ()
+		{
+			canceled.Set ();
+		}
+#endif
+
+#if XBUILD_12
+		protected MessageImportance StandardErrorImportanceToUse {
+			get {
+				return MessageImportance.Normal;
+			}
+		}
+
+		protected MessageImportance StandardOutputImportanceToUse {
+			get {
+				return MessageImportance.Low;
+			}
+		}
+
+		public bool LogStandardErrorAsError { get; set; }
+#endif
 	}
 }
-
-#endif

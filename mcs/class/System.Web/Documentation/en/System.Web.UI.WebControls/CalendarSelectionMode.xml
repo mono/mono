@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CalendarSelectionMode" FullName="System.Web.UI.WebControls.CalendarSelectionMode">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum CalendarSelectionMode" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.CalendarSelectionMode" /> enumeration represents the date selection modes of the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the date selection mode of the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Day">
@@ -25,8 +32,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single date can be selected on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +52,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single date or entire week can be selected on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +72,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single date, week, or entire month can be selected on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +92,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No dates can be selected on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

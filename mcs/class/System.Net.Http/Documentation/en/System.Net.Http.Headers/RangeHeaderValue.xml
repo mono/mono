@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RangeHeaderValue" FullName="System.Net.Http.Headers.RangeHeaderValue">
   <TypeSignature Language="C#" Value="public class RangeHeaderValue : ICloneable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RangeHeaderValue extends System.Object implements class System.ICloneable" />
@@ -14,8 +15,22 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> class provides support for the Range header as defined in <see cref="http://go.microsoft.com/fwlink/?LinkID=241642">RFC 2616</see> by the IETF.</para>
+      <para>Since all HTTP entities are represented in HTTP messages as sequences of bytes, the concept of a byte range is meaningful for any HTTP entity. However, not all clients and servers need to support byte-range operations. </para>
+      <para>The Range header on a request allows a client to request that it only wants to receive some part of the specified range of bytes in an HTTP entity. Servers are not required to support Range header requests. </para>
+      <para>An example of a Range header in an HTTP protocol request that requests the first 100 bytes would be would be the following: </para>
+      <para>Range: bytes=0-99\r\n\r\n</para>
+      <para>A HTTP server indicates support for Range headers with the Accept-Ranges header. An example of the Accept-Ranges header from a server that supports byte-ranges would be as follows:</para>
+      <para>Accept-Ranges: bytes\r\n\r\n</para>
+      <para>If an Accept-Ranges header is not received in the header of the response from the server, then the server does not support Range headers. An example of the Accept-Ranges header from a server that does not support ranges, but recognizes the Accept-Ranges header, would be as follows:</para>
+      <para>Accept-Ranges: none\r\n\r\n</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Range header value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +42,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,10 +61,21 @@
         <Parameter Name="to" Type="System.Nullable&lt;System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This  constructor initializes a new instance of the <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> class with a Range header containing a specified byte range.</para>
+          <para>An example of a Range header with a byte range in an HTTP protocol request that requests the first 100 bytes would be would be the following: </para>
+          <para>Range: bytes=0-99\r\n\r\n</para>
+          <para>For this example, the <paramref name="from" /> parameter would be specified as 0 and the <paramref name="to" /> parameter would be specified as 99. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> class with a byte range.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to start sending data.</param>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to stop sending data.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -63,10 +92,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -81,9 +118,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code is a numeric value that is used to identify an object during equality testing. It can also serve as an index for an object in a collection.</para>
+          <para>The <see cref="M:System.Net.Http.Headers.RangeHeaderValue.GetHashCode" />  method is suitable for use in hashing algorithms and data structures such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for an <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Int32" />.</para>
+          <para>A hash code for the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -100,10 +148,18 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string to an <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.Http.Headers.RangeHeaderValue" />.</para>
+          <para>An <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> instance.</para>
+        </returns>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents range header value information.</param>
       </Docs>
     </Member>
     <Member MemberName="Ranges">
@@ -117,9 +173,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.Net.Http.Headers.RangeItemHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ranges specified from the <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -134,9 +193,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new object that is a copy of the current <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Object" />.</para>
+          <para>A copy of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -151,9 +217,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParse">
@@ -189,9 +262,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unit from the <see cref="T:System.Net.Http.Headers.RangeHeaderValue" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

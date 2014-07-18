@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPostBackDataHandler" FullName="System.Web.UI.IPostBackDataHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IPostBackDataHandler" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You must implement the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface when creating a server control that needs to examine form data that is posted back to the server by the client. The contract that this interface defines allows a server control to determine whether its state should be altered as a result of the postback, and to raise the appropriate events. For more information, see <format type="text/html"><a href="765bfc89-33ee-4d0d-bbe6-3b172c06def9">Server Event Handling in ASP.NET Web Pages</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that ASP.NET server controls must implement to automatically load postback data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="LoadPostData">
@@ -25,11 +32,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">a <see cref="T:System.String" /></param>
-        <param name="postCollection">a <see cref="T:System.Collections.Specialized.NameValueCollection" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ASP.NET page framework tracks all the server controls that return true to this method call, and then invokes the <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method on those controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, processes postback data for an ASP.NET server control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,8 +62,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method raises any change events for the server control that implements the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, signals the server control to notify the ASP.NET application that the state of the control has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

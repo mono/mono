@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Padding" FullName="System.Windows.Forms.Padding">
   <TypeSignature Language="C#" Value="public struct Padding" />
   <AssemblyInfo>
@@ -9,9 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Padding" /> structure represents the padding or margin associated with a rectangular UI element such as a control. The padding is the internal space between the body of the UI element and its edge. In contrast, a margin is the distance separating the adjoining edges of two adjacent UI elements. Because of structural similarities, <see cref="T:System.Windows.Forms.Padding" /> is used to represent both padding and margins.</para>
+      <para>For a diagram that illustrates the <see cref="P:System.Windows.Forms.Control.Padding" /> and <see cref="P:System.Windows.Forms.Control.Margin" /> properties on a control, see <format type="text/html"><a href="3781b5a1-3085-4072-bed0-44670c23ffdc">Margin and Padding in Windows Forms Controls</a></format>.</para>
+      <para>Padding has a different effect on controls that are containers than on controls that are not. For example, in a <see cref="T:System.Windows.Forms.Panel" /> control, the <see cref="T:System.Windows.Forms.Padding" /> property defines the spacing between the border of the <see cref="T:System.Windows.Forms.Panel" /> and its child controls. For a <see cref="T:System.Windows.Forms.Button" /> control, the <see cref="T:System.Windows.Forms.Padding" /> property defines the spacing between the border of the <see cref="T:System.Windows.Forms.Button" /> control and its contained text.</para>
+      <para>In addition to typical methods and properties, <see cref="T:System.Windows.Forms.Padding" /> also defines the following type-level members:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="F:System.Windows.Forms.Padding.Empty" /> field, which represents a predefined <see cref="T:System.Windows.Forms.Padding" /> with no padding.</para>
+        </item>
+        <item>
+          <para>A set of operators for performing common arithmetic operations for the class, such as adding two <see cref="T:System.Windows.Forms.Padding" /> objects together. For languages that do not support operator overloading, you can invoke these members by using alternative method syntax.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Windows.Forms.Padding.Horizontal" />, <see cref="P:System.Windows.Forms.Padding.Vertical" />, and <see cref="P:System.Windows.Forms.Padding.Size" /> properties, which provide combined values that are convenient for use in custom layout calculations.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents padding or margin information associated with a user interface (UI) element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +42,17 @@
         <Parameter Name="all" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="all">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Bottom" />, <see cref="P:System.Windows.Forms.Padding.Top" /> and <see cref="P:System.Windows.Forms.Padding.All" /> properties to the value of the <paramref name="all" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Padding" /> class using the supplied padding size for all edges.</para>
+        </summary>
+        <param name="all">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of pixels to be used for padding for all edges.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,13 +68,23 @@
         <Parameter Name="bottom" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="top">To be added.</param>
-        <param name="right">To be added.</param>
-        <param name="bottom">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If all of the parameter values are equal, then the <see cref="P:System.Windows.Forms.Padding.All" /> property will reflect this common value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Padding" /> class using a separate padding size for each edge.</para>
+        </summary>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The padding size, in pixels, for the left edge.</param>
+        <param name="top">
+          <attribution license="cc4" from="Microsoft" modified="false" />The padding size, in pixels, for the top edge.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The padding size, in pixels, for the right edge.</param>
+        <param name="bottom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The padding size, in pixels, for the bottom edge.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,12 +101,20 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the sum of the two specified <see cref="T:System.Windows.Forms.Padding" /> values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Padding" /> that contains the sum of the two specified <see cref="T:System.Windows.Forms.Padding" /> values.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,10 +132,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When retrieving this property, if all the edges use the same padding value, then this common value is returned. Otherwise, -1 is returned to indicate that all the padding values are not equal.</para>
+          <para>Setting this value changes the <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Bottom" />, and <see cref="P:System.Windows.Forms.Padding.Top" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding value for all the edges.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,10 +160,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this value can also alter the <see cref="P:System.Windows.Forms.Padding.All" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding value for the bottom edge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,9 +182,16 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty padding object is defined as having the <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Bottom" /> and <see cref="P:System.Windows.Forms.Padding.Top" /> padding properties set to 0.</para>
+          <para>This immutable field is useful for comparison operations and initializations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a <see cref="T:System.Windows.Forms.Padding" /> object with no padding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,11 +207,21 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only other objects of type <see cref="T:System.Windows.Forms.Padding" /> (or a derived type) can be equal to the current <see cref="T:System.Windows.Forms.Padding" />. In addition, the corresponding <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Bottom" /> and <see cref="P:System.Windows.Forms.Padding.Top" /> properties for both <see cref="T:System.Windows.Forms.Padding" /> objects must be the same.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the value of the specified object is equivalent to the current <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.Padding" /> objects are equivalent; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.Windows.Forms.Padding" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -159,10 +235,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Padding.GetHashCode" /> method uses the <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Top" />, and <see cref="P:System.Windows.Forms.Padding.Bottom" /> values to generate a 32-bit hash code that represents the current <see cref="T:System.Windows.Forms.Padding" />.</para>
+          <para>A hash code is a number that corresponds to the value of an object (so two objects that have the same value should generate the same hash code). Hash codes are used to sort and store collections of objects. For example, a <see cref="T:System.Collections.Hashtable" /> represents a collection of key-and-value pairs that are organized based on the hash code of the key.</para>
+          <para>For more information on hash codes and hash functions, see the <see cref="M:System.Object.GetHashCode" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a hash code for the current <see cref="T:System.Windows.Forms.Padding" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -180,10 +267,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is convenient for use in many layout calculations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the combined padding for the right and left edges.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -201,10 +294,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this value can also alter the <see cref="P:System.Windows.Forms.Padding.All" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding value for the left edge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,12 +320,24 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A vector addition operation is the result of adding the padding values for each edge. For example, the <see cref="P:System.Windows.Forms.Padding.Left" /> property of the result is the sum of the <see cref="P:System.Windows.Forms.Padding.Left" /> properties of the two operands.</para>
+          <para>This operation is transitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs vector addition on the two specified <see cref="T:System.Windows.Forms.Padding" /> objects, resulting in a new <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.Padding" /> that results from adding <paramref name="p1" /> and <paramref name="p2" />.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Windows.Forms.Padding" /> to add.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Windows.Forms.Padding" /> to add.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -243,12 +354,23 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Windows.Forms.Padding" /> objects are equal if the padding values for each of the four edges – <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Right" />, <see cref="P:System.Windows.Forms.Padding.Top" />, and <see cref="P:System.Windows.Forms.Padding.Bottom" /> – are the same for both objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two specified <see cref="T:System.Windows.Forms.Padding" /> objects are equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Windows.Forms.Padding" /> objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -265,12 +387,23 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation is the inverse of <see cref="M:System.Windows.Forms.Padding.op_Equality(System.Windows.Forms.Padding,System.Windows.Forms.Padding)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two specified <see cref="T:System.Windows.Forms.Padding" /> objects are not equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Windows.Forms.Padding" /> objects are different; otherwise, false.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -287,12 +420,23 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A vector subtraction operation is the result of subtracting the padding values for each edge. For example, the <see cref="P:System.Windows.Forms.Padding.Left" /> property of the result is the difference between the <see cref="P:System.Windows.Forms.Padding.Left" /> properties of two operands.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs vector subtraction on the two specified <see cref="T:System.Windows.Forms.Padding" /> objects, resulting in a new <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Padding" /> result of subtracting <paramref name="p2" /> from <paramref name="p1" />.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Padding" /> to subtract from (the minuend).</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Padding" /> to subtract from (the subtrahend).</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -310,10 +454,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this value can also alter the <see cref="P:System.Windows.Forms.Padding.All" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding value for the right edge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -331,10 +481,18 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Padding.Size" /> property performs a type conversion from <see cref="T:System.Windows.Forms.Padding" /> to <see cref="T:System.Drawing.Size" />. The <see cref="P:System.Windows.Forms.Padding.Horizontal" /> property corresponds to the <see cref="P:System.Drawing.Size.Width" /> property, and the <see cref="P:System.Windows.Forms.Padding.Vertical" /> property corresponds to the <see cref="P:System.Drawing.Size.Height" /> property.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.Padding.Size" /> is convenient for use in many layout calculations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the padding information in the form of a <see cref="T:System.Drawing.Size" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -351,12 +509,20 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtracts one specified <see cref="T:System.Windows.Forms.Padding" /> value from another.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Padding" /> that contains the result of the subtraction of one specified <see cref="T:System.Windows.Forms.Padding" /> value from another.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -374,10 +540,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this value can also alter the <see cref="P:System.Windows.Forms.Padding.All" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding value for the top edge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -391,10 +563,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a string containing the labeled values of the padding for all four edges.</para>
+          <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -412,10 +594,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is convenient for use in many layout calculations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the combined padding for the top and bottom edges.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -55,7 +55,12 @@
       <scopes />
     </method>
     <method token="0x6000009">
-      <sequencepoints />
+      <sequencepoints>
+        <entry il="0x21" row="15" col="2" file_ref="1" hidden="false" />
+        <entry il="0x22" row="16" col="3" file_ref="1" hidden="false" />
+        <entry il="0x29" row="16" col="21" file_ref="1" hidden="false" />
+        <entry il="0x47" row="17" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
       <locals />
       <scopes />
     </method>
@@ -65,12 +70,7 @@
       <scopes />
     </method>
     <method token="0x600000b">
-      <sequencepoints>
-        <entry il="0x21" row="15" col="2" file_ref="1" hidden="false" />
-        <entry il="0x22" row="16" col="3" file_ref="1" hidden="false" />
-        <entry il="0x29" row="16" col="21" file_ref="1" hidden="false" />
-        <entry il="0x47" row="17" col="2" file_ref="1" hidden="false" />
-      </sequencepoints>
+      <sequencepoints />
       <locals />
       <scopes />
     </method>

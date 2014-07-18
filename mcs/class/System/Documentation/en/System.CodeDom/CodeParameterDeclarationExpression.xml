@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeParameterDeclarationExpression" FullName="System.CodeDom.CodeParameterDeclarationExpression">
   <TypeSignature Language="C#" Value="public class CodeParameterDeclarationExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeParameterDeclarationExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeParameterDeclarationExpression" /> can be used to represent code that declares a parameter for a method, property, or constructor.</para>
+      <para>The <see cref="P:System.CodeDom.CodeParameterDeclarationExpression.Name" /> property specifies the name of the parameter. The <see cref="P:System.CodeDom.CodeParameterDeclarationExpression.Type" /> property specifies the data type of the parameter. The <see cref="P:System.CodeDom.CodeParameterDeclarationExpression.Direction" /> property specifies the direction modifier of the parameter. The <see cref="P:System.CodeDom.CodeParameterDeclarationExpression.CustomAttributes" /> property specifies the attributes associated with the parameter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter declaration for a method, property, or constructor.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeParameterDeclarationExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +70,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'CodeTypeReference'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeParameterDeclarationExpression" /> class using the specified parameter type and name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that indicates the type of the parameter to declare. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to declare. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -79,10 +96,22 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'string'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="type" /> parameter references a generic type, it must follow the syntax conventions for generic types. Generic types are formatted as follows: the name of the type, followed by a grave accent ("`"), followed by a count of the generic type arguments, followed by the parameters delimited with brackets.</para>
+          <block subset="none" type="note">
+            <para>You must use square brackets ([]) and not the C# angle brackets (&lt;&gt;) to delimit generic parameters. </para>
+          </block>
+          <para>To avoid the possibility of making a syntactic mistake, consider using the <see cref="M:System.CodeDom.CodeParameterDeclarationExpression.#ctor(System.Type,System.String)" /> constructor that takes a type instead of a string as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeParameterDeclarationExpression" /> class using the specified parameter type and name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the parameter to declare. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to declare. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -100,10 +129,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeParameterDeclarationExpression" /> class using the specified parameter type and name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the parameter to declare. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to declare. </param>
       </Docs>
     </Member>
     <Member MemberName="CustomAttributes">
@@ -121,9 +155,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeAttributeDeclarationCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom attributes for the parameter declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -141,9 +178,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FieldDirection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the direction of the field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -161,9 +201,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -181,9 +224,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the parameter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

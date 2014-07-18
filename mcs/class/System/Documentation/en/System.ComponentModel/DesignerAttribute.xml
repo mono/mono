@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerAttribute" FullName="System.ComponentModel.DesignerAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DesignerAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DesignerAttribute extends System.Attribute" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+      <para>Use the <see cref="P:System.ComponentModel.DesignerAttribute.DesignerBaseTypeName" /> property to find the designer's base type. Use the <see cref="P:System.ComponentModel.DesignerAttribute.DesignerTypeName" /> property to get the name of the type of designer associated with this member.</para>
+      <para>For more information, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the class used to implement design-time services for a component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +47,16 @@
         <Parameter Name="designerTypeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerTypeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerAttribute" /> class using the name of the type that provides design-time services.</para>
+        </summary>
+        <param name="designerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The concatenation of the fully qualified name of the type that provides design-time services for the component this attribute is bound to, and the name of the assembly this type resides in. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +73,16 @@
         <Parameter Name="designerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="designerType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerAttribute" /> class using the type that provides design-time services.</para>
+        </summary>
+        <param name="designerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the class that provides design-time services for the component this attribute is bound to. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,10 +100,19 @@
         <Parameter Name="designerBaseTypeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerTypeName">To be added: an object of type 'string'</param>
-        <param name="designerBaseTypeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+          <para>The <paramref name="designerBaseTypeName" /> parameter allows you to attach more than one type of designer for a given class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerAttribute" /> class using the designer type and the base class for the designer.</para>
+        </summary>
+        <param name="designerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The concatenation of the fully qualified name of the type that provides design-time services for the component this attribute is bound to, and the name of the assembly this type resides in. </param>
+        <param name="designerBaseTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the base class to associate with the designer class. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -98,10 +130,19 @@
         <Parameter Name="designerBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="designerTypeName">To be added: an object of type 'string'</param>
-        <param name="designerBaseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+          <para>The <paramref name="designerBaseType" /> parameter allows you to attach more than one type of designer for a given class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerAttribute" /> class, using the name of the designer class and the base class for the designer.</para>
+        </summary>
+        <param name="designerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The concatenation of the fully qualified name of the type that provides design-time services for the component this attribute is bound to, and the name of the assembly this type resides in. </param>
+        <param name="designerBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base class to associate with the <paramref name="designerTypeName" />. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -119,10 +160,19 @@
         <Parameter Name="designerBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="designerType">To be added: an object of type 'Type'</param>
-        <param name="designerBaseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class you use for the design-time services must implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+          <para>The <paramref name="designerBaseType" /> parameter allows you to attach more than one type of designer for a given class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerAttribute" /> class using the types of the designer and designer base class.</para>
+        </summary>
+        <param name="designerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the class that provides design-time services for the component this attribute is bound to. </param>
+        <param name="designerBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base class to associate with the <paramref name="designerType" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DesignerBaseTypeName">
@@ -138,9 +188,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the base type of this designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignerTypeName">
@@ -156,9 +209,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the designer type associated with this designer attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -177,10 +233,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the value of the given object is equal to the current <see cref="T:System.ComponentModel.DesignerAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the given object is equal to that of the current; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test the value equality of. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -215,9 +278,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is used by filtering algorithms to identify two attributes that are the same type. For most attributes, this just returns the <see cref="T:System.Type" /> instance for the attribute. <see cref="T:System.ComponentModel.DesignerAttribute" /> overrides this to include the type of the designer base type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique ID for this attribute type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

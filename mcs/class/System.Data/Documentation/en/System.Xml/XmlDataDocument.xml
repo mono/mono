@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDataDocument" FullName="System.Xml.XmlDataDocument">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class XmlDataDocument : System.Xml.XmlDocument" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class extends <see cref="T:System.Xml.XmlDocument" />. It enables you to load either relational data or XML data and manipulate that data using the World Wide Web Consortium (W3C) Document Object Model (DOM). The DOM presents data as a hierarchy of node objects. Because XmlDataDocument implements the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface, it can also be used as the source document for the <see cref="T:System.Xml.Xsl.XslTransform" /> class.</para>
+      <para>XmlDataDocument has a close affiliation with the DataSet class, which provides a relational view of the loaded XML data. Any changes made to the XmlDataDocument are reflected in the DataSet and vice versa.</para>
+      <para>To load a DataSet with XML data, use <see cref="M:System.Data.DataSet.ReadXmlSchema(System.Xml.XmlReader)" /> to build a relational mapping. The XML data can then be loaded using <see cref="M:System.Xml.XmlDataDocument.Load(System.String)" /> or <see cref="M:System.Xml.XmlDocument.LoadXml(System.String)" />.</para>
+      <para>To load relational data, specify the DataSet containing the relational data as the parameter in the <see cref="M:System.Xml.XmlDataDocument.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows structured data to be stored, retrieved, and manipulated through a relational <see cref="T:System.Data.DataSet" />. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +34,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Data.DataSet" /> is created and associated with the XmlDataDocument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlDataDocument" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +56,16 @@
         <Parameter Name="dataset" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <param name="dataset">To be added: an object of type 'Data.DataSet'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlDataDocument is synchronized with the specified DataSet. Any data in the DataSet is immediately available through the XmlDataDocument. Any changes in the DataSet are propagated in the XmlDataDocument. Any changes made in the XmlDataDocument, provided they match the DataSet schema, are propagated in the DataSet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlDataDocument" /> class with the specified <see cref="T:System.Data.DataSet" />.</para>
+        </summary>
+        <param name="dataset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The DataSet to load into XmlDataDocument. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,10 +82,23 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deep">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlNode'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cloning the XmlDataDocument also clones the <see cref="T:System.Data.DataSet" /> schema.</para>
+          <para>If <paramref name="deep" /> is set to false, the cloned DataSet has no data; that is, no rows.</para>
+          <para>If <paramref name="deep" /> is set to true, the cloned DataSet is set with the schema and then populated with the data.</para>
+          <para>See <see cref="M:System.Xml.XmlNode.CloneNode(System.Boolean)" /> in the XmlNode class to see a table describing how this method behaves with each of the different node types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
+        <param name="deep">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,12 +117,32 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlElement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note to Inheritors If you overload this function, it cannot be used for extensibility. Instead, you can return an element created by the base class, in this case, XmlDataDocument. See the following example.</para>
+          <code> class MyXmlDataDocument : XmlDataDocument {
+  public override XmlElement CreateElement(string prefix, string localName, string nsURI) {
+    //Ensure we are returning the base class implementation of element.
+    XmlElement e = base.CreateElement(prefix, localName, nsURI);
+    //Add additional code here.
+    return e;    //Return the element created by XmlDataDocument.
+  }    
+ }</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an element with the specified <see cref="P:System.Xml.XmlNode.Prefix" />, <see cref="P:System.Xml.XmlDocument.LocalName" /> , and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XmlElement" />.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the new element. If String.Empty or null, there is no prefix. </param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the new element. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace Uniform Resource Identifier (URI) of the new element. If String.Empty or null, there is no namespaceURI. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,10 +159,21 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlEntityReference'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Xml.XmlEntityReference" /> nodes cannot be created for <see cref="T:System.Xml.XmlDataDocument" /> objects. Calling this method throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XmlEntityReference" /> with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlEntityReference" /> with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the entity reference.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,10 +190,20 @@
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added: an object of type 'XmlNode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XPath.XPathNavigator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XPathNavigator provides read-only, random access to data. Because it is optimized for XSLT transformations, it provides performance benefits when used as an input mechanism to the <see cref="M:System.Xml.Xsl.XslTransform.Transform(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.XsltArgumentList,System.Xml.XmlResolver)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this document. The XPathNavigator is positioned on the node specified in the <paramref name="node" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XPathNavigator used to navigate the document.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> you want the navigator initially positioned on. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +217,15 @@
         <ReturnType>System.Data.DataSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DataSet'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DataSet enables you to access the data in the XmlDataDocument using a relational model. This means that you can handle the data as tables and views, rows and columns, relations, and so on. Changes made in the DataSet are immediately visible in the XmlDataDocument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Data.DataSet" /> that provides a relational representation of the data in the XmlDataDocument.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,10 +242,20 @@
         <Parameter Name="elemId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="elemId">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlElement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported by the <see cref="T:System.Xml.XmlDataDocument" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlElement" /> with the specified ID. This method is not supported by the <see cref="T:System.Xml.XmlDataDocument" /> class. Calling this method throws an exception.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> with the specified ID.</para>
+        </returns>
+        <param name="elemId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute ID to match.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -179,10 +272,17 @@
         <Parameter Name="r" Type="System.Data.DataRow" />
       </Parameters>
       <Docs>
-        <param name="r">To be added: an object of type 'Data.DataRow'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Xml.XmlElement" /> associated with the specified <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlElement containing a representation of the specified DataRow.</para>
+        </returns>
+        <param name="r">
+          <attribution license="cc4" from="Microsoft" modified="false" />The DataRow whose associated XmlElement you want to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,10 +299,17 @@
         <Parameter Name="e" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'XmlElement'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.DataRow'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Data.DataRow" /> associated with the specified <see cref="T:System.Xml.XmlElement" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DataRow containing a representation of the XmlElement; null if there is no DataRow associated with the XmlElement.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlElement whose associated DataRow you want to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -219,9 +326,19 @@
         <Parameter Name="inStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="inStream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlDataDocument does not support creating entity references. If the data includes entity references, the Load method resolves and expands any entity references.</para>
+          <block subset="none" type="note">
+            <para>In order to view the XML data relationally, you must first specify a schema to use for data mapping. This can be done either by calling the <see cref="M:System.Data.DataSet.ReadXmlSchema(System.Xml.XmlReader)" /> method or by creating the tables and columns within the DataSet manually. This step must be done before calling Load.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the XmlDataDocument from the specified stream.</para>
+        </summary>
+        <param name="inStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML document to load. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,9 +355,19 @@
         <Parameter Name="txtReader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="txtReader">To be added: an object of type 'IO.TextReader'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlDataDocument does not support creating entity references. If the data includes entity references, the Load method resolves and expands any entity references.</para>
+          <block subset="none" type="note">
+            <para>In order to view the XML data relationally, you must first specify a schema to use for data mapping. This can be done either by calling the <see cref="M:System.Data.DataSet.ReadXmlSchema(System.Xml.XmlReader)" /> method or by creating the tables and columns within the DataSet manually. This step must be done before calling Load.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the XmlDataDocument from the specified <see cref="T:System.IO.TextReader" />.</para>
+        </summary>
+        <param name="txtReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader used to feed the XML data into the document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,9 +384,19 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlDataDocument does not support creating entity references. If the data includes entity references, the Load method resolves and expands any entity references.</para>
+          <block subset="none" type="note">
+            <para>In order to view the XML data relationally, you must first specify a schema to use for data mapping. This can be done either by calling the <see cref="M:System.Data.DataSet.ReadXmlSchema(System.Xml.XmlReader)" /> method or by creating the tables and columns within the DataSet manually. This step must be done before calling Load.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the XmlDataDocument using the specified URL.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the file containing the XML document to load. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,9 +413,26 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added: an object of type 'XmlReader'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlDataDocument does not support creating entity references. If the data source contains entity references, you must create an <see cref="T:System.Xml.XmlValidatingReader" /> with the <see cref="P:System.Xml.XmlValidatingReader.EntityHandling" /> property set to EntityHandling.ExpandEntities (this is the default behavior) and pass the XmlValidatingReader to the Load method. If you do not use an XmlValidatingReader, the Load method throws an exception.</para>
+          <para>The Load method always preserves significant white space. The <see cref="P:System.Xml.XmlDocument.PreserveWhitespace" /> property determines whether or not white space is preserved. The default is false, white space is not preserved.</para>
+          <para>If the reader is in the initial state (that is, ReadState=ReadState.Initial), Load consumes the entire contents of the reader and builds the DOM from what it finds.</para>
+          <para>If the reader is already positioned on some node at depth "n", then this method loads that node and all subsequent siblings up to the end tag that closes depth "n". This has the following results.</para>
+          <para>If the current node and its following siblings look similar to the following: </para>
+          <code>&lt;!--comment--&gt;&lt;element1&gt;one&lt;/element1&gt;&lt;element2&gt;two&lt;/element2&gt;</code>
+          <para>Load throws an exception, because a document cannot have two root-level elements. If the current node and its following siblings look similar to the following: </para>
+          <code>&lt;!--comment--&gt;&lt;?process
+    instruction?&gt;&lt;!--comment--&gt;&lt;/endtag&gt;</code>
+          <para>Load will succeed; however, you will have an incomplete DOM tree, because there is no root-level element. You have to add a root-level element before you save the document; otherwise, the <see cref="M:System.Xml.XmlDocument.Save(System.String)" /> method throws an exception.</para>
+          <para>If the reader is positioned on a leaf node that is invalid for the root level of a document (for example, a white space or attribute node), the reader continues to read until it is positioned on a node that can be used for the root. The document begins loading at this point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the XmlDataDocument from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlReader containing the XML document to load.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

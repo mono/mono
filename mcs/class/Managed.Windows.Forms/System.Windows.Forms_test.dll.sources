@@ -63,6 +63,7 @@ System.Windows.Forms/DataGridViewLinkCellTest.cs
 System.Windows.Forms/DataGridViewImageCellTest.cs
 System.Windows.Forms/DataGridViewRowCollectionTest.cs
 System.Windows.Forms/DataGridViewRowHeaderTest.cs
+System.Windows.Forms/DataGridViewRowHeightInfoNeededEventArgsTests.cs
 System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
 System.Windows.Forms/DataGridViewTextBoxCellTest.cs
@@ -130,6 +131,7 @@ System.Windows.Forms/RichTextBoxTest.cs
 System.Windows.Forms/SaveFileDialogTest.cs
 System.Windows.Forms/ScrollableControlTest.cs
 System.Windows.Forms/ScrollBarTest.cs
+System.Windows.Forms/ScreenTest.cs
 System.Windows.Forms/SelectionRangeTest.cs
 System.Windows.Forms/SendKeysTest.cs
 System.Windows.Forms/SplitterTest.cs

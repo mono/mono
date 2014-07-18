@@ -865,29 +865,29 @@ namespace System.Net
 			return EndGetRequestStream (asyncResult);
 		}
 
-		WebAsyncResult CheckIfForceWrite (AsyncCallback callback, object state)
+		bool CheckIfForceWrite (SimpleAsyncResult result)
 		{
 			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
-				return null;
-#if NET_4_0
+				return false;
+			#if NET_4_0
 			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength < 0)
-				return null;
+				return false;
 
 			if (contentLength < 0 && writeStream.WriteBufferLength >= 0)
 				InternalContentLength = writeStream.WriteBufferLength;
-#else
+			#else
 			if (contentLength < 0 && writeStream.CanWrite == true)
-				return null;
-#endif
+				return false;
+			#endif
 
 			// This will write the POST/PUT if the write stream already has the expected
 			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream
 			// contains data and it has been closed already (xamarin bug #1512).
 
 			if (writeStream.WriteBufferLength == contentLength || (contentLength == -1 && writeStream.CanWrite == false))
-				return writeStream.WriteRequestAsync (callback, state);
+				return writeStream.WriteRequestAsync (result);
 
-			return null;
+			return false;
 		}
 
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
@@ -914,59 +914,41 @@ namespace System.Net
 			WebAsyncResult aread = asyncRead;
 			initialMethod = method;
 
-			aread.InnerAsyncResult = CheckIfForceWrite (GetResponseAsyncCB, aread);
-			if (aread.InnerAsyncResult == null)
-				GetResponseAsyncCB2 (aread);
-			else
-				Monitor.Exit (locker);
-			return aread;
-		}
+			SimpleAsyncResult.RunWithLock (locker, CheckIfForceWrite, inner => {
+				var synch = inner.CompletedSynchronously;
 
-		void GetResponseAsyncCB (IAsyncResult ar)
-		{
-			var result = (WebAsyncResult)ar;
-			var innerResult = (WebAsyncResult)result.InnerAsyncResult;
-			result.InnerAsyncResult = null;
-
-			if (innerResult != null && innerResult.GotException) {
-				asyncRead.SetCompleted (true, innerResult.Exception);
-				asyncRead.DoCallback ();
-				return;
-			}
-
-			Monitor.Enter (locker);
-			GetResponseAsyncCB2 ((WebAsyncResult)ar);
-		}
-
-		void GetResponseAsyncCB2 (WebAsyncResult aread)
-		{
-			if (haveResponse) {
-				Exception saved = saved_exc;
-				if (webResponse != null) {
-					Monitor.Exit (locker);
-					if (saved == null) {
-						aread.SetCompleted (true, webResponse);
-					} else {
-						aread.SetCompleted (true, saved);
-					}
-					aread.DoCallback ();
-					return;
-				} else if (saved != null) {
-					Monitor.Exit (locker);
-					aread.SetCompleted (true, saved);
+				if (inner.GotException) {
+					aread.SetCompleted (synch, inner.Exception);
 					aread.DoCallback ();
 					return;
 				}
-			}
 
-			if (!requestSent) {
-				requestSent = true;
-				redirects = 0;
-				servicePoint = GetServicePoint ();
-				abortHandler = servicePoint.SendRequest (this, connectionGroup);
-			}
+				if (haveResponse) {
+					Exception saved = saved_exc;
+					if (webResponse != null) {
+						if (saved == null) {
+							aread.SetCompleted (synch, webResponse);
+						} else {
+							aread.SetCompleted (synch, saved);
+						}
+						aread.DoCallback ();
+						return;
+					} else if (saved != null) {
+						aread.SetCompleted (synch, saved);
+						aread.DoCallback ();
+						return;
+					}
+				}
 
-			Monitor.Exit (locker);
+				if (!requestSent) {
+					requestSent = true;
+					redirects = 0;
+					servicePoint = GetServicePoint ();
+					abortHandler = servicePoint.SendRequest (this, connectionGroup);
+				}
+			});
+
+			return aread;
 		}
 
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
@@ -1323,69 +1305,58 @@ namespace System.Net
 				writeStream.SendChunked = false;
 			}
 
-			try {
-				var result = writeStream.SetHeadersAsync (false, SetWriteStreamCB, null);
-				if (result == null)
-					SetWriteStreamCB (null);
-			} catch (Exception exc) {
-				SetWriteStreamErrorCB (exc);
-			}
+			writeStream.SetHeadersAsync (false, result => {
+				if (result.GotException) {
+					SetWriteStreamError (result.Exception);
+					return;
+				}
+
+				haveRequest = true;
+
+				SetWriteStreamInner (inner => {
+					if (inner.GotException) {
+						SetWriteStreamError (inner.Exception);
+						return;
+					}
+
+					if (asyncWrite != null) {
+						asyncWrite.SetCompleted (inner.CompletedSynchronously, writeStream);
+						asyncWrite.DoCallback ();
+						asyncWrite = null;
+					}
+				});
+			});
 		}
 
-		void SetWriteStreamErrorCB (Exception exc)
+		void SetWriteStreamInner (SimpleAsyncCallback callback)
+		{
+			SimpleAsyncResult.Run (result => {
+				if (bodyBuffer != null) {
+					// The body has been written and buffered. The request "user"
+					// won't write it again, so we must do it.
+					if (auth_state.NtlmAuthState != NtlmAuthState.Challenge && proxy_auth_state.NtlmAuthState != NtlmAuthState.Challenge) {
+						// FIXME: this is a blocking call on the thread pool that could lead to thread pool exhaustion
+						writeStream.Write (bodyBuffer, 0, bodyBufferLength);
+						bodyBuffer = null;
+						writeStream.Close ();
+					}
+				} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
+				          method != "TRACE") {
+					if (getResponseCalled && !writeStream.RequestWritten)
+						return writeStream.WriteRequestAsync (result);
+				}
+
+				return false;
+			}, callback);
+		}
+
+		void SetWriteStreamError (Exception exc)
 		{
 			WebException wexc = exc as WebException;
 			if (wexc != null)
 				SetWriteStreamError (wexc.Status, wexc);
 			else
 				SetWriteStreamError (WebExceptionStatus.SendFailure, exc);
-		}
-
-		void SetWriteStreamCB (IAsyncResult ar)
-		{
-			WebAsyncResult result = ar as WebAsyncResult;
-
-			if (result != null && result.Exception != null) {
-				SetWriteStreamErrorCB (result.Exception);
-				return;
-			}
-		
-			haveRequest = true;
-
-			WebAsyncResult writeRequestResult = null;
-
-			if (bodyBuffer != null) {
-				// The body has been written and buffered. The request "user"
-				// won't write it again, so we must do it.
-				if (auth_state.NtlmAuthState != NtlmAuthState.Challenge && proxy_auth_state.NtlmAuthState != NtlmAuthState.Challenge) {
-					// FIXME: this is a blocking call on the thread pool that could lead to thread pool exhaustion
-					writeStream.Write (bodyBuffer, 0, bodyBufferLength);
-					bodyBuffer = null;
-					writeStream.Close ();
-				}
-			} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
-					method != "TRACE") {
-				if (getResponseCalled && !writeStream.RequestWritten)
-					writeRequestResult = writeStream.WriteRequestAsync (SetWriteStreamCB2, null);
-			}
-
-			if (writeRequestResult == null)
-				SetWriteStreamCB2 (null);
-		}
-
-		void SetWriteStreamCB2 (IAsyncResult ar)
-		{
-			var result = (WebAsyncResult)ar;
-			if (result != null && result.GotException) {
-				SetWriteStreamErrorCB (result.Exception);
-				return;
-			}
-
-			if (asyncWrite != null) {
-				asyncWrite.SetCompleted (false, writeStream);
-				asyncWrite.DoCallback ();
-				asyncWrite = null;
-			}
 		}
 
 		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)

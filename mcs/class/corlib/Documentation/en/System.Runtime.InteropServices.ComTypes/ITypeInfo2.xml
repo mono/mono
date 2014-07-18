@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeInfo2" FullName="System.Runtime.InteropServices.ComTypes.ITypeInfo2">
   <TypeSignature Language="C#" Value="public interface ITypeInfo2 : System.Runtime.InteropServices.ComTypes.ITypeInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeInfo2 implements class System.Runtime.InteropServices.ComTypes.ITypeInfo" />
@@ -20,9 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the ITypeInfo2 interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddressOfMember">
@@ -88,10 +95,57 @@
         <Parameter Name="pCustData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pCustData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo2::GetAllCustData, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all custom data items for the library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="pCustData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA, which holds all custom data items. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAllFuncCustData">
@@ -110,11 +164,59 @@
         <Parameter Name="pCustData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="pCustData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo2::GetAllFuncCustData, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all custom data from the specified function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the function to get the custom data for. </param>
+        <param name="pCustData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA, which holds all custom data items. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAllImplTypeCustData">
@@ -133,11 +235,59 @@
         <Parameter Name="pCustData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="pCustData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo2::GetAllImplTypeCustData, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all custom data for the specified implementation type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the implementation type for the custom data. </param>
+        <param name="pCustData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA which holds all custom data items. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAllParamCustData">
@@ -157,12 +307,61 @@
         <Parameter Name="pCustData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="indexFunc">To be added.</param>
-        <param name="indexParam">To be added.</param>
-        <param name="pCustData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo2::GetAllParamCustData, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all of the custom data for the specified function parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="indexFunc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the function to get the custom data for. </param>
+        <param name="indexParam">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the parameter of this function to get the custom data for. </param>
+        <param name="pCustData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA, which holds all custom data items. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAllVarCustData">
@@ -181,11 +380,59 @@
         <Parameter Name="pCustData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="pCustData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo2::GetAllVarCustData, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the variable for the custom data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the variable to get the custom data for. </param>
+        <param name="pCustData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA, which holds all custom data items. </param>
       </Docs>
     </Member>
     <Member MemberName="GetContainingTypeLib">
@@ -252,13 +499,24 @@
         <Parameter Name="pwOrdinal" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="memid">To be added.</param>
-        <param name="invKind">To be added.</param>
-        <param name="pBstrDllName">To be added.</param>
-        <param name="pBstrName">To be added.</param>
-        <param name="pwOrdinal">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::GetDllEntry, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a description or specification of an entry point for a function in a DLL.</para>
+        </summary>
+        <param name="memid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the member function whose DLL entry description is to be returned. </param>
+        <param name="invKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.ComTypes.INVOKEKIND" /> values that specifies the kind of member identified by <paramref name="memid" />. </param>
+        <param name="pBstrDllName">
+          <attribution license="cc4" from="Microsoft" modified="false" />If not null, the function sets <paramref name="pBstrDllName" /> to a BSTR that contains the name of the DLL. </param>
+        <param name="pBstrName">
+          <attribution license="cc4" from="Microsoft" modified="false" />If not null, the function sets <paramref name="lpbstrName" /> to a BSTR that contains the name of the entry point. </param>
+        <param name="pwOrdinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />If not null, and the function is defined by an ordinal, then <paramref name="lpwOrdinal" /> is set to point to the ordinal. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDocumentation">
@@ -410,11 +668,20 @@
         <Parameter Name="pMemId" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="rgszNames">To be added.</param>
-        <param name="cNames">To be added.</param>
-        <param name="pMemId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::GetIDsOfNames, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps between member names and member IDs, and parameter names and parameter IDs.</para>
+        </summary>
+        <param name="rgszNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of names to map. </param>
+        <param name="cNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The count of names to map. </param>
+        <param name="pMemId">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains a reference to an array in which name mappings are placed. This parameter is passed uninitialized.</param>
       </Docs>
     </Member>
     <Member MemberName="GetImplTypeCustData">
@@ -782,9 +1049,16 @@
         <Parameter Name="pFuncDesc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pFuncDesc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseFuncDesc, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a <see cref="T:System.Runtime.InteropServices.FUNCDESC" /> structure previously returned by the <see cref="M:System.Runtime.InteropServices.ComTypes.ITypeInfo.GetFuncDesc(System.Int32,System.IntPtr@)" /> method.</para>
+        </summary>
+        <param name="pFuncDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the FUNCDESC structure to release. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseTypeAttr">
@@ -802,9 +1076,16 @@
         <Parameter Name="pTypeAttr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pTypeAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseTypeAttr, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a <see cref="T:System.Runtime.InteropServices.TYPEATTR" /> structure previously returned by the <see cref="M:System.Runtime.InteropServices.ComTypes.ITypeInfo.GetTypeAttr(System.IntPtr@)" /> method.</para>
+        </summary>
+        <param name="pTypeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the TYPEATTR structure to release. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseVarDesc">
@@ -822,9 +1103,16 @@
         <Parameter Name="pVarDesc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pVarDesc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseVarDesc, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a VARDESC structure previously returned by the <see cref="M:System.Runtime.InteropServices.ComTypes.ITypeInfo.GetVarDesc(System.Int32,System.IntPtr@)" /> method.</para>
+        </summary>
+        <param name="pVarDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the VARDESC structure to release. </param>
       </Docs>
     </Member>
   </Members>

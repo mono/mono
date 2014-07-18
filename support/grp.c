@@ -8,7 +8,9 @@
  */
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <grp.h>
 #include <stdio.h>
 #include <stdlib.h>

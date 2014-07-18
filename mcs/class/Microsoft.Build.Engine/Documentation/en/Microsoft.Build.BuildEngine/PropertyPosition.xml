@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyPosition" FullName="Microsoft.Build.BuildEngine.PropertyPosition">
   <TypeSignature Language="C#" Value="public enum PropertyPosition" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies constants that define the location in the project to insert a property. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="UseExistingOrCreateAfterLastImport">
@@ -20,8 +24,11 @@
         <ReturnType>Microsoft.Build.BuildEngine.PropertyPosition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replace the existing <format type="text/html"><a href="69ab08ab-3e76-41dd-a01b-49aa1d2e0cac">Property</a></format> element if it exists. Otherwise, create the <unmanagedCodeEntityReference>Property</unmanagedCodeEntityReference> after the last <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>Microsoft.Build.BuildEngine.PropertyPosition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replace the existing <format type="text/html"><a href="69ab08ab-3e76-41dd-a01b-49aa1d2e0cac">Property</a></format> element if it exists. Otherwise, if possible, create a new <unmanagedCodeEntityReference>Property</unmanagedCodeEntityReference> element as a child of an existing compatible <format type="text/html"><a href="ff1e6c68-b9a1-4263-a1ce-dc3b829a64d4">PropertyGroup</a></format> element. If necessary, create a new compatible <unmanagedCodeEntityReference>PropertyGroup</unmanagedCodeEntityReference> element immediately following the last <unmanagedCodeEntityReference>PropertyGroup</unmanagedCodeEntityReference> in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -550,13 +550,18 @@ namespace MonoTests.System.Numerics
 		{
 			long[] values = new long [] {
 				0, long.MinValue, long.MaxValue, -1, 1L + int.MaxValue, -1L + int.MinValue, 0x1234, 0xFFFFFFFFL, 0x1FFFFFFFFL, -0xFFFFFFFFL, -0x1FFFFFFFFL,
-				0x100000000L, -0x100000000L, 0x100000001L, -0x100000001L };
+				0x100000000L, -0x100000000L, 0x100000001L, -0x100000001L, 4294967295L, -4294967295L, 4294967296L, -4294967296L };
 			foreach (var val in values) {
-				var a = new BigInteger (val);
-				var b = new BigInteger (a.ToByteArray ());
+				try {
+					var a = new BigInteger (val);
+					var b = new BigInteger (a.ToByteArray ());
 
-				Assert.AreEqual (val, (long)a, "#a_" + val);
-				Assert.AreEqual (val, (long)b, "#b_" + val);
+					Assert.AreEqual (val, (long)a, "#a_" + val);
+					Assert.AreEqual (val, (long)b, "#b_" + val);
+					Assert.AreEqual (a, b, "#a  == #b (" + val + ")");
+				} catch (Exception e) {
+					Assert.Fail ("could not roundtrip {0}", val);
+				}
 			}
 		}
 

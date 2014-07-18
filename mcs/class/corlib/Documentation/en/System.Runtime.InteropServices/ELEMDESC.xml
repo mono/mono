@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ELEMDESC" FullName="System.Runtime.InteropServices.ELEMDESC">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct ELEMDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit ELEMDESC extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about ELEMDESC, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.ELEMDESC" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="desc">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains information about an element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="tdesc">
@@ -55,8 +65,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ELEMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the type of the element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceSelectingEventHandler" FullName="System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void ObjectDataSourceSelectingEventHandler(object sender, ObjectDataSourceSelectingEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create an <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
 </Type>

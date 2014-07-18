@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SchemaReference" FullName="System.Web.Services.Discovery.SchemaReference">
   <TypeSignature Language="C#" Value="public sealed class SchemaReference : System.Web.Services.Discovery.DiscoveryReference" Maintainer="auto" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XML Web services discovery involves discovering the available XML Web services given, a URL. A The URL typically points to a discovery document, which usually has a.disco file name extension. The discovery document contains references to information about the existance of XML Web services. These references can refer to service descriptions, XSD schemas, or other discovery documents. This class represents a reference to an XSD schema.</para>
+      <para>Within a discovery document, a reference to an XSD schema is contained within a schemaRef XML element. The schemaRef XML element has an XML namespace and a ref attribute. The value of the XML namespace must match the <see cref="F:System.Web.Services.Discovery.SchemaReference.Namespace" /> constant. The value of the ref attribute is placed in the <see cref="P:System.Web.Services.Discovery.SchemaReference.Ref" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference in a discovery document to an XML Schema Definition (XSD) language schema. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.SchemaReference" /> class using default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,8 +56,11 @@
       </Parameters>
       <Docs>
         <param name="href">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.SchemaReference" /> class using the supplied URL as the XSD schema reference.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +75,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the default file to use when saving the referenced XSD schema.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,8 +100,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Within a discovery document, a reference to an XSD schema is contained within a schemaRef XML element, which is a part of the XML namespace specified in the <see cref="F:System.Web.Services.Discovery.SchemaReference.Namespace" /> constant.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XML namespace for XSD schema references in discovery documents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,10 +124,18 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads and returns the XSD schema from the passed <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> containing the contents of the referenced XSD schema.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.IO.Stream" /> containing the XSD schema. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +150,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a discovery document, a reference to an XSD schema is contained within a schemaRef XML element. The schemaRef XML element has a ref attribute, which is the URL for the referenced XSD schema. The <see cref="P:System.Web.Services.Discovery.ContractReference.Ref" /> property represents the value of the ref attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to the referenced XSD schema.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,10 +185,18 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="contentType">To be added.</param>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the MIME type is text/xml and the contents of <paramref name="stream" /> are an XSD schema, then the contents of <paramref name="stream" /> are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> properties of <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves whether the referenced document is valid.</para>
+        </summary>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The MIME content type of <paramref name="stream" />. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> containing the referenced document. </param>
       </Docs>
     </Member>
     <Member MemberName="Schema">
@@ -162,9 +207,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Schema.XmlSchema" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSD schema has not been downloaded and added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property of <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" />, an attempt to download and resolve the document is made.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.Schema.XmlSchema" /> object representing the XSD schema.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +235,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the targetNamespace XML attribute of the XSD schema.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,9 +263,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="T:System.Web.Services.Discovery.SchemaReference" /> class, the <see cref="P:System.Web.Services.Discovery.SchemaReference.Url" /> property returns the value of the <see cref="P:System.Web.Services.Discovery.SchemaReference.Ref" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL for the schema reference.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -234,10 +294,15 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="document">a <see cref="T:System.Object" /></param>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the passed XSD schema into the passed <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> to write into <paramref name="stream" />. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> into which the serialized XSD schema is written. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

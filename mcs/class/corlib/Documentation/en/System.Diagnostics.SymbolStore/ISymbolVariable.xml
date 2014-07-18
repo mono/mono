@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolVariable" FullName="System.Diagnostics.SymbolStore.ISymbolVariable">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolVariable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolVariable" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolVariable" /> interface can be a parameter, a local variable, or a field.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the <unmanagedCodeEntityReference>ISymUnmanagedVariable</unmanagedCodeEntityReference> interface, which is one of the unmanaged symbol store interfaces that provide an alternate way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a variable within a symbol store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddressField1">
@@ -33,9 +43,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the use of this property, see the <see cref="T:System.Diagnostics.SymbolStore.SymAddressKind" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first address of a variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressField2">
@@ -51,9 +67,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the use of this property, see the <see cref="T:System.Diagnostics.SymbolStore.SymAddressKind" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the second address of a variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressField3">
@@ -69,9 +91,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the use of this property, see the <see cref="T:System.Diagnostics.SymbolStore.SymAddressKind" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the third address of a variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressKind">
@@ -87,9 +115,12 @@
         <ReturnType>System.Diagnostics.SymbolStore.SymAddressKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SymAddressKind'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Diagnostics.SymbolStore.SymAddressKind" /> value describing the type of the address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -105,9 +136,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes of the variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndOffset">
@@ -123,9 +157,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property only applies to local variables.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the end offset of a variable within the scope of the variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetSignature">
@@ -142,9 +182,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the variable signature.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The variable signature as an opaque blob.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -160,9 +206,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartOffset">
@@ -178,9 +227,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property only applies to the local variable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the start offset of the variable within the scope of the variable.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

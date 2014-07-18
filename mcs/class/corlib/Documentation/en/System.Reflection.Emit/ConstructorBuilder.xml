@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConstructorBuilder" FullName="System.Reflection.Emit.ConstructorBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ConstructorBuilder : System.Reflection.ConstructorInfo, System.Runtime.InteropServices._ConstructorBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ConstructorBuilder extends System.Reflection.ConstructorInfo implements class System.Runtime.InteropServices._ConstructorBuilder" />
@@ -29,8 +30,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> is used to fully describe a constructor in Microsoft intermediate language (MSIL), including the name, attributes, signature, and constructor body. It is used in conjunction with the <see cref="T:System.Reflection.Emit.TypeBuilder" /> class to create classes at run time. Call <see cref="M:System.Reflection.Emit.TypeBuilder.DefineConstructor(System.Reflection.MethodAttributes,System.Reflection.CallingConventions,System.Type[])" /> to get an instance of <see cref="T:System.Reflection.Emit.ConstructorBuilder" />.</para>
+      <para>If you do not define a constructor for your dynamic type, a default constructor is provided automatically, and it calls the default constructor of the base class.</para>
+      <para>If you use <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> to define a constructor for your dynamic type, a default constructor is not provided. You have the following options for providing a default constructor in addition to the constructor you defined:</para>
+      <list type="bullet">
+        <item>
+          <para>If you want a default constructor that simply calls the default constructor of the base class, you can use the <see cref="M:System.Reflection.Emit.TypeBuilder.DefineDefaultConstructor(System.Reflection.MethodAttributes)" /> method to create one (and optionally restrict access to it). Do not provide an implementation for this default constructor. If you do, an exception is thrown when you try to use the constructor. No exception is thrown when the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method is called. </para>
+        </item>
+        <item>
+          <para>If you want a default constructor that does something more than simply calling the default constructor of the base class, or that calls another constructor of the base class, or that does something else entirely, you must use the <see cref="M:System.Reflection.Emit.TypeBuilder.DefineConstructor(System.Reflection.MethodAttributes,System.Reflection.CallingConventions,System.Type[])" /> method to create a <see cref="T:System.Reflection.Emit.ConstructorBuilder" />, and provide your own implementation. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines and represents a constructor of a dynamic class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddDeclarativeSecurity">
@@ -50,10 +68,22 @@
         <Parameter Name="pset" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'Security.Permissions.SecurityAction'</param>
-        <param name="pset">To be added: an object of type 'Security.PermissionSet'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Reflection.Emit.ConstructorBuilder.AddDeclarativeSecurity(System.Security.Permissions.SecurityAction,System.Security.PermissionSet)" /> can be called several times, with each call specifying a security action (such as Demand, Assert, and Deny) and a set of permissions that the action applies to.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0, 1.1, and 2.0, the declarative security attributes applied to a constructor by using this method are stored in the old XML metadata format. See Emitting Declarative Security Attributes.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds declarative security to this constructor.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security action to be taken, such as Demand, Assert, and so on. </param>
+        <param name="pset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The set of permissions the action applies to. </param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -69,9 +99,16 @@
         <ReturnType>System.Reflection.MethodAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of Attributes.</para>
+          <para>code reference: ConstructorBuilder_Attributes_4#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the attributes for this constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CallingConvention">
@@ -87,9 +124,12 @@
         <ReturnType>System.Reflection.CallingConventions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.CallingConventions" /> value that depends on whether the declaring type is generic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclaringType">
@@ -105,9 +145,17 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member of a class (or interface) is either declared or inherited from a base class (or interface).</para>
+          <para>The following code sample illustrates the use of DeclaringType.</para>
+          <para>code reference: ConstructorBuilder_Attributes_4#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a reference to the <see cref="T:System.Type" /> object for the type that declares this member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefineParameter">
@@ -128,12 +176,24 @@
         <Parameter Name="strParamName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="iSequence">To be added: an object of type 'int'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.ParameterAttributes'</param>
-        <param name="strParamName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ParameterBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you specify 0 (zero) for <paramref name="iSequence" />, this method returns a <see cref="T:System.Reflection.Emit.ParameterBuilder" /> instead of throwing an exception. There is nothing useful that you can do with this <see cref="T:System.Reflection.Emit.ParameterBuilder" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a parameter of this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a ParameterBuilder object that represents the new parameter of this constructor.</para>
+        </returns>
+        <param name="iSequence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the parameter in the parameter list. Parameters are indexed beginning with the number 1 for the first parameter. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the parameter. </param>
+        <param name="strParamName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. The name can be the null string. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -152,10 +212,21 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="inherit" /> parameter is ignored because a class never inherits constructors from base classes.</para>
+          <para>To get the custom attributes, finish building the type by calling <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" />, retrieve the constructor by calling the <see cref="M:System.Type.GetConstructor(System.Type[])" /> method on the returned type, and then call the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Boolean)" /> method on the returned <see cref="T:System.Reflection.ConstructorInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes defined for this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of objects representing all the custom attributes of the constructor represented by this <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> instance.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. This parameter is ignored. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -175,11 +246,23 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="inherit" /> parameter is ignored because a class never inherits constructors from base classes.</para>
+          <para>To get the custom attributes, finish building the type by calling <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" />, retrieve the constructor by calling the <see cref="M:System.Type.GetConstructor(System.Type[])" /> method on the returned type, and then call the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Boolean)" /> method on the returned <see cref="T:System.Reflection.ConstructorInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the custom attributes identified by the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of type <see cref="T:System.Object" /> representing the attributes of this constructor.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom attribute type. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. This parameter is ignored. </param>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -196,9 +279,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ILGenerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The runtime generates the code for default constructors. Therefore, if an attempt is made to obtain an ILGenerator, an exception will be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Reflection.Emit.ILGenerator" /> for this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Reflection.Emit.ILGenerator" /> object for this constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -216,11 +308,21 @@
         <Parameter Name="streamSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="streamSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The runtime generates the code for default constructors. Therefore, if an attempt is made to obtain an ILGenerator for a default constructor, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Reflection.Emit.ILGenerator" /> object, with the specified MSIL stream size, that can be used to build a method body for this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.ILGenerator" /> for this constructor.</para>
+        </returns>
+        <param name="streamSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the MSIL stream, in bytes.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMethodImplementationFlags">
@@ -237,9 +339,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of GetMethodImplementationFlags.</para>
+          <para>code reference: ConstructorBuilder_GetModule_4#3</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method implementation flags for this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method implementation flags for this constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetModule">
@@ -256,9 +368,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Module'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the usage of GetModule.</para>
+          <para>code reference: System.Reflection.Emit.MethodBuilder.GetModule#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a reference to the module that contains this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The module that contains this constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetParameters">
@@ -275,9 +397,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported until after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called. In the .NET Framework versions 1.0 and 1.1, <see cref="T:System.InvalidOperationException" /> is thrown. In the .NET Framework version 2.0, <see cref="T:System.NotSupportedException" /> is thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the parameters of this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.ParameterInfo" /> objects that represent the parameters of this constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetToken">
@@ -294,9 +425,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This code sample illustrates the use of GetToken.</para>
+          <para>code reference: ConstructorBuilder_GetModule_4#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Reflection.Emit.MethodToken" /> that represents the token for this constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Reflection.Emit.MethodToken" /> of this constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitLocals">
@@ -314,9 +455,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the local variables in this constructor should be zero-initialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -338,13 +482,30 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the constructor has no parameters, the value of the <paramref name="parameters" /> parameter should be null. Otherwise, the number, type, and order of elements in the <paramref name="parameters" /> array should be identical to the number, type, and order of parameters for the constructor reflected by this instance.</para>
+          <para>For example, if the constructor reflected by this instance is declared as public class taking two strings, then the <paramref name="parameters" /> parameter should be an array of <see cref="T:System.Object" /> with length 2.</para>
+          <block subset="none" type="note">
+            <para>Access restrictions are ignored for fully-trusted code. That is, private constructors, methods, fields, and properties can be accessed and invoked using Reflection whenever the code is fully trusted.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the constructor dynamically reflected by this instance on the given object, passing along the specified parameters, and under the constraints of the given binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Object" /> that is the return value of the invoked constructor.</para>
+        </returns>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" />, such as InvokeMethod, NonPublic, and so on. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of MemberInfo objects using reflection. If binder is null, the default binder is used. See <see cref="T:System.Reflection.Binder" />. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list. This is an array of arguments with the same number, order, and type as the parameters of the constructor to be invoked. If there are no parameters this should be null. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Globalization.CultureInfo" /> used to govern the coercion of types. If this is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. (For example, this is necessary to convert a <see cref="T:System.String" /> that represents 1000 to a <see cref="T:System.Double" /> value, since 1000 is represented differently by different cultures.) </param>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -367,14 +528,30 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number, type, and order of elements in the parameters array should be identical to the number, type, and order of parameters for the constructor reflected by this instance.</para>
+          <para>Before calling the constructor, Invoke ensures that the caller has access permission, and that the parameters are of the correct number, order and type.</para>
+          <para>Access restrictions are ignored for fully-trusted code. That is, private constructors, methods, fields, and properties can be accessed and invoked using Reflection whenever the code is fully trusted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dynamically invokes the constructor reflected by this instance with the specified arguments, under the constraints of the specified Binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the class associated with the constructor.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that needs to be reinitialized. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the BindingFlags values that specifies the type of binding that is desired. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Binder that defines a set of properties and enables the binding, coercion of argument types, and invocation of members using reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list. This is an array of arguments with the same number, order, and type as the parameters of the constructor to be invoked. If there are no parameters, this should be a null reference (Nothing in Visual Basic). </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> used to govern the coercion of types. If this is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -394,11 +571,22 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification for details on how to format <paramref name="binaryAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if the specified custom attribute type is defined.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified custom attribute type is defined; otherwise, false.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A custom attribute type. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. This parameter is ignored. </param>
       </Docs>
     </Member>
     <Member MemberName="MethodHandle">
@@ -414,9 +602,12 @@
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the internal handle for the method. Use this handle to access the underlying metadata handle.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -431,10 +622,16 @@
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the same value as the <see cref="M:System.Reflection.Emit.ConstructorBuilder.GetModule" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dynamic module in which this constructor is defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -450,9 +647,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of Name.</para>
+          <para>code reference: ConstructorBuilder_Name_5#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the name of this constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectedType">
@@ -468,9 +672,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> object represents a constructor on a particular class. In order to obtain a <see cref="T:System.Reflection.ConstructorInfo" /> object, the <see cref="T:System.Type" /> object that represents the class that supports the constructor is queried. This property holds a reference to that <see cref="T:System.Type" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Holds a reference to the <see cref="T:System.Type" /> object from which this object was obtained.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnType">
@@ -491,9 +701,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property might be removed in a future version.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -512,9 +728,13 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class to define the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -539,10 +759,18 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification in the ECMA Partition II documentation for details on how to format <paramref name="binaryAttribute" />. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="SetImplementationFlags">
@@ -561,9 +789,17 @@
         <Parameter Name="attributes" Type="System.Reflection.MethodImplAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Reflection.MethodImplAttributes'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of SetImplementationFlags.</para>
+          <para>code reference: ConstructorBuilder_SetImplementationFlags#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method implementation flags for this constructor.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method implementation flags. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSymCustomAttribute">
@@ -583,10 +819,19 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of SetSymCustomAttributes.</para>
+          <para>code reference: ConstructorBuilder_SetSymCustomAttribute#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets this constructor's custom attribute associated with symbolic information.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom attribute. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="Signature">
@@ -602,9 +847,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the signature of the field in the form of a string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._ConstructorBuilder.GetIDsOfNames">
@@ -654,11 +902,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._ConstructorBuilder.GetTypeInfoCount">
@@ -731,9 +988,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns this <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> instance as a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> containing the name, attributes, and exceptions of this constructor, followed by the current Microsoft intermediate language (MSIL) stream.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

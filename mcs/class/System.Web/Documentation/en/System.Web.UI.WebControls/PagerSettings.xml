@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PagerSettings" FullName="System.Web.UI.WebControls.PagerSettings">
   <TypeSignature Language="C#" Value="public sealed class PagerSettings : System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -18,9 +19,175 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls that support pagination (such as the <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" /> controls) can display a set of controls called <newTerm>the pager</newTerm> that allows the user to navigate the pages within the control. The <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class is used by these controls to represent the properties of the pager. In general, the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object is stored in the PagerSettings property of the control. You can customize the pager by setting the properties of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+      <para>The pager supports several different display modes. To specify the mode in which to display the pager, set the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property. The following table describes the different modes.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Mode</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> </para>
+          </term>
+          <description>
+            <para>Previous-page and next-page buttons.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> </para>
+          </term>
+          <description>
+            <para>Previous-page, next-page, first-page, and last -page buttons.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.PagerButtons.Numeric" /> </para>
+          </term>
+          <description>
+            <para>Numbered link buttons to access pages directly.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> </para>
+          </term>
+          <description>
+            <para>Numbered-link, first-link, and last-link buttons.</para>
+          </description>
+        </item>
+      </list>
+      <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" />, <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" />, or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value you can customize the text of the non-numeric buttons by setting the properties shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" />
+            </para>
+          </term>
+          <description>
+            <para>Text for the first-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" />
+            </para>
+          </term>
+          <description>
+            <para>Text for the previous-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" />
+            </para>
+          </term>
+          <description>
+            <para>Text for the next-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" />
+            </para>
+          </term>
+          <description>
+            <para>Text for the last-page button.</para>
+          </description>
+        </item>
+      </list>
+      <para>As an alternative, you can also display images for the non-numeric buttons by setting the properties as shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to an image to display for the first-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to an image to display for the previous-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to an image to display for the next-page button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to an image to display for the last-page button.</para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>When an image property is set, the corresponding text property acts as the alternate text for the image. For example, when the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> property is set, the text that is specified by the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property is displayed as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+      </block>
+      <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.Numeric" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, you can specify the number of page buttons to display in the pager by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.PageButtonCount" /> property.</para>
+      <para>The pager can be displayed at the top, the bottom, or both the top and bottom of a control. To specify the position of the pager, set the <see cref="P:System.Web.UI.WebControls.PagerSettings.Position" /> property. To show or hide the pager, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.Visible" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the properties of the paging controls in a control that supports pagination. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,9 +195,18 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.PagerSettings.#ctor" /> constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.#ctor" /> constructor generally is used by control developers when providing paging support in a custom control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +233,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> property to specify the URL to an image to display for the first-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display text for the first-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image to display for the first-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +267,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property to specify the text to display for the first-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display an image for the first-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display for the first-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,10 +307,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" /> property to specify the URL to an image to display for the last-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can simply display text for the last-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image to display for the last-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +341,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> property to specify the text to display for the last-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display an image for the last-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display for the last-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -159,10 +375,174 @@
         <ReturnType>System.Web.UI.WebControls.PagerButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls that support pagination provide multiple modes in which to display the paging controls. Use the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property to specify the mode. The following table describes the different modes for pagination controls.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Mode</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> </para>
+              </term>
+              <description>
+                <para>Previous-page and next-page buttons.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> </para>
+              </term>
+              <description>
+                <para>Previous-page, next-page, first-page, and last-page buttons.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerButtons.Numeric" /> </para>
+              </term>
+              <description>
+                <para>Numbered link buttons to access pages directly.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> </para>
+              </term>
+              <description>
+                <para>Numbered and first-link and last-link buttons.</para>
+              </description>
+            </item>
+          </list>
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" />, <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" />, or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, you can specify custom text for the non-numeric buttons by setting the properties shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" />
+                </para>
+              </term>
+              <description>
+                <para>Text for the first-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" />
+                </para>
+              </term>
+              <description>
+                <para>Text for the previous-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" />
+                </para>
+              </term>
+              <description>
+                <para>Text for the next-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageText" />
+                </para>
+              </term>
+              <description>
+                <para>Text for the last-page button.</para>
+              </description>
+            </item>
+          </list>
+          <para>As an alternative, you can also display images for the non-numeric buttons by setting the properties shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The URL to an image to display for the first-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The URL to an image to display for the previous-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The URL to an image to display for the next-page button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagerSettings.LastPageImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The URL to an image to display for the last-page button.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>When an image property is set, the corresponding text property acts as the alternate text for the image. For example, when the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageImageUrl" /> property is set, the text that is specified by the <see cref="P:System.Web.UI.WebControls.PagerSettings.FirstPageText" /> property is displayed as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the mode in which to display the pager controls in a control that supports pagination.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,10 +569,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" /> property to specify the URL to an image to display for the next-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can simply display text for the next-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image to display for the next-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -213,10 +603,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> property to specify the text to display for the next-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display an image for the next-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.NextPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display for the next-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -237,10 +637,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.Numeric" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.PageButtonCount" /> property to specify the number of page buttons to display in the pager.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of page buttons to display in the pager when the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.Numeric" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NumericFirstLast" /> value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -261,10 +668,57 @@
         <ReturnType>System.Web.UI.WebControls.PagerPosition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagerSettings.Position" /> property to specify the location at which to display the pager. The following table describes the different positions.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Position</para>
+                </term>
+                <description>
+                  <para>Location</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerPosition.Bottom" />
+                </para>
+              </term>
+              <description>
+                <para>The bottom of the control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerPosition.Top" /> </para>
+              </term>
+              <description>
+                <para>The top of the control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.PagerPosition.TopAndBottom" /> </para>
+              </term>
+              <description>
+                <para>At both the top and bottom of the control.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the location where the pager is displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -291,10 +745,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" /> property to specify the URL to an image to display for the previous-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display text for the previous-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image to display for the previous-page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -315,10 +779,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property is set to the <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPreviousFirstLast" /> or <see cref="F:System.Web.UI.WebControls.PagerButtons.NextPrevious" /> value, use the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> property to specify the text to display for the previous-page button.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display an image for the previous-page button by setting the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" /> property instead of the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> property. If the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageImageUrl" /> and <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> properties are both set, the image is displayed with the <see cref="P:System.Web.UI.WebControls.PagerSettings.PreviousPageText" /> property acting as the alternate text for the image. On browsers that support ToolTips, this text is also displayed as a ToolTip for the corresponding button.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display for the previous page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -331,9 +805,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.PagerSettings.PropertyChanged" /> event is raised each time a property of a <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object changes values. The <see cref="E:System.Web.UI.WebControls.PagerSettings.PropertyChanged" /> event commonly is used by data-bound controls that support pagination to rebind the data to the control when the pager settings change.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a property of a <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object changes values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -349,9 +830,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> instance is cast to the <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the server control is tracking its view state changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -368,8 +855,17 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#LoadViewState(System.Object)" /> method to load the previously saved view state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#LoadViewState(System.Object)" /> method is private and cannot be called.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved view state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -383,9 +879,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#SaveViewState" /> method is a helper method that is used by the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class to save the state of the object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#SaveViewState" /> method is private and cannot be called.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current view state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the saved state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -399,8 +907,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#TrackViewState" /> method is overridden to mark the starting point at which to begin tracking and saving changes to the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object as part of the view state for the object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#TrackViewState" /> method is private and cannot be called.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the starting point at which to begin tracking and saving view state changes to the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -411,10 +928,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.ToString" /> method is used to retrieve a string representation of a <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object. The <see cref="M:System.Web.UI.WebControls.PagerSettings.ToString" /> method has been overridden to always return an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the string representation of a <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string ("").</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -435,10 +961,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagerSettings.Visible" /> property to specify whether the paging controls are displayed in a control that supports pagination. To hide the paging controls, set the <see cref="P:System.Web.UI.WebControls.PagerSettings.Visible" /> property to false.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the paging controls are displayed in a control that supports pagination.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

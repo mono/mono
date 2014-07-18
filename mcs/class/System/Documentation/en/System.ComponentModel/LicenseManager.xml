@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LicenseManager" FullName="System.ComponentModel.LicenseManager">
   <TypeSignature Language="C#" Value="public sealed class LicenseManager" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LicenseManager extends System.Object" />
@@ -15,8 +16,27 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.LicenseManager" /> class provides the following static properties: <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" /> and <see cref="P:System.ComponentModel.LicenseManager.UsageMode" />. The class also provides the following static methods: <see cref="M:System.ComponentModel.LicenseManager.CreateWithContext(System.Type,System.ComponentModel.LicenseContext)" />, <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" />, and <see cref="M:System.ComponentModel.LicenseManager.Validate(System.Type)" />.</para>
+      <para>When you create a component that you want to license, you must do the following: </para>
+      <list type="ordered">
+        <item>
+          <para>Specify the <see cref="T:System.ComponentModel.LicenseProvider" /> by marking the component with a <see cref="T:System.ComponentModel.LicenseProviderAttribute" />.</para>
+        </item>
+        <item>
+          <para>Call <see cref="M:System.ComponentModel.LicenseManager.Validate(System.Type)" /> or <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" /> in the constructor of the component. <see cref="M:System.ComponentModel.LicenseManager.Validate(System.Type)" /> throws a <see cref="T:System.ComponentModel.LicenseException" /> when it tries to create an instance without a valid license. <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" /> does not throw an exception.</para>
+        </item>
+        <item>
+          <para>Call <see cref="M:System.ComponentModel.License.Dispose" /> on any license that is granted when the component is disposed or finalized.</para>
+        </item>
+      </list>
+      <para>For more information on licensing, see <format type="text/html"><a href="8e66c1ed-a445-4b26-8185-990b6e2bbd57">How to: License Components and Controls</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and methods to add a license to a component and to manage a <see cref="T:System.ComponentModel.LicenseProvider" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateWithContext">
@@ -36,11 +56,22 @@
         <Parameter Name="creationContext" Type="System.ComponentModel.LicenseContext" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="creationContext">To be added: an object of type 'LicenseContext'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.LicenseContext" /> you specify as the <paramref name="creationContext" /> parameter is used as the <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" /> for the life of this <see cref="T:System.ComponentModel.License" />. The <see cref="M:System.ComponentModel.LicenseManager.CreateWithContext(System.Type,System.ComponentModel.LicenseContext)" /> method blocks all other threads in the <see cref="T:System.AppDomain" /> from modifying the <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" />, allowing <see cref="M:System.ComponentModel.LicenseManager.CreateWithContext(System.Type,System.ComponentModel.LicenseContext)" /> to behave as an atomic operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type, given a context in which you can use the licensed instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type to create. </param>
+        <param name="creationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.LicenseContext" /> that specifies when you can use the licensed instance. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateWithContext">
@@ -61,12 +92,24 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="creationContext">To be added: an object of type 'LicenseContext'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.LicenseContext" /> you specify as the <paramref name="creationContext" /> parameter is used as the <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" /> for the life of this <see cref="T:System.ComponentModel.License" />. This method blocks all other threads in the <see cref="T:System.AppDomain" /> from modifying the <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" />, allowing <see cref="M:System.ComponentModel.LicenseManager.CreateWithContext(System.Type,System.ComponentModel.LicenseContext)" /> to behave as an atomic operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type with the specified arguments, given a context in which you can use the licensed instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the specified type with the given array of arguments.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type to create. </param>
+        <param name="creationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.LicenseContext" /> that specifies when you can use the licensed instance. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> that represents the arguments for the type. </param>
       </Docs>
     </Member>
     <Member MemberName="CurrentContext">
@@ -84,9 +127,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LicenseContext'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the user requests a valid <see cref="T:System.ComponentModel.License" />, the user must give the context in which the <see cref="T:System.ComponentModel.License" /> is valid to the <see cref="M:System.ComponentModel.LicenseProvider.GetLicense(System.ComponentModel.LicenseContext,System.Type,System.Object,System.Boolean)" /> method. The <see cref="T:System.ComponentModel.LicenseContext" /> returned by this property should be passed to all <see cref="T:System.ComponentModel.LicenseProvider" /> classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current <see cref="T:System.ComponentModel.LicenseContext" />, which specifies when you can use the licensed object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLicensed">
@@ -105,10 +154,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the given type has a valid license.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the given type is licensed; otherwise, false.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to find a valid license for. </param>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -127,10 +183,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" /> method returns true when the type is either not licensed, or is licensed and the license is valid.</para>
+          <para>This method does not throw a <see cref="T:System.ComponentModel.LicenseException" /> when it cannot grant a valid <see cref="T:System.ComponentModel.License" />. The <see cref="M:System.ComponentModel.LicenseManager.Validate(System.Type)" /> method throws exceptions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a valid license can be granted for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a valid license can be granted; otherwise, false.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of object that requests the <see cref="T:System.ComponentModel.License" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -175,9 +242,16 @@
         <Parameter Name="contextUser" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contextUser">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.ComponentModel.LicenseContext" /> to get the <see cref="T:System.ComponentModel.License" /> of an object. This method locks the <see cref="T:System.ComponentModel.LicenseContext" />, preventing the <see cref="T:System.ComponentModel.License" /> from being retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prevents changes being made to the current <see cref="T:System.ComponentModel.LicenseContext" /> of the given object.</para>
+        </summary>
+        <param name="contextUser">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose current context you want to lock. </param>
       </Docs>
     </Member>
     <Member MemberName="UnlockContext">
@@ -196,9 +270,16 @@
         <Parameter Name="contextUser" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contextUser">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.ComponentModel.LicenseContext" /> to get the <see cref="T:System.ComponentModel.License" /> of an object. This method unlocks the <see cref="T:System.ComponentModel.LicenseContext" />, allowing the <see cref="T:System.ComponentModel.License" /> to be retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows changes to be made to the current <see cref="T:System.ComponentModel.LicenseContext" /> of the given object.</para>
+        </summary>
+        <param name="contextUser">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose current context you want to unlock. </param>
       </Docs>
     </Member>
     <Member MemberName="UsageMode">
@@ -214,9 +295,15 @@
         <ReturnType>System.ComponentModel.LicenseUsageMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LicenseUsageMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property cannot find a <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" /> value, it returns <see cref="F:System.ComponentModel.LicenseUsageMode.Runtime" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.LicenseUsageMode" /> which specifies when you can use the licensed object for the <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Validate">
@@ -235,9 +322,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method throws a <see cref="T:System.ComponentModel.LicenseException" /> when a valid <see cref="T:System.ComponentModel.License" /> cannot be granted. The <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" /> method does not throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a license can be granted for the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of object that requests the license. </param>
       </Docs>
     </Member>
     <Member MemberName="Validate">
@@ -257,11 +351,23 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="instance">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'License'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method throws a <see cref="T:System.ComponentModel.LicenseException" /> when a valid <see cref="T:System.ComponentModel.License" /> cannot be granted. The <see cref="M:System.ComponentModel.LicenseManager.IsValid(System.Type)" /> method does not throw an exception.</para>
+          <para>All objects asking for a <see cref="T:System.ComponentModel.License" /> must dispose of the license by calling the <see cref="M:System.ComponentModel.License.Dispose" /> method when the object is disposed of or finalized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a license can be granted for the instance of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid <see cref="T:System.ComponentModel.License" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of object that requests the license. </param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> of the specified type or a type derived from the specified type. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GraphicsPath" FullName="System.Drawing.Drawing2D.GraphicsPath">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable" />
   <AssemblyInfo>
@@ -20,8 +21,20 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Applications use paths to draw outlines of shapes, fill the interiors of shapes, and create clipping regions. The graphics engine maintains the coordinates of geometric shapes in a path in world coordinate space.</para>
+      <para>A path may be composed of any number of figures (subpaths). Each figure is either composed of a sequence of connected lines and curves or a geometric shape primitive. The starting point of a figure is the first point in the sequence of connected lines and curves. The ending point is the last point in the sequence. The starting and ending points of a geometric shape primitive are defined by the primitive specification.</para>
+      <para>A figure that consists of a sequence of connected lines and curves (whose starting and ending points may be coincident) is an open figure, unless it is closed explicitly. A figure can be closed explicitly, by using the <see cref="M:System.Drawing.Drawing2D.GraphicsPath.CloseFigure" /> method, which closes the current figure by connecting a line from the ending point to the starting point. A figure that consists of a geometric shape primitive is a closed figure.</para>
+      <para>For purposes of filling and clipping (for example, if a path is rendered using <see cref="M:System.Drawing.Graphics.FillPath(System.Drawing.Brush,System.Drawing.Drawing2D.GraphicsPath)" />), all open figures are closed by adding a line from the figure's first point to its last point.</para>
+      <para>A new figure is implicitly started when a path is created or when a figure is closed. A new figure is explicitly created when the <see cref="M:System.Drawing.Drawing2D.GraphicsPath.StartFigure" /> method is called.</para>
+      <para>When a geometric shape primitive is added to a path, it adds a figure containing the geometric shape, and also implicitly starts a new figure. Consequently, there is always a current figure in a path. When lines and curves are added to a path, an implicit line is added as needed to connect the ending point of the current figure to the starting point of the new lines and curves to form a sequence of connected lines and curves.</para>
+      <para>A figure has a direction that describes how line and curve segments are traced between the starting point and the ending point. The direction is defined in the order that lines and curves are added to a figure, or is defined by the geometric shape primitive. The direction is used in determining the path interiors for clipping and fill.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a series of connected lines and curves. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> class with a <see cref="P:System.Drawing.Drawing2D.GraphicsPath.FillMode" /> value of <see cref="F:System.Drawing.Drawing2D.FillMode.Alternate" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +62,13 @@
         <Parameter Name="fillMode" Type="System.Drawing.Drawing2D.FillMode" />
       </Parameters>
       <Docs>
-        <param name="fillMode">To be added: an object of type 'FillMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> class with the specified <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration.</para>
+        </summary>
+        <param name="fillMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration that determines how the interior of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> is filled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,10 +84,15 @@
         <Parameter Name="types" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="pts">To be added: an object of type 'Drawing.Point []'</param>
-        <param name="types">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> class with the specified <see cref="T:System.Drawing.Drawing2D.PathPointType" /> and <see cref="T:System.Drawing.Point" /> arrays.</para>
+        </summary>
+        <param name="pts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that defines the coordinates of the points that make up this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. </param>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,10 +108,15 @@
         <Parameter Name="types" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="pts">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="types">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> array with the specified <see cref="T:System.Drawing.Drawing2D.PathPointType" /> and <see cref="T:System.Drawing.PointF" /> arrays.</para>
+        </summary>
+        <param name="pts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that defines the coordinates of the points that make up this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. </param>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,11 +133,17 @@
         <Parameter Name="fillMode" Type="System.Drawing.Drawing2D.FillMode" />
       </Parameters>
       <Docs>
-        <param name="pts">To be added: an object of type 'Drawing.Point []'</param>
-        <param name="types">To be added: an object of type 'byte []'</param>
-        <param name="fillMode">To be added: an object of type 'FillMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> class with the specified <see cref="T:System.Drawing.Drawing2D.PathPointType" /> and <see cref="T:System.Drawing.Point" /> arrays and with the specified <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration element.</para>
+        </summary>
+        <param name="pts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that defines the coordinates of the points that make up this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. </param>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
+        <param name="fillMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration that specifies how the interiors of shapes in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> are filled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,11 +160,17 @@
         <Parameter Name="fillMode" Type="System.Drawing.Drawing2D.FillMode" />
       </Parameters>
       <Docs>
-        <param name="pts">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="types">To be added: an object of type 'byte []'</param>
-        <param name="fillMode">To be added: an object of type 'FillMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> array with the specified <see cref="T:System.Drawing.Drawing2D.PathPointType" /> and <see cref="T:System.Drawing.PointF" /> arrays and with the specified <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration element.</para>
+        </summary>
+        <param name="pts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that defines the coordinates of the points that make up this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. </param>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
+        <param name="fillMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration that specifies how the interiors of shapes in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> are filled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,11 +189,19 @@
         <Parameter Name="sweep_angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="rect">To be added: an object of type 'Drawing.Rectangle'</param>
         <param name="start_angle">To be added.</param>
         <param name="sweep_angle">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the beginning of the arc.</para>
+          <para>The arc is traced along the perimeter of the ellipse bounded by the specified rectangle. The starting point of the arc is determined by measuring clockwise from the x-axis of the ellipse (at the 0-degree angle) by the number of degrees in the start angle. The endpoint is similarly located by measuring clockwise from the starting point by the number of degrees in the sweep angle. If the sweep angle is greater than 360 degrees or less than -360 degrees, the arc is swept by exactly 360 degrees or -360 degrees, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends an elliptical arc to the current figure.</para>
+        </summary>
+        <param name="rect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangular bounds of the ellipse from which the arc is taken. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -170,11 +220,19 @@
         <Parameter Name="sweep_angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="rect">To be added: an object of type 'Drawing.RectangleF'</param>
         <param name="start_angle">To be added.</param>
         <param name="sweep_angle">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the beginning of the arc.</para>
+          <para>The arc is traced along the perimeter of the ellipse bounded by the specified rectangle. The starting point of the arc is determined by measuring clockwise from the x-axis of the ellipse (at the 0-degree angle) by the number of degrees in the start angle. The endpoint is similarly located by measuring clockwise from the starting point by the number of degrees in the sweep angle. If the sweep angle is greater than 360 degrees or less than -360 degrees, the arc is swept by exactly 360 degrees or -360 degrees, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends an elliptical arc to the current figure.</para>
+        </summary>
+        <param name="rect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangular bounds of the ellipse from which the arc is taken. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -196,14 +254,25 @@
         <Parameter Name="sweep_angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
         <param name="start_angle">To be added.</param>
         <param name="sweep_angle">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the beginning of the arc.</para>
+          <para>The arc is traced along the perimeter of the ellipse bounded by the specified rectangle. The starting point of the arc is determined by measuring clockwise from the x-axis of the ellipse (at the 0-degree angle) by the number of degrees in the start angle. The endpoint is similarly located by measuring clockwise from the starting point by the number of degrees in the sweep angle. If the sweep angle is greater than 360 degrees or less than -360 degrees, the arc is swept by exactly 360 degrees or -360 degrees, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends an elliptical arc to the current figure.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper-left corner of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the rectangular region that defines the ellipse from which the arc is drawn. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -225,14 +294,25 @@
         <Parameter Name="sweep_angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="width">To be added: an object of type 'float'</param>
-        <param name="height">To be added: an object of type 'float'</param>
         <param name="start_angle">To be added.</param>
         <param name="sweep_angle">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the beginning of the arc.</para>
+          <para>The arc is traced along the perimeter of the ellipse bounded by the specified rectangle. The starting point of the arc is determined by measuring clockwise from the x-axis of the ellipse (at the 0-degree angle) by the number of degrees in the start angle. The endpoint is similarly located by measuring clockwise from the starting point by the number of degrees in the sweep angle. If the sweep angle is greater than 360 degrees or less than -360 degrees, the arc is swept by exactly 360 degrees or -360 degrees, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends an elliptical arc to the current figure.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper-left corner of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the rectangular region that defines the ellipse from which the arc is drawn. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the rectangular region that defines the ellipse from which the arc is drawn. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -252,12 +332,23 @@
         <Parameter Name="pt4" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt1">To be added: an object of type 'Drawing.Point'</param>
-        <param name="pt2">To be added: an object of type 'Drawing.Point'</param>
-        <param name="pt3">To be added: an object of type 'Drawing.Point'</param>
-        <param name="pt4">To be added: an object of type 'Drawing.Point'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cubic curve is constructed from the first point to the fourth point by using the second and third points as control points.</para>
+          <para>If there is a previous line or curve segment in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the cubic curve.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a cubic Bézier curve to the current figure.</para>
+        </summary>
+        <param name="pt1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the starting point of the curve. </param>
+        <param name="pt2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the first control point for the curve. </param>
+        <param name="pt3">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the second control point for the curve. </param>
+        <param name="pt4">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the endpoint of the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,12 +368,23 @@
         <Parameter Name="pt4" Type="System.Drawing.PointF" />
       </Parameters>
       <Docs>
-        <param name="pt1">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="pt2">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="pt3">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="pt4">To be added: an object of type 'Drawing.PointF'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cubic curve is constructed from the first point to the fourth point by using the second and third points as control points.</para>
+          <para>If there is a previous line or curve segment in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the cubic curve.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a cubic Bézier curve to the current figure.</para>
+        </summary>
+        <param name="pt1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the starting point of the curve. </param>
+        <param name="pt2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the first control point for the curve. </param>
+        <param name="pt3">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the second control point for the curve. </param>
+        <param name="pt4">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the endpoint of the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -306,16 +408,31 @@
         <Parameter Name="y4" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x1">To be added: an object of type 'int'</param>
-        <param name="y1">To be added: an object of type 'int'</param>
-        <param name="x2">To be added: an object of type 'int'</param>
-        <param name="y2">To be added: an object of type 'int'</param>
-        <param name="x3">To be added: an object of type 'int'</param>
-        <param name="y3">To be added: an object of type 'int'</param>
-        <param name="x4">To be added: an object of type 'int'</param>
-        <param name="y4">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cubic curve is constructed from the first point to the fourth point by using the second and third points as control points.</para>
+          <para>If there is a previous line or curve segment in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the cubic curve.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a cubic Bézier curve to the current figure.</para>
+        </summary>
+        <param name="x1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the starting point of the curve. </param>
+        <param name="y1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the starting point of the curve. </param>
+        <param name="x2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the first control point for the curve. </param>
+        <param name="y2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the first control point for the curve. </param>
+        <param name="x3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the second control point for the curve. </param>
+        <param name="y3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the second control point for the curve. </param>
+        <param name="x4">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the endpoint of the curve. </param>
+        <param name="y4">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the endpoint of the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -339,16 +456,31 @@
         <Parameter Name="y4" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x1">To be added: an object of type 'float'</param>
-        <param name="y1">To be added: an object of type 'float'</param>
-        <param name="x2">To be added: an object of type 'float'</param>
-        <param name="y2">To be added: an object of type 'float'</param>
-        <param name="x3">To be added: an object of type 'float'</param>
-        <param name="y3">To be added: an object of type 'float'</param>
-        <param name="x4">To be added: an object of type 'float'</param>
-        <param name="y4">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cubic curve is constructed from the first point to the fourth point by using the second and third points as control points.</para>
+          <para>If there is a previous line or curve segment in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the cubic curve.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a cubic Bézier curve to the current figure.</para>
+        </summary>
+        <param name="x1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the starting point of the curve. </param>
+        <param name="y1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the starting point of the curve. </param>
+        <param name="x2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the first control point for the curve. </param>
+        <param name="y2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the first control point for the curve. </param>
+        <param name="x3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the second control point for the curve. </param>
+        <param name="y3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the second control point for the curve. </param>
+        <param name="x4">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the endpoint of the curve. </param>
+        <param name="y4">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the endpoint of the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -372,8 +504,15 @@
       </Parameters>
       <Docs>
         <param name="pts">To be added: an object of type 'Drawing.Point []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="points" /> parameter specifies an array of endpoints and control points of the connected curves. The first curve is constructed from the first point to the fourth point in the <paramref name="points" /> array by using the second and third points as control points. In addition to the endpoint of the previous curve, each subsequent curve in the sequence needs exactly three more points: the next two points in the sequence are control points, and the third is the endpoint for the added curve.</para>
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the first cubic curve in the sequence.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a sequence of connected cubic Bézier curves to the current figure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,8 +530,15 @@
       </Parameters>
       <Docs>
         <param name="pts">To be added: an object of type 'Drawing.PointF []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="points" /> parameter specifies an array of endpoints and control points of the connected curves. The first curve is constructed from the first point to the fourth point in the <paramref name="points" /> array by using the second and third points as control points. In addition to the endpoint of the previous curve, each subsequent curve in the sequence needs exactly three more points: the next two points in the sequence are control points, and the third is the endpoint for the added curve.</para>
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment to the starting point of the first cubic curve in the sequence.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a sequence of connected cubic Bézier curves to the current figure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -409,9 +555,16 @@
         <Parameter Name="points" Type="System.Drawing.Point[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points. If the first point and the last point in the <paramref name="points" /> array are not the same point, the curve is closed by connecting these two points. The tension value cannot be set for this method, and defaults to a value equivalent to 0.5.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -428,9 +581,16 @@
         <Parameter Name="points" Type="System.Drawing.PointF[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points. If the first point and the last point in the <paramref name="points" /> array are not the same point, the curve is closed by connecting these two points. The tension value cannot be set for this method, and defaults to a value equivalent to 0.5.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -448,10 +608,18 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points. If the first point and the last point in the <paramref name="points" /> array are not the same point, the curve is closed by connecting these two points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the curve. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value between from 0 through 1 that specifies the amount that the curve bends between points, with 0 being the smallest curve (sharpest corner) and 1 being the smoothest curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -469,10 +637,18 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points. If the first point and the last point in the <paramref name="points" /> array are not the same point, the curve is closed by connecting these two points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the curve. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value between from 0 through 1 that specifies the amount that the curve bends between points, with 0 being the smallest curve (sharpest corner) and 1 being the smoothest curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -489,9 +665,16 @@
         <Parameter Name="points" Type="System.Drawing.Point[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -508,9 +691,16 @@
         <Parameter Name="points" Type="System.Drawing.PointF[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure. A cardinal spline curve is used because the curve travels through each of the points in the array.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the curve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -528,10 +718,18 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the curve. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,10 +747,18 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the curve. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -572,12 +778,23 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="numberOfSegments">To be added: an object of type 'int'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+          <para>The curve begins at the point in the array specified by the <paramref name="offset" /> parameter and includes the number of points (segments) specified by <paramref name="numberOfSegments" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the curve. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the element in the <paramref name="points" /> array that is used as the first point in the curve. </param>
+        <param name="numberOfSegments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -597,12 +814,23 @@
         <Parameter Name="tension" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="numberOfSegments">To be added: an object of type 'int'</param>
-        <param name="tension">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+          <para>The curve begins at the point in the array specified by <paramref name="offset" />, and includes the number of points (segments) specified by <paramref name="numberOfSegments" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a spline curve to the current figure.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the curve. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the element in the <paramref name="points" /> array that is used as the first point in the curve. </param>
+        <param name="numberOfSegments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of segments used to draw the curve. A segment can be thought of as a line connecting two points. </param>
+        <param name="tension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -620,8 +848,11 @@
       </Parameters>
       <Docs>
         <param name="r">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an ellipse to the current path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -639,8 +870,11 @@
       </Parameters>
       <Docs>
         <param name="r">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an ellipse to the current path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -660,12 +894,19 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an ellipse to the current path.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the bounding rectangle that defines the ellipse. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the bounding rectangle that defines the ellipse. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -685,12 +926,19 @@
         <Parameter Name="height" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="width">To be added: an object of type 'float'</param>
-        <param name="height">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an ellipse to the current path.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper left corner of the bounding rectangle that defines the ellipse. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the bounding rectangle that defines the ellipse. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the bounding rectangle that defines the ellipse. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -710,8 +958,14 @@
       <Docs>
         <param name="a">To be added.</param>
         <param name="b">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the line segment defined by the specified points to the end of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. If there are previous lines or curves in the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, a line segment is drawn to connect the last point in the path to the first point in the new line segment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a line segment to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -731,8 +985,14 @@
       <Docs>
         <param name="a">To be added.</param>
         <param name="b">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the line segment defined by the specified points to the end of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. If there are previous lines or curves in the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, a line segment is drawn to connect the last point in the path to the first point in the new line segment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a line segment to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -752,12 +1012,22 @@
         <Parameter Name="y2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x1">To be added: an object of type 'int'</param>
-        <param name="y1">To be added: an object of type 'int'</param>
-        <param name="x2">To be added: an object of type 'int'</param>
-        <param name="y2">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the line segment defined by the specified points to the end of the current figure. If there are previous lines or curves in the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, a line segment is drawn to connect the last point in the path to the first point in the new line segment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a line segment to the current figure.</para>
+        </summary>
+        <param name="x1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the starting point of the line. </param>
+        <param name="y1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the starting point of the line. </param>
+        <param name="x2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the endpoint of the line. </param>
+        <param name="y2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the endpoint of the line. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -777,12 +1047,22 @@
         <Parameter Name="y2" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x1">To be added: an object of type 'float'</param>
-        <param name="y1">To be added: an object of type 'float'</param>
-        <param name="x2">To be added: an object of type 'float'</param>
-        <param name="y2">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the line segment defined by the specified points to the end of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. If there are previous lines or curves in the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, a line segment is drawn to connect the last point in the path to the first point in the new line segment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a line segment to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="x1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the starting point of the line. </param>
+        <param name="y1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the starting point of the line. </param>
+        <param name="x2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the endpoint of the line. </param>
+        <param name="y2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the endpoint of the line. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -799,9 +1079,16 @@
         <Parameter Name="points" Type="System.Drawing.Point[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment the starting point of the line. The <paramref name="points" /> parameter specifies an array of endpoints. The first two specify the first line. Each additional point specifies the endpoint of a line segment whose starting point is the endpoint of the previous line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a series of connected line segments to the end of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that represents the points that define the line segments to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -818,9 +1105,16 @@
         <Parameter Name="points" Type="System.Drawing.PointF[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are previous lines or curves in the figure, a line is added to connect the endpoint of the previous segment the starting point of the line. The <paramref name="points" /> parameter specifies an array of endpoints. The first two specify the first line. Each additional point specifies the endpoint of a line segment whose starting point is the endpoint of the previous line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a series of connected line segments to the end of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that represents the points that define the line segments to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -838,10 +1132,15 @@
         <Parameter Name="connect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="addingPath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="connect">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> to this path.</para>
+        </summary>
+        <param name="addingPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> to add. </param>
+        <param name="connect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that specifies whether the first figure in the added path is part of the last figure in this path. A value of true specifies that (if possible) the first figure in the added path is part of the last figure in this path. A value of false specifies that the first figure in the added path is separate from the last figure in this path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -860,11 +1159,20 @@
         <Parameter Name="sweepAngle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="rect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="startAngle">To be added: an object of type 'float'</param>
-        <param name="sweepAngle">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The pie shape is defined by a partial outline of an ellipse and the two radial lines that intersect the endpoints of the partial outline. The partial outline begins at <paramref name="startAngle" /> (measured clockwise from the x-axis) and ends at <paramref name="startAngle" /> + <paramref name="sweepAngle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the outline of a pie shape to this path.</para>
+        </summary>
+        <param name="rect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="startAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting angle for the pie section, measured in degrees clockwise from the x-axis. </param>
+        <param name="sweepAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle between <paramref name="startAngle" /> and the end of the pie section, measured in degrees clockwise from <paramref name="startAngle" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -886,14 +1194,26 @@
         <Parameter Name="sweepAngle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
-        <param name="startAngle">To be added: an object of type 'float'</param>
-        <param name="sweepAngle">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The pie shape is defined by a partial outline of an ellipse and the two radial lines that intersect the endpoints of the partial outline. The partial outline begins at <paramref name="startAngle" /> (measured clockwise from the x-axis) and ends at <paramref name="startAngle" /> + <paramref name="sweepAngle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the outline of a pie shape to this path.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="startAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting angle for the pie section, measured in degrees clockwise from the x-axis. </param>
+        <param name="sweepAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle between <paramref name="startAngle" /> and the end of the pie section, measured in degrees clockwise from <paramref name="startAngle" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -915,14 +1235,26 @@
         <Parameter Name="sweepAngle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="width">To be added: an object of type 'float'</param>
-        <param name="height">To be added: an object of type 'float'</param>
-        <param name="startAngle">To be added: an object of type 'float'</param>
-        <param name="sweepAngle">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The pie shape is defined by a partial outline of an ellipse and the two radial lines that intersect the endpoints of the partial outline. The partial outline begins at <paramref name="startAngle" /> (measured clockwise from the x-axis) and ends at <paramref name="startAngle" /> + <paramref name="sweepAngle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the outline of a pie shape to this path.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the bounding rectangle that defines the ellipse from which the pie is drawn. </param>
+        <param name="startAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting angle for the pie section, measured in degrees clockwise from the x-axis. </param>
+        <param name="sweepAngle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle between <paramref name="startAngle" /> and the end of the pie section, measured in degrees clockwise from <paramref name="startAngle" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -939,9 +1271,16 @@
         <Parameter Name="points" Type="System.Drawing.Point[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.Point []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The points in the <paramref name="points" /> array specify the vertices of a polygon. If the first point in the array is not the same as the last point, those two points are connected to close the polygon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a polygon to this path.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Point" /> structures that defines the polygon to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -958,9 +1297,16 @@
         <Parameter Name="points" Type="System.Drawing.PointF[]" />
       </Parameters>
       <Docs>
-        <param name="points">To be added: an object of type 'Drawing.PointF []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The points in the <paramref name="points" /> array specify the vertices of a polygon. If the first point in the array is not the same as the last point, those two points are connected to close the polygon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a polygon to this path.</para>
+        </summary>
+        <param name="points">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that defines the polygon to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -977,9 +1323,13 @@
         <Parameter Name="rect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="rect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a rectangle to this path.</para>
+        </summary>
+        <param name="rect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -996,9 +1346,13 @@
         <Parameter Name="rect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="rect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a rectangle to this path.</para>
+        </summary>
+        <param name="rect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1015,9 +1369,13 @@
         <Parameter Name="rects" Type="System.Drawing.Rectangle[]" />
       </Parameters>
       <Docs>
-        <param name="rects">To be added: an object of type 'Drawing.Rectangle []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a series of rectangles to this path.</para>
+        </summary>
+        <param name="rects">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Rectangle" /> structures that represents the rectangles to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1034,9 +1392,13 @@
         <Parameter Name="rects" Type="System.Drawing.RectangleF[]" />
       </Parameters>
       <Docs>
-        <param name="rects">To be added: an object of type 'Drawing.RectangleF []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a series of rectangles to this path.</para>
+        </summary>
+        <param name="rects">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.RectangleF" /> structures that represents the rectangles to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1058,14 +1420,23 @@
         <Parameter Name="format" Type="System.Drawing.StringFormat" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <param name="family">To be added: an object of type 'Drawing.FontFamily'</param>
-        <param name="style">To be added: an object of type 'int'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="origin">To be added: an object of type 'Drawing.Point'</param>
-        <param name="format">To be added: an object of type 'Drawing.StringFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a text string to this path.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to add. </param>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontFamily" /> that represents the name of the font with which the test is drawn. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> enumeration that represents style information about the text (bold, italic, and so on). This must be cast as an integer (see the example code later in this section). </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the em square box that bounds the character. </param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the point where the text starts. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.StringFormat" /> that specifies text formatting information, such as line spacing and alignment. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1087,14 +1458,23 @@
         <Parameter Name="format" Type="System.Drawing.StringFormat" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <param name="family">To be added: an object of type 'Drawing.FontFamily'</param>
-        <param name="style">To be added: an object of type 'int'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="origin">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="format">To be added: an object of type 'Drawing.StringFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a text string to this path.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to add. </param>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontFamily" /> that represents the name of the font with which the test is drawn. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> enumeration that represents style information about the text (bold, italic, and so on). This must be cast as an integer (see the example code later in this section). </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the em square box that bounds the character. </param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the point where the text starts. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.StringFormat" /> that specifies text formatting information, such as line spacing and alignment. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1116,14 +1496,23 @@
         <Parameter Name="format" Type="System.Drawing.StringFormat" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <param name="family">To be added: an object of type 'Drawing.FontFamily'</param>
-        <param name="style">To be added: an object of type 'int'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="layoutRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="format">To be added: an object of type 'Drawing.StringFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a text string to this path.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to add. </param>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontFamily" /> that represents the name of the font with which the test is drawn. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> enumeration that represents style information about the text (bold, italic, and so on). This must be cast as an integer (see the example code later in this section). </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the em square box that bounds the character. </param>
+        <param name="layoutRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the text. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.StringFormat" /> that specifies text formatting information, such as line spacing and alignment. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1145,14 +1534,23 @@
         <Parameter Name="format" Type="System.Drawing.StringFormat" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <param name="family">To be added: an object of type 'Drawing.FontFamily'</param>
-        <param name="style">To be added: an object of type 'int'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="layoutRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="format">To be added: an object of type 'Drawing.StringFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a text string to this path.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to add. </param>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontFamily" /> that represents the name of the font with which the test is drawn. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> enumeration that represents style information about the text (bold, italic, and so on). This must be cast as an integer (see the example code later in this section). </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the em square box that bounds the character. </param>
+        <param name="layoutRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the text. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.StringFormat" /> that specifies text formatting information, such as line spacing and alignment. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1167,8 +1565,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Drawing.Drawing2D.GraphicsPath.SetMarkers" /> method to create a marker at the current location in a <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. Use the <see cref="M:System.Drawing.Drawing2D.GraphicsPathIterator.NextMarker(System.Drawing.Drawing2D.GraphicsPath)" /> method to iterate through the existing markers in a path.</para>
+          <para>Markers are used to separate groups of subpaths. One or more subpaths can be contained between two markers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all markers from this path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1183,9 +1588,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> this method creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1200,8 +1611,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes all open figures in this path and starts a new figure. It closes each open figure by connecting a line from its endpoint to its starting point.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1216,8 +1630,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current figure and starts a new figure. If the current figure contains a sequence of connected lines and curves, the method closes the loop by connecting a line from the endpoint to the starting point.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1232,8 +1649,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> to be reallocated for other purposes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1249,9 +1676,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FillMode'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration that determines how the interiors of shapes in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> are filled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1282,8 +1712,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts each curve in this path into a sequence of connected line segments.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1300,9 +1733,13 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the specified transform and then converts each curve in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> into a sequence of connected line segments.</para>
+        </summary>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> by which to transform this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> before flattening. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1320,10 +1757,15 @@
         <Parameter Name="flatness" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <param name="flatness">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts each curve in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> into a sequence of connected line segments.</para>
+        </summary>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> by which to transform this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> before flattening. </param>
+        <param name="flatness">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the maximum permitted error between the curve and its flattened approximation. A value of 0.25 is the default. Reducing the flatness value will increase the number of line segments in the approximation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1338,9 +1780,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Drawing.RectangleF'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the returned bounding rectangle is influenced by the type of end caps, pen width, and pen miter limit, and therefore produces a "loose fit" to the bounded path. The approximate formula is: the initial bounding rectangle is inflated by pen width, and this result is multiplied by the miter limit, plus some additional margin to allow for end caps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.RectangleF" /> that represents a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1357,10 +1808,20 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Drawing.RectangleF'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the returned bounding rectangle is influenced by the type of end caps, pen width, and pen miter limit, and therefore produces a "loose fit" to the bounded path. The approximate formula is: the initial bounding rectangle is inflated by pen width, and this result is multiplied by the miter limit, plus some additional margin to allow for end caps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when this path is transformed by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.RectangleF" /> that represents a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </returns>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a transformation to be applied to this path before the bounding rectangle is calculated. This path is not permanently transformed; the transformation is used only during the process of calculating the bounding rectangle. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1378,11 +1839,22 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Drawing.RectangleF'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the returned bounding rectangle is influenced by the type of end caps, pen width, and pen miter limit, and therefore produces a "loose fit" to the bounded path. The approximate formula is: the initial bounding rectangle is inflated by pen width, and this result is multiplied by the miter limit, plus some additional margin to allow for end caps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when the current path is transformed by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> and drawn with the specified <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.RectangleF" /> that represents a rectangle that bounds this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </returns>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a transformation to be applied to this path before the bounding rectangle is calculated. This path is not permanently transformed; the transformation is used only during the process of calculating the bounding rectangle. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> with which to draw the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1397,9 +1869,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Drawing.PointF'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last point in the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathPoints" /> array of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.PointF" /> that represents the last point in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1417,11 +1895,22 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="point">To be added: an object of type 'Drawing.Point'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="point">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that specifies the location to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1439,11 +1928,22 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="point">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="point">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that specifies the location to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1462,12 +1962,24 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added: an object of type 'Drawing.Point'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point. The coordinates of the point to be tested are given in world coordinates. The transform matrix of <paramref name="graphics" /> is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" /> and using the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> as drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that specifies the location to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1486,12 +1998,24 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point. The coordinates of the point to be tested are given in world coordinates. The transform matrix of <paramref name="graphics" /> is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" /> and using the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> as drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that specifies the location to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1510,12 +2034,24 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1534,12 +2070,24 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1559,13 +2107,26 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point. The coordinates of the point to be tested are given in world coordinates. The transform matrix of <paramref name="graphics" /> is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" /> and using the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> as drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1585,13 +2146,26 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests to see if the outline of a given path is rendered visible at the specified point. The coordinates of the point to be tested are given in world coordinates. The transform matrix of the <paramref name="graphics" /> parameter is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> when drawn with the specified <see cref="T:System.Drawing.Pen" /> and using the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within (under) the outline of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> as drawn with the specified <see cref="T:System.Drawing.Pen" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Pen" /> to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1608,10 +2182,17 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="point">To be added: an object of type 'Drawing.Point'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="point">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the point to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1628,10 +2209,17 @@
         <Parameter Name="point" Type="System.Drawing.PointF" />
       </Parameters>
       <Docs>
-        <param name="point">To be added: an object of type 'Drawing.PointF'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="point">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the point to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1649,11 +2237,22 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added: an object of type 'Drawing.Point'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates of the point to be tested are given in world coordinates. The transform matrix of the <paramref name="graphics" /> parameter is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents the point to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1671,11 +2270,22 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added: an object of type 'Drawing.PointF'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates of the point to be tested are given in world coordinates. The transform matrix of the <paramref name="graphics" /> parameter is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this; otherwise, false.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> that represents the point to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1693,11 +2303,19 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1715,11 +2333,19 @@
         <Parameter Name="y" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1738,12 +2364,24 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates of the point to be tested are given in world coordinates. The transform matrix of <paramref name="graphics" /> is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, using the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1762,12 +2400,24 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates of the point to be tested are given in world coordinates. The transform matrix of the <paramref name="graphics" /> parameter is temporarily applied before testing for visibility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> in the visible clip region of the specified <see cref="T:System.Drawing.Graphics" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the specified point is contained within this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the point to test. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the point to test. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> for which to test visibility. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1781,9 +2431,12 @@
         <ReturnType>System.Drawing.Drawing2D.PathData</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PathData'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Drawing.Drawing2D.PathData" /> that encapsulates arrays of points (<paramref name="points" />) and types (<paramref name="types" />) for this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1797,9 +2450,12 @@
         <ReturnType>System.Drawing.PointF[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.PointF []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the points in the path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1813,9 +2469,75 @@
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array of bytes returned by the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathTypes" /> property specifies point types and flags for the data points in a path. For each point, bits 0 through 2 indicate the type of a point, and bits 3 through 7 hold a set of flags that specify the attributes of a point. The following table shows possible values and their meanings.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>Indicates that the point is the start of a figure. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>Indicates that the point is one of the two endpoints of a line. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>Indicates that the point is an endpoint or control point of a cubic Bézier spline. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x7</para>
+              </term>
+              <description>
+                <para>Masks all bits except for the three low-order bits, which indicate the point type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x20</para>
+              </term>
+              <description>
+                <para>Specifies that the point is a marker. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x80</para>
+              </term>
+              <description>
+                <para>Specifies that the point is the last point in a closed subpath (figure).</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the types of the corresponding points in the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathPoints" /> array.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1829,9 +2551,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements in the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathPoints" /> or the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathTypes" /> array.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1846,8 +2571,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Empties the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathPoints" /> and <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathTypes" /> arrays and sets the <see cref="T:System.Drawing.Drawing2D.FillMode" /> to <see cref="F:System.Drawing.Drawing2D.FillMode.Alternate" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1862,8 +2590,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reverses the order of points in the <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathPoints" /> array of this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1878,8 +2609,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a marker on the path that can be used to separate sections of the path. You can then use the <see cref="M:System.Drawing.Drawing2D.GraphicsPathIterator.NextMarker(System.Drawing.Drawing2D.GraphicsPath)" /> methods to iterate through the markers in the path.</para>
+          <para>Markers are used to separate groups of subpaths. One or more subpaths can be contained between two markers in the path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a marker on this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1894,8 +2632,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must keep the original points if they are needed. The original points are converted to cubic Bézier control points internally, therefore there is no mechanism for returning the original points.</para>
+          <para>This method starts a new subpath in the path. Subpaths allow you to separate a path into sections and use the <see cref="T:System.Drawing.Drawing2D.GraphicsPathIterator" /> class to iterate through the subpaths.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts a new figure without closing the current figure. All subsequent points added to the path are added to this new figure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1912,9 +2657,16 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformation can scale, translate, rotate, or skew the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a transform matrix to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that represents the transformation to apply. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1932,10 +2684,15 @@
         <Parameter Name="srcRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="destPoints">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="srcRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="destPoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that define a parallelogram to which the rectangle defined by <paramref name="srcRect" /> is transformed. The array can contain either three or four elements. If the array contains three elements, the lower-right corner of the parallelogram is implied by the first three points. </param>
+        <param name="srcRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that is transformed to the parallelogram defined by <paramref name="destPoints" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1954,11 +2711,17 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="destPoints">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="srcRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="destPoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that define a parallelogram to which the rectangle defined by <paramref name="srcRect" /> is transformed. The array can contain either three or four elements. If the array contains three elements, the lower-right corner of the parallelogram is implied by the first three points. </param>
+        <param name="srcRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that is transformed to the parallelogram defined by <paramref name="destPoints" />. </param>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a geometric transform to apply to the path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1978,12 +2741,19 @@
         <Parameter Name="warpMode" Type="System.Drawing.Drawing2D.WarpMode" />
       </Parameters>
       <Docs>
-        <param name="destPoints">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="srcRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <param name="warpMode">To be added: an object of type 'WarpMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="destPoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that defines a parallelogram to which the rectangle defined by <paramref name="srcRect" /> is transformed. The array can contain either three or four elements. If the array contains three elements, the lower-right corner of the parallelogram is implied by the first three points. </param>
+        <param name="srcRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that is transformed to the parallelogram defined by <paramref name="destPoints" />. </param>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a geometric transform to apply to the path. </param>
+        <param name="warpMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.WarpMode" /> enumeration that specifies whether this warp operation uses perspective or bilinear mode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2004,13 +2774,21 @@
         <Parameter Name="flatness" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="destPoints">To be added: an object of type 'Drawing.PointF []'</param>
-        <param name="srcRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <param name="warpMode">To be added: an object of type 'WarpMode'</param>
-        <param name="flatness">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="destPoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.PointF" /> structures that define a parallelogram to which the rectangle defined by <paramref name="srcRect" /> is transformed. The array can contain either three or four elements. If the array contains three elements, the lower-right corner of the parallelogram is implied by the first three points. </param>
+        <param name="srcRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that is transformed to the parallelogram defined by <paramref name="destPoints" />. </param>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a geometric transform to apply to the path. </param>
+        <param name="warpMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.WarpMode" /> enumeration that specifies whether this warp operation uses perspective or bilinear mode. </param>
+        <param name="flatness">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value from 0 through 1 that specifies how flat the resulting path is. For more information, see the <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Flatten" /> methods. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2027,9 +2805,16 @@
         <Parameter Name="pen" Type="System.Drawing.Pen" />
       </Parameters>
       <Docs>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates an outline around the original lines in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, with a distance between the existing lines and the new outline equal to that of the width of the <see cref="T:System.Drawing.Pen" /> used in the call to <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Widen(System.Drawing.Pen)" />. If you want to fill the space between the lines you must use the <see cref="M:System.Drawing.Graphics.FillPath(System.Drawing.Brush,System.Drawing.Drawing2D.GraphicsPath)" /> rather then the <see cref="M:System.Drawing.Graphics.DrawPath(System.Drawing.Pen,System.Drawing.Drawing2D.GraphicsPath)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an additional outline to the path.</para>
+        </summary>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Pen" /> that specifies the width between the original outline of the path and the new outline this method creates. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2047,10 +2832,18 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates an outline around the original lines in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, with a distance between the existing lines and the new outline equal to that of the width of the <see cref="T:System.Drawing.Pen" /> used in the call to <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Widen(System.Drawing.Pen,System.Drawing.Drawing2D.Matrix)" />. If you want to fill the space between the lines you must use the <see cref="M:System.Drawing.Graphics.FillPath(System.Drawing.Brush,System.Drawing.Drawing2D.GraphicsPath)" /> rather then the <see cref="M:System.Drawing.Graphics.DrawPath(System.Drawing.Pen,System.Drawing.Drawing2D.GraphicsPath)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an additional outline to the <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+        </summary>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Pen" /> that specifies the width between the original outline of the path and the new outline this method creates. </param>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a transform to apply to the path before widening. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2069,11 +2862,20 @@
         <Parameter Name="flatness" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="pen">To be added: an object of type 'Drawing.Pen'</param>
-        <param name="matrix">To be added: an object of type 'Matrix'</param>
-        <param name="flatness">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates an outline around the original lines in this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />, with a distance between the existing lines and the new outline equal to that of the width of the <see cref="T:System.Drawing.Pen" /> used in the call to <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Widen(System.Drawing.Pen,System.Drawing.Drawing2D.Matrix,System.Single)" />. If you want to fill the space between the lines you must use the <see cref="M:System.Drawing.Graphics.FillPath(System.Drawing.Brush,System.Drawing.Drawing2D.GraphicsPath)" /> rather then the <see cref="M:System.Drawing.Graphics.DrawPath(System.Drawing.Pen,System.Drawing.Drawing2D.GraphicsPath)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces this <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> with curves that enclose the area that is filled when this path is drawn by the specified pen.</para>
+        </summary>
+        <param name="pen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Pen" /> that specifies the width between the original outline of the path and the new outline this method creates. </param>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.Matrix" /> that specifies a transform to apply to the path before widening. </param>
+        <param name="flatness">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies the flatness for curves. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvokeMemberBinder" FullName="System.Dynamic.InvokeMemberBinder">
   <TypeSignature Language="C#" Value="public abstract class InvokeMemberBinder : System.Dynamic.DynamicMetaObjectBinder" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit InvokeMemberBinder extends System.Dynamic.DynamicMetaObjectBinder" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the invoke member dynamic operation at the call site, providing the binding semantic and the details about the operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +31,17 @@
         <Parameter Name="callInfo" Type="System.Dynamic.CallInfo" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="callInfo">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Dynamic.InvokeMemberBinder" />.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to invoke.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the name should be matched ignoring case; false otherwise.</param>
+        <param name="callInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature of the arguments at the call site.</param>
       </Docs>
     </Member>
     <Member MemberName="Bind">
@@ -49,11 +59,19 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the binding of the dynamic invoke member operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic invoke member operation.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments of the dynamic invoke member operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CallInfo">
@@ -67,9 +85,12 @@
         <ReturnType>System.Dynamic.CallInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the signature of the arguments at the call site.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FallbackInvoke">
@@ -88,12 +109,24 @@
         <Parameter Name="errorSuggestion" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="errorSuggestion">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the target when the target implements the invoke member operation as a sequence of get member, and invoke, to let the <see cref="T:System.Dynamic.DynamicMetaObject" /> request the binding of the invoke operation only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in the derived class, performs the binding of the dynamic invoke operation if the target dynamic object cannot bind.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic invoke operation.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments of the dynamic invoke operation.</param>
+        <param name="errorSuggestion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding result to use if binding fails, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="FallbackInvokeMember">
@@ -111,11 +144,19 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the binding of the dynamic invoke member operation if the target dynamic object cannot bind.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic invoke member operation.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments of the dynamic invoke member operation.</param>
       </Docs>
     </Member>
     <Member MemberName="FallbackInvokeMember">
@@ -134,12 +175,21 @@
         <Parameter Name="errorSuggestion" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="errorSuggestion">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in the derived class, performs the binding of the dynamic invoke member operation if the target dynamic object cannot bind.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic invoke member operation.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments of the dynamic invoke member operation.</param>
+        <param name="errorSuggestion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding result to use if binding fails, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="IgnoreCase">
@@ -153,9 +203,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value indicating if the string comparison should ignore the case of the member name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -169,9 +222,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the member to invoke.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnType">
@@ -185,9 +241,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result type of the operation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

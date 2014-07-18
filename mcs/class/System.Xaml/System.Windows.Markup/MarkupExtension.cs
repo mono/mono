@@ -29,9 +29,7 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public abstract class MarkupExtension
 	{
 		public abstract object ProvideValue (IServiceProvider serviceProvider);

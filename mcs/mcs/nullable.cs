@@ -187,6 +187,11 @@ namespace Mono.CSharp.Nullable
 			call.EmitPredefined (ec, NullableInfo.GetHasValue (expr.Type), null);
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			expr.EmitSideEffect (ec);
+		}
+
 		public override Expression EmitToField (EmitContext ec)
 		{
 			if (temp_field == null)
@@ -529,6 +534,11 @@ namespace Mono.CSharp.Nullable
 				return null;
 
 			Expression res = base.ResolveOperator (ec, unwrap);
+			if (res == null) {
+				Error_OperatorCannotBeApplied (ec, loc, OperName (Oper), Expr.Type);
+				return null;
+			}
+
 			if (res != this) {
 				if (user_operator == null)
 					return res;
@@ -1153,23 +1163,22 @@ namespace Mono.CSharp.Nullable
 					//
 					Constant lc = left as Constant;
 					if (lc != null && !lc.IsDefaultValue)
-						return ReducedExpression.Create (lc, this);
+						return ReducedExpression.Create (lc, this, false);
 
 					//
 					// Reduce (left ?? null) to left OR (null-constant ?? right) to right
 					//
-					if (right.IsNull || lc != null)
-						return ReducedExpression.Create (lc != null ? right : left, this);
+					if (right.IsNull || lc != null) {
+						//
+						// Special case null ?? null
+						//
+						if (right.IsNull && ltype == right.Type)
+							return null;
+
+						return ReducedExpression.Create (lc != null ? right : left, this, false);
+					}
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = ltype;
-					return this;
-				}
-
-				//
-				// Special case null ?? null
-				//
-				if (ltype == right.Type) {
 					type = ltype;
 					return this;
 				}
@@ -1185,7 +1194,7 @@ namespace Mono.CSharp.Nullable
 			// Reduce (null ?? right) to right
 			//
 			if (left.IsNull)
-				return ReducedExpression.Create (right, this).Resolve (ec);
+				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
 			type = rtype;
@@ -1229,7 +1238,15 @@ namespace Mono.CSharp.Nullable
 				unwrap.EmitCheck (ec);
 				ec.Emit (OpCodes.Brfalse, is_null_label);
 
-				left.Emit (ec);
+				//
+				// When both expressions are nullable the unwrap
+				// is needed only for null check not for value uwrap
+				//
+				if (type.IsNullableType && TypeSpecComparer.IsEqual (NullableInfo.GetUnderlyingType (type), unwrap.Type))
+					unwrap.Load (ec);
+				else
+					left.Emit (ec);
+
 				ec.Emit (OpCodes.Br, end_label);
 
 				ec.MarkLabel (is_null_label);

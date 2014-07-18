@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DISPPARAMS" FullName="System.Runtime.InteropServices.DISPPARAMS">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct DISPPARAMS" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit DISPPARAMS extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about DISPPARAMS, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.DISPPARAMS" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="cArgs">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the count of arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="cNamedArgs">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the count of named arguments </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="rgdispidNamedArgs">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dispatch IDs of named arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="rgvarg">
@@ -91,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a reference to the array of arguments.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

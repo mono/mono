@@ -22,6 +22,12 @@ LIB_MCS_FLAGS = \
 	-r:System.Xml.dll			\
 	-r:System.Web.dll
 
+plainweb_dir = $(the_libdir_base)plainweb
+LOCAL_MCS_FLAGS = -lib:$(plainweb_dir)
+
+plainweb = $(plainweb_dir)/System.Web.dll
+system_web_services_deps = $(plainweb)
+
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += \
 	-r:System.Configuration.dll \
@@ -41,3 +47,10 @@ EXTRA_DISTFILES = \
 	Test/System.Web.Services.Description/*.wsdl
 
 include ../../build/library.make
+
+$(the_libdir_base)$(LIBRARY): $(system_web_services_deps)
+
+$(plainweb):
+	(cd ../System.Web; $(MAKE) $@)
+
+.NOTPARALLEL: $(plainweb)

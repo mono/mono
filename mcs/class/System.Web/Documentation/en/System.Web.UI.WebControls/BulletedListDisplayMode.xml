@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BulletedListDisplayMode" FullName="System.Web.UI.WebControls.BulletedListDisplayMode">
   <TypeSignature Language="C#" Value="public enum BulletedListDisplayMode" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.BulletedListDisplayMode" /> enumeration represents the display behaviors that you can apply to the content of the list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property uses these enumeration values to set the display behavior of the list item content in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. For example, if you set the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property to the <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" /> value, the content of each list item in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control renders as a hyperlink.</para>
+      <para>The <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.Text" /> value allows you to display the list item content as regular text with no additional functionality.</para>
+      <para>The <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" /> value allows you to display list item content as hyperlinks. When clicked, a hyperlink navigates to a URL. Use the <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property to specify the URL that a hyperlink navigates to.</para>
+      <para>The <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" /> value allows you to display list item content as link buttons. Use the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event to post back to the server when the user clicks a link button. Use the event data of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class to determine the index of the link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> that the user clicked.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the display behaviors that you can apply to the list item contents in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="HyperLink">
@@ -20,8 +30,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletedListDisplayMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the list item content as hyperlinks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletedListDisplayMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the list item content as link buttons.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletedListDisplayMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the list item content as text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

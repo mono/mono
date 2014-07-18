@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellStyle" FullName="System.Windows.Forms.DataGridViewCellStyle">
   <TypeSignature Language="C#" Value="public class DataGridViewCellStyle : ICloneable" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> class lets you share style information across multiple <see cref="T:System.Windows.Forms.DataGridView" /> cells, rows, columns, and row or column headers, avoiding the memory requirements of setting style properties on individual cells. For more information about classes that have a property of type <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> and how they relate to each other, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the formatting and style information applied to individual cells within a <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +30,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> class using default property values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +48,14 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> class using the property values of the specified <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> used as a template to provide initial property values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +68,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewContentAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the position of the cell content within a <see cref="T:System.Windows.Forms.DataGridView" /> cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,10 +95,17 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCellStyle.ApplyStyle(System.Windows.Forms.DataGridViewCellStyle)" /> method applies the values of the properties that are set in the <paramref name="dataGridViewCellStyle" /> parameter to the current <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />. If a property is not set in <paramref name="dataGridViewCellStyle" />, the current <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> retains its value of that property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the specified <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to the current <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to apply to the current <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +118,13 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of a <see cref="T:System.Windows.Forms.DataGridView" /> cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,9 +141,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents an exact copy of this cell style.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DataSourceNullValue">
@@ -126,10 +159,19 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can enter a null value into a cell by pressing CTRL+0 or by typing the value of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property. When the user commits the change, the underlying cell value is set to the value of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property or to null if <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> is <see cref="F:System.DBNull.Value" /> and the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> is a reference type. This conversion does not occur when you set the <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property programmatically. </para>
+          <block subset="none" type="note">
+            <para>The control does not display the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property value for cell values equal to the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property value when <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> is set to a value other than <see cref="F:System.DBNull.Value" /> or null. In this case, you can handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event to display the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property value. For more information, see the code example in this topic. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value saved to the data source when the user enters a null value into a cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,11 +198,18 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equivalent to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> and has the same property values as this instance; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,10 +222,16 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to change the typeface styles applied to the cell text. Because a <see cref="T:System.Drawing.Font" /> is immutable (its properties are read-only), you can modify this property only by assigning a new or existing <see cref="T:System.Drawing.Font" /> to it; you cannot alter the properties of the returned object directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font applied to the textual content of a <see cref="T:System.Windows.Forms.DataGridView" /> cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,10 +244,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCellStyle.ForeColor" /> property typically should specify a color that contrasts with the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.BackColor" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of a <see cref="T:System.Windows.Forms.DataGridView" /> cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -205,10 +266,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Format" /> property specifies how cell values are formatted as strings. For more information, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format string applied to the textual content of a <see cref="T:System.Windows.Forms.DataGridView" /> cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -232,10 +299,13 @@
         <ReturnType>System.IFormatProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object used to provide culture-specific formatting of <see cref="T:System.Windows.Forms.DataGridView" /> cell values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,10 +343,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property has been explicitly set without having to store its default value for comparison. This is useful because the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property has a non-empty default value, unlike most other <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> properties, which have default values such as null, <see cref="F:System.Drawing.Color.Empty" />, or <see cref="F:System.Windows.Forms.DataGridViewContentAlignment.NotSet" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property has been set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -297,10 +373,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> property has been explicitly set without having to store its default value for comparison. This is useful because the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> property has a non-empty default value, unlike most other <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> properties, which have default values such as null, <see cref="F:System.Drawing.Color.Empty" />, or <see cref="F:System.Windows.Forms.DataGridViewContentAlignment.NotSet" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> property has been set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,10 +403,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property has been explicitly set without having to store its default value for comparison. This is useful because the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property has a non-empty default value, unlike most other <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> properties, which have default values such as null, <see cref="F:System.Drawing.Color.Empty" />, or <see cref="F:System.Windows.Forms.DataGridViewContentAlignment.NotSet" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property has been set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -345,10 +433,20 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DataGridView" /> cell with this cell style has a value of <see cref="F:System.DBNull.Value" /> or null or the user edits the cell and presses CTRL+0, the <see cref="T:System.Windows.Forms.DataGridView" /> control displays the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property value. When a user edits a cell with this cell style and enters the value of this property or presses CTRL+0, the control sets the cell value to the value of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property or to null if <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> is <see cref="F:System.DBNull.Value" /> and the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> is a reference type. This conversion does not occur when you set the <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property programmatically.</para>
+          <block subset="none" type="note">
+            <para>The control does not display the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property value for cell values equal to the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property value when <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> is set to a value other than <see cref="F:System.DBNull.Value" /> or null. In this case, you can handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event to display the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> property value. For more information, see the code example in this topic. </para>
+          </block>
+          <para>This property takes any object, which enables you to specify a value with a type appropriate to the display type of the cell. For example, you can set this property to string values for use by text box cells or images for use by image cells. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.DataGridView" /> cell display value corresponding to a cell value of <see cref="F:System.DBNull.Value" /> or null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -369,10 +467,16 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Padding" /> property affects where the editing control of the <see cref="T:System.Windows.Forms.DataGridViewCell" /> is drawn. For example, if you set <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Padding" /> on a <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> to a <see cref="T:System.Windows.Forms.Padding" /> that has a value of 10 for its <see cref="P:System.Windows.Forms.Padding.Left" />, <see cref="P:System.Windows.Forms.Padding.Top" />, <see cref="P:System.Windows.Forms.Padding.Right" />, and <see cref="P:System.Windows.Forms.Padding.Bottom" /> properties, the content of the cell is drawn in the middle of the cell with a space of 10 pixels between the edges of the text box and the edges of the cell. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the space between the edge of a <see cref="T:System.Windows.Forms.DataGridViewCell" /> and its content.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,10 +489,13 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color used by a <see cref="T:System.Windows.Forms.DataGridView" /> cell when it is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -401,10 +508,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCellStyle.SelectionForeColor" /> property typically should specify a color that contrasts with the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.SelectionBackColor" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color used by a <see cref="T:System.Windows.Forms.DataGridView" /> cell when it is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -421,9 +534,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents an exact copy of this cell style.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -433,10 +555,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that contains additional data related to the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -458,10 +583,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string indicating the current property settings of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string indicating the current property settings of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -474,10 +605,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewTriState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Windows.Forms.DataGridViewCellStyle.WrapMode" /> is <see cref="F:System.Windows.Forms.DataGridViewTriState.False" /> for a cell that contains text, the cell displays the text on a single line, and displays any embedded newline characters as box characters. If <see cref="P:System.Windows.Forms.DataGridViewCellStyle.WrapMode" /> is <see cref="F:System.Windows.Forms.DataGridViewTriState.True" /> for a cell that contains text, the cell displays newline characters as line breaks, but also wraps any lines that exceed the width of the cell. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether textual content in a <see cref="T:System.Windows.Forms.DataGridView" /> cell is wrapped to subsequent lines or truncated when it is too long to fit on a single line.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

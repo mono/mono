@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtendedProtectionPolicyElement" FullName="System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement">
   <TypeSignature Language="C#" Value="public sealed class ExtendedProtectionPolicyElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ExtendedProtectionPolicyElement extends System.Configuration.ConfigurationElement" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> can be configured for server applications using standard configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class represents a configuration element for an <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this constructor is used to initialize a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class, the <see cref="P:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement.PolicyEnforcement" /> property is set to <see cref="F:System.Security.Authentication.ExtendedProtection.PolicyEnforcement.Never" />, the <see cref="P:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement.ProtectionScenario" /> property is set to <see cref="F:System.Security.Authentication.ExtendedProtection.ProtectionScenario.TransportSelected" />, and the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ServiceNameElementCollection" /> property is set to null.</para>
+          <para>The properties on the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class instance should be set to appropriate values for the application before calling the <see cref="M:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement.BuildPolicy" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BuildPolicy">
@@ -44,9 +58,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties on the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class instance must be set before calling the <see cref="M:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement.BuildPolicy" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement.BuildPolicy" /> method builds a new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> instance based on the properties set on the <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> instance that represents the extended protection policy created.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CustomServiceNames">
@@ -65,9 +88,12 @@
         <ReturnType>System.Security.Authentication.ExtendedProtection.Configuration.ServiceNameElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom Service Provider Name (SPN) list used to match against a client's SPN for this configuration policy element. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PolicyEnforcement">
@@ -86,9 +112,15 @@
         <ReturnType>System.Security.Authentication.ExtendedProtection.PolicyEnforcement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is an <see cref="T:System.Security.Authentication.ExtendedProtection.PolicyEnforcement" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the policy enforcement value for this configuration policy element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -123,9 +155,12 @@
         <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the kind of protection enforced by the extended protection policy for this configuration policy element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

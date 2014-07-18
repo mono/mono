@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHttpHandler" FullName="System.Web.IHttpHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IHttpHandler" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can write custom HTTP handlers to process specific, predefined types of HTTP requests in any Common Language Specification (CLS) compliant language. Executable code defined in the HttpHandler classes, rather than conventional ASP or ASP.NET Web pages, responds to these specific requests. HTTP handlers give you a means of interacting with the low-level request and response services of the IIS Web server and provide functionality much like ISAPI extensions but with a simpler programming model.</para>
+      <para>If your handler will access session state values, it must implement the <see cref="T:System.Web.SessionState.IRequiresSessionState" /> interface (a marker interface with no methods).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that ASP.NET implements to synchronously process HTTP Web requests using custom HTTP handlers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IsReusable">
@@ -21,9 +29,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You explicitly set the <see cref="P:System.Web.IHttpHandler.IsReusable" /> property to true or false by code you provide that overrides the <see cref="P:System.Web.IHttpHandler.IsReusable" /> property accessor (getter).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +54,16 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'HttpContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Place your custom HttpHandler code in the <see cref="M:System.Web.IHttpHandler.ProcessRequest(System.Web.HttpContext)" /> virtual method, as shown in the following example.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables processing of HTTP Web requests by a custom HttpHandler that implements the <see cref="T:System.Web.IHttpHandler" /> interface.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BasicDesignerLoader" FullName="System.ComponentModel.Design.Serialization.BasicDesignerLoader">
   <TypeSignature Language="C#" Value="public abstract class BasicDesignerLoader : System.ComponentModel.Design.Serialization.DesignerLoader, System.ComponentModel.Design.Serialization.IDesignerLoaderService" />
   <AssemblyInfo>
@@ -13,8 +14,59 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> is a complete implementation of a designer loader without anything relating to a persistence format. A <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> does not dictate either a text or binary persistence, but it does support the following features:</para>
+      <list type="bullet">
+        <item>
+          <para>Multiple load dependencies.</para>
+        </item>
+        <item>
+          <para>Tracking changes within the designer.</para>
+        </item>
+        <item>
+          <para>Deferred idle-time reloading.</para>
+        </item>
+      </list>
+      <para>A <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> adds two kinds of services to the designer host’s service container: replaceable services and irreplaceable services. You can replace a replaceable service by changing the value of the protected <see cref="P:System.ComponentModel.Design.Serialization.BasicDesignerLoader.LoaderHost" /> property. You cannot replace irreplaceable services because their implementations depend on each other.</para>
+      <para>The following table describes the services that are provided by default.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Default Service</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" />
+            </para>
+          </term>
+          <description>
+            <para>Allows objects to request that the designer reload itself when it is idle. This is a replaceable service.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
+            </para>
+          </term>
+          <description>
+            <para>Used to serialize and deserialize objects. The serialization manager is added as a service so objects that need to perform serialization can utilize any serialization providers that were added to the serialization manager. This is an irreplaceable service.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an implementation of the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +77,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginLoad">
@@ -42,9 +97,28 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.Serialization.IDesignerLoaderHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is an implementation of the abstract <see cref="M:System.ComponentModel.Design.Serialization.DesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> method. You do not need to override this method in your own class. The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> method performs the following actions:</para>
+          <list type="bullet">
+            <item>
+              <para>It verifies that the design surface has not already loaded.</para>
+            </item>
+            <item>
+              <para>On the first call, it adds relevant services and calls the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Initialize" /> method.</para>
+            </item>
+            <item>
+              <para>It calls the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" />, <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" />, and <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> methods.</para>
+            </item>
+          </list>
+          <para>If the designer loader service has not been removed from the service container, <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> will call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#AddLoadDependency" /> and <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> methods instead of the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> and <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> methods. In this situation, it is the responsibility of the designer loader service to call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> and <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the loading process.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer loader host to load.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -58,8 +132,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" /> method does not flush changes to the designer loader. If you want changes to be saved, call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> before calling <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" />.</para>
+          <para>Call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" />. The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> in an unusable state. After calling <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableComponentNotification">
@@ -75,10 +159,17 @@
         <Parameter Name="enable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enable">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables component notification with the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component notification was enabled prior to this call; otherwise, false.</para>
+        </returns>
+        <param name="enable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to enable component notification by the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />; false to disable component notification by the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Flush">
@@ -92,8 +183,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the designer loader has not been loaded or has not been marked as modified, the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> method returns immediately. Otherwise, <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> asks the serialization manager to create a serialization session and then calls <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes pending changes to the designer loader.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -109,10 +206,21 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.GetService(System.Type)" /> is a helper method that allows classes deriving from <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> to access services offered by the designer loader host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, or null if the requested service cannot be found.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service.</param>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -126,8 +234,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Initialize" /> method is called the first time <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> is invoked. You can add any services necessary to the designer loader host at this time. The base implementation adds services that <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> provides, so after calling the base implementation you may replace existing services. You must remove any custom services you add here by overriding <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Dispose" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes services.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReloadNeeded">
@@ -141,9 +255,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.IsReloadNeeded" /> method is used by some designer loaders to optimize reloading. This method can be overridden if your designer loader supports intelligent reloading. Some designer loaders can detect changes made to their underlying document and determine if a reload of the designer is actually necessary. If not, they should return false from this method. The default implementation always returns true, indicating that any call to <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Reload(System.ComponentModel.Design.Serialization.BasicDesignerLoader.ReloadOptions)" /> will succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the designer should be reloaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the designer should be reloaded; otherwise, false. The default implementation always returns true.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoaderHost">
@@ -156,9 +279,15 @@
         <ReturnType>System.ComponentModel.Design.Serialization.IDesignerLoaderHost</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the loader host that was given to this designer loader. This can be null if <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> has not been called yet, or if this designer loader has been disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the loader host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Loading">
@@ -171,9 +300,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> class provides the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" />, which supports load dependencies. This property takes load dependencies into account and will return true if there are any outstanding load dependencies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer loader is loading the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Modified">
@@ -186,9 +321,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the designer loader has detected that the designer has been modified. If this property is true when the designer loader’s <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> method is called, the designer loader will call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the designer has been modified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBeginLoad">
@@ -202,8 +343,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> method is invoked to start the loading process. You should perform any necessary initialization for loading at this time. This method should not be used to perform the actual load. The default implementation disables change notifications and sets up the <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> for loading.</para>
+          <para>If you implement <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> to provide dependent load support, you should call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> when the first dependent load occurs. Call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> method after the last call to the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method. By default, <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> implements <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> and does this for you. If <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> is not available when <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> is called, <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> will directly call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" />.</para>
+          <para>If you provide your own loader service, or if you choose not to provide a loader service, you are responsible for calling this method. The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> method will automatically call this, either indirectly by calling <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#AddLoadDependency" /> if <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> is available, or directly if it is not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that loading is about to begin.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBeginUnload">
@@ -217,8 +366,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginUnload" /> method is invoked when the designer loader is about to unload the document.</para>
+          <para>The document may be unloaded in preparation for reloading, or if the document failed to load. If you added document-specific services in <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> or <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" />, remove them here.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that unloading is about to begin.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnEndLoad">
@@ -235,10 +391,20 @@
         <Parameter Name="errors" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="successful">To be added.</param>
-        <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> method is invoked when loading is finished. It is always called, even if an exception is thrown during loading. The value of <paramref name="successful" /> will be set to true if the load succeeded, or false if a fatal error occurred. The <paramref name="errors" /> collection will contain objects that were reported as errors. Usually, these objects are exceptions.</para>
+          <para>If you implement <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> to provide dependent load support, you should call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> method after the last call to the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method. By default, <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" /> implements <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> and does this for you. If <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> is not available when <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> is called, <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> will directly call <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> after calling <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" />.</para>
+          <para>This method should be called by the designer loader service when all dependent loads have been completed.  This stops the loading process that was initiated by the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> method. If you provide your own loader service, or if you choose not to provide a loader service, you are responsible for calling this method. The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.BeginLoad(System.ComponentModel.Design.Serialization.IDesignerLoaderHost)" /> method will automatically call this, either indirectly by calling the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method if <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> is available, or directly if it is not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that loading is complete.</para>
+        </summary>
+        <param name="successful">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the load completed successfully; otherwise, false.</param>
+        <param name="errors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> containing objects (usually exceptions) that were reported as errors.</param>
       </Docs>
     </Member>
     <Member MemberName="OnModifying">
@@ -252,8 +418,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnModifying" /> method is called in response to a component changing, adding, or removing event which indicates that the designer is about to be modified. You can implement source code control by overriding this method. A call to <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnModifying" /> does not mean that the <see cref="P:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Modified" /> property will later be set to true; it merely indicates an intention to do so.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that the state of the document is about to be modified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PerformFlush">
@@ -269,9 +441,16 @@
         <Parameter Name="serializationManager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="serializationManager">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> method is invoked when the designer loader needs to flush to persistence any changes made to the designers. It is invoked in response to a call to the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes all changes to the designer.</para>
+        </summary>
+        <param name="serializationManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for persisting the state of loaded designers.</param>
       </Docs>
     </Member>
     <Member MemberName="PerformLoad">
@@ -287,9 +466,16 @@
         <Parameter Name="serializationManager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="serializationManager">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> method is invoked when the designer loader needs to load its state. <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> is called before the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" /> method. You must implement this method to load the designer contents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a designer from persistence.</para>
+        </summary>
+        <param name="serializationManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for loading state for the designers.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyProvider">
@@ -302,9 +488,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialization manager provides a Properties property on its primary interface that can be read by serializers to customize their serialization to specific needs. The properties that are examined by the serializers vary depending on the type of serializer used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the property provider for the serialization manager being used by the loader.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reload">
@@ -335,9 +527,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a reload has been queued.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReportFlushErrors">
@@ -353,9 +548,16 @@
         <Parameter Name="errors" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.ReportFlushErrors(System.Collections.ICollection)" /> method is called during <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Flush" /> if one or more errors occurred while flushing changes. The values in the <paramref name="errors" /> collection can be exceptions or objects with <see cref="M:System.Object.ToString" /> values that describe the error. The default implementation of <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.ReportFlushErrors(System.Collections.ICollection)" /> raises the last exception in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reports errors that occurred while flushing changes.</para>
+        </summary>
+        <param name="errors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> containing error objects, usually exceptions.</param>
       </Docs>
     </Member>
     <Member MemberName="SetBaseComponentClassName">
@@ -371,9 +573,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.SetBaseComponentClassName(System.String)" /> method should be called during loading to establish the full name of the component a designer is designing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the full class name of the base component.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representing the full name of the component to be designed.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency">
@@ -387,8 +596,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency" /> method once for each external object participating in the load process. The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method is called when the work of the load process is done.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an external component as part of the load process managed by <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete">
@@ -405,10 +620,19 @@
         <Parameter Name="errorCollection" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="successful">To be added.</param>
-        <param name="errorCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method is called to signal that a dependent loading operation has completed. Call the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> method once for every process that was registered by calling the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency" /> method, which has already completed.</para>
+          <para>If the dependent load succeeds, the caller sets the <paramref name="successful" /> parameter to true and passes either an empty collection or null to the <paramref name="errorCollection" /> parameter. If the dependent load encounters errors, the caller sets the <paramref name="successful" /> parameter to false and passes a collection of exceptions that indicate the reason or reasons for failure to the <paramref name="errorCollection" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals that a dependent load has finished.</para>
+        </summary>
+        <param name="successful">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to load successfully; otherwise, false.</param>
+        <param name="errorCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> containing errors that occurred during the load.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerLoaderService.Reload">
@@ -422,9 +646,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any object can call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#Reload" /> method to request that the loader reload the design document. If the loader supports reloading and complies with the reload, the designer loader can return true. Otherwise, it returns false, indicating that the reload will not occur. Callers cannot rely on the reload happening immediately; the designer loader can schedule this for some other time, or it can try to reload the designer at once.</para>
+          <para>The caller can display a message to the user if the designer cannot be reloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reloads the design document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reload request is accepted; false if the loader does not allow the reload.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

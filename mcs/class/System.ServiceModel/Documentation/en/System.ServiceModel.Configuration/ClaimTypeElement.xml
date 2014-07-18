@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClaimTypeElement" FullName="System.ServiceModel.Configuration.ClaimTypeElement">
   <TypeSignature Language="C#" Value="public sealed class ClaimTypeElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ClaimTypeElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that contains the type of claim. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ClaimTypeElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +46,15 @@
         <Parameter Name="isOptional" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="claimType">To be added.</param>
-        <param name="isOptional">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ClaimTypeElement" /> class.  </para>
+        </summary>
+        <param name="claimType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A uniform resource identifier (URI) that specifies the type of claim. Predefined claim types are available as static properties of the <see cref="T:System.IdentityModel.Claims.ClaimTypes" /> class. </param>
+        <param name="isOptional">
+          <attribution license="cc4" from="Microsoft" modified="false" />A boolean value that specifies whether the claim is optional.</param>
       </Docs>
     </Member>
     <Member MemberName="ClaimType">
@@ -64,9 +76,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Predefined claim types are available as static properties of the <see cref="T:System.IdentityModel.Claims.ClaimTypes" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string representation of a uniform resource identifier (URI) that specifies the type of claim. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsOptional">
@@ -85,9 +103,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether the claim is optional.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

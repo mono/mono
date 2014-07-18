@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnicastIPAddressInformationCollection" FullName="System.Net.NetworkInformation.UnicastIPAddressInformationCollection">
   <TypeSignature Language="C#" Value="public class UnicastIPAddressInformationCollection : System.Collections.Generic.ICollection&lt;System.Net.NetworkInformation.UnicastIPAddressInformation&gt;, System.Collections.Generic.IEnumerable&lt;System.Net.NetworkInformation.UnicastIPAddressInformation&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnicastIPAddressInformationCollection extends System.Object implements class System.Collections.Generic.ICollection`1&lt;class System.Net.NetworkInformation.UnicastIPAddressInformation&gt;, class System.Collections.Generic.IEnumerable`1&lt;class System.Net.NetworkInformation.UnicastIPAddressInformation&gt;, class System.Collections.IEnumerable" />
@@ -18,9 +19,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores a set of <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +37,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformationCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -52,10 +59,14 @@
         <Parameter Name="address" Type="System.Net.NetworkInformation.UnicastIPAddressInformation" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> because this operation is not supported for this collection.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -71,9 +82,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> because this operation is not supported for this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -91,11 +105,18 @@
         <Parameter Name="address" Type="System.Net.NetworkInformation.UnicastIPAddressInformation" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the collection contains the specified <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> object exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> object to be searched in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -114,11 +135,19 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array parameter must be one-dimensional with zero-based indexing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements in this collection to a one-dimensional array of type <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A one-dimensional array that receives a copy of the collection.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which the copy begins.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -133,10 +162,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> types in this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -152,10 +184,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that is returned by this method is initially positioned before the first element in this collection. You must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method before you can access the first element. To access the element at the current position, call the <see cref="P:System.Collections.IEnumerator.Current" /> property.</para>
+          <para>Do not modify the collection while using the enumerator. If the collection is modified while an enumerator is in use, an attempt to set the position by calling <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> causes an <see cref="T:System.InvalidOperationException" />.</para>
+          <para>For a detailed description of enumerators, see the documentation for the <see cref="T:System.Collections.IEnumerator" /> class and the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that can be used to iterate through this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerator" /> interface and provides access to the <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> types in this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -170,10 +213,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether access to this collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -213,11 +259,18 @@
         <Parameter Name="address" Type="System.Net.NetworkInformation.UnicastIPAddressInformation" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> because the collection is read-only and elements cannot be removed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be removed.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -233,9 +286,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that is returned by this method is initially positioned before the first element in this collection. You must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method before you can access the first element. To access the element at the current position, call the <see cref="P:System.Collections.IEnumerator.Current" /> property.</para>
+          <para>Do not modify the collection while using the enumerator. If the collection is modified while an enumerator is in use, an attempt to set the position by calling <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> causes an <see cref="T:System.InvalidOperationException" />.</para>
+          <para>For a detailed description of enumerators, see the documentation for the <see cref="T:System.Collections.IEnumerator" /> class and the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that can be used to iterate through this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerator" /> interface and provides access to the <see cref="T:System.Net.NetworkInformation.UnicastIPAddressInformation" /> types in this collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

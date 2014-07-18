@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyInfoEncryptedKey" FullName="System.Security.Cryptography.Xml.KeyInfoEncryptedKey">
   <TypeSignature Language="C#" Value="public class KeyInfoEncryptedKey : System.Security.Cryptography.Xml.KeyInfoClause" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit KeyInfoEncryptedKey extends System.Security.Cryptography.Xml.KeyInfoClause" />
@@ -11,9 +12,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class wraps the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class, which allows you to add the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class as a subelement of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class.  Initialize the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class to an instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class when you need to add an encrypted session key to your encrypted XML document.    </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Wraps the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class, it to be placed as a subelement of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +33,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor does not initialize the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class using an instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class.  Use the <see cref="P:System.Security.Cryptography.Xml.KeyInfoEncryptedKey.EncryptedKey" /> property to specify an <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object when you use this constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,9 +57,12 @@
       </Parameters>
       <Docs>
         <param name="ek">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class using an <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EncryptedKey">
@@ -61,10 +77,16 @@
         <ReturnType>System.Security.Cryptography.Xml.EncryptedKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class wraps the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class, which allows you to add the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class as a subelement of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class.  Use the <see cref="P:System.Security.Cryptography.Xml.KeyInfoEncryptedKey.EncryptedKey" /> property to access the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object that encapsulates an encrypted key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -80,10 +102,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an XML representation of a <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML representation of a <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> object. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -101,10 +129,14 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the input <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> object to match.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlElement" /> object that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoEncryptedKey" /> object.</param>
       </Docs>
     </Member>
   </Members>

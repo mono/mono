@@ -32,24 +32,19 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public abstract class ValueSerializer
 	{
-#if !NET_2_1
 		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor)
 		{
 			return GetSerializerFor (descriptor, null);
 		}
-#endif
 
 		public static ValueSerializer GetSerializerFor (Type type)
 		{
 			return GetSerializerFor (type, null);
 		}
 
-#if !NET_2_1
 		// untested
 		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor, IValueSerializerContext context)
 		{
@@ -63,7 +58,6 @@ namespace System.Windows.Markup
 				return new TypeConverterValueSerializer (tc);
 			return null;
 		}
-#endif
 
 		public static ValueSerializer GetSerializerFor (Type type, IValueSerializerContext context)
 		{

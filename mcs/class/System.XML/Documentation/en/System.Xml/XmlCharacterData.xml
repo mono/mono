@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlCharacterData" FullName="System.Xml.XmlCharacterData">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlCharacterData : System.Xml.XmlLinkedNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlCharacterData extends System.Xml.XmlLinkedNode" />
@@ -15,8 +16,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>The abstract base class of Xml nodes that contain character data: <see cref="T:System.Xml.XmlCDataSection" />, <see cref="T:System.Xml.XmlComment" />, <see cref="T:System.Xml.XmlSignificantWhitespace" />, <see cref="T:System.Xml.XmlText" />, and <see cref="T:System.Xml.XmlWhitespace" />.</summary>
     <remarks>None.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides text manipulation methods that are used by several classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +37,16 @@
         <Parameter Name="doc" Type="System.Xml.XmlDocument" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <param name="doc">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlCharacterData" /> class.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />String that contains character data to be added to document.</param>
+        <param name="doc">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDocument" /> to contain character data.</param>
       </Docs>
     </Member>
     <Member MemberName="AppendData">
@@ -55,9 +65,16 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the XmlNodeChangedAction.Change event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified string to the end of the character data of the node.</para>
+        </summary>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to insert into the existing string. </param>
       </Docs>
     </Member>
     <Member MemberName="Data">
@@ -74,9 +91,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data returned is equivalent to the <see cref="P:System.Xml.XmlCharacterData.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the data of the node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeleteData">
@@ -96,10 +119,18 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the XmlNodeChangedAction.Change event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a range of characters from the node.</para>
+        </summary>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the string to start deleting. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to delete. </param>
       </Docs>
     </Member>
     <Member MemberName="InnerText">
@@ -115,9 +146,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the concatenated values of the node and all the children of the node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InsertData">
@@ -137,10 +174,18 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the XmlNodeChangedAction.Change event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified string at the specified character offset.</para>
+        </summary>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the string to insert the supplied string data. </param>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string data that is to be inserted into the existing string. </param>
       </Docs>
     </Member>
     <Member MemberName="Length">
@@ -156,9 +201,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the data, in characters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReplaceData">
@@ -179,11 +227,20 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the XmlNodeChangedAction.Change event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the specified number of characters starting at the specified offset with the specified string.</para>
+        </summary>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the string to start replacing. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to replace. </param>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new data that replaces the old string data. </param>
       </Docs>
     </Member>
     <Member MemberName="Substring">
@@ -203,11 +260,19 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a substring of the full string from the specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substring corresponding to the specified range.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the string to start retrieving. An offset of zero indicates the starting point is at the start of the data. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -223,9 +288,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the node.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

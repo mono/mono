@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContentsResizedEventArgs" FullName="System.Windows.Forms.ContentsResizedEventArgs">
   <TypeSignature Language="C#" Value="public class ContentsResizedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This event is raised when the bounding rectangle necessary to accept new text changes. If the text within the control spans multiple lines, the requested rectangle will always be the width of the control. You can handle this event in your control to implement auto-resizing for multiline <see cref="T:System.Windows.Forms.RichTextBox" /> controls. The <see cref="T:System.Windows.Forms.ContentsResizedEventArgs" /> identifies the requested size of the <see cref="T:System.Windows.Forms.RichTextBox" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.RichTextBox.ContentsResized" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,9 +28,13 @@
         <Parameter Name="newRectangle" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="newRectangle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ContentsResizedEventArgs" /> class.</para>
+        </summary>
+        <param name="newRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the requested dimensions of the <see cref="T:System.Windows.Forms.RichTextBox" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,9 +48,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When text is entered into the <see cref="T:System.Windows.Forms.RichTextBox" /> control, the <see cref="T:System.Windows.Forms.RichTextBox" /> control determines the proper size of the control in order to display all of the contents of the control. You can use the <see cref="P:System.Windows.Forms.ContentsResizedEventArgs.NewRectangle" /> property in an event handler for the <see cref="E:System.Windows.Forms.RichTextBox.ContentsResized" /> event of the <see cref="T:System.Windows.Forms.RichTextBox" /> control to properly size the control to display all of the control's contents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the requested size of the <see cref="T:System.Windows.Forms.RichTextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

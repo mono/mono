@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TagMapInfo" FullName="System.Web.Configuration.TagMapInfo">
   <TypeSignature Language="C#" Value="public sealed class TagMapInfo : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.TagMapInfo" /> class allows you to remap the types of tags at compile time. This remapping causes the mapped type to be used in place of the original tag type for all pages and controls in the ASP.NET application in the scope of the configuration file.</para>
+      <para>The <see cref="T:System.Web.Configuration.TagMapCollection" /> class allows you to programmatically access and modify the tagMapping subsection of the pages section of a configuration file. Within the tagMappings subsection, you can add and remove mappings between tag types by specifying the fully qualified strong names of the types.</para>
+      <block subset="none" type="note">
+        <para>Unlike other attributes and collections in the pages section, tag remapping has no matching ASP.NET page directive.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a single configuration tag remapping statement. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +33,16 @@
         <Parameter Name="mappedTagTypeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tagTypeName">To be added.</param>
-        <param name="mappedTagTypeName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.TagMapInfo" /> class based on the passed property values.</para>
+        </summary>
+        <param name="tagTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the type for the tag that is being remapped.</param>
+        <param name="mappedTagTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to which the tag is remapped, along with the supporting details.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +59,16 @@
       </Parameters>
       <Docs>
         <param name="map">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to another object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are identical; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +82,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash value for the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +112,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tag remapping occurs at compile time. This remapping causes the mapped type (specified by the <see cref="P:System.Web.Configuration.TagMapInfo.MappedTagType" /> property) to be used in place of the original tag type (specified by the <see cref="P:System.Web.Configuration.TagMapInfo.TagType" /> property) for all pages and controls in the ASP.NET application in the scope of the configuration file.</para>
+          <block subset="none" type="note">
+            <para>An empty string value for this property will cause the configuration system to throw an exception when the object is serialized.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type to which the tag is remapped.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,10 +137,13 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the properties belonging to this <see cref="T:System.Web.Configuration.TagPrefixInfo" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +186,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tag remapping occurs at compile time. This remapping causes the mapped type (specified by the <see cref="P:System.Web.Configuration.TagMapInfo.MappedTagType" /> property) to be used in place of the original tag type (specified by the <see cref="P:System.Web.Configuration.TagMapInfo.TagType" /> property) for all pages and controls in the ASP.NET application in the scope of the configuration file.</para>
+          <block subset="none" type="note">
+            <para>An empty string value for this property will cause the configuration system to throw an exception when the object is serialized.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the original type for the tag that is being remapped.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

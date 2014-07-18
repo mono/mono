@@ -55,6 +55,8 @@
     <Compile Include="Test\System.Data.Common\DbDataAdapterTest.cs" />
     <Compile Include="Test\System.Data.Common\DBDataPermissionAttributeTest.cs" />
     <Compile Include="Test\System.Data.Common\DBDataPermissionTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbDataReaderMock.cs" />
+    <Compile Include="Test\System.Data.Common\DbDataReaderTest.cs" />
     <Compile Include="Test\System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" />
     <Compile Include="Test\System.Data.Common\DbTransactionTest.cs" />
     <Compile Include="Test\System.Data.Odbc\OdbcCommandBuilderTest.cs" />
@@ -169,7 +171,8 @@
     <Compile Include="Test\System.Data\XmlExportOfTypedDataSetTest.cs" />
     <Compile Include="Test\System.Xml\XmlDataDocumentTest.cs" />
     <Compile Include="Test\System.Xml\XmlDataDocumentTest2.cs" />
-    <Compile Include="Mono.Data.SqlExpressions\Parser.cs" />  </ItemGroup>
+    <Compile Include="Mono.Data.SqlExpressions\Parser.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -235,4 +238,3 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
-

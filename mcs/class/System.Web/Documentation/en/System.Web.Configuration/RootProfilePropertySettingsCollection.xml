@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RootProfilePropertySettingsCollection" FullName="System.Web.Configuration.RootProfilePropertySettingsCollection">
   <TypeSignature Language="C#" Value="public sealed class RootProfilePropertySettingsCollection : System.Web.Configuration.ProfilePropertySettingsCollection" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> class is both a root-level <see cref="T:System.Web.Configuration.ProfilePropertySettingsCollection" /> collection and a container for a <see cref="T:System.Web.Configuration.ProfileGroupSettingsCollection" /> collection. These collections allow you to create named groups of more <see cref="T:System.Web.Configuration.ProfilePropertySettingsCollection" /> collections, each containing individual named <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> objects. For more information about the profile features added to vstecasplong, see <format type="text/html"><a href="06a7bf4a-a5a2-462d-9793-c79063a2018d">Creating Web Sites for Individual Users</a></format>.</para>
+      <para>The <see cref="P:System.Web.Configuration.ProfileSection.PropertySettings" /> property is a <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> object that contains all the properties defined within the properties subsection of the profile section of the configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Acts as the top of a two-level named hierarchy of <see cref="T:System.Web.Configuration.ProfilePropertySettingsCollection" /> collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,48 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> property is a <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> object that contains all the properties defined within the properties subsection of the profile section of the configuration file.</para>
+          <para>The following table shows the default settings that are used for this constructor.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Setting</para>
+                </term>
+                <description>
+                  <para>Default Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfilePropertySettingsCollection.AllowClear" />
+                </para>
+              </term>
+              <description>
+                <para>True.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.RootProfilePropertySettingsCollection.GroupSettings" />
+                </para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Web.Configuration.ProfileGroupSettingsCollection" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> class using default settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,9 +84,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.Configuration.ProfilePropertySettingsCollection.AllowClear" /> property is set when the object is created. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection can be cleared.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CollectionType">
@@ -69,10 +122,19 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override of base class method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> object to another A <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the passed <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> object is equal to the current object; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,10 +148,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override of base class method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a hash code for the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unique integer hash code for the current object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,10 +178,16 @@
         <ReturnType>System.Web.Configuration.ProfileGroupSettingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.RootProfilePropertySettingsCollection.GroupSettings" /> property allows you to create groups of <see cref="T:System.Web.Configuration.ProfilePropertySettingsCollection" /> collections. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Configuration.ProfileGroupSettingsCollection" /> containing a collection of <see cref="T:System.Web.Configuration.ProfileGroupSettings" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -127,9 +204,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the collection has been modified since it was last saved or loaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any contained element has been modified; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnDeserializeUnrecognizedElement">
@@ -197,8 +280,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the value of the <see cref="M:System.Web.Configuration.RootProfilePropertySettingsCollection.IsModified" /> property to false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ThrowOnDuplicate">

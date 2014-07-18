@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataAccessKind" FullName="Microsoft.SqlServer.Server.DataAccessKind">
   <TypeSignature Language="C#" Value="public enum DataAccessKind" />
   <AssemblyInfo>
@@ -8,9 +9,17 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the type of access to user data for a user-defined method or function.</para>
+      <para>This enumeration is used in <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> and <see cref="T:Microsoft.SqlServer.Server.SqlFunctionAttribute" /> to indicate whether the method or function uses ADO.NET to connect back to the database using the "context connection."</para>
+      <para>Note that methods and functions are not allowed to make changes to the database, so the options for this enumeration are None (meaning no data-access performed by the method or function) and Read (meaning that the method or function perform read-only data-access operations, such as executing SELECT statements).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the type of access to user data for a user-defined method or function.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -20,8 +29,11 @@
         <ReturnType>Microsoft.SqlServer.Server.DataAccessKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method or function does not access user data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +46,11 @@
         <ReturnType>Microsoft.SqlServer.Server.DataAccessKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method or function reads user data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

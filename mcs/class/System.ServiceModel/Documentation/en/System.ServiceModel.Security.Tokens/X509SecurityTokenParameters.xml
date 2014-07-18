@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509SecurityTokenParameters" FullName="System.ServiceModel.Security.Tokens.X509SecurityTokenParameters">
   <TypeSignature Language="C#" Value="public class X509SecurityTokenParameters : System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit X509SecurityTokenParameters extends System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is a collection of token properties and methods, and is used in creating security binding elements and tokens.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the parameters for an X.509 security token.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +48,32 @@
         <Parameter Name="x509ReferenceStyle" Type="System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType" />
       </Parameters>
       <Docs>
-        <param name="x509ReferenceStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>X509ReferenceStyle describes the kinds of security key identifier clauses that can be used to refer to the X509 security token. By default, references by Thumbprint, IssuerSerial, SubjectKeyIdentifier, and RawDataKeyIdentifier are accepted.</para>
+          <para>The following new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType.Any" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle.Internal" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+          <para>The corresponding properties are set to the values in the input parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters" /> class.</para>
+        </summary>
+        <param name="x509ReferenceStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,8 +88,14 @@
       </Parameters>
       <Docs>
         <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to the corresponding values in <paramref name="other" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -71,10 +110,33 @@
         <Parameter Name="inclusionMode" Type="System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode" />
       </Parameters>
       <Docs>
-        <param name="x509ReferenceStyle">To be added.</param>
-        <param name="inclusionMode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <paramref name="inclusionMode" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <paramref name="x509ReferenceStyle" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+          <para>The corresponding properties are set to the values in the input parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters" /> class.</para>
+        </summary>
+        <param name="x509ReferenceStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType" />.</param>
+        <param name="inclusionMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CloneCore">
@@ -89,9 +151,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern. </para>
+          <para>
+            <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> is an abstract class which is overridden by <see cref="M:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters.CloneCore" />.</para>
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters.CloneCore" /> method calls the <see cref="M:System.ServiceModel.Security.Tokens.X509SecurityTokenParameters.#ctor(System.ServiceModel.Security.Tokens.X509SecurityTokenParameters)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones another instance of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause">
@@ -109,11 +183,19 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <param name="referenceStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a key identifier clause for a token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security key identifier clause.</para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
+        <param name="referenceStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />.</param>
       </Docs>
     </Member>
     <Member MemberName="HasAsymmetricKey">
@@ -127,9 +209,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asymmetric keys are used in public-key cryptography, which uses two keys, a public key and a private key, which are related mathematically. The public key is distributed widely, but the private key is kept secret. In public-key cryptography, there is no need to exchange a common key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token has an asymmetric key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeSecurityTokenRequirement">
@@ -146,9 +234,28 @@
         <Parameter Name="requirement" Type="System.IdentityModel.Selectors.SecurityTokenRequirement" />
       </Parameters>
       <Docs>
-        <param name="requirement">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following properties of the <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" /> are initialized:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.TokenType" /> = <see cref="P:System.IdentityModel.Tokens.SecurityTokenTypes.X509Certificate" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.RequireCryptographicToken" /> = true.</para>
+            </item>
+          </list>
+          <para>
+            <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.KeyType" /> = <see cref="F:System.IdentityModel.Tokens.SecurityKeyType.AsymmetricKey" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a security token requirement.</para>
+        </summary>
+        <param name="requirement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportsClientAuthentication">
@@ -162,9 +269,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports client authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsClientWindowsIdentity">
@@ -178,9 +288,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports a Windows identity for authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsServerAuthentication">
@@ -194,9 +307,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports server authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -211,9 +327,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a text representation of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of this class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="X509ReferenceStyle">
@@ -227,9 +349,12 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the X.509 reference style.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

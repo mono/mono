@@ -121,25 +121,25 @@ namespace System.Runtime.Serialization.Json
 					writer.WriteString (qn.Namespace);
 				} else if (TypeMap.IsDictionary (type)) {
 					writer.WriteAttributeString ("type", "array");
-					var itemGetter = type.GetProperty ("Item");
-					var keysGetter = type.GetProperty ("Keys");
-					var argarr = new object [1];
-					foreach (object o in (IEnumerable) keysGetter.GetValue (graph, null)) {
-						writer.WriteStartElement ("item");
-						writer.WriteAttributeString ("type", "object");
-						// outputting a KeyValuePair as <Key .. /><Value ... />
-						writer.WriteStartElement ("Key");
-						WriteObjectContent (o, false, !(graph is Array && type.GetElementType () != typeof (object)));
-						writer.WriteEndElement ();
-						writer.WriteStartElement ("Value");
-						argarr [0] = o;
-						WriteObjectContent (itemGetter.GetValue (graph, argarr), false, !(graph is Array && type.GetElementType () != typeof (object)));
-						writer.WriteEndElement ();
-						writer.WriteEndElement ();
+					bool otn = !(graph is Array && type.GetElementType () != typeof (object));
+					var d = graph as IDictionary;
+					if (d != null) {
+						// Optimize the IDictionary case to avoid reflection
+						foreach (object k in d.Keys)
+							WriteItem (k, d [k], otn);
+					} else {
+						// we can't typecast to IDictionary<,> and can't use dynamic for iOS support
+						var itemGetter = GetDictionaryProperty (type, "Item");
+						var keysGetter = GetDictionaryProperty (type, "Keys");
+						var argarr = new object [1];
+						foreach (object o in (IEnumerable) keysGetter.GetValue (graph, null)) {
+							argarr [0] = o;
+							WriteItem (o, itemGetter.GetValue (graph, argarr), otn);
+						}
 					}
-				} else if (TypeMap.IsCollection (type)) { // array
+				} else if (graph is Array || TypeMap.IsEnumerable (type)) {
 					writer.WriteAttributeString ("type", "array");
-					foreach (object o in (ICollection) graph) {
+					foreach (object o in (IEnumerable) graph) {
 						writer.WriteStartElement ("item");
 						// when it is typed, then no need to output "__type"
 						WriteObjectContent (o, false, !(graph is Array && type.GetElementType () != typeof (object)));
@@ -160,6 +160,36 @@ throw new InvalidDataContractException (String.Format ("Type {0} cannot be seria
 				}
 				break;
 			}
+		}
+
+		void WriteItem (object key, object value, bool outputTypeName)
+		{
+			writer.WriteStartElement ("item");
+			writer.WriteAttributeString ("type", "object");
+			// outputting a KeyValuePair as <Key .. /><Value ... />
+			writer.WriteStartElement ("Key");
+			WriteObjectContent (key, false, outputTypeName);
+			writer.WriteEndElement ();
+			writer.WriteStartElement ("Value");
+			WriteObjectContent (value, false, outputTypeName);
+			writer.WriteEndElement ();
+			writer.WriteEndElement ();
+		}
+
+		PropertyInfo GetDictionaryProperty (Type type, string propertyName)
+		{
+			var p = type.GetProperty (propertyName);
+			if (p != null)
+				return p;
+			// check explicit - but the generic names might differ, e.g. TKey,TValue vs T,V
+			var ap = type.GetProperties (BindingFlags.Instance | BindingFlags.NonPublic);
+			foreach (var cp in ap) {
+				if (!cp.Name.EndsWith (propertyName, StringComparison.Ordinal))
+					continue;
+				if (cp.Name.StartsWith ("System.Collections.Generic.IDictionary<", StringComparison.Ordinal))
+					return cp;
+			}
+			return null;
 		}
 
 		string FormatTypeName (Type type)

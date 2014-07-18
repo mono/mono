@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RC2" FullName="System.Security.Cryptography.RC2">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class RC2 : System.Security.Cryptography.SymmetricAlgorithm" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit RC2 extends System.Security.Cryptography.SymmetricAlgorithm" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Abtract base class for all implementations of RC2(r).</summary>
-    <remarks>RC2(r) is documented in IETF RFC2286: A Description of the RC2(r) Encryption Algorithm available at http://www.ietf.org/rfc/rfc2268.txt</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>A newer symmetric encryption algorithm, Advanced Encryption Standard (AES), is available. Consider using the <see cref="T:System.Security.Cryptography.Aes" /> algorithm and its derived classes instead of the <see cref="T:System.Security.Cryptography.RC2" /> class. Use <see cref="T:System.Security.Cryptography.RC2" /> only for compatibility with legacy applications and data.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class from which all implementations of the <see cref="T:System.Security.Cryptography.RC2" /> algorithm must derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +45,55 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code will create a new instance of a derived class.</para>
+          <para>This algorithm supports key lengths from 40 bits to 1024 bits in increments of 8 bits, but the <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> implementation only supports key lengths from 40 bits to 128 bits in increments of 8 bits.</para>
+          <para>This method initializes the protected fields of <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> to the default values listed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Field </para>
+                </term>
+                <description>
+                  <para>Default Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.KeySizeValue" /> </para>
+              </term>
+              <description>
+                <para>128 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.BlockSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.FeedbackSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Cryptography.RC2" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -54,9 +110,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an instance of the default RC2(r) implementation.</summary>
-        <returns>To be added: an object of type 'RC2'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create an instance of the RC2 class that you can use to encrypt and decrypt data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the <see cref="T:System.Security.Cryptography.RC2" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -75,10 +140,20 @@
         <Parameter Name="AlgName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="AlgName">To be added.</param>
-        <summary>Create an instance of the specified RC2(r) implementation.</summary>
-        <returns>To be added: an object of type 'RC2'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create an instance of the RC2 class that you can use to encrypt and decrypt data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the specified implementation of the <see cref="T:System.Security.Cryptography.RC2" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
+        <param name="AlgName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.RC2" /> to use. </param>
       </Docs>
     </Member>
     <Member MemberName="EffectiveKeySize">
@@ -94,9 +169,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the effective size of the secret key used by the <see cref="T:System.Security.Cryptography.RC2" /> algorithm in bits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EffectiveKeySizeValue">
@@ -113,8 +191,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is accessed through the <see cref="P:System.Security.Cryptography.RC2.EffectiveKeySize" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the effective size of the secret key used by the <see cref="T:System.Security.Cryptography.RC2" /> algorithm in bits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeySize">
@@ -130,9 +214,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This algorithm supports key lengths from 40 bits to 1024 bits in increments of 8 bits, but the RC2CryptoServiceProvider implementation only supports key lengths from 40 bits to 128 bits in increments of 8 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the secret key used by the <see cref="T:System.Security.Cryptography.RC2" /> algorithm in bits.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

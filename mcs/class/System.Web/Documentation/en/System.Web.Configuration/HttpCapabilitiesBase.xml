@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCapabilitiesBase" FullName="System.Web.Configuration.HttpCapabilitiesBase">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HttpCapabilitiesBase : System.Web.UI.IFilterResolutionService" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> is the base class from which the <see cref="T:System.Web.HttpBrowserCapabilities" /> class is derived. <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> offers a large number of read-only properties that provide type-safe access to a browser's capabilities dictionary. You can access the <see cref="T:System.Web.HttpBrowserCapabilities" /> class through the <see cref="P:System.Web.HttpRequest.Browser" /> property that is exposed by the ASP.NET <see cref="P:System.Web.HttpRequest.Browser" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to detailed information about the capabilities of the client's browser.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +56,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports ActiveX controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Adapters">
@@ -60,9 +74,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of available control adapters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddBrowser">
@@ -78,9 +95,13 @@
         <Parameter Name="browserName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="browserName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to add an entry to the internal collection of browsers for which capabilities are recognized.</para>
+        </summary>
+        <param name="browserName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the browser to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AOL">
@@ -93,9 +114,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the client is an America Online (AOL) browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundSounds">
@@ -108,9 +132,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports playing background sounds using the &lt;bgsounds&gt; HTML element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Beta">
@@ -123,9 +150,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Beta version browsers can exhibit unpredictable behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser is a beta version.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Browser">
@@ -138,9 +171,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the browser string (if any) that was sent by the browser in the User-Agent request header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Browsers">
@@ -153,9 +189,12 @@
         <ReturnType>System.Collections.ArrayList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ArrayList" /> of the browsers in the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Capabilities" /> dictionary.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanCombineFormsInDeck">
@@ -168,9 +207,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanCombineFormsInDeck" /> property applies only to WML-compatible mobile devices. If true, the adapter can output multiple forms from the same page as cards of a single deck, where possible.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports decks that contain multiple forms, such as separate cards.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanInitiateVoiceCall">
@@ -183,9 +228,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanInitiateVoiceCall" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser device is capable of initiating a voice call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderAfterInputOrSelectElement">
@@ -198,9 +249,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderAfterInputOrSelectElement" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports page content following WML &lt;select&gt; or &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderEmptySelects">
@@ -213,9 +270,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports empty HTML &lt;select&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderInputAndSelectElementsTogether">
@@ -228,9 +288,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderInputAndSelectElementsTogether" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports WML INPUT and SELECT elements together on the same card.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderMixedSelects">
@@ -243,9 +309,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderMixedSelects" /> property applies only to WML-compatible mobile devices. </para>
+          <para>If false, onpick values are displayed as hyperlinks and value attributes require a &lt;do&gt; element for postback.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports WML &lt;option&gt; elements that specify both onpick and value attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderOneventAndPrevElementsTogether">
@@ -258,9 +331,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderOneventAndPrevElementsTogether" /> property applies only to WML-compatible mobile devices.</para>
+          <para>If false, WML &lt;onevent&gt; and &lt;prev&gt; elements that coexist within the same WML card will not be properly rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports WML &lt;onevent&gt; and &lt;prev&gt; elements that coexist within the same WML card.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderPostBackCards">
@@ -273,9 +353,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderPostBackCards" /> property applies only to WML-compatible mobile-device browsers.</para>
+          <para>If false, postback cards will not be properly rendered by the browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports WML cards for postback.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRenderSetvarZeroWithMultiSelectionList">
@@ -288,9 +375,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanRenderSetvarZeroWithMultiSelectionList" /> property applies only to WML-compatible mobile devices.</para>
+          <para>If false, HTML &lt;setvar&gt; elements with a value attribute of 0 will not display correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports WML &lt;setvar&gt; elements with a value attribute of 0.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanSendMail">
@@ -303,9 +397,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports sending e-mail by using the HTML &lt;mailto&gt; element for displaying electronic addresses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Capabilities">
@@ -318,9 +415,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to get the defined capabilities of the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CDF">
@@ -333,9 +433,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports Channel Definition Format (CDF) for webcasting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClrVersion">
@@ -348,9 +451,17 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.ClrVersion" /> property is supported only when the browser is Internet Explorer version 5.0 and later.</para>
+          <para>If the .NET Framework is not installed on the client, the value of the version elements returned is 0, 0,-1,-1.</para>
+          <para>If more than one version of the .NET Framework is installed on the client, the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.ClrVersion" /> property returns the latest version.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the .NET Framework that is installed on the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cookies">
@@ -363,9 +474,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Cookies" /> property indicates whether the browser application supports cookies. If the user has disabled cookies in their application, the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Cookies" /> property will not be affected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports cookies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Crawler">
@@ -378,9 +495,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser is a search engine Web crawler.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateHtmlTextWriter">
@@ -396,10 +516,18 @@
         <Parameter Name="w" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.HtmlTextWriter" /> to be used.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Web.UI.HtmlTextWriter" /> to be used.</para>
+        </returns>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.IO.TextWriter" /> to be created.</param>
       </Docs>
     </Member>
     <Member MemberName="DefaultSubmitButtonLimit">
@@ -412,9 +540,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.DefaultSubmitButtonLimit" /> property primarily represents the number of soft keys that are available on a WML-compatible mobile device. </para>
+          <para>Web Forms pages for mobile devices can contain a <see cref="T:System.Web.UI.MobileControls.SelectionList" /> object and more than one <see cref="T:System.Web.UI.MobileControls.Command" /> control. The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.DefaultSubmitButtonLimit" /> allows you to choose which of the <see cref="T:System.Web.UI.MobileControls.Command" /> controls should be assigned to a soft key on devices that have multiple soft keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the maximum number of Submit buttons that are allowed for a form.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisableOptimizedCacheKey">
@@ -428,8 +563,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to disable use of an optimized cache key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EcmaScriptVersion">
@@ -442,9 +580,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version number of ECMAScript that the browser supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Frames">
@@ -457,9 +598,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports HTML frames.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GatewayMajorVersion">
@@ -472,9 +616,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major version number of the wireless gateway used to access the server, if known. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GatewayMinorVersion">
@@ -487,9 +634,12 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor version number of the wireless gateway used to access the server, if known. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GatewayVersion">
@@ -502,9 +652,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the wireless gateway used to access the server, if known.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetClrVersions">
@@ -518,9 +671,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.HttpCapabilitiesBase.GetClrVersions" />  method is supported only when the browser is Internet Explorer version 5.0 or later. If the common language runtime is not installed on the client, the property returns an array containing a single <see cref="T:System.Version" /> object with the values 0, 0,-1,-1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all versions of the .NET Framework common language runtime that are installed on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Version" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetConfigCapabilities">
@@ -534,11 +696,19 @@
         <Parameter Name="request" Type="System.Web.HttpRequest" />
       </Parameters>
       <Docs>
-        <param name="configKey">a <see cref="T:System.String" /></param>
-        <param name="request">a <see cref="T:System.Web.HttpRequest" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to return an instance of <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> representing the browser that generated the specified <see cref="T:System.Web.HttpRequest" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> representing the browser that generated the specified <see cref="T:System.Web.HttpRequest" />.</para>
+        </returns>
+        <param name="configKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the configuration section that configures browser capabilities.</param>
+        <param name="request">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpRequest" /> generated by the browser for which to return capabilities and which is usually the current <see cref="T:System.Web.HttpRequest" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -555,9 +725,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, a link control might be necessary when a <ui>Back</ui> button is not available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser has a dedicated <ui>Back</ui> button.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HidesRightAlignedMultiselectScrollbars">
@@ -570,9 +746,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the scrollbar of an HTML &lt;select multiple&gt; element with an align attribute value of right is obscured upon rendering.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HtmlTextWriter">
@@ -585,9 +764,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fully qualified class name of the <see cref="T:System.Web.UI.HtmlTextWriter" /> to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -600,9 +782,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the internal identifier of the browser as specified in the browser definition file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Init">
@@ -613,8 +798,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to initialize an internal set of values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -631,9 +819,26 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Possible return values include:</para>
+          <list type="bullet">
+            <item>
+              <para>virtualKeyboard</para>
+            </item>
+            <item>
+              <para>telephoneKeypad</para>
+            </item>
+            <item>
+              <para>keyboard</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of input supported by browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsBrowser">
@@ -649,10 +854,20 @@
         <Parameter Name="browserName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="browserName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.HttpCapabilitiesBase.IsBrowser(System.String)" /> method also returns true if the client browser definition inherits from the specified browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the client browser is the same as the specified browser.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client browser is the same as the specified browser; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="browserName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified browser.</param>
       </Docs>
     </Member>
     <Member MemberName="IsColor">
@@ -665,9 +880,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser has a color display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsMobileDevice">
@@ -680,9 +898,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser is a recognized mobile device.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -715,9 +936,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports Java.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="JavaScript">
@@ -735,9 +959,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the browser supports JavaScript but scripting is disabled through a security setting, the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.JavaScript" /> property will return true but script will not execute on the browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports JavaScript.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="JScriptVersion">
@@ -750,9 +980,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the JScript version that the browser supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MajorVersion">
@@ -765,9 +998,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major (integer) version number of the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumHrefLength">
@@ -780,9 +1016,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum length in characters for the href attribute of an HTML &lt;a&gt; (anchor) element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumRenderedPageSize">
@@ -795,9 +1034,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processing by an intermediate gateway can change the number of bytes that reach the browser. ASP.NET does not enforce this limit on page size.</para>
+          <para>
+            <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.MaximumRenderedPageSize" /> is primarily useful when working with mobile-client browsers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum length of the page, in bytes, which the browser can display. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumSoftkeyLabelLength">
@@ -810,9 +1057,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.MaximumSoftkeyLabelLength" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the maximum length of the text that a soft-key label can display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinorVersion">
@@ -825,9 +1078,12 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor (that is, decimal) version number of the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinorVersionString">
@@ -840,9 +1096,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor (decimal) version number of the browser as a string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MobileDeviceManufacturer">
@@ -855,9 +1114,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the manufacturer of a mobile device, if known.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MobileDeviceModel">
@@ -870,9 +1132,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the model name of a mobile device, if known.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MSDomVersion">
@@ -885,9 +1150,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of Microsoft HTML (MSHTML) Document Object Model (DOM) that the browser supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumberOfSoftkeys">
@@ -900,9 +1168,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.NumberOfSoftkeys" /> property applies only to WML-compatible mobile devices.</para>
+          <para>Soft keys are special keys that the application can usually map to custom tasks. Soft-key text is displayed on the screen in the lower-left and lower-right corners.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of soft keys on a mobile device.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Platform">
@@ -915,9 +1190,53 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some of the possible values for the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Platform" /> property are as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>Unknown</para>
+            </item>
+            <item>
+              <para>Win95</para>
+            </item>
+            <item>
+              <para>Win98</para>
+            </item>
+            <item>
+              <para>Windows NT 5.0 (Windows 2000)</para>
+            </item>
+            <item>
+              <para>Windows NT 5.1 (Windows XP)</para>
+            </item>
+            <item>
+              <para>WinNT (all other versions of Windows NT)</para>
+            </item>
+            <item>
+              <para>Win16</para>
+            </item>
+            <item>
+              <para>WinCE</para>
+            </item>
+            <item>
+              <para>Mac68K</para>
+            </item>
+            <item>
+              <para>MacPPC</para>
+            </item>
+            <item>
+              <para>UNIX</para>
+            </item>
+            <item>
+              <para>WebTV</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the platform that the client uses, if it is known.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferredImageMime">
@@ -930,9 +1249,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the MIME type of the type of image content typically preferred by the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferredRenderingMime">
@@ -945,9 +1267,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the MIME type of the type of content typically preferred by the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferredRenderingType">
@@ -960,9 +1285,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the general name for the type of content that the browser prefers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferredRequestEncoding">
@@ -975,9 +1303,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the request encoding preferred by the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferredResponseEncoding">
@@ -990,9 +1321,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the response encoding preferred by the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersBreakBeforeWmlSelectAndInput">
@@ -1005,9 +1339,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RendersBreakBeforeWmlSelectAndInput" /> property applies only to WML-compatible mobile devices.</para>
+          <para>If true, content following &lt;select&gt; or &lt;input&gt; elements will automatically be placed on a new line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser renders a line break before &lt;select&gt; or &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersBreaksAfterHtmlLists">
@@ -1020,9 +1361,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, content following list-item elements will automatically be placed on a new line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser renders a line break after list-item elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersBreaksAfterWmlAnchor">
@@ -1035,9 +1382,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RendersBreaksAfterWmlAnchor" /> property applies only to WML-compatible mobile devices.</para>
+          <para>If true, content following a stand-alone HTML &lt;a&gt; (anchor) element will automatically be placed on a new line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser renders a line break after a stand-alone HTML &lt;a&gt; (anchor) element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersBreaksAfterWmlInput">
@@ -1050,9 +1404,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RendersBreaksAfterWmlInput" /> property applies only to WML-compatible mobile devices.</para>
+          <para>If true, content following an HTML &lt;input&gt; element will automatically be placed on a new line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser renders a line break after an HTML &lt;input&gt; element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersWmlDoAcceptsInline">
@@ -1065,9 +1426,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RendersWmlDoAcceptsInline" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the mobile-device browser renders a WML do-based form accept construct as an inline button rather than as a soft key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RendersWmlSelectsAsMenuCards">
@@ -1080,9 +1447,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RendersWmlSelectsAsMenuCards" /> property applies only to WML-compatible mobile devices.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser renders WML &lt;select&gt; elements as menu cards, rather than as a combo box.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiredMetaTagNameValue">
@@ -1095,9 +1468,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Intended for internal use only. Some browsers require a meta-tag similar to the following for the browser to render properly.</para>
+          <code>&lt;META NAME="NAME" CONTENT="VALUE"&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to produce a meta-tag required by some browsers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresAttributeColonSubstitution">
@@ -1110,9 +1490,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some browsers do not recognize colons in element attribute values. If true, a different character will be substituted on rendering and returned in postback data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires colons in element attribute values to be substituted with a different character.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresContentTypeMetaTag">
@@ -1125,9 +1511,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, server-control adapters insert the following tag into the HTML &lt;head&gt; element of a Web page:</para>
+          <code>&lt;META HTTP-EQUIV="CONTENT-TYPE" CONTENT=""; CHARSET=""&gt;</code>
+          <para>In this example, <paramref name="CONTENT" /> is the value returned by the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.PreferredRenderingMime" /> property, and charset is the character encoding used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires an HTML &lt;meta&gt; element for which the content-type attribute is specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresControlStateInSession">
@@ -1140,9 +1534,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires control state to be maintained in sessions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresDBCSCharacter">
@@ -1155,9 +1552,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires a double-byte character set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresHtmlAdaptiveErrorReporting">
@@ -1170,9 +1570,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the browser does not properly render HTTP error messages. To correct this, server control adapters generate a custom error page for the browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires nonstandard error messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresLeadingPageBreak">
@@ -1185,9 +1591,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, server-control adapters insert an additional &lt;br&gt; element immediately following the &lt;body&gt; tag in a Web page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires the first element in the body of a Web page to be an HTML &lt;br&gt; element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresNoBreakInFormatting">
@@ -1200,9 +1612,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the browser will not correctly render pages containing the HTML &lt;br&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser does not support HTML &lt;br&gt; elements to format line breaks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresOutputOptimization">
@@ -1215,9 +1633,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, server control adapters generate minimal output to reduce the size of the resulting page.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RequiresOutputOptimization" /> property returns true for i-mode–compatible browsers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires pages to contain a size-optimized form of markup language tags.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresPhoneNumbersAsPlainText">
@@ -1230,9 +1657,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.RequiresPhoneNumbersAsPlainText" />  property applies only to browsers for which the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.CanInitiateVoiceCall" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports phone dialing based on plain text, or whether it requires special markup.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresSpecialViewStateEncoding">
@@ -1245,9 +1678,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTTP is a stateless protocol, and VIEWSTATE is one mechanism used to persist client changes across multiple requests. Each control on a Web page contains a <see cref="P:System.Web.UI.Control.ViewState" /> property, which represents the accumulation of any changes made by the client. In a Web Forms page, these changes are encoded in postback data as the value of an HTML &lt;input&gt; element with a type attribute of hidden. For example:</para>
+          <code>&lt;input type="hidden" name="__VIEWSTATE" value="t0PH_u56?cDxleHQ7P=" /&gt;</code>
+          <para>If true, non-alphabetic characters in the VIEWSTATE value will not be sent correctly by the browser, nor by an intermediate gateway. To correct this, server-control adapters replace non-alphabetic characters in the VIEWSTATE value with ones that do not require encoding in HTTP requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires VIEWSTATE values to be specially encoded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresUniqueFilePathSuffix">
@@ -1260,9 +1701,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A self-referring HTML &lt;form&gt; element is one for which the action attribute specifies its own URL. If true, self-referring forms do not return the correct results. This is due to caching by either the browser or an intermediate gateway. To correct this, server control adapters append a default query string (__ufps=<paramref name="uniquefilepathsuffix" />) onto the form-action URL values of self-referring forms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires unique form-action URLs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresUniqueHtmlCheckboxNames">
@@ -1275,9 +1722,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires unique name attribute values of multiple HTML &lt;input type="checkbox"&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresUniqueHtmlInputNames">
@@ -1290,9 +1740,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser requires unique name attribute values of multiple HTML &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiresUrlEncodedPostfieldValues">
@@ -1305,9 +1758,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether postback data sent by the browser will be UrlEncoded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScreenBitDepth">
@@ -1320,9 +1776,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the depth of the display, in bits per pixel.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScreenCharactersHeight">
@@ -1335,9 +1794,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned value can be derived from the assumed character size and actual screen pixel size. The algorithm for determining the height uses a combination of the default font sizes (from a .config file), browser-specific sizes (again, from a .config file), and explicit headers sent by the browser. Some browsers might rely on internal default values, which only approximate the actual height.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the approximate height of the display, in character lines.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScreenCharactersWidth">
@@ -1350,9 +1815,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned value can be derived from the assumed character size and actual screen pixel size. The algorithm for determining the width uses a combination of the default font sizes (from a .config file), device-specific sizes (again, from a .config file), and explicit headers sent by the devices. These values are not necessarily exact (especially for variable-width fonts, these values are approximate). Some devices might rely on internal default values, which only approximate the actual width.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the approximate width of the display, in characters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScreenPixelsHeight">
@@ -1365,9 +1836,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned value can be derived from the assumed character size and character height. The algorithm for determining the pixel height uses a combination of the default font sizes (from a .config file), device-specific sizes (again, from a .config file), and explicit headers sent by the devices. These values are not necessarily exact. Some devices might rely on internal default values, which only approximate the actual height.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the approximate height of the display, in pixels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScreenPixelsWidth">
@@ -1380,9 +1857,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned value can be derived from the assumed character size and character width. The algorithm for determining the pixel width uses a combination of the default font sizes (from a .config file), device-specific sizes (again, from a .config file), and explicit headers sent by the devices. These values are not necessarily exact (especially for variable-width fonts, these values are approximate). Some devices might rely on internal default values, which only approximate the actual width.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the approximate width of the display, in pixels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsAccesskeyAttribute">
@@ -1395,9 +1878,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The accesskey attribute extends control of forms and links on a Web page to mobile and accessible platforms by assigning a soft key or other controller on the device to interact with HTML &lt;a&gt; (anchor) and &lt;input&gt; elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the ACCESSKEY attribute of HTML &lt;a&gt; (anchor) and &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsBodyColor">
@@ -1410,9 +1899,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the bgcolor attribute of the HTML &lt;body&gt; element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsBold">
@@ -1425,9 +1917,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports HTML &lt;b&gt; elements to format bold text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsCacheControlMetaTag">
@@ -1440,9 +1935,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cache-control value for the http-equiv attribute of HTML &lt;meta&gt; elements allows control over client caching of downloaded content, which includes Web pages. The following HTML fragment shows an example:</para>
+          <code>&lt;META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE"/&gt;</code>
+          <para>If true, the inclusion of this tag in the &lt;head&gt; element of a Web page should force the browser to reload content from the server.</para>
+          <para>If false, server control adapters append a default query string (__ufps=<paramref name="uniquefilepathsuffix" />) onto link URL values that do not already have one. This forces the browser to reload content from the server.</para>
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsCacheControlMetaTag" /> property also applies to the equivalent HTTP header form:</para>
+          <code>CACHE-CONTROL: NO-CACHE</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the cache-control value for the http-equiv attribute of HTML &lt;meta&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsCallback">
@@ -1455,9 +1961,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports callback scripts.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsCss">
@@ -1470,9 +1979,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports Cascading Style Sheets (CSS).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsDivAlign">
@@ -1485,9 +1997,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML &lt;div&gt; elements are used to group multiple HTML elements so that CSS styles can be applied to them as a whole. The align attribute sets the horizontal alignment of a &lt;div&gt; group on a Web page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the align attribute of HTML &lt;div&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsDivNoWrap">
@@ -1500,9 +2018,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML &lt;div&gt; elements are used to group multiple HTML elements so that CSS styles can be applied to them as a whole. The nowrap attribute specifies that the elements contained in the &lt;div&gt; group should remain adjacent to each other without wrapping to a new line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the nowrap attribute of HTML &lt;div&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsEmptyStringInCookieValue">
@@ -1515,9 +2039,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports empty (null) strings in cookie values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsFontColor">
@@ -1530,9 +2057,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the color attribute of HTML &lt;font&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsFontName">
@@ -1545,9 +2075,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the name attribute of HTML &lt;font&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsFontSize">
@@ -1560,9 +2093,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the size attribute of HTML &lt;font&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsImageSubmit">
@@ -1575,9 +2111,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports using a custom image in place of a standard form Submit button.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsIModeSymbols">
@@ -1590,9 +2129,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsInputMode" /> property applies only to i-mode–compatible devices.</para>
+          <para>Set i-Phone–specific picture symbols for i-mode–compatible browsers by using the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports i-mode symbols.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsInputIStyle">
@@ -1605,9 +2151,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsInputMode" /> property applies only to i-mode–compatible devices.</para>
+          <para>The istyle attribute is used for setting the input style of a text-input field on i-mode–compatible browsers. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the istyle attribute of HTML &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsInputMode">
@@ -1620,9 +2173,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsInputMode" /> property applies only to i-mode–compatible devices.</para>
+          <para>The MODE attribute is used for setting the input mode of a text input field on i-mode–compatible browsers. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the mode attribute of HTML &lt;input&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsItalic">
@@ -1635,9 +2195,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports HTML &lt;i&gt; elements to format italic text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsJPhoneMultiMediaAttributes">
@@ -1650,9 +2213,36 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsJPhoneMultiMediaAttributes" /> property applies only to J-Phone–compatible mobile devices.</para>
+          <para>J-Phone is a markup language specification, based on HTML, for J-Phone–compatible browsers. If true, the browser supports additional attributes for HTML &lt;a&gt; (anchor) and &lt;select&gt; elements. The additional attributes supported are as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>src</para>
+            </item>
+            <item>
+              <para>soundstart</para>
+            </item>
+            <item>
+              <para>loop</para>
+            </item>
+            <item>
+              <para>volume</para>
+            </item>
+            <item>
+              <para>vibration</para>
+            </item>
+            <item>
+              <para>viblength</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports J-Phone multimedia attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsJPhoneSymbols">
@@ -1665,9 +2255,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsJPhoneSymbols" /> property applies only to J-Phone–compatible mobile devices.</para>
+          <para>Set J-Phone–specific picture symbols for J-Phone–compatible browsers by using the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports J-Phone–specific picture symbols.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsQueryStringInFormAction">
@@ -1680,9 +2277,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, query string parameters are sent, in postback data, as HTML &lt;input&gt; elements with the type attributes set to hidden.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports a query string in the action attribute value of HTML &lt;form&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsRedirectWithCookie">
@@ -1695,9 +2298,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With UP.Browser 4.1 or UP.Browser 3.2, the <see cref="M:System.Web.HttpResponse.Redirect(System.String)" /> method behaves as if the value of the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsRedirectWithCookie" /> property of the <see cref="T:System.Web.HttpBrowserCapabilities" /> object is false, unless the <see cref="P:System.Web.Configuration.SessionStateSection.Cookieless" /> property in the <see cref="P:System.Web.Configuration.SystemWebSectionGroup.SessionState" /> section of Web.config has been explicitly set to true.</para>
+          <para>In ASP.NET 1.1, the options for this setting were true or false, but with ASP.NET 2.0, the choices are expanded, and <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> is now the default setting. If your Web application has the cookieless attribute of the &lt;sessionState&gt; section in the Web.config file set to a Boolean value, <see cref="M:System.Web.HttpResponse.Redirect(System.String)" /> should work as expected for these browsers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports cookies on redirection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsSelectMultiple">
@@ -1710,9 +2320,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports the multiple attribute of HTML &lt;select&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsUncheck">
@@ -1725,9 +2338,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, the value of the checked attribute of HTML &lt;input type=checkbox&gt; elements is omitted from postback data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the clearing of a checked HTML &lt;input type=checkbox&gt; element is reflected in postback data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsXmlHttp">
@@ -1740,9 +2359,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports receiving XML over HTTP.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IFilterResolutionService.CompareFilters">
@@ -1759,11 +2381,19 @@
         <Parameter Name="filter2" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filter1">To be added.</param>
-        <param name="filter2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to compare filters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if <paramref name="filter1" /> is a parent of <paramref name="filter2" />; -1 if <paramref name="filter2" /> is a parent of <paramref name="filter1" />; 0 if there is no parent-child relationship between <paramref name="filter1" /> and <paramref name="filter2" />.</para>
+        </returns>
+        <param name="filter1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first filter to compare.</param>
+        <param name="filter2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second filter to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IFilterResolutionService.EvaluateFilter">
@@ -1779,10 +2409,17 @@
         <Parameter Name="filterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to evaluate a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the filter was successfully evaluated; otherwise, false.</para>
+        </returns>
+        <param name="filterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter to evaluate.</param>
       </Docs>
     </Member>
     <Member MemberName="Tables">
@@ -1795,9 +2432,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports HTML &lt;table&gt; elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TagWriter">
@@ -1810,9 +2450,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to get the type of the object that is used to write tags for the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -1825,9 +2468,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name and major (integer) version number of the browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseOptimizedCacheKey">
@@ -1840,9 +2486,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to get a value indicating whether to use an optimized cache key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VBScript">
@@ -1855,9 +2504,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the browser supports Visual Basic Scripting edition (VBScript).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -1870,9 +2522,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Version" /> property returns a string. In some scenarios, the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Version" /> property might contain letter characters, as in the case of a browser or client device that is a beta version such as "7.0b." To correctly get the version as a data type that can be used in a numeric comparison, concatenate the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.MajorVersion" /> and <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.MinorVersion" /> property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full version number (integer and decimal) of the browser as a string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="W3CDomVersion">
@@ -1885,9 +2543,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the World Wide Web Consortium (W3C) XML Document Object Model (DOM) that the browser supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win16">
@@ -1900,9 +2561,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the client is a Win16-based computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win32">
@@ -1915,9 +2579,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the client is a Win32-based computer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

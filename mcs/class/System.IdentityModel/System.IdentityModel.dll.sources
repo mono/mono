@@ -91,3 +91,4 @@ System.IdentityModel.Tokens/X509SecurityToken.cs
 System.IdentityModel.Tokens/X509SubjectKeyIdentifierClause.cs
 System.IdentityModel.Tokens/X509ThumbprintKeyIdentifierClause.cs
 System.IdentityModel.Tokens/X509WindowsSecurityToken.cs
+System.Security.Claims/AuthenticationTypes.cs

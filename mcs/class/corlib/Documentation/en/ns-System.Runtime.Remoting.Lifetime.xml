@@ -1,9 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Lifetime" FullName="System.Runtime.Remoting.Lifetime" FullNameSP="System.Runtime.Remoting.Lifetime" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Lifetime" /> namespace contains classes that manage the lifetime of remote objects.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Traditionally, distributed garbage collection uses reference counts and pinging for control over the lifetime of objects. This works well when there are a few clients per service, but doesn't scale well when there are thousands of clients per service. The remoting lifetime service associates a lease with each service, and deletes a service when its lease time expires. The lifetime service can take on the function of a traditional distributed garbage collector, and it also adjusts well when the numbers of clients per server increases.</para>
+      <para>Each application domain contains a lease manager that is responsible for controlling leases in its domain. All leases are examined periodically for expired lease times. If a lease has expired, one or more of the lease's sponsors are invoked and given the opportunity to renew the lease. If none of the sponsors decides to renew the lease, the lease manager removes the lease and the object can be collected by the garbage collector. The lease manager maintains a lease list with leases sorted by remaining lease time. The leases with the shortest remaining time are stored at the top of the list.</para>
     </remarks>
   </Docs>
 </Namespace>

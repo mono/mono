@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThemeableAttribute" FullName="System.Web.UI.ThemeableAttribute">
   <TypeSignature Language="C#" Value="public sealed class ThemeableAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Control developers use the <see cref="T:System.Web.UI.ThemeableAttribute" /> attribute to decorate control types and their members, to signal which ones can and cannot be affected by themes and control skins. By default, all properties exposed by a control are themeable. However, themes are typically applied only to stylistic properties; the Themeable(false) attribute should be applied explicitly to all non-stylistic properties. Decorating a member with the Themeable(false) attribute ensures that the member is not themed, regardless of the value of the <see cref="P:System.Web.UI.Control.EnableTheming" /> property. For example, if the <see cref="T:System.Web.UI.ThemeableAttribute" /> attribute is applied to a control and set to false, the control is not affected by themes even when its <see cref="P:System.Web.UI.Control.EnableTheming" /> property is set to true. </para>
+      <para>The <see cref="T:System.Web.UI.ThemeableAttribute" /> class maintains a static list of all types that support themes, and this list is consulted whenever the static methods <see cref="M:System.Web.UI.ThemeableAttribute.IsObjectThemeable(System.Object)" /> and <see cref="M:System.Web.UI.ThemeableAttribute.IsTypeThemeable(System.Type)" /> are called. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the metadata attribute that Web server controls and their members use to indicate whether their rendering can be affected by themes and control skins. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +34,17 @@
         <Parameter Name="themeable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="themeable">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passing true to this constructor is equivalent to using the <see cref="F:System.Web.UI.ThemeableAttribute.Yes" /> field, while passing false is equivalent to using the <see cref="F:System.Web.UI.ThemeableAttribute.No" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ThemeableAttribute" /> class, using the specified Boolean value to determine whether the attribute represents a type or member that is affected by themes and control skins.</para>
+        </summary>
+        <param name="themeable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to initialize the <see cref="T:System.Web.UI.ThemeableAttribute" /> to represent a type or member that can be affected by themes; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,9 +57,15 @@
         <ReturnType>System.Web.UI.ThemeableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of the <see cref="T:System.Web.UI.ThemeableAttribute" /> class is equivalent to the <see cref="F:System.Web.UI.ThemeableAttribute.Yes" /> field. This is not necessarily equivalent to an instance that is created using the default class constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ThemeableAttribute" /> instance that represents the application-defined default value of the attribute.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,11 +81,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is the same instance as the current instance, or if the instances are different, but the attribute values are equivalent; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,10 +106,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ThemeableAttribute.GetHashCode" /> method is suitable for use in hashing algorithms and data structures like a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the <see cref="T:System.Web.UI.ThemeableAttribute" /> type. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Web.UI.ThemeableAttribute" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +132,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current instance is equivalent to a <see cref="F:System.Web.UI.ThemeableAttribute.Default" /> instance of the <see cref="T:System.Web.UI.ThemeableAttribute" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equivalent to a <see cref="F:System.Web.UI.ThemeableAttribute.Default" /> instance of the class; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,10 +158,16 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the object passed to the method supports themes. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object supports themes and control skins; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -134,11 +183,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.ThemeableAttribute" /> class maintains a static internal catalog of types that support themes, and this method checks the catalog to determine whether the specified <see cref="T:System.Type" /> is represented there. If it is not, the method examines the <see cref="T:System.ComponentModel.AttributeCollection" /> object associated with the <see cref="T:System.Type" /> for the <see cref="T:System.Web.UI.ThemeableAttribute" /> attribute to determine whether themes are supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the <see cref="T:System.Type" /> passed to the method supports themes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> supports themes and control skins; otherwise, false.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to test for themes support.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,9 +210,15 @@
         <ReturnType>System.Web.UI.ThemeableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.ThemeableAttribute.No" /> field is equivalent to creating an instance using the <see cref="M:System.Web.UI.ThemeableAttribute.#ctor(System.Boolean)" /> constructor and passing false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ThemeableAttribute" /> instance used to decorate a type or member that is not affected by themes and control skins.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -166,10 +231,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member is affected by themes if no <see cref="T:System.Web.UI.ThemeableAttribute" /> attribute is defined explicitly for the member, or the Themeable(true) attribute is applied. A member is not affected by themes if the Themeable(false) attribute is applied; this is the default value for <see cref="T:System.Web.UI.ThemeableAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current control or member of a control can be affected by themes and control skins defined for the Web application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -182,9 +253,15 @@
         <ReturnType>System.Web.UI.ThemeableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.ThemeableAttribute.Yes" /> field is equivalent to creating an instance using the <see cref="M:System.Web.UI.ThemeableAttribute.#ctor(System.Boolean)" /> constructor and passing true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ThemeableAttribute" /> instance used to decorate a type or member that is affected by themes and control skins.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

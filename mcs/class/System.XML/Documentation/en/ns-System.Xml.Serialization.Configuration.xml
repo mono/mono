@@ -1,6 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.Serialization.Configuration">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Xml.Serialization.Configuration" /> namespace contains classes used to read the values found in application configuration files under the <format type="text/html"><a href="3ce45919-388a-418c-8968-6df0372c73ec">system.xml.serialization</a></format> section. </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace are used by the serialization infrastructure to handle the configuration elements and cannot be used directly. For more information about configuration files, see <format type="text/html"><a href="69003d39-dc8a-460c-a6be-e6d93e690b38">Configuration File Schema for the .NET Framework</a></format>.</para>
+      <para>Instead, to configure the <see cref="T:System.Xml.Serialization.XmlSerializer" /> or <see cref="T:System.Xml.Serialization.XmlSchemaImporter" />, create an application configuration file and use the following XML elements:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="3ce45919-388a-418c-8968-6df0372c73ec">&lt;system.xml.serialization&gt; Element</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="465ef2a0-f909-4ac1-9a56-0ead5c849698">&lt;schemaImporterExtensions&gt; Element</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="c828a558-094b-441e-9065-790b87315fa0">&lt;add&gt; Element for &lt;xmlSchemaImporterExtensions&gt;</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="90fda55c-7730-41e9-bc4b-6423a4b920af">&lt;dateTimeSerialization&gt; Element</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="d129d10c-3eb7-45d9-8098-5fa853825e47">&lt;xmlSerializer&gt; Element</a>
+            </format>
+          </para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

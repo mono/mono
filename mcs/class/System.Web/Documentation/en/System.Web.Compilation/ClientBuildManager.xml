@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientBuildManager" FullName="System.Web.Compilation.ClientBuildManager">
   <TypeSignature Language="C#" Value="public sealed class ClientBuildManager : MarshalByRefObject, IDisposable" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ClientBuildManager" /> class offers methods and properties for compiling ASP.NET Web applications, and retrieving the generated assemblies or generated source code. Instances of the class are established in the client's application domain and provide access to the ASP.NET build system outside of Microsoft Internet Information Services (IIS). The class can be used to develop customized tools for compiling Web applications. </para>
+      <para>The command-line tool aspnet_compiler uses the <see cref="T:System.Web.Compilation.ClientBuildManager" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides compilation services for ASP.NET applications.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,11 +34,16 @@
         <Parameter Name="appPhysicalSourceDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="appVirtualDir">To be added.</param>
-        <param name="appPhysicalSourceDir">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ClientBuildManager" /> class without a specified target directory or precompilation flags. </para>
+        </summary>
+        <param name="appVirtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application root.</param>
+        <param name="appPhysicalSourceDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application root.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,12 +58,21 @@
         <Parameter Name="appPhysicalTargetDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="appVirtualDir">To be added.</param>
-        <param name="appPhysicalSourceDir">To be added.</param>
-        <param name="appPhysicalTargetDir">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This form of the constructor is typically used with precompilation, as it specifies a precompilation target directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ClientBuildManager" /> class with the specified target directory. </para>
+        </summary>
+        <param name="appVirtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application root.</param>
+        <param name="appPhysicalSourceDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application root.</param>
+        <param name="appPhysicalTargetDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target directory for precompilation.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,13 +88,23 @@
         <Parameter Name="parameter" Type="System.Web.Compilation.ClientBuildManagerParameter" />
       </Parameters>
       <Docs>
-        <param name="appVirtualDir">To be added.</param>
-        <param name="appPhysicalSourceDir">To be added.</param>
-        <param name="appPhysicalTargetDir">To be added.</param>
-        <param name="parameter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This form of the constructor is typically used with precompilation, as it specifies a precompilation target directory and precompilation flags.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ClientBuildManager" /> class with the specified target directory and compilation parameter.</para>
+        </summary>
+        <param name="appVirtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application root.</param>
+        <param name="appPhysicalSourceDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application root.</param>
+        <param name="appPhysicalTargetDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target directory for precompilation.</param>
+        <param name="parameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />Values that determine the precompilation behavior.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,9 +117,12 @@
         <ReturnType>System.Web.Compilation.BuildManagerHostUnloadEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an application domain is shut down. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,9 +135,12 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an application domain is started. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,9 +153,12 @@
         <ReturnType>System.Web.Compilation.BuildManagerHostUnloadEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an application domain is unloaded. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,10 +171,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The directory for code generation is typically in the temporary ASP.NET files directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the directory used for code generation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -147,9 +194,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Compilation.ClientBuildManager.CompileApplicationDependencies" /> method ensures that resources, Web references, files in the App_Code directory, .browser files in the App_Browsers directory, and the Global.asax file are compiled. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles application-dependent files, such as files in the App_Code directory, the Global.asax file, resource files, and Web references.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,10 +218,14 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the file represented by the virtual path.</para>
+        </summary>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to be compiled.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -185,11 +242,16 @@
         <Parameter Name="callback" Type="System.Web.Compilation.ClientBuildManagerCallback" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the file represented by the virtual path and provides a callback class to receive status information about the build.</para>
+        </summary>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to be compiled.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to receive status information from compilation.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,12 +268,20 @@
         <Parameter Name="failIfExists" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="failIfExists">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object in the application domain of the ASP.NET runtime.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object in the application domain of the ASP.NET runtime.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to be created.</param>
+        <param name="failIfExists">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the object has already been created in the application domain of the ASP.NET runtime; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -303,10 +373,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes to files in specific top-level directories cause the application domain to shut down. Files within the Bin, App_Code, Global_Resources, Web References, and App_Browsers directories are monitored to detect any changes. When changes are detected, the application domain is shut down.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the directories with files that, when changed, cause the application domain to shut down.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> array containing the top-level directory names.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -320,10 +399,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.IDictionary" /> object contains browser names for the keys and <see cref="T:System.Web.UI.Triplet" /> objects for the values. The <see cref="T:System.Web.UI.Triplet" /> objects each contain the name of the parent browser element, a description, and the depth of the browser element in the tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of browser elements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> containing browser elements.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -364,11 +452,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the file represented by the virtual path and returns its compiled type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the compiled file.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the file to compile. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -407,11 +502,18 @@
         <Parameter Name="filePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filePath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the virtual path of a generated file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the virtual path for <paramref name="filePath" />.</para>
+        </returns>
+        <param name="filePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full physical path to a generated file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -427,11 +529,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the generated file for a virtual path. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the physical path to the generated file.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the file to retrieve.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -447,11 +556,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of the assemblies defined in the Bin directory and the &lt;assembly&gt; section of the Web configuration file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> array containing paths to code bases in the Bin directory and the &lt;assembly&gt; section of the Web configuration file. </para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration name and path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -465,10 +581,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the virtual paths to the App_Code directory and its subdirectories in an ASP.NET application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> array containing all the virtual paths to code directories in an application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -482,10 +604,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> method in its base class. It always returns null and thereby prevents a lease from being created that would limit the application domain's lifetime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gives the application domain an infinite lifetime by preventing a lease from being created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -501,11 +632,18 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether an assembly is a code assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="assemblyName" /> parameter matches one of the generated code assemblies; otherwise, false.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly to be identified as a code assembly.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -518,10 +656,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether an application domain for compiling ASP.NET Web applications has been created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -535,9 +676,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET supports three forms of precompilation. One form allows for the in-place precompilation of an ASP.NET application. In this form, the site is deployed to production and then precompiled, which eliminates the need to dynamically compile the site when it is first visited by a user. The first user of the site will not experience the delay normally encountered on a site that is dynamically compiled.</para>
+          <para>The two other forms of precompilation are used for deployment. In either form, a layout of the site is generated that can be deployed to a production computer. One of these forms includes the markup pages so some amount of updating can be performed on the compiled site. The other form does not contain the markup pages and therefore cannot be updated without recompiling the original site. No source code is deployed to the target environment in either of these forms of precompilation.</para>
+          <para>The application to precompile is defined through the <see cref="T:System.Web.Compilation.ClientBuildManager" /> constructor. The <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> object of the <see cref="M:System.Web.Compilation.ClientBuildManager.#ctor(System.String,System.String,System.String,System.Web.Compilation.ClientBuildManagerParameter)" /> constructor defines which of the three forms of precompilation to perform.</para>
+          <para>A developer can precompile a Web site with the aspnet_compiler command-line tool or by calling the <see cref="M:System.Web.Compilation.ClientBuildManager.PrecompileApplication" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Precompiles an ASP.NET application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -553,10 +703,20 @@
         <Parameter Name="callback" Type="System.Web.Compilation.ClientBuildManagerCallback" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET supports three forms of precompilation. One form allows for the in-place precompilation of an ASP.NET application. In this form, the site is deployed to production and then precompiled, which eliminates the need to dynamically compile the site when it is first visited by a user. The first user of the site will not experience the delay normally encountered on a site that is dynamically compiled. The <paramref name="callback" /> parameter contains the method to call when reporting the result of compilation.</para>
+          <para>The two other forms of precompilation are used for deployment. In either form, a layout of the site is generated that can be deployed to a production computer. One of these forms includes the markup pages so some amount of updating can be performed on the compiled site. The other form does not contain the markup pages and therefore cannot be updated without recompiling the original site. No source code is deployed to the target environment in either of these forms of precompilation.</para>
+          <para>The application to precompile is defined through the <see cref="T:System.Web.Compilation.ClientBuildManager" /> constructor. The <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> object of the <see cref="M:System.Web.Compilation.ClientBuildManager.#ctor(System.String,System.String,System.String,System.Web.Compilation.ClientBuildManagerParameter)" /> constructor defines which of the three forms of precompilation to perform.</para>
+          <para>A developer can precompile a Web site with the aspnet_compiler command-line tool or by calling the <see cref="M:System.Web.Compilation.ClientBuildManager.PrecompileApplication(System.Web.Compilation.ClientBuildManagerCallback)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Precompiles an ASP.NET application and provides a callback method to receive status information about the build.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Compilation.ClientBuildManagerCallback" /> containing the method to call when reporting the result of compilation.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -573,11 +733,22 @@
         <Parameter Name="forceCleanBuild" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="forceCleanBuild">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET supports three forms of precompilation. One form allows for the in-place precompilation of an ASP.NET application. In this form, the site is deployed to production and then precompiled, which eliminates the need to dynamically compile the site when it is first visited by a user. The first user of the site will not experience the delay normally encountered on a site that is dynamically compiled. The <paramref name="callback" /> parameter contains the method to call when reporting the result of compilation.</para>
+          <para>The two other forms of precompilation are used for deployment. In either form, a layout of the site is generated that can be deployed to a production computer. One of these forms includes the markup pages so some amount of updating can be performed on the compiled site. The other form does not contain the markup pages and therefore cannot be updated without recompiling the original site. No source code is deployed to the target environment in either of these forms of precompilation.</para>
+          <para>The application to precompile is defined through the <see cref="T:System.Web.Compilation.ClientBuildManager" /> constructor. The <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> object of the <see cref="M:System.Web.Compilation.ClientBuildManager.#ctor(System.String,System.String,System.String,System.Web.Compilation.ClientBuildManagerParameter)" /> constructor defines which of the three forms of precompilation to perform.</para>
+          <para>A developer can precompile a Web site with the aspnet_compiler command-line tool or by calling the <see cref="M:System.Web.Compilation.ClientBuildManager.PrecompileApplication(System.Web.Compilation.ClientBuildManagerCallback)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Precompiles an ASP.NET application, provides a callback method to receive status information about the build, and indicates whether to create a clean build.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Compilation.ClientBuildManagerCallback" /> containing the method to call when reporting the result of compilation.</param>
+        <param name="forceCleanBuild">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to perform a clean build, which will first delete all object and intermediate files; false to rebuild only those files that have changed. Set to true if there is a chance that a dependency might not be picked up by the build environment.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -594,8 +765,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates the current ASP.NET application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unload">
@@ -606,10 +780,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unloads the application domain for compiling ASP.NET Web applications.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the application domain is unloaded; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

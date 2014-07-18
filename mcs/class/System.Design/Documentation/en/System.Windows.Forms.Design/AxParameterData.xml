@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AxParameterData" FullName="System.Windows.Forms.Design.AxParameterData">
   <TypeSignature Language="C#" Value="public class AxParameterData" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter of a method of a hosted ActiveX control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,9 +25,13 @@
         <Parameter Name="info" Type="System.Reflection.ParameterInfo" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.AxParameterData" /> class using the specified parameter information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.ParameterInfo" /> indicating the parameter information to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,10 +46,15 @@
         <Parameter Name="ignoreByRefs" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="ignoreByRefs">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.AxParameterData" /> class using the specified parameter information and whether to ignore by reference parameters.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.ParameterInfo" /> indicating the parameter information to use. </param>
+        <param name="ignoreByRefs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether to ignore parameters passed by reference. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,10 +69,15 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inname">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.AxParameterData" /> class using the specified name and type name.</para>
+        </summary>
+        <param name="inname">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -74,10 +92,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="inname">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.AxParameterData" /> class using the specified name and type.</para>
+        </summary>
+        <param name="inname">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,10 +117,17 @@
         <Parameter Name="infos" Type="System.Reflection.ParameterInfo[]" />
       </Parameters>
       <Docs>
-        <param name="infos">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified parameter information to an <see cref="T:System.Windows.Forms.Design.AxParameterData" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Windows.Forms.Design.AxParameterData" /> objects representing the specified array of <see cref="T:System.Reflection.ParameterInfo" /> objects.</para>
+        </returns>
+        <param name="infos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.ParameterInfo" /> objects to convert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,11 +145,19 @@
         <Parameter Name="ignoreByRefs" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="infos">To be added.</param>
-        <param name="ignoreByRefs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified parameter information to an <see cref="T:System.Windows.Forms.Design.AxParameterData" /> object, according to the specified value indicating whether to ignore by reference parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Windows.Forms.Design.AxParameterData" /> objects representing the specified array of <see cref="T:System.Reflection.ParameterInfo" /> objects.</para>
+        </returns>
+        <param name="infos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.ParameterInfo" /> objects to convert. </param>
+        <param name="ignoreByRefs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether to ignore parameters passed by reference. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +171,12 @@
         <ReturnType>System.CodeDom.FieldDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the direction of assignment fields.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +190,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parameter data is passed by reference.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +209,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parameter data is in.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +228,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parameter data is optional.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +247,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parameter data is out.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +266,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,9 +285,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type expected by the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,9 +304,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the type expected by the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

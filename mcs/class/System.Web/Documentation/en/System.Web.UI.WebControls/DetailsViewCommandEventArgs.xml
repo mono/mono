@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewCommandEventArgs" FullName="System.Web.UI.WebControls.DetailsViewCommandEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewCommandEventArgs : System.Web.UI.WebControls.CommandEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemCommand" /> event when a button within a <see cref="T:System.Web.UI.WebControls.ButtonField" />, <see cref="T:System.Web.UI.WebControls.CommandField" />, or <see cref="T:System.Web.UI.WebControls.TemplateField" /> row field is clicked. This allows you to provide an event handler that performs a custom routine whenever this event occurs.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control also raises other specialized events when certain buttons are clicked (buttons with the CommandName property set to "Delete", "Insert", "Page", or "Update"). When using one of these buttons, you should consider using one of the specialized events provided by the control (such as <see cref="E:System.Web.UI.WebControls.DetailsView.ItemDeleted" /> or <see cref="E:System.Web.UI.WebControls.DetailsView.ItemDeleting" />).</para>
+      </block>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" /> object is passed to the event handler. If the button that raised the event has a command name or command argument value, you can use the <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" /> object to determine these values. To determine the command name and command argument of the button clicked, use the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> and <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> properties, respectively. You can also access the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control that raised the event by using the <see cref="P:System.Web.UI.WebControls.DetailsViewCommandEventArgs.CommandSource" /> property.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewCommandEventArgs.#ctor(System.Object,System.Web.UI.WebControls.CommandEventArgs)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemCommand" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +36,58 @@
       <Docs>
         <param name="source">To be added.</param>
         <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> contained in the <paramref name="originalArgs" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contained in the <paramref name="originalArgs" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewCommandEventArgs.CommandSource" /> </para>
+              </term>
+              <description>
+                <para>The object contained in the <paramref name="commandSource" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewCommandEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +100,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewCommandEventArgs.CommandSource" /> property to access the properties of the object that represents the source of the command. In some cases, this will be the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control itself, and in other cases it will be the <see cref="T:System.Web.UI.WebControls.Button" /> control that was clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the source of the command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindCtx" FullName="System.Runtime.InteropServices.ComTypes.IBindCtx">
   <TypeSignature Language="C#" Value="public interface IBindCtx" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindCtx" />
@@ -16,9 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see the existing documentation for IBindCtx in the MSDN library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IBindCtx interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnumObjectParam">
@@ -122,10 +130,17 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RegisterObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the passed object as one of the objects that has been bound during a moniker operation and that should be released when the operation is complete.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register for release. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterObjectParam">
@@ -144,11 +159,19 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added.</param>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RegisterObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the specified object pointer under the specified name in the internally maintained table of object pointers.</para>
+        </summary>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to register <paramref name="punk" /> with. </param>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseBoundObjects">
@@ -164,9 +187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::ReleaseBoundObjects in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all the objects currently registered with the bind context by using the <see cref="M:System.Runtime.InteropServices.ComTypes.IBindCtx.RegisterObjectBound(System.Object)" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RevokeObjectBound">
@@ -184,10 +213,17 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RevokeObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the object from the set of registered objects that need to be released.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to unregister for release. </param>
       </Docs>
     </Member>
     <Member MemberName="RevokeObjectParam">
@@ -205,11 +241,21 @@
         <Parameter Name="pszKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RevokeObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Revokes the registration of the object currently found under the specified key in the internally maintained table of contextual object parameters, if that key is currently registered.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the specified key was successfully removed from the table; otherwise, an S_FALSE HRESULT value.</para>
+        </returns>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to unregister. </param>
       </Docs>
     </Member>
     <Member MemberName="SetBindOptions">

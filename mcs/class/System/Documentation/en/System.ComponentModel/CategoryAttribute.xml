@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CategoryAttribute" FullName="System.ComponentModel.CategoryAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CategoryAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CategoryAttribute extends System.Attribute" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ComponentModel.CategoryAttribute" /> indicates the category to associate the associated property or event with, when listing properties or events in a <see cref="T:System.Windows.Forms.PropertyGrid" /> control set to <see cref="F:System.Windows.Forms.PropertySort.Categorized" /> mode. If a <see cref="T:System.ComponentModel.CategoryAttribute" /> has not been applied to a property or event, the <see cref="T:System.Windows.Forms.PropertyGrid" /> associates it with the <ui>Misc</ui> category. A new category can be created for any name by specifying the name of the category in the constructor for the <see cref="T:System.ComponentModel.CategoryAttribute" />.</para>
+      <para>The <see cref="P:System.ComponentModel.CategoryAttribute.Category" /> property indicates the name of the category that the attribute represents. The <see cref="P:System.ComponentModel.CategoryAttribute.Category" /> property also provides transparent localization of category names.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the name of the category in which to group the property or event when displayed in a <see cref="T:System.Windows.Forms.PropertyGrid" /> control set to Categorized mode.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.CategoryAttribute" /> class using the category name Default.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +65,17 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the name you provide for the <paramref name="category" /> parameter is one of the predefined category names, the name will be automatically localized by the <see cref="P:System.ComponentModel.CategoryAttribute.Category" /> property.</para>
+          <para>If the name you provide is not a predefined category name, and you do not override the <see cref="M:System.ComponentModel.CategoryAttribute.GetLocalizedString(System.String)" /> method to provide a localized name, the category name will not be localized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.CategoryAttribute" /> class using the specified category name.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the category. </param>
       </Docs>
     </Member>
     <Member MemberName="Action">
@@ -72,9 +91,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Action category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Appearance">
@@ -90,9 +112,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Appearance category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Asynchronous">
@@ -107,9 +132,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Asynchronous category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Behavior">
@@ -125,9 +153,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Behavior category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Category">
@@ -143,9 +174,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property calls <see cref="M:System.ComponentModel.CategoryAttribute.GetLocalizedString(System.String)" /> to get the localized name of the category the first time it is accessed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the category for the property or event that this attribute is applied to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Data">
@@ -161,9 +198,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Data category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -179,9 +219,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Default category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Design">
@@ -197,9 +240,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Design category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DragDrop">
@@ -215,9 +261,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the DragDrop category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -236,10 +285,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the value of the given object is equal to the current <see cref="T:System.ComponentModel.CategoryAttribute" />..</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the given object is equal to that of the current; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test the value equality of. </param>
       </Docs>
     </Member>
     <Member MemberName="Focus">
@@ -255,9 +311,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Focus category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Format">
@@ -273,9 +332,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Format category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -292,9 +354,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocalizedString">
@@ -313,10 +381,20 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.CategoryAttribute.Category" /> property calls this method the first time it is accessed to look up the localized name for the specified category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up the localized name of the specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The localized name of the category, or null if a localized name does not exist.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifer for the category to look up. </param>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -333,9 +411,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if this attribute is the default.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is the default value for this attribute class; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Key">
@@ -351,9 +435,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Key category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Layout">
@@ -369,9 +456,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Layout category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mouse">
@@ -387,9 +477,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the Mouse category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WindowStyle">
@@ -405,9 +498,12 @@
         <ReturnType>System.ComponentModel.CategoryAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.CategoryAttribute" /> representing the WindowStyle category.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

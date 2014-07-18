@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceCollectionInfo" FullName="System.ServiceModel.Syndication.ResourceCollectionInfo">
   <TypeSignature Language="C#" Value="public class ResourceCollectionInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ResourceCollectionInfo extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of resources represented by &lt;atom:collection&gt; element. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +46,15 @@
         <Parameter Name="link" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,10 +69,15 @@
         <Parameter Name="link" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,12 +94,22 @@
         <Parameter Name="allowsNewEntries" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="allowsNewEntries">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>&lt;accept&gt; elements specify the type of resources that can be added to a collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories documents.</param>
+        <param name="allowsNewEntries">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether new &lt;accept&gt; elements can be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -99,12 +126,19 @@
         <Parameter Name="accepts" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="accepts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories documents.</param>
+        <param name="accepts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of resource types that can be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Accepts">
@@ -118,9 +152,12 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of resource types that can be added to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttributeExtensions">
@@ -134,9 +171,12 @@
         <ReturnType>System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of attribute extensions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseUri">
@@ -150,9 +190,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the base URI for the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Categories">
@@ -166,9 +209,12 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.CategoriesDocument&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateInlineCategoriesDocument">
@@ -183,9 +229,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateReferencedCategoriesDocument">
@@ -200,9 +254,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">
@@ -216,9 +278,17 @@
         <ReturnType>System.ServiceModel.Syndication.SyndicationElementExtensionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Element extensions are valid XML elements that are not specified in either the Atom 1.0 or RSS 2.0 specifications. You can add any valid XML element as an extension, provided its namespace is different from the enclosing namespace.
+</para>
+          <code>&lt;mg:MyElement xmlns:mg="http://myserver/elements" /&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element extensions for the service document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Link">
@@ -232,9 +302,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the URI for the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Title">
@@ -248,9 +321,12 @@
         <ReturnType>System.ServiceModel.Syndication.TextSyndicationContent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The title of the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -270,13 +346,25 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -294,11 +382,21 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -316,10 +414,15 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions to the specified <see cref="T:System.Xml.XmlWriter" /> using the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -337,10 +440,15 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions to the specified <see cref="T:System.Xml.XmlWriter" /> using the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing.</param>
       </Docs>
     </Member>
   </Members>

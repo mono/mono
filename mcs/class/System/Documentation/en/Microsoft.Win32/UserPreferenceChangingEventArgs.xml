@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserPreferenceChangingEventArgs" FullName="Microsoft.Win32.UserPreferenceChangingEventArgs">
   <TypeSignature Language="C#" Value="public class UserPreferenceChangingEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UserPreferenceChangingEventArgs extends System.EventArgs" />
@@ -12,8 +13,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:Microsoft.Win32.SystemEvents.UserPreferenceChanging" /> event occurs when a change to a user preference is about to be applied.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Win32.SystemEvents.UserPreferenceChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +36,13 @@
         <Parameter Name="category" Type="Microsoft.Win32.UserPreferenceCategory" />
       </Parameters>
       <Docs>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Win32.UserPreferenceChangingEventArgs" /> class using the specified user preference category identifier.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:Microsoft.Win32.UserPreferenceCategory" /> values that indicate the user preference category that is changing. </param>
       </Docs>
     </Member>
     <Member MemberName="Category">
@@ -47,9 +58,12 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the category of user preferences that is changing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

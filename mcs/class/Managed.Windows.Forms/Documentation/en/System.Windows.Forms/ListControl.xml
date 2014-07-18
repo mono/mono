@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListControl" FullName="System.Windows.Forms.ListControl">
   <TypeSignature Language="C#" Value="public abstract class ListControl : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ListControl" /> class provides implementations of common elements for the <see cref="T:System.Windows.Forms.ListBox" /> and <see cref="T:System.Windows.Forms.ComboBox" /> controls.</para>
+      <para>The following properties are of primary concern to users of a data-bound <see cref="T:System.Windows.Forms.ListBox" /> or <see cref="T:System.Windows.Forms.ComboBox" />: <see cref="P:System.Windows.Forms.ListControl.DataSource" />, <see cref="P:System.Windows.Forms.ListControl.DisplayMember" />, <see cref="P:System.Windows.Forms.ListControl.SelectedValue" />, and <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common implementation of members for the <see cref="T:System.Windows.Forms.ListBox" /> and <see cref="T:System.Windows.Forms.ComboBox" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +27,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListControl" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,9 +48,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list enables selection of list items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataManager">
@@ -49,9 +63,15 @@
         <ReturnType>System.Windows.Forms.CurrencyManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ListControl.DataManager" /> property is valid if the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property is set. If this is not a data-bound control, the default is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.CurrencyManager" /> associated with this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +96,19 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are two ways to fill the <see cref="T:System.Windows.Forms.ComboBox" /> and <see cref="T:System.Windows.Forms.ListBox" /> controls.</para>
+          <para>For example, you can add objects to the <see cref="T:System.Windows.Forms.ComboBox" /> by using the <see cref="M:System.Windows.Forms.ComboBox.ObjectCollection.Add(System.Object)" /> method. You can also add objects to a <see cref="T:System.Windows.Forms.ComboBox" /> by using the <see cref="P:System.Windows.Forms.ListControl.DataSource" />, <see cref="P:System.Windows.Forms.ListControl.DisplayMember" />, and <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> properties to fill the <see cref="T:System.Windows.Forms.ComboBox" />.</para>
+          <para>When the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property is set, a user cannot modify the items collection.</para>
+          <para>If setting the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property causes the data source to change, the <see cref="E:System.Windows.Forms.ListControl.DataSourceChanged" /> event is raised. If setting this property causes the data member to change, the <see cref="E:System.Windows.Forms.ListControl.DisplayMemberChanged" /> event is raised.</para>
+          <para>When you set <see cref="P:System.Windows.Forms.ListControl.DataSource" /> to null, <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> is set to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source for this <see cref="T:System.Windows.Forms.ListControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,8 +122,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,9 +154,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The controls that inherit from <see cref="T:System.Windows.Forms.ListControl" /> can display diverse types of objects. If the specified property does not exist on the object or the value of <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> is an empty string (""), the results of the object's ToString method are displayed instead.</para>
+          <para>If the new display member cannot be set, the previous display member setting is maintained.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the property to display for this <see cref="T:System.Windows.Forms.ListControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,8 +177,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,10 +201,17 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the current value of the <see cref="T:System.Windows.Forms.ListControl" /> item, if it is a property of an object, given the item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The filtered object.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object the <see cref="T:System.Windows.Forms.ListControl" /> item is bound to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,11 +229,19 @@
         <Parameter Name="field" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current value of the <see cref="T:System.Windows.Forms.ListControl" /> item, if it is a property of an object given the item and the property name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The filtered object.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object the <see cref="T:System.Windows.Forms.ListControl" /> item is bound to.</param>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name of the item the <see cref="T:System.Windows.Forms.ListControl" /> is bound to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,8 +258,15 @@
         <ReturnType>System.Windows.Forms.ListControlConvertEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.ListControl.Format" /> event is raised before each visible item in the <see cref="T:System.Windows.Forms.ListControl" /> is formatted. Handling this event gives you access to the string to be displayed for this list item, through the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property of the <see cref="T:System.Windows.Forms.ListControlConvertEventArgs" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is bound to a data value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatInfo">
@@ -219,9 +290,15 @@
         <ReturnType>System.IFormatProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ListControl.FormatInfo" /> property will override the default formatting behavior, which uses the <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> setting.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.IFormatProvider" /> that provides custom formatting behavior. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatInfoChanged">
@@ -242,8 +319,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ListControl.FormatInfo" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatString">
@@ -267,9 +350,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The format string used must follow standard dnprdnshort format specifications. For more information, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format-specifier characters that indicate how a value is to be displayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatStringChanged">
@@ -282,8 +371,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when value of the <see cref="P:System.Windows.Forms.ListControl.FormatString" /> property changes</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormattingEnabled">
@@ -293,10 +388,26 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> property to true causes the <see cref="E:System.Windows.Forms.ListControl.Format" /> event to be raised for each visible member of the <see cref="T:System.Windows.Forms.ListControl" />.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" />, <see cref="P:System.Windows.Forms.ListControl.SelectedValue" />, and <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> are related as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> is false, <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" /> will not be set to -1 when <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> is blank.</para>
+            </item>
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> is true, <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" /> will be set to -1 when <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> is blank.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether formatting is applied to the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property of the <see cref="T:System.Windows.Forms.ListControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -317,8 +428,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetItemText">
@@ -331,10 +448,17 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the text representation of the specified item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property is not specified, the value returned by <see cref="M:System.Windows.Forms.ListControl.GetItemText(System.Object)" /> is the value of the item's ToString method. Otherwise, the method returns the string value of the member specified in the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property for the object specified in the <paramref name="item" /> parameter.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object from which to get the contents to display. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,10 +475,17 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles special input keys, such as PAGE UP, PAGE DOWN, HOME, END, and so on.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="keyData" /> parameter specifies the <see cref="F:System.Windows.Forms.Keys.End" />, <see cref="F:System.Windows.Forms.Keys.Home" />, <see cref="F:System.Windows.Forms.Keys.PageUp" />, or <see cref="F:System.Windows.Forms.Keys.PageDown" /> key; false if the <paramref name="keyData" /> parameter specifies <see cref="F:System.Windows.Forms.Keys.Alt" />.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the values of <see cref="T:System.Windows.Forms.Keys" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -390,9 +521,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnDataSourceChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.DataSourceChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -409,9 +548,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnDisplayMemberChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.DisplayMemberChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -431,9 +578,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.ListControlConvertEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnFormat(System.Windows.Forms.ListControlConvertEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.Format" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ListControlConvertEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnFormatInfoChanged">
@@ -449,9 +604,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnFormatInfoChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.FormatInfoChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnFormatStringChanged">
@@ -467,9 +630,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnFormatStringChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.FormatStringChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnFormattingEnabledChanged">
@@ -485,9 +656,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnFormattingEnabledChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.FormattingEnabledChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSelectedIndexChanged">
@@ -500,9 +679,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -519,9 +705,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -538,9 +731,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format><format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListControl.OnValueMemberChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.ValueMemberChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -557,9 +758,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resynchronizes the data of the object at the specified index with the contents of the data source.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item whose data to refresh. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -577,8 +782,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resynchronizes the item data with the contents of the data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectedIndex">
@@ -588,9 +796,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets or sets the zero-based index of the currently selected item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -618,9 +829,25 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a property is not specified in <see cref="P:System.Windows.Forms.ListControl.ValueMember" />, <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> returns the results of the ToString method of the object.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" />, <see cref="P:System.Windows.Forms.ListControl.SelectedValue" />, and <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> are related as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> is false, <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" /> will not be set to -1 when <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> is blank.</para>
+            </item>
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ListControl.FormattingEnabled" /> is true, <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" /> will be set to -1 when <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> is blank.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the member property specified by the <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -634,8 +861,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -653,10 +886,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, sets the object with the specified index in the derived class.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array index of the object.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -673,9 +911,13 @@
         <Parameter Name="items" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, sets the specified array of objects in a collection in the derived class.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of items.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -697,9 +939,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify the contents of the <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> property in cases where you bind data.</para>
+          <para>You can clear the <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> property by setting the property to an empty string ("") or null.</para>
+          <para>Setting a new <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> property raises the <see cref="E:System.Windows.Forms.ListControl.ValueMemberChanged" /> and <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the property to use as the actual value for the items in the <see cref="T:System.Windows.Forms.ListControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -713,8 +963,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListControl.ValueMember" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

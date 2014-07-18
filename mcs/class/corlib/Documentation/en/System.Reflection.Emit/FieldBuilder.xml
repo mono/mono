@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FieldBuilder" FullName="System.Reflection.Emit.FieldBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class FieldBuilder : System.Reflection.FieldInfo, System.Runtime.InteropServices._FieldBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit FieldBuilder extends System.Reflection.FieldInfo implements class System.Runtime.InteropServices._FieldBuilder" />
@@ -29,8 +30,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Get an instance of FieldBuilder by calling <see cref="M:System.Reflection.Emit.TypeBuilder.DefineField(System.String,System.Type,System.Reflection.FieldAttributes)" />, <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineInitializedData(System.String,System.Byte[],System.Reflection.FieldAttributes)" />, or <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUninitializedData(System.String,System.Int32,System.Reflection.FieldAttributes)" />.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="M:System.Reflection.Emit.FieldBuilder.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Globalization.CultureInfo)" /> method is currently not supported. As a workaround, retrieve the <see cref="T:System.Reflection.FieldInfo" /> by reflecting on the finished type and call <see cref="M:System.Reflection.FieldInfo.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Globalization.CultureInfo)" /> to set the value of the field.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines and represents a field. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attributes">
@@ -46,9 +56,16 @@
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of Attributes.</para>
+          <para>code reference: FieldBuilder_ReflectedType#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the attributes of this field. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclaringType">
@@ -64,9 +81,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a reference to the <see cref="T:System.Type" /> object for the type that declares this field. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FieldHandle">
@@ -82,9 +102,12 @@
         <ReturnType>System.RuntimeFieldHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the internal metadata handle for this field. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FieldType">
@@ -100,9 +123,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the <see cref="T:System.Type" /> object that represents the type of this field. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -121,10 +147,17 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes defined for this field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Object" /> representing all the custom attributes of the constructor represented by this <see cref="T:System.Reflection.Emit.FieldBuilder" /> instance.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -144,11 +177,19 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes defined for this field identified by the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Object" /> representing all the custom attributes of the constructor represented by this <see cref="T:System.Reflection.Emit.FieldBuilder" /> instance.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom attribute type. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. </param>
       </Docs>
     </Member>
     <Member MemberName="GetToken">
@@ -165,9 +206,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FieldToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token representing this field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Reflection.Emit.FieldToken" /> object that represents the token for this field.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -186,10 +233,22 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the field is static, the <paramref name="obj" /> parameter is ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field.</para>
+          <para>The return type of <see cref="M:System.Reflection.Emit.FieldBuilder.GetValue(System.Object)" /> is <see cref="T:System.Object" />. For example, if the field holds a Boolean primitive value, an instance of <see cref="T:System.Object" /> with the appropriate Boolean value is returned. Before returning the value, <see cref="M:System.Reflection.Emit.FieldBuilder.GetValue(System.Object)" /> checks to see if the user has access permission.</para>
+          <para>Access restrictions are ignored for fully-trusted code. Private constructors, methods, fields, and properties can be accessed and invoked using Reflection whenever the code is fully-trusted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of the field supported by the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the value of the field reflected by this instance.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which to access the field. </param>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -209,11 +268,19 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether an attribute having the specified type is defined on a field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instance of <paramref name="attributeType" /> is defined on this field; otherwise, false.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the attribute. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls inheritance of custom attributes from base classes. </param>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -228,10 +295,13 @@
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the module in which the type that contains this field is being defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -247,9 +317,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of Name.</para>
+          <para>code reference: FieldBuilder_Class_Name#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the name of this field. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectedType">
@@ -265,9 +342,17 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.FieldBuilder" /> object represents a field of a particular class. In order to obtain a <see cref="T:System.Reflection.Emit.FieldBuilder" /> object, the <see cref="T:System.Type" /> object that represents the class that supports the field is queried. This property holds a reference to that <see cref="T:System.Type" /> object.</para>
+          <para>The following code sample illustrates the use of ReflectedType.</para>
+          <para>code reference: FieldBuilder_ReflectedType#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the reference to the <see cref="T:System.Type" /> object from which this object was obtained. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetConstant">
@@ -286,9 +371,17 @@
         <Parameter Name="defaultValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="defaultValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="defaultValue" /> is restricted to the following types: Boolean, SByte, Int16, Int32, Int64, Byte, UInt16, UInt32, UInt64, Single, Double, DateTime, Char, String, and Enum. If the field type is a reference type, CLS compliance requires <paramref name="defaultValue" /> to be null. However, starting with the net_v40_long, <paramref name="defaultValue" /> can be non-null for a reference type as long as the value can be assigned to that reference type. For example, an Int32 value can be assigned to a field of type <see cref="T:System.Object" />. This is not CLS-compliant, but it can be useful in interop scenarios.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the default value of this field.</para>
+        </summary>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new default value for this field. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -307,9 +400,13 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class to define the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -334,10 +431,18 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification in the ECMA Partition II documentation for details on how to format <paramref name="binaryAttribute" />. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="SetMarshal">
@@ -361,9 +466,17 @@
         <Parameter Name="unmanagedMarshal" Type="System.Reflection.Emit.UnmanagedMarshal" />
       </Parameters>
       <Docs>
-        <param name="unmanagedMarshal">To be added: an object of type 'UnmanagedMarshal'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of SetMarshal.</para>
+          <para>code reference: FieldBuilder_SetOffset#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes the native marshaling of the field.</para>
+        </summary>
+        <param name="unmanagedMarshal">
+          <attribution license="cc4" from="Microsoft" modified="false" />A descriptor specifying the native marshalling of this field. </param>
       </Docs>
     </Member>
     <Member MemberName="SetOffset">
@@ -382,9 +495,17 @@
         <Parameter Name="iOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="iOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following code sample illustrates the use of SetOffset.</para>
+          <para>code reference: FieldBuilder_SetOffset#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the field layout.</para>
+        </summary>
+        <param name="iOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset of the field within the type containing this field. </param>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -407,13 +528,29 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="val">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will assign the <paramref name="val" /> parameter to the field reflected by this instance on <see cref="T:System.Object" /> <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field.</para>
+          <para>The new value is passed as an <see cref="T:System.Object" />. For example, if the field's type is Boolean, an instance of <see cref="T:System.Object" /> with the appropriate Boolean value is passed. Before setting the value, <see cref="M:System.Reflection.Emit.FieldBuilder.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Globalization.CultureInfo)" /> checks to see if the user has access permission.</para>
+          <para>Access restrictions are ignored for fully-trusted code. Private constructors, methods, fields, and properties can be accessed and invoked using Reflection whenever the code is fully-trusted.</para>
+          <block subset="none" type="note">
+            <para>This method is currently not supported. As a workaround, retrieve the <see cref="T:System.Reflection.FieldInfo" /> by reflecting on the finished type and call <see cref="M:System.Reflection.FieldInfo.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Globalization.CultureInfo)" /> to set the value of the field.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the field supported by the given object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which to access the field. </param>
+        <param name="val">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A member of IBinder that specifies the type of binding that is desired (for example, IBinder.CreateInstance, IBinder.ExactBinding). </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of properties and enabling for binding, coercion of argument types, and invocation of members using reflection. If binder is null, then IBinder.DefaultBinding is used. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The software preferences of a particular culture. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._FieldBuilder.GetIDsOfNames">
@@ -463,11 +600,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._FieldBuilder.GetTypeInfoCount">

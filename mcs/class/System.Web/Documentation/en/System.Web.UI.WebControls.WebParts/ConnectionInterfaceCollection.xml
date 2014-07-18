@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConnectionInterfaceCollection" FullName="System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection">
   <TypeSignature Language="C#" Value="public sealed class ConnectionInterfaceCollection : System.Collections.ReadOnlyCollectionBase" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Communication between a provider and consumer requires a contract defined in an interface. This collection contains all the communication interfaces supported by the consumer. The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetSecondaryInterfaces(System.Web.UI.Control)" /> method returns a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> object.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of interfaces for use in Web Parts connections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +44,14 @@
         <Parameter Name="connectionInterfaces" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="connectionInterfaces">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> class with the specified collection. </para>
+        </summary>
+        <param name="connectionInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of objects to convert into a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +65,16 @@
         <Parameter Name="connectionInterfaces" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="existingConnectionInterfaces">To be added.</param>
-        <param name="connectionInterfaces">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> class by combining the two specified collections. </para>
+        </summary>
+        <param name="existingConnectionInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> to combine with the <paramref name="connectionInterfaces" /> object.</param>
+        <param name="connectionInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to combine with the <paramref name="existingConnectionInterfaces" /> object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +91,16 @@
       </Parameters>
       <Docs>
         <param name="t">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> object contains a specific value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is found in the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" />; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,11 +117,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire <see cref="T:System.Collections.ReadOnlyCollectionBase" /> object to a compatible one-dimensional <see cref="T:System.Array" />, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.ReadOnlyCollectionBase" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,9 +139,12 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>References a static, read-only instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -128,10 +161,16 @@
       </Parameters>
       <Docs>
         <param name="t">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified object and returns the zero-based index of the first occurrence within the entire <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> collection. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the entire <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" />, if found; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

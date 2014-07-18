@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IControlDesignerAccessor" FullName="System.Web.UI.IControlDesignerAccessor">
   <TypeSignature Language="C#" Value="public interface IControlDesignerAccessor" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The property and methods defined in the <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface offer a convenient way for the control designer to access a control for passing and retrieving temporary design-time data. The interface is implemented by the <see cref="T:System.Web.UI.Control" /> class. Control designers use the implementation of this interface to access the control.</para>
+      <para>Temporary design-time data is not persisted with the control itself. To persist design-time data for a control, you should retrieve the contents of the <see cref="P:System.Web.UI.IControlDesignerAccessor.UserData" /> property and store them in a designer-specific location.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to a control designer to store temporary design-time data associated with a control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetDesignModeState">
@@ -19,10 +27,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used only by control designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets the state from the control during use on the design surface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> of the control state.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,9 +56,15 @@
       </Parameters>
       <Docs>
         <param name="designData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In overridden controls, this method is used to retain and set state for the control during design-time mode. This method is used only by control designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, sets control state before rendering it on the design surface.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,9 +81,15 @@
       </Parameters>
       <Docs>
         <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a composite container scenario where one control contains another control, the container is the control owner.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, specifies the control that acts as the owner to the control implementing this method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +102,16 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control's properties and content can be persisted, so that the control maintains state in the design-time environment. This property is used only by control designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets a collection of information that can be accessed by a control designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

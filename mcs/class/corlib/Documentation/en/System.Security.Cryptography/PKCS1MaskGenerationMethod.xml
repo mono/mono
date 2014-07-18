@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PKCS1MaskGenerationMethod" FullName="System.Security.Cryptography.PKCS1MaskGenerationMethod">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class PKCS1MaskGenerationMethod : System.Security.Cryptography.MaskGenerationMethod" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PKCS1MaskGenerationMethod extends System.Security.Cryptography.MaskGenerationMethod" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This class implements MGF1 from PKCS#1: RSA Cryptography Standard (http://www.rsasecurity.com/rsalabs/pkcs/pkcs-1/index.html).</summary>
-    <remarks>This implementation is not compatible with Microsoft .NET Framework v1.0 and v1.1 (implementation bug) but is compatible with PKCS #1.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is only used by implementations of key exchange algorithms for mask generation. Application code does not use this class directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Computes masks according to PKCS #1 for use by key exchange algorithms.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +42,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Create a new instance of the PKCS#1 Mask Generation Function #1 (MGF1).</summary>
-        <remarks>This class isn't normally used by application developers. It is required to build the PKCS1 formatters and deformatters.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets <see cref="P:System.Security.Cryptography.PKCS1MaskGenerationMethod.HashName" /> to the default hash algorithm name (SHA1).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.PKCS1MaskGenerationMethod" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateMask">
@@ -56,12 +69,22 @@
         <Parameter Name="cbReturn" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rgbSeed">The random seed to be used for the mask.</param>
-        <param name="cbReturn">The required length of the mask.</param>
-        <summary>Generate a new mask using the specified seed value.</summary>
-        <returns>An array of byte containing the generated mask.</returns>
-        <remarks>This method is not compatible with the one provided by Microsoft in framework 1.0 and 1.1 (known bug) but IS compliant with PKCS#1 v.2.1 and work for implementing OAEP.
-</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Masks are used in key exchange computation and generally are not used by applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates and returns a mask from the specified random seed of the specified length.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly generated mask whose length is equal to the <paramref name="cbReturn" /> parameter.</para>
+        </returns>
+        <param name="rgbSeed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The random seed to use for computing the mask. </param>
+        <param name="cbReturn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the generated mask in bytes. </param>
       </Docs>
     </Member>
     <Member MemberName="HashName">
@@ -77,9 +100,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The hash algorithm to be used by the mask function.</summary>
         <value>The current hash algorithm being used to generate masks.</value>
-        <remarks>Default is <see cref="T:System.Security.Cryptography.SHA1" />.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no hash algorithm is specified, <see cref="T:System.Security.Cryptography.SHA1" /> is used by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the hash algorithm type to use for generating the mask.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnmanagedMemoryAccessor" FullName="System.IO.UnmanagedMemoryAccessor">
   <TypeSignature Language="C#" Value="public class UnmanagedMemoryAccessor : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnmanagedMemoryAccessor extends System.Object implements class System.IDisposable" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateViewAccessor" /> method of a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFile" /> object returns the unmanaged blocks of memory for working with views of memory-mapped files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides random access to unmanaged blocks of memory from managed code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,11 +54,17 @@
         <Parameter Name="capacity" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="capacity">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor" /> class with a specified buffer, offset, and capacity.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to contain the accessor.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the accessor.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of memory to allocate.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -65,12 +81,19 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="capacity">To be added.</param>
-        <param name="access">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor" /> class with a specified buffer, offset, capacity, and access right.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to contain the accessor.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the accessor.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of memory to allocate.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access allowed to the memory. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CanRead">
@@ -84,9 +107,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the accessor is readable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanWrite">
@@ -100,9 +126,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the accessory is writable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Capacity">
@@ -116,9 +145,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the capacity of the accessor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -133,8 +165,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.IO.UnmanagedMemoryAccessor" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -151,9 +186,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.UnmanagedMemoryAccessor" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.UnmanagedMemoryAccessor" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -173,12 +216,22 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="capacity">To be added.</param>
-        <param name="access">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the constructors for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the initial values for the accessor.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to contain the accessor.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the accessor.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of memory to allocate.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access allowed to the memory. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IsOpen">
@@ -192,9 +245,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the accessor is currently open by a process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Read&lt;T&gt;">
@@ -278,10 +334,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a Boolean value from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true or false.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading. </param>
       </Docs>
     </Member>
     <Member MemberName="ReadByte">
@@ -298,10 +361,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a byte value from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadChar">
@@ -318,10 +388,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a character from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDecimal">
@@ -338,10 +415,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a decimal value from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDouble">
@@ -358,10 +442,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a double-precision floating-point value from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt16">
@@ -378,10 +469,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 16-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt32">
@@ -398,10 +496,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 32-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt64">
@@ -418,10 +523,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 64-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadSByte">
@@ -443,10 +555,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an 8-bit signed integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadSingle">
@@ -463,10 +582,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a single-precision floating-point value from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt16">
@@ -488,10 +614,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an unsigned 16-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt32">
@@ -513,10 +646,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an unsigned 32-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt64">
@@ -538,10 +678,17 @@
         <Parameter Name="position" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an unsigned 64-bit integer from the accessor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that was read.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin reading.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -559,10 +706,15 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a Boolean value into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -580,10 +732,15 @@
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a byte value into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -601,10 +758,15 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -622,10 +784,15 @@
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a decimal value into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -643,10 +810,15 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a Double value into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -664,10 +836,15 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a 16-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -685,10 +862,15 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a 32-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -706,10 +888,15 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a 64-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -732,10 +919,15 @@
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an 8-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -753,10 +945,15 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a Single into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -779,10 +976,15 @@
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an unsigned 16-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -805,10 +1007,15 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an unsigned 32-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -831,10 +1038,15 @@
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an unsigned 64-bit integer into the accessor.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes into the accessor at which to begin writing.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write&lt;T&gt;">

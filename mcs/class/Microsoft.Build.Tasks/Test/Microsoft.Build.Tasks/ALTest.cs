@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks;
@@ -285,6 +286,20 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			ale.ARFC (clbe);
 			
 			Assert.AreEqual ("/embed:a /embed:b", clbe.ToString (), "A1");
+		}
+
+		[Test]
+		public void TestEmbedResourcesWithLogicalName ()
+		{
+			ALExtended ale = new ALExtended ();
+			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
+			var dict = new Dictionary<string, string> ();
+			dict ["LogicalName"] = "value";
+
+			ale.EmbedResources = new ITaskItem [2] { new TaskItem ("a", dict), new TaskItem ("b", dict) };
+			ale.ARFC (clbe);
+
+			Assert.AreEqual ("/embed:a,value /embed:b,value", clbe.ToString (), "A1");
 		}
 
 		[Test]

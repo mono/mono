@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMIRunningObjectTable" FullName="System.Runtime.InteropServices.UCOMIRunningObjectTable">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIRunningObjectTable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMIRunningObjectTable" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, please see the existing documentation for IRunningObjectTable in the com subfolder of the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IRunningObjectTable" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnumRunning">
@@ -109,9 +116,16 @@
         <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.UCOMIMoniker" />
       </Parameters>
       <Docs>
-        <param name="pmkObjectName">To be added: an object of type 'UCOMIMoniker'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IRunningObjectTable::IsRunning in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the specified moniker is currently registered in the Running Object Table.</para>
+        </summary>
+        <param name="pmkObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to the moniker to search for in the Running Object Table. </param>
       </Docs>
     </Member>
     <Member MemberName="NoteChangeTime">
@@ -180,9 +194,16 @@
         <Parameter Name="dwRegister" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dwRegister">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IRunningObjectTable::Revoke in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters the specified object from the ROT.</para>
+        </summary>
+        <param name="dwRegister">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ROT entry to revoke. </param>
       </Docs>
     </Member>
   </Members>

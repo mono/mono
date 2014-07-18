@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewModeEventArgs" FullName="System.Web.UI.WebControls.DetailsViewModeEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewModeEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event is raised when a <see cref="T:System.Web.UI.WebControls.DetailsView" /> control attempts to change between edit, insert, and read-only mode, but before the mode actually changes. This allows you to provide an event handler that performs a custom routine, such as configuring the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control for a specific mode or canceling the mode change, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewModeEventArgs" /> object is passed to the event handler, which allows you to determine the mode to which the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control is changing, to determine whether the <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event was raised as a result of the user canceling an edit operation, or to indicate that an insert operation should be canceled. To determine the new mode, use the <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.NewMode" /> property. You can also use the <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.NewMode" /> property to change to an alternate mode by setting it to one of the <see cref="T:System.Web.UI.WebControls.DetailsViewMode" /> enumeration values. Use the <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.CancelingEdit" /> property to determine whether the user canceled an edit operation. To cancel an insert operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewModeEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewModeEventArgs.#ctor(System.Web.UI.WebControls.DetailsViewMode,System.Boolean)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +32,55 @@
         <Parameter Name="cancelingEdit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="cancelingEdit">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewModeEventArgs" /> class.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewModeEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.CancelingEdit" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="cancelingEdit" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.NewMode" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="mode" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewModeEventArgs" /> class.</para>
+        </summary>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DetailsViewMode" /> enumeration values.</param>
+        <param name="cancelingEdit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event was raised as a result of the user canceling an edit operation; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +93,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event is raised when a <see cref="T:System.Web.UI.WebControls.DetailsView" /> control attempts to change between edit, insert, and read-only mode, but before the mode actually changes. Use the <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.CancelingEdit" /> property to determine whether the <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event was raised as a result of the user canceling an edit operation. For example, you might want to reset the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control whenever the user cancels an edit operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="E:System.Web.UI.WebControls.DetailsView.ModeChanging" /> event was raised as a result of the user canceling an edit operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +115,16 @@
         <ReturnType>System.Web.UI.WebControls.DetailsViewMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewModeEventArgs.NewMode" /> property to determine the mode to which the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control is changing. For example, you might want to configure the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control based on the mode to which it changes. You can also use this property to specify the mode to which the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control changes by setting it to one of the <see cref="T:System.Web.UI.WebControls.DetailsViewMode" /> enumeration values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the mode to which the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control is changing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

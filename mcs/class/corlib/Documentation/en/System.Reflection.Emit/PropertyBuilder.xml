@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyBuilder" FullName="System.Reflection.Emit.PropertyBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PropertyBuilder : System.Reflection.PropertyInfo, System.Runtime.InteropServices._PropertyBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit PropertyBuilder extends System.Reflection.PropertyInfo implements class System.Runtime.InteropServices._PropertyBuilder" />
@@ -29,8 +30,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A PropertyBuilder is always associated with a TypeBuilder. The TypeBuilder. DefineProperty method will return a new PropertyBuilder to a client.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the properties for a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddOtherMethod">
@@ -49,9 +56,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds one of the other methods associated with this property.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the other method. </param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -67,9 +78,12 @@
         <ReturnType>System.Reflection.PropertyAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes for this property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRead">
@@ -85,9 +99,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boolean property indicating if the property can be read. If the property does not have a get accessor, it cannot be read.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the property can be read.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanWrite">
@@ -103,9 +123,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boolean property indicating if the property can be written to. If the property does not have a set accessor, it cannot be written to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the property can be written to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclaringType">
@@ -121,9 +147,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class that declares this member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAccessors">
@@ -142,10 +171,20 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the accessors of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetAccessors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of the public and non-public get and set accessors on this property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type MethodInfo containing the matching public or non-public accessors, or an empty array if matching accessors do not exist on this property.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether non-public methods should be returned in the MethodInfo array. true if non-public methods are to be included; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -164,10 +203,20 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetCustomAttributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of all the custom attributes for this property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of all the custom attributes.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, walks up this property's inheritance chain to find the custom attributes </param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -187,11 +236,22 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetCustomAttributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of custom attributes identified by <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of custom attributes defined on this reflected member, or null if no attributes are defined on this member.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of custom attributes identified by type. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, walks up this property's inheritance chain to find the custom attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="GetGetMethod">
@@ -210,10 +270,20 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the getter of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetGetMethod.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the public and non-public get accessor for this property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object representing the get accessor for this property, if <paramref name="nonPublic" /> is true. Returns null if <paramref name="nonPublic" /> is false and the get accessor is non-public, or if <paramref name="nonPublic" /> is true but no get accessors exist.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether non-public get accessors should be returned. true if non-public methods are to be included; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="GetIndexParameters">
@@ -230,9 +300,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the index parameters of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetIndexParameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of all the index parameters for the property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type ParameterInfo containing the parameters for the indexes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSetMethod">
@@ -251,10 +330,52 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the setter of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetSetMethod.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the set accessor for this property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the Set method for this property. </para>
+              </term>
+              <description>
+                <para>The set accessor is public.</para>
+                <para>
+                  <paramref name="nonPublic" /> is true and non-public methods can be returned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>null </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="nonPublic" /> is true, but the property is read-only.</para>
+                <para>
+                  <paramref name="nonPublic" /> is false and the set accessor is non-public. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the accessor should be returned if it is non-public. true if non-public methods are to be included; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -274,11 +395,22 @@
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the value of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetValue.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the indexed property by calling the property's getter method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified indexed property.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -301,14 +433,28 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the value of a property, reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.GetValue.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of a property having the specified binding, index, and CultureInfo.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value for <paramref name="obj" />.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The invocation attribute. This must be a bit flag from BindingFlags : InvokeMethod, CreateInstance, Static, GetField, SetField, GetProperty, or SetProperty. A suitable invocation attribute must be specified. If a static member is to be invoked, the Static flag of BindingFlags must be set. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of MemberInfo objects using reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The CultureInfo object that represents the culture for which the resource is to be localized. Note that if the resource is not localized for this culture, the CultureInfo.Parent method will be called successively in search of a match. If this value is null, the CultureInfo is obtained from the CultureInfo.CurrentUICulture property. </param>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -328,11 +474,22 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reflect on the property's parent type using Type.GetType or Assembly.GetType, retrieve the Reflection property object from the type, and call PropertyInfo.IsDefined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether one or more instance of <paramref name="attributeType" /> is defined on this property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instance of <paramref name="attributeType" /> is defined on this property; otherwise false.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Type object to which the custom attributes are applied. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to walk up this property's inheritance chain to find the custom attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -347,10 +504,16 @@
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is provided as a convenience for the user. It is equivalent to using the <see cref="P:System.Reflection.Emit.PropertyBuilder.DeclaringType" /> property to get the type in which the property is declared, and then calling the <see cref="P:System.Type.Module" /> property of the resulting <see cref="T:System.Type" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the module in which the type that declares the current property is being defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -366,9 +529,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of this member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyToken">
@@ -384,9 +550,12 @@
         <ReturnType>System.Reflection.Emit.PropertyToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PropertyToken'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the token for this property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyType">
@@ -402,9 +571,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the field of this property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectedType">
@@ -420,9 +592,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class object that was used to obtain this instance of MemberInfo.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetConstant">
@@ -441,9 +616,17 @@
         <Parameter Name="defaultValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="defaultValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="defaultValue" /> is restricted to the following types: Boolean, SByte, Int16, Int32, Int64, Byte, UInt16, UInt32, UInt64, Single, Double, DateTime, Char, String, and Enum. If the property type is a reference type, CLS compliance requires <paramref name="defaultValue" /> to be null. However, starting with the net_v40_long, <paramref name="defaultValue" /> can be non-null for reference types as long as the value can be assigned to that reference type. For example, an Int32 value can be assigned to a property of type <see cref="T:System.Object" />. This is not CLS-compliant, but it can be useful in interop scenarios.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the default value of this property.</para>
+        </summary>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value of this property. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -462,9 +645,13 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class to define the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -489,10 +676,18 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification in the ECMA Partition II documentation for details on how to format <paramref name="binaryAttribute" />. The Partition II documentation is available online on MSDN (<see cref="http://go.microsoft.com/fwlink/?linkid=65555">ECMA C# and Common Language Infrastructure Standards</see> Web page) and on the ECMA Web site (<see cref="http://go.microsoft.com/fwlink/?linkid=65552">Standard ECMA-335 Common Language Infrastructure</see> document). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="SetGetMethod">
@@ -511,9 +706,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method that gets the property value.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the method that gets the property value. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSetMethod">
@@ -532,9 +731,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method that sets the property value.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the method that sets the property value. </param>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -555,11 +758,20 @@
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the value of a property, reflect on the property's parent type using <see cref="Overload:System.Type.GetType" /> or <see cref="Overload:System.Reflection.Assembly.GetType" />, retrieve the <see cref="T:System.Reflection.PropertyInfo" /> object from the type, and call <see cref="Overload:System.Reflection.PropertyInfo.SetValue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the property with optional index values for index properties.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be set. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for this property. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -583,14 +795,26 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the value of a property, reflect on the property's parent type using <see cref="Overload:System.Type.GetType" /> or <see cref="Overload:System.Reflection.Assembly.GetType" />, retrieve the <see cref="T:System.Reflection.PropertyInfo" /> object from the type, and call <see cref="Overload:System.Reflection.PropertyInfo.SetValue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the property value for the given object to the given value.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for this property. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The invocation attribute. This must be a bit flag from BindingFlags : InvokeMethod, CreateInstance, Static, GetField, SetField, GetProperty, or SetProperty. A suitable invocation attribute must be specified. If a static member is to be invoked, the Static flag of BindingFlags must be set. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of MemberInfo objects using reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The CultureInfo object that represents the culture for which the resource is to be localized. Note that if the resource is not localized for this culture, the CultureInfo.Parent method will be called successively in search of a match. If this value is null, the CultureInfo is obtained from the CultureInfo.CurrentUICulture property. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._PropertyBuilder.GetIDsOfNames">
@@ -640,11 +864,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._PropertyBuilder.GetTypeInfoCount">

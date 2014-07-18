@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Contexts" FullName="System.Runtime.Remoting.Contexts" FullNameSP="System.Runtime.Remoting.Contexts" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Contexts" /> namespace contains objects that define the contexts all objects reside within. A context is an ordered sequence of properties that defines an environment for the objects within it. Contexts are created during the activation process for objects that are configured to require certain automatic services such synchronization, transactions, just-in-time (JIT) activation, security, and so on. Multiple objects can live inside a context.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Whenever a new object is created, the.NET Framework finds a compatible context or creates a new context for the object. After an object is placed in a context, it stays in it for life. Classes that can be bound to a context are called context-bound classes. When accessed from another context, these context-bound classes are referenced directly using a proxy. A call from an object in one context to an object in another context will go through a context proxy and be affected by the policy implemented by the combined context properties.</para>
     </remarks>
   </Docs>
 </Namespace>

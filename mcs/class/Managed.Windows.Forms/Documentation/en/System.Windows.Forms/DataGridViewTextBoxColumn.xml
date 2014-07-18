@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewTextBoxColumn" FullName="System.Windows.Forms.DataGridViewTextBoxColumn">
   <TypeSignature Language="C#" Value="public class DataGridViewTextBoxColumn : System.Windows.Forms.DataGridViewColumn" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> class is a specialized type of <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class used to logically host cells that enable displaying and editing of text strings. A <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> has an associated <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> object in every <see cref="T:System.Windows.Forms.DataGridViewRow" /> that intersects it. When a <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> becomes activated, it supplies a <see cref="T:System.Windows.Forms.DataGridViewTextBoxEditingControl" /> control to handle user input.</para>
+      <para>The sort mode for this column type defaults to <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Hosts a collection of <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> cells.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,47 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the column by setting the following properties. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.CellTemplate" /> </para>
+              </term>
+              <description>
+                <para>A newly created <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.SortMode" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> class to the default state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +80,19 @@
         <ReturnType>System.Windows.Forms.DataGridViewCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor for the <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> class initializes this property to a newly created <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" />.</para>
+          <block subset="none" type="note">
+            <para>Changing the properties of the cell template will not immediately affect the user interface (UI) of the column's existing cells. These changes are only apparent after the column is regenerated (for example, by sorting the column or through a call to the <see cref="M:System.Windows.Forms.DataGridView.InvalidateColumn(System.Int32)" /> method).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template used to model cell appearance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +113,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.MaxInputLength" /> property does not affect the length of text entered programmatically through the cell's value or through cell formatting. It affects only what the user can input and edit.</para>
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewTextBoxCell.MaxInputLength" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewTextBoxCell.MaxInputLength" /> property of every cell in the column. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters that can be entered into the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,10 +141,20 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnSortMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DataGridView" /> control is sorted using a column with a <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />, a sorting glyph is automatically displayed in the column header.</para>
+          <para>When the control is sorted using a column with a <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Programmatic" />, you must display the sorting glyph yourself through the <see cref="P:System.Windows.Forms.DataGridViewColumnHeaderCell.SortGlyphDirection" /> property.</para>
+          <para>The default sort mode of a <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />. The default sort mode for other column types is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" />.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.SortMode" /> value does not prevent you from sorting a column programmatically, although other restrictions may apply. For more information, see the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method.</para>
+          <para>A <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" /> will not prevent the <see cref="E:System.Windows.Forms.DataGridView.ColumnHeaderMouseClick" /> event from occurring, but it will prevent the header from changing its appearance when it is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the sort mode for the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

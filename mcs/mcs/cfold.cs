@@ -309,10 +309,10 @@ namespace Mono.CSharp {
 						return new StringConstant (ec.BuiltinTypes, (string)left.GetValue () + (string)right.GetValue (),
 							left.Location);
 
-					if (lt == InternalType.NullLiteral)
+					if (lt == InternalType.NullLiteral || left.IsNull)
 						return new StringConstant (ec.BuiltinTypes, "" + right.GetValue (), left.Location);
 
-					if (rt == InternalType.NullLiteral)
+					if (rt == InternalType.NullLiteral || right.IsNull)
 						return new StringConstant (ec.BuiltinTypes, left.GetValue () + "", left.Location);
 
 					return null;
@@ -367,8 +367,8 @@ namespace Mono.CSharp {
 						return null;
 
 					result = result.Reduce (ec, lt);
-					if (result == null)
-						return null;
+					if (result == null || lt.IsEnum)
+						return result;
 
 					return new EnumConstant (result, lt);
 				}

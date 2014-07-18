@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AutoCompleteType" FullName="System.Web.UI.WebControls.AutoCompleteType">
   <TypeSignature Language="C#" Value="public enum AutoCompleteType" />
   <AssemblyInfo>
@@ -8,9 +9,22 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To assist with data entry, Internet Explorer 5 and later and some other browsers support a feature named AutoComplete. AutoComplete monitors a text box and stores a list of the values that the user has entered. When the user returns to the text box another time, the list of values is displayed. Instead of retyping a value, the user can simply select the value from this list. </para>
+      <block subset="none" type="note">
+        <para>Not all browsers support the AutoComplete feature. Check with your browser to determine compatibility.</para>
+      </block>
+      <para>To control the behavior of the AutoComplete feature for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control, you use the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property. The <see cref="T:System.Web.UI.WebControls.AutoCompleteType" /> enumeration is used to represent the values that you can apply to the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property.</para>
+      <para>By default, the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control is set to AutoCompleteType.None. With this setting, the <see cref="T:System.Web.UI.WebControls.TextBox" /> control shares the list with other <see cref="T:System.Web.UI.WebControls.TextBox" /> controls with the same <see cref="P:System.Web.UI.Control.ID" /> across different pages. You can also share a list among <see cref="T:System.Web.UI.WebControls.TextBox" /> controls based on a category instead of based on an <see cref="P:System.Web.UI.Control.ID" />. When you set the <see cref="T:System.Web.UI.WebControls.AutoCompleteType" /> property to one of the category values (such as AutoCompleteType.FirstName or AutoCompleteType.LastName), all <see cref="T:System.Web.UI.WebControls.TextBox" /> controls with the same category share the same list. You can disable the AutoComplete feature for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control by setting the <see cref="T:System.Web.UI.WebControls.AutoCompleteType" /> property to AutoCompleteType.Disabled.</para>
+      <para>Refer to your browser documentation for details on configuring and enabling the AutoComplete feature. For example, to enable the AutoComplete feature in Internet Explorer version 5 or later, from the <ui>Tools</ui> menu, choose <ui>Internet Options</ui>. Then choose the <ui>Content</ui> tab. Choose the <ui>AutoComplete</ui> button to view and modify options for the AutoComplete feature.</para>
+      <para>For more information on the AutoComplete feature in Internet Explorer, search for <see cref="http://msdn.microsoft.com/library/default.asp?url=/workshop/author/forms/autocomplete_ovr.asp">Using AutoComplete in HTML Forms</see> in the MSDN Library at http://msdn.microsoft.com/library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the values that control the behavior of the AutoComplete feature in a <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BusinessCity">
@@ -20,8 +34,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The city for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +51,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The country/region for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +68,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fax number for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +85,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The phone number for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +102,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +119,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The street for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +136,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL to a business Web site category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -118,8 +153,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ZIP code for a business address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,8 +170,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The phone number for a mobile-phone category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,8 +187,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a business category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -160,8 +204,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A department within a business category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -174,8 +221,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The AutoComplete feature is disabled for the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,8 +238,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name to display for the user category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,8 +255,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user's e-mail address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -216,8 +272,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first name category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,8 +289,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The gender of the user category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,8 +306,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The city for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,8 +323,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The country/region for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -272,8 +340,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fax number for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -286,8 +357,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL to a Web site category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -300,8 +374,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The phone number for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -314,8 +391,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -328,8 +408,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The street for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -342,8 +425,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ZIP code for a home address category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -356,8 +442,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user's job title category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -370,8 +459,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last name category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -384,8 +476,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user's middle name category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -398,8 +493,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No category is associated with the <see cref="T:System.Web.UI.WebControls.TextBox" /> control. All <see cref="T:System.Web.UI.WebControls.TextBox" /> controls with the same <see cref="P:System.Web.UI.Control.ID" /> share the same value list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -412,8 +510,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any supplemental information to include in the form category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -426,8 +527,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location of the business office category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -440,8 +544,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The phone number for a pager category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -454,8 +561,11 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The keyword or keywords with which to search a Web page or Web site category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

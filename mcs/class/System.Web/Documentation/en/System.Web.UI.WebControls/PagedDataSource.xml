@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PagedDataSource" FullName="System.Web.UI.WebControls.PagedDataSource">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PagedDataSource : System.Collections.ICollection, System.ComponentModel.ITypedList" />
   <AssemblyInfo>
@@ -20,8 +21,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.PagedDataSource" /> class encapsulates the properties that allow data-source controls, such as the <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />, to perform paging. This class is used by control developers when providing paging support to a custom data-bound control.</para>
+      <para>This class uses the best available method to enumerate over the data belonging to the current page. If the underlying data source supports indexed access (such as <see cref="T:System.Array" /> and <see cref="T:System.Collections.IList" />), this class uses it. Otherwise, it uses the enumerator created by the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.PagedDataSource" />, see the <see cref="M:System.Web.UI.WebControls.PagedDataSource.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the paging-related properties of a data-bound control (such as <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />) that allow it to perform paging. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +39,87 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.PagedDataSource" /> class.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.PagedDataSource" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowPaging" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.CurrentPageIndex" />
+                </para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageSize" />
+                </para>
+              </term>
+              <description>
+                <para>10</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.PagedDataSource.VirtualCount" />
+                </para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.PagedDataSource" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +134,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" /> property to indicate whether custom paging is enabled. Custom paging is an optional type of paging provided specifically by the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. ASP.NET version 2.0 data-bound control (such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />) uses server-side paging and does not support custom paging. Custom paging and server-side paging are mutually exclusive. If you set <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" /> to true, be sure that <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" /> is set to false.</para>
+          <para>For more information about custom paging, see <see cref="P:System.Web.UI.WebControls.DataGrid.AllowCustomPaging" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether custom paging is enabled in a data-bound control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +158,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowPaging" /> property to specify whether a data-bound control has paging enabled. ASP.NET version 2.0 data-bound controls (such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />) also use server-side paging to provide automatic paging functionality. For more information on server-side paging, see <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" />. When using the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control, you can also provide your own custom paging logic. For more information on custom paging, see <see cref="P:System.Web.UI.WebControls.DataGrid.AllowCustomPaging" /> and <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" />.</para>
+          <para>For more information about paging support for data-bound controls, see the AllowPaging property of the data-bound control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether paging is enabled in a data-bound control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +184,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET version 2.0 data-bound controls (such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />) provide automatic paging functionality through server-side paging. When using an ASP.NET 2.0 data-bound control, set this property to true.</para>
+          <block subset="none" type="note">
+            <para>Server-side paging and custom paging are mutually exclusive. If you set <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" /> to true, be sure that <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" /> is set to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether server-side paging is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -98,10 +209,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to copy the contents of the data source into the specified <see cref="T:System.Array" />, starting at the specified index. The <see cref="T:System.Array" /> is often used to iterate through the items in the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from the data source to the specified <see cref="T:System.Array" />, starting at the specified index in the <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based <see cref="T:System.Array" /> that receives the copied items from the data source. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first position in the specified <see cref="T:System.Array" /> to receive the copied contents. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +234,32 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.Count" /> property to determine the number of items to be used from the data source. The value returned depends on whether paging is enabled and whether custom paging is used.</para>
+          <list type="bullet">
+            <item>
+              <para>If paging is disabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property to false), the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSourceCount" /> property is returned.</para>
+            </item>
+            <item>
+              <para>If paging is enabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property to true) and custom paging is enabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsCustomPagingEnabled" /> property set to true), the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageSize" /> property is returned.</para>
+            </item>
+            <item>
+              <para>If paging is enabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property to true) and the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsLastPage" /> property is set to false, the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageSize" /> property is returned.</para>
+            </item>
+            <item>
+              <para>If paging is enabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property to true), custom paging is disabled (by setting the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsCustomPagingEnabled" /> property false), and the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsLastPage" /> property is set to true, the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSourceCount" /> property is subtracted from the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.FirstIndexInPage" /> property before it is returned.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property contains null, 0 is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items to be used from the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +274,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.CurrentPageIndex" /> property to specify or determine the index of the current page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the current page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +297,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.IEnumerable" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property to specify or determine the data source being paged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +319,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSourceCount" /> property to determine the number of items in the data source. If custom paging or server-side paging is used, the value of the <see cref="P:System.Web.UI.WebControls.PagedDataSource.VirtualCount" /> property is returned; otherwise, the total number of items in the data source is returned.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property contains null, 0 is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items in the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +344,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.FirstIndexInPage" /> property to determine the index of the first item on the current page.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property is set to false, or the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsCustomPagingEnabled" /> or <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" /> properties are set to true, or the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property contains null, 0 is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the first record displayed on the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +370,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create a <see cref="T:System.Collections.IEnumerator" /> that can be iterated through to get each item in the data source. To access the item at the current position in the enumerator, use the <see cref="P:System.Collections.IEnumerator.Current" /> property. Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to move to the next item in the collection. To move the enumerator to its initial position, use the <see cref="M:System.Collections.IEnumerator.Reset" /> method.</para>
+          <block subset="none" type="note">
+            <para>When you initially get the enumerator or use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to the first item in the collection, you must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method. Otherwise, the item represented by the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all items in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all items in the data source.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -218,9 +402,18 @@
       </Parameters>
       <Docs>
         <param name="list_accessors">a <see cref="T:System.ComponentModel.PropertyDescriptor[]" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.PagedDataSource.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" /> method to create a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties on each item used to bind data. If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property is null or is not a <see cref="T:System.ComponentModel.ITypedList" /> implemented object, null is returned. For more information on the <see cref="M:System.Web.UI.WebControls.PagedDataSource.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" /> method, see <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties on each item used to bind data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties on each item used to bind data.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,9 +431,19 @@
       </Parameters>
       <Docs>
         <param name="list_accessors">a <see cref="T:System.ComponentModel.PropertyDescriptor[]" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is inherited from <see cref="T:System.ComponentModel.ITypedList" /> and is not applicable to this class. It has been implemented to return <see cref="F:System.String.Empty" /> for all cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the list. This method does not apply to this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.String.Empty" /> for all cases.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,9 +457,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsCustomPagingEnabled" /> property to determine whether custom paging is enabled.</para>
+          <block subset="none" type="note">
+            <para>Both the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> and <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowCustomPaging" /> properties must be true for this property to return true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether custom paging is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -270,9 +482,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsFirstPage" /> property to determine whether the current page is the first page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current page is the first page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -286,9 +504,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsLastPage" /> property to determine whether the current page is the last page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current page is the last page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -302,9 +526,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property to determine whether paging is enabled.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowPaging" /> property must be true and the <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageSize" /> property cannot be set to 0 for this property to return true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether paging is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -318,9 +551,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is implemented to always return false, which indicates that the data source can be modified in all cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,9 +576,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Server-side paging is enabled when the <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowPaging" /> and <see cref="P:System.Web.UI.WebControls.PagedDataSource.AllowServerPaging" /> properties are both set to true, and the amount of data retrieved by the data source cannot be displayed in a single page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether server-side paging support is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -349,9 +594,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is derived from the <see cref="T:System.Collections.ICollection" /> class and is overridden to always return false to indicate that this class is not thread-safe.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsSynchronized" /> property, see the <see cref="P:System.Collections.ICollection.IsSynchronized" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the data source is synchronized (thread-safe).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -365,9 +617,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageCount" /> property to determine the number of pages necessary to display all items in the data source.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSource" /> property is null, 0 is returned. If the <see cref="P:System.Web.UI.WebControls.PagedDataSource.IsPagingEnabled" /> property is set to false or the <see cref="P:System.Web.UI.WebControls.PagedDataSource.DataSourceCount" /> property is set to 0 or less, 1 is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of pages necessary to display all items in the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -382,9 +643,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.PageSize" /> property to specify or determine the number of items to display on a single page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of items to display on a single page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -398,9 +665,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned in this implementation is the <see cref="T:System.Web.UI.WebControls.PagedDataSource" /> object itself.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.DataGridColumnCollection.SyncRoot" /> property, see the <see cref="P:System.Collections.ICollection.SyncRoot" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -415,9 +689,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PagedDataSource.VirtualCount" /> property when custom paging or server-side paging is used to determine the virtual number of items in the data source. For more information on the <see cref="P:System.Web.UI.WebControls.PagedDataSource.VirtualCount" /> property, see <see cref="P:System.Web.UI.WebControls.DataGrid.VirtualItemCount" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the virtual number of items in the data source when custom paging is used.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -2156,5 +2156,97 @@ namespace MonoTests.System.Net
 			// and return the same instance as WebRequest.DefaultWebProxy
 			Assert.AreSame (wc.Proxy, WebRequest.DefaultWebProxy);
 		}
+		 
+#if NET_4_5
+		[Test]
+		public void UploadStringAsyncCancelEvent ()
+		{
+			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			{
+
+				webClient.UploadStringCompleted += (sender, args) =>
+				{
+					if (args.Cancelled)
+						cancelEvent.Set ();
+				};
+
+				webClient.UploadStringAsync (uri, "PUT", "text");
+			});
+		}
+
+		[Test]
+		public void UploadDataAsyncCancelEvent ()
+		{
+			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			{
+				webClient.UploadDataCompleted += (sender, args) =>
+				{
+					if (args.Cancelled)
+						cancelEvent.Set ();
+				};
+
+				webClient.UploadDataAsync (uri, "PUT", new byte[] { });
+			});
+		}
+		
+		[Test]
+		public void UploadValuesAsyncCancelEvent ()
+		{
+			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			{
+				webClient.UploadValuesCompleted += (sender, args) =>
+				{
+					if (args.Cancelled)
+						cancelEvent.Set ();
+				};
+
+				webClient.UploadValuesAsync (uri, "PUT", new NameValueCollection ());
+			});
+		}
+
+		[Test]
+		public void UploadFileAsyncCancelEvent ()
+		{
+			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			{
+				string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+				File.Create (tempFile).Close ();
+
+				webClient.UploadFileCompleted += (sender, args) =>
+				{
+					if (args.Cancelled)
+						cancelEvent.Set ();
+				};
+
+				webClient.UploadFileAsync (uri, "PUT", tempFile);
+			});
+		}
+#endif
+
+#if NET_4_0
+		public void UploadAsyncCancelEventTest (Action<WebClient, Uri, EventWaitHandle> uploadAction)
+		{
+			var ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback + ":8000/test/";
+
+			using (var responder = new SocketResponder (ep, EchoRequestHandler))
+			{
+				responder.Start ();
+
+				var webClient = new WebClient ();
+
+				var cancellationTokenSource = new CancellationTokenSource ();
+				cancellationTokenSource.Token.Register (webClient.CancelAsync);
+
+				var cancelEvent = new ManualResetEvent (false);
+
+				uploadAction.Invoke (webClient, new Uri (url), cancelEvent);
+
+				cancellationTokenSource.Cancel ();
+
+				Assert.IsTrue (cancelEvent.WaitOne (1000));
+			}
+		}
+#endif
 	}
 }

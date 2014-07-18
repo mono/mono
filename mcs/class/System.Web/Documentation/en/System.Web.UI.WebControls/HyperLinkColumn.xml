@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HyperLinkColumn" FullName="System.Web.UI.WebControls.HyperLinkColumn">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HyperLinkColumn : System.Web.UI.WebControls.DataGridColumn" />
   <AssemblyInfo>
@@ -14,8 +15,31 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> column type in a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control to create a hyperlink for each row in the <see cref="T:System.Web.UI.WebControls.DataGrid" />. Set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> property to specify the caption text for the hyperlink. To specify the URL to link to when the hyperlink is clicked, set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> property.</para>
+      <block subset="none" type="note">
+        <para>If you set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> properties, all hyperlinks in the column will share the same caption and URL.</para>
+      </block>
+      <para>You can also bind the text caption and URL of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> to a field in a data source instead of setting the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> properties. This allows you to display a different caption and to specify a different URL for each hyperlink in the column.</para>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property to specify a field in a data source to bind to the text caption of the hyperlinks in the column.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property takes precedence.</para>
+      </block>
+      <para>Specify the field to bind to the URL of the hyperlink by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property takes precedence.</para>
+      </block>
+      <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> property allows you to specify the window or frame to display the Web page content linked to when the hyperlink is clicked.</para>
+      <para>When using data binding, you can format the text caption and URL of the hyperlink by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> properties, respectively.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A column type for the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control that contains a hyperlink for each item in the column.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +48,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +70,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property to specify the field from a data source to bind to the URL of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />. When the URL is data bound to a field, the URL of each hyperlink in the column is set with a corresponding value in the specified field. This allows you to set a different URL for each hyperlink in the column. To specify the same URL for each row in the column, set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> property instead of this property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property takes precedence.</para>
+          </block>
+          <para>When you are using data binding, you can specify a custom display format for the URL of the hyperlinks by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field from a data source to bind to the URL of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +102,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> property to provide a custom display format for the URL of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />. The specified format is only applied to the URL when the URL is data-bound to a field in a data source. Specify the field to bind to the URL of the hyperlinks in the column by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property.</para>
+          <para>For information on the syntax of formatting strings, see <see cref="M:System.String.Format(System.String,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display format for the URL of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> when the URL is data-bound to a field in a data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +134,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property to specify the field name from a data source to bind to the text caption of the hyperlinks in <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />. When the text caption is data bound to a field, the text caption of each hyperlink in the column is set with a corresponding value in the specified field. This allows you to set a different text caption for each hyperlink in the column. To specify the same text caption for each row in the column, set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> property instead of this property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property takes precedence.</para>
+          </block>
+          <para>When you using data binding, you can specify a custom display format for the text caption of the hyperlinks by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field from a data source to bind to the text caption of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +166,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> property to provide a custom display format for the text caption of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />. The specified format is applied to the text caption only when the text caption is data bound to a field in a data source. Specify the field to bind to the text caption of the hyperlinks in the column by setting the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property.</para>
+          <para>For information on the syntax of formatting strings, see <see cref="M:System.String.Format(System.String,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display format for the text caption of the hyperlinks in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,9 +201,18 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.HyperLinkColumn.FormatDataNavigateUrlValue(System.Object)" /> method to format a data-bound URL value with the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats a data-bound URL using the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data-bound URL in the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlFormatString" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,9 +230,18 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.HyperLinkColumn.FormatDataTextValue(System.Object)" /> method to format a data-bound text caption value with the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats a data-bound text caption using the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data-bound text caption in the format specified by the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextFormatString" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,11 +276,18 @@
         <Parameter Name="item_type" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <param name="cell">a <see cref="T:System.Web.UI.WebControls.TableCell" /></param>
         <param name="column_index">To be added.</param>
         <param name="item_type">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HyperLinks are created for all items in the DataGrid except the Header and Footer items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the cell representing this column with the contained hyperlink.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cell to be initialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +302,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> property to specify the URL to link to when a hyperlink in the column is clicked.</para>
+          <block subset="none" type="note">
+            <para>When this property is set, all hyperlinks in the column share the same URL link.</para>
+          </block>
+          <para>To provide a separate URL for each hyperlink in the column, use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.NavigateUrl" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataNavigateUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to link to when a hyperlink in the column is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -235,9 +337,76 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> property to specify the frame or window that displays the Web page linked to when a hyperlink in the column is clicked.</para>
+          <para>If this property is not set, the browser or window with focus refreshes when a hyperlink in the column is clicked.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" /> must be XHTML 1.1 compliant. For more information, refer to the topic <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Target" /> value must begin with a letter in the range of A to Z (case-insensitive), except for the following special values, which begin with an underscore. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search </para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported.  For example, Internet Explorer 5.0 and above support the _search target value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame to display the Web page content that is linked to when the hyperlink in the column is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,9 +426,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> property to specify the text caption to display for the hyperlinks in the column.</para>
+          <block subset="none" type="note">
+            <para>When this property is set, all hyperlinks in the column share the same text caption.</para>
+          </block>
+          <para>To provide a separate text caption for each hyperlink in the column, use the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> and <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.Text" /> properties cannot both be set at the same time. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HyperLinkColumn.DataTextField" /> property takes precedence.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Text is not HTML encoded before it is displayed in the <see cref="T:System.Web.UI.WebControls.HyperLinkColumn" />. This makes it possible to embed script within HTML tags in the text. If the values for this column come from user input, be sure to validate the values to reduce security vulnerabilities.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption to display for the hyperlinks in the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

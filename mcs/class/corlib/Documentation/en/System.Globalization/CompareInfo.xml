@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompareInfo" FullName="System.Globalization.CompareInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CompareInfo : System.Runtime.Serialization.IDeserializationCallback" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable beforefieldinit CompareInfo extends System.Object implements class System.Runtime.Serialization.IDeserializationCallback" />
@@ -23,8 +24,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Globalization.CultureInfo" /> class includes a <see cref="P:System.Globalization.CultureInfo.CompareInfo" /> property that is an instance of this class. <see cref="M:System.String.Compare(System.String,System.String)" /> uses the information in <see cref="P:System.Globalization.CultureInfo.CompareInfo" /> to compare strings.</para>
+      <para>
+        <see cref="T:System.Globalization.CompareInfo" /> provides the <see cref="M:System.Globalization.CompareInfo.GetCompareInfo(System.Int32,System.Reflection.Assembly)" /> method, instead of public constructors, to allow for late-bound access.</para>
+      <para>To create a <see cref="T:System.Globalization.CompareInfo" /> object for any culture, you should use the <see cref="P:System.Globalization.CultureInfo.CompareInfo" /> property, or call the <see cref="M:System.Globalization.CompareInfo.GetCompareInfo(System.Int32,System.Reflection.Assembly)" /> method.</para>
+      <format type="text/html">
+        <h2>Ignored Search Values</h2>
+      </format>
+      <para>Comparison operations, such as those performed by the <see cref="Overload:System.Globalization.CompareInfo.IndexOf" /> or <see cref="Overload:System.Globalization.CompareInfo.LastIndexOf" /> methods, can yield unexpected results if the value to search for is ignored. The search value is ignored if it is an empty string (""), a character or string consisting of characters having code points that are not considered in the operation because of comparison options, or a value with code points that have no linguistic significance. If the search value for the <see cref="Overload:System.Globalization.CompareInfo.IndexOf" /> method is an empty string, for example, the return value is zero.</para>
+      <format type="text/html">
+        <h2>Security Considerations</h2>
+      </format>
+      <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to ensure that the behavior is consistent, regardless of the culture settings of the operating system.</para>
+      <block subset="none" type="note">
+        <para>When possible, you should use string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a set of methods for culture-sensitive string comparisons.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Compare">
@@ -44,11 +65,63 @@
         <Parameter Name="string2" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the comparison is performed by using <see cref="F:System.Globalization.CompareOptions.None" />. If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two strings. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is less than <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is greater than <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="Compare">
@@ -69,12 +142,65 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two strings using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is less than <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is greater than <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="string1" /> and <paramref name="string2" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />, and <see cref="F:System.Globalization.CompareOptions.StringSort" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Compare">
@@ -96,13 +222,65 @@
         <Parameter Name="offset2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="offset1">To be added: an object of type 'int'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <param name="offset2">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the end section of a string with the end section of another string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="offset1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string1" /> at which to start comparing. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
+        <param name="offset2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string2" /> at which to start comparing. </param>
       </Docs>
     </Member>
     <Member MemberName="Compare">
@@ -125,14 +303,67 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="offset1">To be added: an object of type 'int'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <param name="offset2">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the end section of a string with the end section of another string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="offset1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string1" /> at which to start comparing. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
+        <param name="offset2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string2" /> at which to start comparing. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="string1" /> and <paramref name="string2" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />, and <see cref="F:System.Globalization.CompareOptions.StringSort" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Compare">
@@ -156,15 +387,69 @@
         <Parameter Name="length2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="offset1">To be added: an object of type 'int'</param>
-        <param name="length1">To be added: an object of type 'int'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <param name="offset2">To be added: an object of type 'int'</param>
-        <param name="length2">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should use string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares a section of one string with a section of another string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="offset1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string1" /> at which to start comparing. </param>
+        <param name="length1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of consecutive characters in <paramref name="string1" /> to compare. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
+        <param name="offset2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string2" /> at which to start comparing. </param>
+        <param name="length2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of consecutive characters in <paramref name="string2" /> to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="Compare">
@@ -189,16 +474,71 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="string1">To be added: an object of type 'string'</param>
-        <param name="offset1">To be added: an object of type 'int'</param>
-        <param name="length1">To be added: an object of type 'int'</param>
-        <param name="string2">To be added: an object of type 'string'</param>
-        <param name="offset2">To be added: an object of type 'int'</param>
-        <param name="length2">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares a section of one string with a section of another string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="string1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
+        <param name="offset1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string1" /> at which to start comparing. </param>
+        <param name="length1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of consecutive characters in <paramref name="string1" /> to compare. </param>
+        <param name="string2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second string to compare. </param>
+        <param name="offset2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the character in <paramref name="string2" /> at which to start comparing. </param>
+        <param name="length2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of consecutive characters in <paramref name="string2" /> to compare. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="string1" /> and <paramref name="string2" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />, and <see cref="F:System.Globalization.CompareOptions.StringSort" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -217,10 +557,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Globalization.CompareInfo" /> objects are equal if their <see cref="P:System.Globalization.CompareInfo.LCID" /> and <see cref="P:System.Globalization.CompareInfo.Name" /> properties are equal.</para>
+          <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is equal to the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to the current <see cref="T:System.Globalization.CompareInfo" />; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.CompareInfo" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -255,10 +607,17 @@
         <Parameter Name="culture" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="culture">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the culture with the specified identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the culture identifier. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCompareInfo">
@@ -277,10 +636,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the culture with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representing the culture name. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCompareInfo">
@@ -300,11 +666,26 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="culture">To be added: an object of type 'int'</param>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The behavior of this method is unpredictable. It is recommended for your application to use a version of this method that does not take an assembly input.</para>
+          </block>
+          <para>The <paramref name="assembly" /> parameter must be of the same type as <see cref="P:System.Reflection.Module.Assembly" />.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the specified culture and that uses string comparison methods in the specified <see cref="T:System.Reflection.Assembly" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the culture identifier. </param>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Reflection.Assembly" /> that contains the string comparison methods to use. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCompareInfo">
@@ -324,11 +705,25 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The behavior of this method is unpredictable. We recommend that you use a version of this method that does not take an assembly input.</para>
+          </block>
+          <para>The <paramref name="assembly" /> parameter must be of the same type as <see cref="P:System.Reflection.Module.Assembly" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the specified culture and that uses string comparison methods in the specified <see cref="T:System.Reflection.Assembly" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representing the culture name. </param>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Reflection.Assembly" /> that contains the string comparison methods to use. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -345,9 +740,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>This method generates the same hash code for two objects that are equal according to the <see cref="M:System.Globalization.CompareInfo.Equals(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the current <see cref="T:System.Globalization.CompareInfo" /> for hashing algorithms and data structures, such as a hash table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.CompareInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSortKey">
@@ -366,10 +771,20 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SortKey'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each character in a string is given several categories of sort weights, including script, alphabetic, case, and diacritic weights. A sort key is the repository of these weights for a particular string. For example, a sort key might contain a string of alphabetic weights, followed by a string of case weights, and so on. The <see cref="Overload:System.Globalization.CompareInfo.GetSortKey" /> method is equivalent to the Windows API method LCMapString with the LCMAP_SORTKEY flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sort key for the specified string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.SortKey" /> object that contains the sort key for the specified string.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string for which a <see cref="T:System.Globalization.SortKey" /> object is obtained. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSortKey">
@@ -389,11 +804,22 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SortKey'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each character in a string is given several categories of sort weights, including script, alphabetic, case, and diacritic weights. A sort key is the repository of these weights for a particular string. For example, a sort key might contain a string of alphabetic weights, followed by a string of case weights, and so on. The <see cref="Overload:System.Globalization.CompareInfo.GetSortKey" /> method is equivalent to the Windows API method LCMapString with the LCMAP_SORTKEY flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Globalization.SortKey" /> object for the specified string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.SortKey" /> object that contains the sort key for the specified string.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string for which a <see cref="T:System.Globalization.SortKey" /> object is obtained. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of one or more of the following enumeration values that define how the sort key is calculated: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />, and <see cref="F:System.Globalization.CompareOptions.StringSort" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -413,11 +839,26 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches the source string from the beginning of the string to the end of the string.</para>
+          <para>This overload performs a culture-sensitive search. If <paramref name="value" /> represents a precomposed Unicode character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if their Unicode code points are the same, you should call an overload that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Unlike <see cref="M:System.Globalization.CompareInfo.IndexOf(System.String,System.Char)" />, which performs a culture-sensitive comparison, overloads of the <see cref="M:System.String.IndexOf(System.Char)" /> method that search for a character perform an ordinal comparison and overloads that search for a string perform a culture-sensitive comparison.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should use string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the entire source string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -437,11 +878,26 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should use one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the entire source string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -462,12 +918,29 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.IndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should use string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how the strings should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -488,12 +961,28 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
+          <para>This overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if the Unicode values are the same, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Overloads of <see cref="M:System.String.IndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -514,12 +1003,29 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -540,12 +1046,28 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -567,13 +1089,31 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.IndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -595,13 +1135,30 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
+          <para>This overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if the Unicode values are the same, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Overloads of <see cref="M:System.String.IndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -623,13 +1180,31 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -651,13 +1226,30 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -680,14 +1272,33 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.IndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -710,14 +1321,33 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IsPrefix">
@@ -737,11 +1367,25 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="prefix" /> is an empty string, this method returns true.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified source string starts with the specified prefix.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="prefix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> starts with <paramref name="prefix" />; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to compare with the beginning of <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IsPrefix">
@@ -762,12 +1406,28 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="prefix" /> is an empty string, this method returns true.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified source string starts with the specified prefix using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="prefix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> starts with <paramref name="prefix" />; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to compare with the beginning of <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="prefix" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSortable">
@@ -790,11 +1450,21 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="ch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="ch" /> parameter is sortable if it is a Unicode character that is defined in an internal <see cref="T:System.Globalization.CompareInfo" /> class sort table, and is not a private use or unpaired high or low surrogate character.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a specified Unicode character is sortable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="ch" /> parameter is sortable; otherwise, false.</para>
+        </returns>
+        <param name="ch">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Unicode character.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSortable">
@@ -817,11 +1487,21 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each Unicode character in the <paramref name="str" /> parameter is represented by one or more UTF-16 encoded <see cref="T:System.Char" /> objects. The <paramref name="str" /> parameter is sortable if each Unicode character is defined in an internal <see cref="T:System.Globalization.CompareInfo" /> class sort table, and is not a private use or unpaired high or low surrogate character.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a specified Unicode string is sortable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="str" /> parameter is not an empty string ("") and all the Unicode characters in <paramref name="str" /> are sortable; otherwise, false.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string of zero or more Unicode characters.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSuffix">
@@ -841,11 +1521,25 @@
         <Parameter Name="suffix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="suffix">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="suffix" /> is an empty string, this method returns true.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified source string ends with the specified suffix.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="suffix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> ends with <paramref name="suffix" />; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
+        <param name="suffix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to compare with the end of <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IsSuffix">
@@ -866,12 +1560,28 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="suffix">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="suffix" /> is an empty string, this method returns true.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified source string ends with the specified suffix using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="suffix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> ends with <paramref name="suffix" />; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
+        <param name="suffix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to compare with the end of <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="suffix" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" /> used by itself, or the bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -891,11 +1601,26 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
+          <para>This overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if the Unicode values are the same, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the entire source string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -915,11 +1640,26 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the entire source string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -940,12 +1680,29 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -966,12 +1723,28 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
+          <para>This overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if the Unicode values are the same, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -992,12 +1765,29 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1018,12 +1808,28 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1045,13 +1851,31 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1073,13 +1897,30 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
+          <para>This overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where a character is considered equivalent to another character only if the Unicode values are the same, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1101,13 +1942,31 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1129,13 +1988,30 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
+          <para>This overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. To perform an ordinal (culture-insensitive) search, where the Unicode values are compared, you should call one of the overloads that has a parameter of type <see cref="T:System.Globalization.CompareOptions" /> and use the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons .</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1158,14 +2034,33 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. If the character is a Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), it might be considered equivalent to any occurrence of its components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search. A character is considered equivalent to another character only if the Unicode values are the same. Overloads of <see cref="M:System.String.LastIndexOf(System.Char)" /> that search for a character perform an ordinal search, whereas those that search for a string perform a culture-sensitive search.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">
@@ -1188,14 +2083,33 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <param name="options">To be added: an object of type 'CompareOptions'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
+          <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is not valid for this method.</para>
+          <para>If <paramref name="options" /> does not include the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs a culture-sensitive search. A Unicode value representing a precomposed character, such as the ligature "Æ" (U+00C6), might be considered equivalent to any occurrence of the character's components in the correct sequence, such as "AE" (U+0041, U+0045), depending on the culture. If <paramref name="options" /> includes the <see cref="F:System.Globalization.CompareOptions.Ordinal" /> value, this overload performs an ordinal (culture-insensitive) search, where the Unicode values are compared.</para>
+          <block subset="none" type="note">
+            <para>When possible, you should call string comparison methods that have a parameter of type <see cref="T:System.Globalization.CompareOptions" /> to specify the kind of comparison expected. As a general rule, use linguistic options (using the current culture) for comparing strings displayed in the user interface and specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" /> for security comparisons.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character. </para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to locate within <paramref name="source" />. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that defines how <paramref name="source" /> and <paramref name="value" /> should be compared. <paramref name="options" /> is either the enumeration value <see cref="F:System.Globalization.CompareOptions.Ordinal" />, or a bitwise combination of one or more of the following values: <see cref="F:System.Globalization.CompareOptions.IgnoreCase" />, <see cref="F:System.Globalization.CompareOptions.IgnoreSymbols" />, <see cref="F:System.Globalization.CompareOptions.IgnoreNonSpace" />, <see cref="F:System.Globalization.CompareOptions.IgnoreWidth" />, and <see cref="F:System.Globalization.CompareOptions.IgnoreKanaType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="LCID">
@@ -1211,9 +2125,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the properly formed culture identifier for the current <see cref="T:System.Globalization.CompareInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -1233,9 +2150,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.CompareInfo.Name" /> and <see cref="P:System.Globalization.CultureInfo.Name" /> properties can have different values. For example, an <see cref="P:System.Globalization.CompareInfo.LCID" /> property value of hexadecimal 0x10407 identifies an alternate sort culture that sorts names as they might appear in a German telephone book. The <see cref="P:System.Globalization.CompareInfo.Name" /> property has a value of "de-de_phoneb", whereas the <see cref="P:System.Globalization.CultureInfo.Name" /> property of the associated German (Germany) culture has a value of "de-DE".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the culture used for sorting operations by this <see cref="T:System.Globalization.CompareInfo" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.IDeserializationCallback.OnDeserialization">
@@ -1254,9 +2177,16 @@
         <Parameter Name="sender" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation that can be used only when the current <see cref="T:System.Globalization.CompareInfo" /> object is cast to an <see cref="T:System.Runtime.Serialization.IDeserializationCallback" /> interface. For more information, see the <see cref="M:System.Runtime.Serialization.IDeserializationCallback.OnDeserialization(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs when the entire object graph has been deserialized.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that initiated the callback. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1273,9 +2203,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.Object.ToString" /> method. It returns a string that consists of the class name and the value of the instance <see cref="P:System.Globalization.CompareInfo.Name" /> property, separated by a hyphen. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

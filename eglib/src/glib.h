@@ -49,12 +49,6 @@
 
 G_BEGIN_DECLS
 
-#ifdef G_OS_WIN32
-/* MSC and Cross-compilatin will use this */
-int vasprintf (char **strp, const char *fmt, va_list ap);
-#endif
-
-
 /*
  * Basic data types
  */
@@ -727,8 +721,16 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define G_UNLIKELY(x) (x)
 #endif
 
+#if defined(_MSC_VER)
+#define  eg_unreachable() __assume(0)
+#elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && (__GNUC_MINOR__ >= 5)))
+#define  eg_unreachable() __builtin_unreachable()
+#else
+#define  eg_unreachable()
+#endif
+
 #define  g_assert(x)     G_STMT_START { if (G_UNLIKELY (!(x))) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x);  } G_STMT_END
-#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); } G_STMT_END
+#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
 
 /*
  * Unicode conversion
@@ -1007,19 +1009,6 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  */
 #define G_PRIORITY_DEFAULT 0
 #define G_PRIORITY_DEFAULT_IDLE 200
-
-/*
- * Empty thread functions, not used by eglib
- */
-#define g_thread_supported()   TRUE
-#define g_thread_init(x)       G_STMT_START { if (x != NULL) { g_error ("No vtable supported in g_thread_init"); } } G_STMT_END
-
-#define G_LOCK_DEFINE(name)        int name;
-#define G_LOCK_DEFINE_STATIC(name) static int name;
-#define G_LOCK_EXTERN(name)
-#define G_LOCK(name)
-#define G_TRYLOCK(name)
-#define G_UNLOCK(name)
 
 #define GUINT16_SWAP_LE_BE_CONSTANT(x) ((((guint16) x) >> 8) | ((((guint16) x) << 8)))
 

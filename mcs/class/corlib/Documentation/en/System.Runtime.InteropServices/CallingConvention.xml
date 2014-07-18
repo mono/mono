@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CallingConvention" FullName="System.Runtime.InteropServices.CallingConvention" FullNameSP="System_Runtime_InteropServices_CallingConvention" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable CallingConvention extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum CallingConvention" />
@@ -19,22 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Indicates the calling convention used by a method located in an unmanaged shared library.</para>
-    </summary>
     <remarks>
-      <para>The values of this enumeration are used to specify the calling conventions required
- to call unmanaged methods implemented in shared libraries.</para>
-      <para>
-        <block subset="none" type="note">Implementers
- should map the semantics of specified calling conventions onto the calling conventions
- of the host OS.</block>
-      </para>
-      <para>
-        <block subset="none" type="note">For additional information on shared
- libraries and an example of the use of the <see cref="T:System.Runtime.InteropServices.CallingConvention" /> enumeration, see the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> class overview.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Always use the <see cref="T:System.Runtime.InteropServices.CallingConvention" /> enumeration rather than the <see cref="T:System.Runtime.InteropServices.CALLCONV" /> enumeration to specify a calling convention in managed code. The latter exists only for the sake of COM definitions. The <see cref="T:System.Runtime.InteropServices.CallingConvention" /> enumeration is used by <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> and several classes in <see cref="N:System.Reflection.Emit" /> to dynamically emit platform invoke signatures.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the calling convention required to call methods implemented in unmanaged code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cdecl">
@@ -53,32 +46,11 @@
       <Parameters />
       <MemberValue>Cdecl</MemberValue>
       <Docs>
-        <summary>
-          <para>Indicates that the <see langword="cdecl " />
-calling convention is appropriate for a method call.</para>
-          <para>For example, on a Windows platform the <see cref="F:System.Runtime.InteropServices.CallingConvention.Cdecl" /> convention produces the
-following behavior:</para>
-          <list type="table">
-            <listheader>
-              <term>Element</term>
-              <description>Behavior</description>
-            </listheader>
-            <item>
-              <term> Argument-passing order</term>
-              <description>Right to left.</description>
-            </item>
-            <item>
-              <term> Stack-maintenance responsibility</term>
-              <description>Calling function pops the arguments from the
-         stack.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">This is the default calling
-   convention for functions compiled with 32-bit C and C++ language compilers.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller cleans the stack. This enables calling functions with varargs, which makes it appropriate to use for methods that accept a variable number of parameters, such as Printf.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -98,17 +70,11 @@ following behavior:</para>
       <Parameters />
       <MemberValue>FastCall</MemberValue>
       <Docs>
-        <summary>
-          <para>Indicates that the <see langword="fastcall " />
-calling convention is appropriate for a method
-call. </para>
-          <para>
-            <block subset="none" type="note">On a Windows platform this convention
-   indicates that arguments to functions are to be passed in registers whenever
-   possible.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This calling convention is not supported.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -128,29 +94,11 @@ call. </para>
       <Parameters />
       <MemberValue>StdCall</MemberValue>
       <Docs>
-        <summary>
-          <para>Indicates that the <see langword="stdcall " />
-calling convention is appropriate for a
-method.</para>
-          <para>For example, on a Windows platform the <see cref="F:System.Runtime.InteropServices.CallingConvention.StdCall" /> convention produces the
-following behavior:</para>
-          <list type="table">
-            <listheader>
-              <term>Element</term>
-              <description>Behavior</description>
-            </listheader>
-            <item>
-              <term> Argument-passing order</term>
-              <description>Right to left.</description>
-            </item>
-            <item>
-              <term> Stack-maintenance responsibility</term>
-              <description>Called function pops its own arguments from the
- stack.</description>
-            </item>
-          </list>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The callee cleans the stack. This is the default convention for calling unmanaged functions with platform invoke.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -170,41 +118,11 @@ following behavior:</para>
       <Parameters />
       <MemberValue>ThisCall</MemberValue>
       <Docs>
-        <summary>
-          <para>Indicates that the <see langword="thiscall" /> calling convention is appropriate for a
-   method. This convention is similar to the <see cref="F:System.Runtime.InteropServices.CallingConvention.Cdecl" /> calling convention,
-   except that the last element that the caller pushes the stack is the
-<see langword="this" /> 
-pointer.</para>
-          <para>For example, on a Windows platform the <see cref="F:System.Runtime.InteropServices.CallingConvention.ThisCall" /> convention
-produces the following behavior:</para>
-          <list type="table">
-            <listheader>
-              <term>Element</term>
-              <description>Behavior</description>
-            </listheader>
-            <item>
-              <term> Argument-passing order</term>
-              <description>Right to left.</description>
-            </item>
-            <item>
-              <term> Stack-maintenance responsibility</term>
-              <description>Calling function pops the arguments from the
-         stack.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="this" /> pointer</term>
-              <description>Pushed last onto the stack.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">The <see langword="thiscall" /> calling convention is the default
-calling convention used by C++ member functions that are not called with
-a variable number of arguments.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first parameter is the this pointer and is stored in register ECX. Other parameters are pushed on the stack. This calling convention is used to call methods on classes exported from an unmanaged DLL.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -222,8 +140,11 @@ a variable number of arguments.</block>
       </ReturnValue>
       <MemberValue>Winapi</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not actually a calling convention, but instead uses the default platform calling convention. For example, on Windows the default is <see cref="F:System.Runtime.InteropServices.CallingConvention.StdCall" /> and on Windows CE.NET it is <see cref="F:System.Runtime.InteropServices.CallingConvention.Cdecl" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

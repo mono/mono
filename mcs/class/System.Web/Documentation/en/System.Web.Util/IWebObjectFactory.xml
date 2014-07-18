@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebObjectFactory" FullName="System.Web.Util.IWebObjectFactory">
   <TypeSignature Language="C#" Value="public interface IWebObjectFactory" />
   <AssemblyInfo>
@@ -6,9 +7,12 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the interface for implementing factories for Web objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateInstance">
@@ -19,10 +23,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.Util.IWebObjectFactory" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.Util.IWebObjectFactory" /> </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

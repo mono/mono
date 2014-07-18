@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyInfo" FullName="System.Security.Cryptography.Xml.KeyInfo">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class KeyInfo : System.Collections.IEnumerable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit KeyInfo extends System.Object implements class System.Collections.IEnumerable" />
@@ -18,11 +19,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>Represent the XMLDSIG KeyInfo element which is a container for all key informations related to the signed document.</summary>
     <remarks>
-      <para>The &lt;KeyInfo&gt; element is detailled in section 4.4 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</para>
-      <para>This implementation doesn't support the optional &lt;PGPData&gt;, &lt;SPKIData&gt; and &lt;MgmtData&gt; XMLDSIG elements.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class represents key information in XML digital signing and encryption. </para>
+      <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class enables you to imbed key-related information intended to help identify the key necessary for validating or decrypting the XML document. Multiple types of key-related information can be included within a single <see cref="T:System.Security.Cryptography.Xml.KeyInfo" />; each type of key-related information has an associated class derived from <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" />.</para>
+      <para>For more information about the &lt;KeyInfo&gt; element, see the XMLDSIG specification, which is available from the W3C at www.w3.org/TR/xmldsig-core/, or see the XML encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML digital signature or XML encryption &lt;KeyInfo&gt; element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddClause">
@@ -57,9 +66,13 @@
         <Parameter Name="clause" Type="System.Security.Cryptography.Xml.KeyInfoClause" />
       </Parameters>
       <Docs>
-        <param name="clause">a <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /></param>
-        <summary>Add new key informations to the document.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> that represents a particular type of <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> information to the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </summary>
+        <param name="clause">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -76,9 +89,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Int32" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> objects contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -95,9 +111,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two enumerators taken from the same collection at the same time are not necessarily required to return the same iteration.</para>
+          <para>Initially, the enumerator must be positioned before the first element of the collection and must be advanced by the caller of the implementation before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> objects in the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of the subelements of <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -116,10 +142,21 @@
         <Parameter Name="requestedObjectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="requestedObjectType">a <see cref="T:System.Type" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two enumerators taken from the same collection at the same time are not necessarily required to return the same iteration.</para>
+          <para>Initially, the enumerator must be positioned before the first element of the collection and must be advanced by the caller of the implementation before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> objects of the specified type in the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of the subelements of <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> that can be used to iterate through the collection.</para>
+        </returns>
+        <param name="requestedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to enumerate. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -136,9 +173,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -155,9 +198,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key information identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -176,9 +222,13 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> state from an XML element.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element from which to load the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> state. </param>
       </Docs>
     </Member>
   </Members>

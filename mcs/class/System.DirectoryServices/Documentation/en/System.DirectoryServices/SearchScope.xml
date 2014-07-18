@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SearchScope" FullName="System.DirectoryServices.SearchScope">
   <TypeSignature Language="C#" Value="public sealed enum SearchScope" />
   <AssemblyInfo>
@@ -87,8 +88,11 @@
       </ReturnValue>
       <MemberValue>Base</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Limits the search to the base object. The result contains a maximum of one object.  When the <see cref="P:System.DirectoryServices.DirectorySearcher.AttributeScopeQuery" /> property is specified for a search, the scope of the search must be set to <see cref="F:System.DirectoryServices.SearchScope.Base" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OneLevel">
@@ -99,8 +103,11 @@
       </ReturnValue>
       <MemberValue>OneLevel</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the immediate child objects of the base object, excluding the base object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Subtree">
@@ -111,13 +118,19 @@
       </ReturnValue>
       <MemberValue>Subtree</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the whole subtree, including the base object and all its child objects. If the scope of a directory search is not specified, a <see cref="F:System.DirectoryServices.SearchScope.Subtree" /> type of search is performed. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the possible scopes for a directory search that is performed using the <see cref="T:System.DirectoryServices.DirectorySearcher" /> object.</para>
+    </summary>
   </Docs>
 </Type>

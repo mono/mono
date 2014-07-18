@@ -45,7 +45,7 @@ gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
 static gint flush_internal (ZStream *stream, gboolean is_final);
 
 static void *
-z_alloc (void *opaque, gsize nitems, gsize item_size)
+z_alloc (void *opaque, unsigned int nitems, unsigned int item_size)
 {
 	return g_malloc0 (nitems * item_size);
 }

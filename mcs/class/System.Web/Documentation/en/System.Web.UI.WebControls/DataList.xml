@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataList" FullName="System.Web.UI.WebControls.DataList">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataList : System.Web.UI.WebControls.BaseDataList, System.Web.UI.INamingContainer, System.Web.UI.WebControls.IRepeatInfoUser" />
   <AssemblyInfo>
@@ -31,8 +32,360 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para> <format type="text/html"><a href="#introduction">Introduction</a></format>
+              </para>
+        </item>
+        <item>
+          <para> <format type="text/html"><a href="#templates">Templates</a></format>
+              </para>
+        </item>
+        <item>
+          <para> <format type="text/html"><a href="#customizing_the_appearance_of_the_datalist_control">Customizing the Appearance of the DataList Control</a></format>
+              </para>
+        </item>
+        <item>
+          <para> <format type="text/html"><a href="#display_direction_and_layout">Display Direction and Layout</a></format>
+              </para>
+        </item>
+        <item>
+          <para> <format type="text/html"><a href="#security">Security</a></format>
+              </para>
+        </item>
+        <item>
+          <para> <format type="text/html"><a href="#declarative_syntax">Declarative Syntax</a></format>
+              </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.DataList" /> control to display a template-defined data bound list. The <see cref="T:System.Web.UI.WebControls.DataList" /> control supports selecting and editing.</para>
+      <format type="text/html">
+        <a href="#templates" />
+      </format>
+      <format type="text/html">
+        <h2>Templates</h2>
+      </format>
+      <para>The contents of the <see cref="T:System.Web.UI.WebControls.DataList" /> control can be manipulated by using templates. The following table lists the supported templates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Template Name </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, ItemTemplate is used. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for the item currently being edited in the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, ItemTemplate is used. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.FooterTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for the footer section of the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, a footer section will not be displayed. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.HeaderTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for the header section of the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, a header section will not be displayed. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>Required template that provides the content and layout for items in the <see cref="T:System.Web.UI.WebControls.DataList" />. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for the currently selected item in the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, <see cref="P:System.Web.UI.WebControls.DataList.ItemTemplate" /> is used. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.SeparatorTemplate" />
+                    </para>
+          </term>
+          <description>
+            <para>If defined, provides the content and layout for the separator between items in the <see cref="T:System.Web.UI.WebControls.DataList" />. If not defined, a separator will not be displayed. </para>
+          </description>
+        </item>
+      </list>
+      <para>At the very minimum, the <see cref="P:System.Web.UI.WebControls.DataList.ItemTemplate" /> needs to be defined to display the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Additional templates can be used to provide a custom look to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+      <format type="text/html">
+        <a href="#customizing_the_appearance_of_the_datalist_control" />
+      </format>
+      <format type="text/html">
+        <h2>Customizing the Appearance of the DataList Control</h2>
+      </format>
+      <para>The appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control may be customized by setting the style properties for the different parts of the control. The following table lists the different style properties.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Style Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the item being edited in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the footer in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the header in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.SeparatorStyle" />
+                    </para>
+          </term>
+          <description>
+            <para>Specifies the style for the separator between the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+      </list>
+      <para>You can also show or hide different parts of the control. The following table lists the properties that control which parts are shown or hidden.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.ShowFooter" />
+                    </para>
+          </term>
+          <description>
+            <para>Shows or hides the footer section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> <see cref="P:System.Web.UI.WebControls.DataList.ShowHeader" />
+                    </para>
+          </term>
+          <description>
+            <para>Shows or hides the header section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#display_direction_and_layout" />
+      </format>
+      <format type="text/html">
+        <h2>Display Direction and Layout</h2>
+      </format>
+      <para>The display direction of a <see cref="T:System.Web.UI.WebControls.DataList" /> control can be vertical or horizontal. Set the <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" /> property to specify the display direction.</para>
+      <para>The layout of the <see cref="T:System.Web.UI.WebControls.DataList" /> control is controlled with the <see cref="P:System.Web.UI.WebControls.DataList.RepeatLayout" /> property. Setting this property to RepeatLayout.Table will display the <see cref="T:System.Web.UI.WebControls.DataList" /> in a table format, while RepeatLayout.Flow displays the <see cref="T:System.Web.UI.WebControls.DataList" /> without a table structure.</para>
+      <format type="text/html">
+        <a href="#security" />
+      </format>
+      <format type="text/html">
+        <h2>Security</h2>
+      </format>
+      <para>The DataList control can contain controls that enable users to enter information.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. </para>
+      </block>
+      <para>For more information about security, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Validating User Input in ASP.NET Web Pages</a></format>. </para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:DataList
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    Caption="string"
+    CaptionAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Bottom|Left|Right"
+    CellPadding="integer"
+    CellSpacing="integer"
+    CssClass="string"
+    DataKeyField="string"
+    DataMember="string"
+    DataSource="string"
+    DataSourceID="string"
+    EditItemIndex="integer"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ExtractTemplateRows="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    GridLines="<codeFeaturedElement>None</codeFeaturedElement>|Horizontal|Vertical|Both"
+    Height="size"
+    HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+    ID="string"
+    OnCancelCommand="CancelCommand event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDeleteCommand="DeleteCommand event handler"
+    OnDisposed="Disposed event handler"
+    OnEditCommand="EditCommand event handler"
+    OnInit="Init event handler"
+    OnItemCommand="ItemCommand event handler"
+    OnItemCreated="ItemCreated event handler"
+    OnItemDataBound="ItemDataBound event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnSelectedIndexChanged="SelectedIndexChanged event handler"
+    OnUnload="Unload event handler"
+    OnUpdateCommand="UpdateCommand event handler"
+    RepeatColumns="integer"
+    RepeatDirection="Horizontal|<codeFeaturedElement>Vertical</codeFeaturedElement>"
+    RepeatLayout="<codeFeaturedElement>Table</codeFeaturedElement>|Flow"
+    runat="server"
+    SelectedIndex="integer"
+    ShowFooter="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ShowHeader="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    UseAccessibleHeader="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+        &lt;AlternatingItemStyle /&gt;
+        &lt;AlternatingItemTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/AlternatingItemTemplate&gt;
+        &lt;EditItemStyle /&gt;
+        &lt;EditItemTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/EditItemTemplate&gt;
+        &lt;FooterStyle /&gt;
+        &lt;FooterTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/FooterTemplate&gt;
+        &lt;HeaderStyle /&gt;
+        &lt;HeaderTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/HeaderTemplate&gt;
+        &lt;ItemStyle /&gt;
+        &lt;ItemTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/ItemTemplate&gt;
+        &lt;SelectedItemStyle /&gt;
+        &lt;SelectedItemTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/SelectedItemTemplate&gt;
+        &lt;SeparatorStyle /&gt;
+        &lt;SeparatorTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/SeparatorTemplate&gt;
+&lt;/asp:DataList&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A data bound list control that displays items using templates.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +394,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DataList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataList" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +415,74 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property to provide a custom style for the alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are inherited from one item style property to another through a hierarchy. Item style properties set lower in the hierarchy are inherited by item style properties higher in the hierarchy. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property, all other item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control will also have a red font. This allows you to provide a common appearance for the control by setting a single item style property. You can override the inherited style settings for an item style property that is higher in the hierarchy by setting its style properties. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property. The following table lists the hierarchy order from highest to lowest.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Precedence </para>
+                </term>
+                <description>
+                  <para>Style property </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify a custom style for the alternating items, place the &lt;AlternatingItemStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;AlternatingItemStyle&gt; tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +511,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemTemplate" /> property to control the contents of alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The appearance of alternating items is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property.</para>
+          <para>To specify a template for the alternating items, place the &lt;AlternatingItemTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;AlternatingItemTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,8 +552,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event is raised when the Cancel button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to -1 (to deselect the item) and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>Text is not HTML encoded before it is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. This makes it possible to embed script within HTML tags in the text. If the values for the control come from user input, be sure to validate the values to reduce security vulnerabilities.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the Cancel button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,8 +582,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.DataList.CancelCommandName" /> field to represent the Cancel command name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Cancel command name. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,9 +606,18 @@
         <Parameter Name="useDataSource" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useDataSource">a <see cref="T:System.Boolean" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method is used primarily by control developers when deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method uses the <see cref="M:System.Web.UI.WebControls.DataList.CreateItem(System.Int32,System.Web.UI.WebControls.ListItemType)" /> and <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> methods to create <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls that represent the header, footer, separator, and data-bound items contained in the data list. You can access the data-bound items for the data list through the <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection. You can access all item types, including the header, footer, and separator items, through the <see cref="P:System.Web.UI.WebControls.BaseDataList.Controls" /> collection.</para>
+          <para>Override the <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method to customize how <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls are created or added to the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Override the <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> method to customize templates for a <see cref="T:System.Web.UI.WebControls.DataListItem" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the control hierarchy that is used to render the data list control, with or without the specified data source.</para>
+        </summary>
+        <param name="useDataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" /> true to use the control's data source; false to indicate that the control is being recreated from view state and should not be data-bound.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -169,9 +632,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Style" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateControlStyle" /> method is used primarily by control developers in deriving a custom implementation from the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the default style object that is used internally by the <see cref="T:System.Web.UI.WebControls.DataList" /> control to implement all style related properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.TableStyle" /> that contains the default style properties for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -189,11 +661,23 @@
         <Parameter Name="itemType" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added: an object of type 'int'</param>
-        <param name="itemType">To be added: an object of type 'ListItemType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataListItem'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateItem(System.Int32,System.Web.UI.WebControls.ListItemType)" /> method is used primarily by control developers in creating a custom implementation of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The <see cref="M:System.Web.UI.WebControls.DataList.CreateItem(System.Int32,System.Web.UI.WebControls.ListItemType)" /> method is functionally equivalent to calling the <see cref="M:System.Web.UI.WebControls.DataListItem.#ctor(System.Int32,System.Web.UI.WebControls.ListItemType)" /> constructor for a <see cref="T:System.Web.UI.WebControls.DataListItem" />. The <see cref="P:System.Web.UI.WebControls.DataListItem.ItemIndex" /> and <see cref="P:System.Web.UI.WebControls.DataListItem.ItemType" /> properties are initialized for the new <see cref="T:System.Web.UI.WebControls.DataListItem" /> using the specified values, but the item is not inserted into the <see cref="T:System.Web.UI.WebControls.DataList" />. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method uses the <see cref="M:System.Web.UI.WebControls.DataList.CreateItem(System.Int32,System.Web.UI.WebControls.ListItemType)" /> and <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> methods to create <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls that represent the header, footer, separator, and data-bound items contained in the data list. You can access the data-bound items for the data list through the <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection. You can access all item types, including the header, footer, and separator items, through the <see cref="P:System.Web.UI.WebControls.BaseDataList.Controls" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.DataListItem" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.UI.WebControls.DataListItem" /> created with the specified list-item type.</para>
+        </returns>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified location within the <see cref="T:System.Web.UI.WebControls.DataList" /> to place the created item.</param>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.ListItemType" /> that represents the specified type of the item to create.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -208,8 +692,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event is raised when the Delete button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event removes the selected item from the data source and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the Delete button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,8 +716,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.DataList.DeleteCommandName" /> field to represent the Delete command name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Delete command name. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -240,8 +738,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event is raised when the Edit button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to the selected row and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>Text is not HTML encoded before it is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. This makes it possible to embed script within HTML tags in the text. If the values for the control come from user input, be sure to validate the values to reduce security vulnerabilities.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the Edit button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,8 +768,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.DataList.EditCommandName" /> field to represent the Edit command name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Edit command name. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,9 +790,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to programmatically specify the item to edit. You can also use this property to determine the index of the item selected for editing.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property is zero based.</para>
+          </block>
+          <para>To unselect an item, set the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to -1.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property is stored in control state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index number of the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control to edit.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,9 +825,74 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" /> property to provide a custom style for the item selected for editing in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are inherited from one item style property to another through a hierarchy. Item style properties set lower in the hierarchy are inherited by item style properties higher in the hierarchy. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property, all other item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control will also have a red font. This allows you to provide a common appearance for the control by setting a single item style property. You can override the inherited style settings for an item style property that is higher in the hierarchy by setting its style properties. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property. The following table lists the hierarchy order from highest to lowest.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Precedence </para>
+                </term>
+                <description>
+                  <para>Style Property </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify a custom style for the item selected for editing, place the &lt;EditItemStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;EditItemStyle&gt; tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for the item selected for editing in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -324,9 +921,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.EditItemTemplate" /> property to control the contents of the item selected for editing in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The appearance of the item selected for editing is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" /> property.</para>
+          <para>To specify a template for the item selected for editing, place the &lt;EditItemTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;EditItemTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the item selected for editing in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -355,9 +962,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the <see cref="T:System.Web.UI.WebControls.DataList" /> control are specified by using templates. Normally, you list controls that you want to display in the templates. You can also place a <see cref="T:System.Web.UI.WebControls.Table" /> control in a template and display the rows of the table.</para>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.ExtractTemplateRows" /> property to specify whether the rows of a <see cref="T:System.Web.UI.WebControls.Table" /> control defined in each template of a <see cref="T:System.Web.UI.WebControls.DataList" /> control are extracted and displayed. All rows extracted from the templates of the <see cref="T:System.Web.UI.WebControls.DataList" /> control are displayed in a single table. This allows you to create a single table from other smaller tables and still maintain the features of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>When this property is set to true, you must provide a well-formed <see cref="T:System.Web.UI.WebControls.Table" /> control for each template you want to include in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Only the rows of the tables will be displayed. All other content in the template will be ignored. You must use a <see cref="T:System.Web.UI.WebControls.Table" /> control for this feature to work properly. The <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control is not compatible with this property.</para>
+          </block>
+          <para>When you create a cell for a <see cref="T:System.Web.UI.WebControls.Table" /> control in a template, you can use the <see cref="P:System.Web.UI.WebControls.TableCell.ColumnSpan" /> property of the <see cref="T:System.Web.UI.WebControls.TableCell" /> object to control the number of columns the cell spans. You can also use the <see cref="P:System.Web.UI.WebControls.TableCell.RowSpan" /> property to control the number of rows the cell spans.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.RepeatColumns" />, <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" />, and <see cref="P:System.Web.UI.WebControls.DataList.RepeatLayout" /> properties do not affect the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control when this property is set to true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the rows of a <see cref="T:System.Web.UI.WebControls.Table" /> control, defined in each template of a <see cref="T:System.Web.UI.WebControls.DataList" /> control, are extracted and displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,9 +997,20 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide a custom style for the footer section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property of the <see cref="T:System.Web.UI.WebControls.DataList" /> control inherits the style settings of the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property, the <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property will also have a red font. This allows you to provide a common appearance for the control by setting a single style property. You can override the inherited style settings by setting the <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property.</para>
+          <para>To specify a custom style for the footer section, place the &lt;FooterStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;FooterStyle&gt; tag.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.ShowFooter" /> property must be set to true for this property to be visible.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for the footer section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -407,9 +1039,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.FooterTemplate" /> property to control the contents of the footer section. The appearance of the footer section is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.ShowFooter" /> property must be set to true for this property to be visible.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property of the <see cref="T:System.Web.UI.WebControls.DataList" /> control inherits the style settings of the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property, the <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property will also have a red font. This allows you to provide a common appearance for the control by setting a single style property. You can override the inherited style settings by setting the <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property.</para>
+          <para>To specify a template for the footer section, place the &lt;FooterTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;FooterTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the footer section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -438,9 +1084,66 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.GridLines" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.GridLines" /> property to specify the grid line style for the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The following table lists the possible styles.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Style </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para> <see cref="F:System.Web.UI.WebControls.GridLines.None" />
+                </para>
+              </term>
+              <description>
+                <para>No grid lines. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> <see cref="F:System.Web.UI.WebControls.GridLines.Horizontal" />
+                </para>
+              </term>
+              <description>
+                <para>Displays the horizontal grid lines. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> <see cref="F:System.Web.UI.WebControls.GridLines.Vertical" />
+                </para>
+              </term>
+              <description>
+                <para>Displays the vertical grid line. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> <see cref="F:System.Web.UI.WebControls.GridLines.Both" />
+                </para>
+              </term>
+              <description>
+                <para>Displays both the horizontal and vertical grid lines. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This property only applies if the <see cref="P:System.Web.UI.WebControls.DataList.RepeatLayout" /> property is set to RepeatLayout.Table.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the grid line style for the <see cref="T:System.Web.UI.WebControls.DataList" /> control when the <see cref="P:System.Web.UI.WebControls.DataList.RepeatLayout" /> property is set to RepeatLayout.Table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -459,9 +1162,19 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide a custom style for the heading of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>To specify a custom style for the heading section, place the &lt;HeaderStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;HeaderStyle&gt; tag.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.ShowHeader" /> property must be set to true for this property to be visible.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for the heading section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -490,9 +1203,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.HeaderTemplate" /> property to control the contents of the heading section. The appearance of the header section is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.ShowHeader" /> property must be set to true for this property to be visible.</para>
+          </block>
+          <para>To specify a template for the heading section, place the &lt;HeaderTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;HeaderTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the heading section of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -523,9 +1249,18 @@
         <Parameter Name="item" Type="System.Web.UI.WebControls.DataListItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added: an object of type 'DataListItem'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> method is used primarily by control developers to extend the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method uses the <see cref="M:System.Web.UI.WebControls.DataList.CreateItem(System.Int32,System.Web.UI.WebControls.ListItemType)" /> and <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> methods to create <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls that represent the header, footer, separator, and data-bound items contained in the data list. You can access the data-bound items for the data list through the <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection. You can access all item types, including the header, footer, and separator items, through the <see cref="P:System.Web.UI.WebControls.BaseDataList.Controls" /> collection.</para>
+          <para>Override the <see cref="M:System.Web.UI.WebControls.DataList.CreateControlHierarchy(System.Boolean)" /> method to customize how <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls are created or added to the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Override the <see cref="M:System.Web.UI.WebControls.DataList.InitializeItem(System.Web.UI.WebControls.DataListItem)" /> method to customize templates for a <see cref="T:System.Web.UI.WebControls.DataListItem" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Web.UI.WebControls.DataListItem" /> object based on the specified templates and styles for the list-item type.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataListItem" /> to initialize.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -540,8 +1275,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" /> event is raised when any button is clicked in the <see cref="T:System.Web.UI.WebControls.DataList" /> control and is commonly used when you have a button control with a custom CommandName value.</para>
+          <para>For more information about handling events, see<format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32"> How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when any button is clicked in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -556,8 +1298,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event is raised when an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is created, both during round-trips and at the time data is bound to the control.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event is commonly used to control the content and appearance of a row in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs on the server when an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -572,8 +1322,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event is raised after an item is data bound to the <see cref="T:System.Web.UI.WebControls.DataList" /> control. This event provides you with the last opportunity to access the data item before it is displayed on the client. After this event is raised, the data item is no longer available.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an item is data bound to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -587,9 +1344,18 @@
         <ReturnType>System.Web.UI.WebControls.DataListItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataListItemCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection to programmatically control the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection does not provide any methods to add or remove items to the collection. However, you can control the contents of an item by providing a handler for the <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event.</para>
+          <block subset="none" type="note">
+            <para>Only items bound to the data source are contained in the <see cref="P:System.Web.UI.WebControls.DataList.Items" /> collection. The header, footer, and separator are not included in the collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.UI.WebControls.DataListItem" /> objects representing the individual items within the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -611,9 +1377,75 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide a custom style for the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are inherited from one item style property to another through a hierarchy. Item style properties set lower in the hierarchy are inherited by item style properties higher in the hierarchy. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property, all other item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control will also have a red font. This allows you to provide a common appearance for the control by setting a single item style property. You can override the inherited style settings for an item style property that is higher in the hierarchy by setting its style properties. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property. The following table lists the hierarchy order from highest to lowest.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Precedence </para>
+                </term>
+                <description>
+                  <para>Style Property </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify a custom style for the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control, place the &lt;ItemStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;ItemStyle&gt; tag.</para>
+          <para>You can also use the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property to provide a different appearance for the alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -642,9 +1474,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.ItemTemplate" /> property to control the contents of the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The appearance of the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property.</para>
+          <para>To specify a template for the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control, place the &lt;ItemTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;ItemTemplate&gt; tags.</para>
+          <para>You can optionally use the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemTemplate" /> property to provide a different appearance for the alternating items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -675,9 +1518,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code.  However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.LoadViewState(System.Object)" /> method restores view-state information for the <see cref="T:System.Web.UI.WebControls.DataList" /> control from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.DataList.SaveViewState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved view state of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the state of the <see cref="T:System.Web.UI.WebControls.DataList" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -695,11 +1546,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">a <see cref="T:System.Object" /></param>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
         <summary>To be added</summary>
         <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -716,9 +1569,23 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListCommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListCommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnCancelCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event is raised when the Cancel button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to -1 (to deselect the item) and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnCancelCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListCommandEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -735,9 +1602,20 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListCommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListCommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnDeleteCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event is raised when the Delete button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event removes the selected item from the data source and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnDeleteCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListCommandEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -754,9 +1632,23 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListCommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListCommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnEditCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event is raised when the Edit button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to the selected row and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnEditCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListCommandEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -776,9 +1668,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnInit(System.EventArgs)" /> method notifies the <see cref="T:System.Web.UI.WebControls.DataList" /> control to perform any initialization steps that are required to create and set up an instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event for the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnItemCommand">
@@ -791,9 +1690,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListCommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListCommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnItemCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" /> event is raised when any button is clicked in the <see cref="T:System.Web.UI.WebControls.DataList" /> control and is commonly used when you have a button control with a custom CommandName value, such as Add, in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnItemCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListCommandEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -810,9 +1719,20 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListItemEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnItemCreated(System.Web.UI.WebControls.DataListItemEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event is raised when an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is created, both during round-trips and at the time data is bound to the control.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event is commonly used to control the content and appearance of a row in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnItemCreated(System.Web.UI.WebControls.DataListItemEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -829,9 +1749,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListItemEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnItemDataBound(System.Web.UI.WebControls.DataListItemEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event is raised after an item is data bound to the <see cref="T:System.Web.UI.WebControls.DataList" /> control. This event provides you with the last opportunity to access the data item before it is displayed on the client. After this event is raised, the data item is no longer available.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnItemDataBound(System.Web.UI.WebControls.DataListItemEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -848,9 +1778,23 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.DataListCommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'DataListCommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataList.OnUpdateCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method to provide a custom handler for the <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event is raised when the Update button for an item is clicked.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event updates the data, sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to -1 (to deselect the item), and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.OnUpdateCommand(System.Web.UI.WebControls.DataListCommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -865,8 +1809,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.PrepareControlHierarchy" /> method is used primarily by control developers when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.PrepareControlHierarchy" /> prepares the control hierarchy and sets styles for contained <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls before the child controls are rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares the control hierarchy for rendering in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -883,9 +1834,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.RenderContents(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers, when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.RenderContents(System.Web.UI.HtmlTextWriter)" /> method renders the inner content of the <see cref="T:System.Web.UI.WebControls.DataList" /> control, including the contained <see cref="T:System.Web.UI.WebControls.DataListItem" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the list items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -900,9 +1859,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the number of columns that display items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. For example, if you set this property to 5, the <see cref="T:System.Web.UI.WebControls.DataList" /> control displays its items in five columns.</para>
+          <block subset="none" type="note">
+            <para>If this property is set to 0, the <see cref="T:System.Web.UI.WebControls.DataList" /> control displays its items in a single row or column, based on the value of the <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" /> property. If the <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" /> property is set to RepeatDirection.Horizontal, the items are displayed in a single row. If the <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" /> property is set to RepeatDirection.Vertical, the items are displayed in a single column.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of columns to display in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -922,9 +1890,90 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'RepeatDirection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.RepeatDirection" /> property to specify the display direction of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>The number of columns displayed is always determined by the <see cref="P:System.Web.UI.WebControls.DataList.RepeatColumns" /> property.</para>
+          </block>
+          <para>If this property is set to RepeatDirection.Vertical, the items in the list are displayed in columns loaded from top to bottom, then left to right, until all items are rendered. For example, if the <see cref="P:System.Web.UI.WebControls.DataList.RepeatColumns" /> property is set to 3, the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are displayed in three columns, as in the following table.</para>
+          <list type="table">
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>4 </para>
+              </description>
+              <description>
+                <para>7 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>5 </para>
+              </description>
+              <description>
+                <para>8 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>6 </para>
+              </description>
+              <description>
+                <para>9</para>
+              </description>
+            </item>
+          </list>
+          <para>If this property is set to RepeatDirection.Horizontal, the items in the list are displayed in rows loaded from left to right, then top to bottom, until all items are rendered. For example, if the <see cref="P:System.Web.UI.WebControls.DataList.RepeatColumns" /> property is set to 3, the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control are displayed in rows of three items each, as in the following table.</para>
+          <list type="table">
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>2 </para>
+              </description>
+              <description>
+                <para>3 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>5 </para>
+              </description>
+              <description>
+                <para>6 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>7 </para>
+              </term>
+              <description>
+                <para>8 </para>
+              </description>
+              <description>
+                <para>9</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the <see cref="T:System.Web.UI.WebControls.DataList" /> control displays vertically or horizontally.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -944,9 +1993,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'RepeatLayout'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.RepeatLayout" /> property to specify whether the items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are displayed in a table. The only <see cref="T:System.Web.UI.WebControls.RepeatLayout" /> values that are supported by the <see cref="T:System.Web.UI.WebControls.DataList" /> control are <see cref="F:System.Web.UI.WebControls.RepeatLayout.Table" /> and <see cref="F:System.Web.UI.WebControls.RepeatLayout.Flow" />.</para>
+          <para>If this property is set to RepeatLayout.Table, the items in the list are displayed in a table. If this property is set to RepeatLayout.Flow, the items in the list are displayed without a table structure.</para>
+          <para>When the <see cref="T:System.Web.UI.WebControls.DataList" /> control is displayed in a table, you can use the <see cref="P:System.Web.UI.WebControls.DataList.GridLines" /> property to specify a grid line style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the control is displayed in a table or flow layout.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -966,9 +2023,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.SaveViewState" /> method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. The <see cref="P:System.Web.UI.Control.ViewState" /> property's value is then persisted to a string object after the save-state stage of the server control's life cycle. For more information, see <format type="text/html"><a href="7949d756-1a79-464e-891f-904b1cfc7991">ASP.NET Page Life Cycle Overview</a></format>. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in a hidden HTML input element. When you author custom server controls, you can improve efficiency by overriding the <see cref="M:System.Web.UI.WebControls.DataList.SaveViewState" /> method and modifying the <see cref="P:System.Web.UI.Control.ViewState" /> property for your server control. For more information, see <format type="text/html"><a href="fbe26c16-cff4-4089-b3dd-877411f0c0ef">Developing Custom ASP.NET Server Controls</a></format> and <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the control view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.DataList" /> view state. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -983,8 +2051,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.DataList.SelectCommandName" /> field to represent the Select command name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Select command name. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -999,9 +2073,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.SelectedIndex" /> property to programmatically specify the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can also use this property to determine the index of the selected item.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DataList.SelectedIndex" /> property is zero based.</para>
+          </block>
+          <para>To deselect an item, set the <see cref="P:System.Web.UI.WebControls.DataList.SelectedIndex" /> property to -1.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.DataList.SelectedIndex" /> property is stored in control state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1023,9 +2108,15 @@
         <ReturnType>System.Web.UI.WebControls.DataListItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataListItem'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.SelectedItem" /> property to get a <see cref="T:System.Web.UI.WebControls.DataListItem" /> object that represents the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. This object can then be used to access the properties of the selected item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1047,9 +2138,74 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide a custom style for the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>Item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are inherited from one item style property to another through a hierarchy. Item style properties set lower in the hierarchy are inherited by item style properties higher in the hierarchy. For example, if you specify a red font for the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property, all other item style properties in the <see cref="T:System.Web.UI.WebControls.DataList" /> control will also have a red font. This allows you to provide a common appearance for the control by setting a single item style property. You can override the inherited style settings for an item style property that is higher in the hierarchy by setting its style properties. For example, you can specify a blue font for the <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" /> property, overriding the red font specified in the <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" /> property. The following table lists the hierarchy order from highest to lowest.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Precedence </para>
+                </term>
+                <description>
+                  <para>Style Property </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.EditItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.AlternatingItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.DataList.ItemStyle" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para> <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify a custom style for the selected item, place the &lt;SelectedItemStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;SelectedItemStyle&gt; tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties for the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1078,9 +2234,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemTemplate" /> property to control the contents of the selected item. The appearance of the selected item is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.SelectedItemStyle" /> property.</para>
+          <para>To specify a template for the selected item, place the &lt;SelectedItemTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;SelectedItemTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the selected item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1116,9 +2282,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the key field for the selected data list item.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SeparatorStyle">
@@ -1128,9 +2297,16 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableItemStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.SeparatorStyle" /> property to provide a custom style for the separator between each item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The separator allows you to place an element with custom content between each item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. Common style attributes that can be adjusted include foreground color, background color, font, and content alignment within the cell. Providing a different style enhances the appearance of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>To specify a custom style for the separator, place the &lt;SeparatorStyle&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the style attributes within the opening &lt;SeparatorStyle&gt; tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style properties of the separator between each item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1159,9 +2335,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.ITemplate" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.SeparatorTemplate" /> property to control the contents of the separator between the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The separator allows you to place an element with custom content between each item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. The appearance of the separator between the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control is controlled by the <see cref="P:System.Web.UI.WebControls.DataList.SeparatorStyle" /> property.</para>
+          <para>To specify a template for the separator, place the &lt;SeparatorTemplate&gt; tags between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DataList" /> control. You can then list the contents of the template between the opening and closing &lt;SeparatorTemplate&gt; tags.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template for the separator between the items of the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1190,9 +2376,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.ShowFooter" /> property to specify whether the footer section is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>You can control the appearance of the footer section by setting the <see cref="P:System.Web.UI.WebControls.DataList.FooterStyle" /> property. The contents of the footer section are controlled by the <see cref="P:System.Web.UI.WebControls.DataList.FooterTemplate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the footer section is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1212,9 +2405,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.ShowHeader" /> property to specify whether the header section is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <para>You can control appearance of the header section by setting the <see cref="P:System.Web.UI.WebControls.DataList.HeaderStyle" /> property. The contents of the header section are controlled by the <see cref="P:System.Web.UI.WebControls.DataList.HeaderTemplate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the header section is displayed in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1241,11 +2441,22 @@
         <Parameter Name="repeatIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemType">To be added.</param>
-        <param name="repeatIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.WebControls.IRepeatInfoUser.GetItemStyle(System.Web.UI.WebControls.ListItemType,System.Int32)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style of the specified item type at the specified index in the list control.</para>
+        </returns>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> enumeration values.</param>
+        <param name="repeatIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item in the list control.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IRepeatInfoUser.HasFooter">
@@ -1259,9 +2470,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.WebControls.IRepeatInfoUser.HasFooter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IRepeatInfoUser.HasHeader">
@@ -1275,9 +2492,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.WebControls.IRepeatInfoUser.HasHeader" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IRepeatInfoUser.HasSeparators">
@@ -1291,9 +2514,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.WebControls.IRepeatInfoUser.HasSeparators" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IRepeatInfoUser.RenderItem">
@@ -1313,12 +2542,22 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="itemType">To be added.</param>
-        <param name="repeatIndex">To be added.</param>
-        <param name="repeatInfo">To be added.</param>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.WebControls.IRepeatInfoUser.RenderItem(System.Web.UI.WebControls.ListItemType,System.Int32,System.Web.UI.WebControls.RepeatInfo,System.Web.UI.HtmlTextWriter)" />.</para>
+        </summary>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the item.</param>
+        <param name="repeatIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item.</param>
+        <param name="repeatInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information that is used to render the item.</param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object to use to render the item.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IRepeatInfoUser.RepeatedItemCount">
@@ -1332,9 +2571,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataList" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IRepeatInfoUser" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.WebControls.IRepeatInfoUser.RepeatedItemCount" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TagKey">
@@ -1348,9 +2593,15 @@
         <ReturnType>System.Web.UI.HtmlTextWriterTag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataList.TagKey" /> property to determine the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that is associated with a <see cref="T:System.Web.UI.WebControls.DataList" /> control. The <see cref="P:System.Web.UI.WebControls.DataList.TagKey" /> property is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTML tag that is used to render the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TrackViewState">
@@ -1361,8 +2612,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataList.TrackViewState" /> method is overridden to mark the starting point at which to begin tracking and saving changes to the control as part of the control's view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracks view-state changes to the <see cref="T:System.Web.UI.WebControls.DataList" /> control so they can be stored in the control's <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1377,8 +2634,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event is raised when the Update button for an item is clicked.</para>
+          <para>A typical handler for the <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event updates the data, sets the <see cref="P:System.Web.UI.WebControls.DataList.EditItemIndex" /> property to -1 (to deselect the item), and then rebinds the data to the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the Update button is clicked for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1393,8 +2661,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.DataList.UpdateCommandName" /> field to represent the Update command name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Update command name. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

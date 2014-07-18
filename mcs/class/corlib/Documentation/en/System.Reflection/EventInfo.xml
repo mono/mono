@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventInfo" FullName="System.Reflection.EventInfo" FullNameSP="System_Reflection_EventInfo" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract EventInfo extends System.Reflection.MemberInfo" />
   <TypeSignature Language="C#" Value="public abstract class EventInfo : System.Reflection.MemberInfo, System.Runtime.InteropServices._EventInfo" />
@@ -31,33 +32,22 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Provides access to event metadata.</para>
-    </summary>
     <remarks>
-      <para> Events are handled by delegates. An event listener supplies an event-handler
-      delegate that is invoked whenever the event is raised by an event source. In order
-      to connect to the event source, the event listener adds this delegate to the
-      invocation list of the source. When the event is raised, the event-handler delegate
-      invokes the methods in its invocation list. The <see cref="M:System.Reflection.EventInfo.GetAddMethod" />,
-   <see cref="M:System.Reflection.EventInfo.AddEventHandler(System.Object,System.Delegate)" />
-   , <see cref="M:System.Reflection.EventInfo.GetRemoveMethod" />, and <see cref="M:System.Reflection.EventInfo.RemoveEventHandler(System.Object,System.Delegate)" /> methods,
-   and the
-   delegate type of the event-handler associated
-   with an event, are required to be marked in the metadata.</para>
-      <para>
-        <block subset="none" type="note">For information on
-   delegates, see the <see cref="T:System.Delegate" />
-   
-   class
-   overview.</block>
-      </para>
-      <para>
-        <block subset="none" type="note">For
-   information on events, see Partitions I and II of the CLI
-   specification.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Reflection.EventInfo" /> class to inspect events and to hook up event handlers, as shown in the example code for the <see cref="M:System.Reflection.EventInfo.AddEventHandler(System.Object,System.Delegate)" /> method. </para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Reflection.EventInfo" /> is not intended to be used to raise events. An object raises events as dictated by its internal state. </para>
+      </block>
+      <para>Events are used with delegates. An event listener instantiates an event-handler delegate that is invoked whenever the event is raised by an event source. In order to connect to the event source, the event listener adds this delegate to the invocation list on the source. When the event is raised, the invoke method of the event-handler delegate is called. Both multicast and single-cast event notifications are supported. The Add and Remove methods, as well as the event-handler delegate class associated with an event, must be marked in the metadata.</para>
+      <para>Delegates are object-oriented function pointers. In C or C++, a function pointer is a reference to a method. In contrast to the C or C++ function pointer, a delegate contains two references: a reference to a method and a reference to an object that supports the method. Delegates can invoke a method without knowing the class type that declares or inherits the method. Delegates need only know the return type and parameter list of the method.</para>
+      <para>The event model works equally well for single-cast and multicast delegates. When the delegate's invoke method is called, only a single object will have a method called on it. A multicast modifier can be applied to a delegate declaration, which allows multiple methods to be called when the invoke method of the delegate is called.</para>
+      <para>Calling <see cref="M:System.Reflection.ICustomAttributeProvider.GetCustomAttributes(System.Type,System.Boolean)" /> on EventInfo when the <paramref name="inherit" /> parameter of GetCustomAttributes is true does not walk the type hierarchy. Use <see cref="T:System.Attribute" /> to inherit custom attributes.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Discovers the attributes of an event and provides access to event metadata.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -73,11 +63,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Reflection.EventInfo" />
-class.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the EventInfo class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -104,23 +94,24 @@ class.</para>
         <Parameter Name="handler" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="target">An object that represents an event source. </param>
-        <param name="handler">
-          <para>A <see cref="T:System.Delegate" /> instance to be added to <paramref name="target" /> that references methods to be invoked when the event reflected by the current instance is raised by <paramref name="target" />. </para>
-        </param>
-        <summary>
-          <para> Adds the specified event handler delegate to the specified event source.
-      </para>
-        </summary>
-        <remarks>
-          <para> Each time the event reflected by the current instance is raised by <paramref name="target" />, the methods
-   in the invocation list of <paramref name="handler" /> are invoked.</para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="handler " />is not the same <see cref="T:System.Type" /> as the event handler delegate declared for the event reflected by the current instance.</para>
         </exception>
         <exception cref="T:System.Reflection.TargetException">The event reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the event reflected by the current instance.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method attempts to add a delegate to synchronize the event on the target object.</para>
+          <para>Each time the event is raised by the target parameter, the method or methods encapsulated by the handler will be invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler to an event source.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event source. </param>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />Encapsulates a method or methods to be invoked when the event is raised by the target. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -135,9 +126,15 @@ class.</para>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is the equivalent of calling the <see cref="M:System.Reflection.EventInfo.GetAddMethod(System.Boolean)" /> with a value of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Reflection.MethodInfo" /> object for the <see cref="M:System.Reflection.EventInfo.AddEventHandler(System.Object,System.Delegate)" /> method of the event, including non-public methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -155,15 +152,19 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the attributes of the event reflected by the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Reflection.EventAttributes" /> value that specifies the attributes in the metadata of the
    event reflected by the current
    instance.</para>
         </value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes are returned in a 4-byte integer representing a bitmap of the attributes set for the event reflected by this instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes for this event.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -181,10 +182,17 @@ class.</para>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="EventHandlerType">
@@ -202,11 +210,6 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the <see cref="T:System.Type" /> of the
-   event-handler <see cref="T:System.Delegate" />
-   associated with the event reflected by the current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Type" /> that represents
    the type of the
@@ -218,6 +221,10 @@ class.</para>
           <para>This property is read-only.</para>
         </remarks>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Type object of the underlying event-handler delegate associated with this event.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -236,30 +243,18 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetAddMethod initializes and adds the event subscribe method. The AddEventHandler method is used to add an event-handler delegate to the invocation list of an event source.</para>
+        </remarks>
         <summary>
-          <para> Returns the public method used to add an event
-      handler delegate to an event source for the event reflected by the current
-      instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method used to add an event handler delegate to the event source.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> 
-instance that reflects
-the public method used to add an event handler delegate to an event
-source for the event reflected by the current instance, if found; otherwise,
-returns <see langword="null" />
-. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to add an event handler delegate to the event source.</para>
         </returns>
-        <remarks>
-          <para>This method is equivalent to <see cref="M:System.Reflection.EventInfo.GetAddMethod" />(<see langword="false" />).</para>
-          <block subset="none" type="note">
-            <para>The returned method is used to add an event-handler delegate to the 
-      invocation list of an event source. Typically, the method has the following
-      signature format:</para>
-            <para>
-              <c>add_&lt;EventName&gt;(&lt;EventHandlerType&gt; handler)</c>
-            </para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -280,35 +275,23 @@ returns <see langword="null" />
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
-        <summary>
-          <para> Returns the method used to add an event handler delegate to an event source for the event reflected by the current
-      instance, specifying whether or not to return non-public methods.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Reflection.MethodInfo" />
-instance that
-reflects the method used to add an event handler delegate to an event source
-for the event reflected by the current instance, if found; otherwise, returns
-<see langword="null" /> 
-.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The returned method is used to add an event-handler
-         delegate to the invocation list of an event source. Typically, the method has
-         the following signature format:</para>
-            <para>
-              <c>add_&lt;EventName&gt;(&lt;EventHandlerType&gt; handler)</c>
-            </para>
-          </block>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.MethodAccessException">
           <paramref name="nonPublic" /> is <see langword="true" />, the method used to add an event handler delegate is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GetAddMethod initializes and adds the event subscribe method as a Boolean value. The AddEventHandler method is used to add an event-handler delegate to the invocation list of an event source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, retrieves the MethodInfo object for the <see cref="M:System.Reflection.EventInfo.AddEventHandler(System.Object,System.Delegate)" /> method of the event, specifying whether to return non-public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to add an event handler delegate to the event source.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if non-public methods can be returned; otherwise, false. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -324,9 +307,15 @@ for the event reflected by the current instance, if found; otherwise, returns
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOtherMethods">
@@ -342,10 +331,34 @@ for the event reflected by the current instance, if found; otherwise, returns
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata for an event can associate four kinds of methods with the event:</para>
+          <list type="bullet">
+            <item>
+              <para>The .addon directive specifies the method used to add event handlers. Use the <see cref="Overload:System.Reflection.EventInfo.GetAddMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for that method.</para>
+            </item>
+            <item>
+              <para>The .removeon directive specifies the method used to detach event handlers. Use the <see cref="Overload:System.Reflection.EventInfo.GetRemoveMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for that method.</para>
+            </item>
+            <item>
+              <para>The .fire directive specifies the method used to raise the event. Use the <see cref="Overload:System.Reflection.EventInfo.GetRaiseMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for that method.</para>
+            </item>
+            <item>
+              <para>The .other directive specifies any other methods associated with the event. Use the <see cref="Overload:System.Reflection.EventInfo.GetOtherMethods" /> method to retrieve an array of <see cref="T:System.Reflection.EventInfo" /> objects for those methods.</para>
+            </item>
+          </list>
+          <para>The methods associated with an event using the .other directive have no special significance to the runtime. The C# and Visual Basic compilers do not use the .other directive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the public methods that have been associated with an event in metadata using the .other directive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects representing the public methods that have been associated with the event in metadata by using the .other directive. If there are no such public methods, an empty array is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOtherMethods">
@@ -363,11 +376,36 @@ for the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata for an event can associate four kinds of methods with the event:</para>
+          <list type="bullet">
+            <item>
+              <para>The .addon directive specifies the method used to add event handlers. Use the <see cref="Overload:System.Reflection.EventInfo.GetAddMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for that method.</para>
+            </item>
+            <item>
+              <para>The .removeon directive specifies the method used to detach event handlers. Use the <see cref="Overload:System.Reflection.EventInfo.GetRemoveMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for this method.</para>
+            </item>
+            <item>
+              <para>The .fire directive specifies the method used to raise the event. Use the <see cref="Overload:System.Reflection.EventInfo.GetRaiseMethod" /> method to retrieve an <see cref="T:System.Reflection.EventInfo" /> for this method.</para>
+            </item>
+            <item>
+              <para>The .other directive specifies any other methods associated with the event. Use the <see cref="Overload:System.Reflection.EventInfo.GetOtherMethods" /> method to retrieve an array of <see cref="T:System.Reflection.EventInfo" /> objects for those methods.</para>
+            </item>
+          </list>
+          <para>The methods associated with an event using the .other directive have no special significance to the runtime. The C# and Visual Basic compilers do not use the .other directive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the methods that have been associated with the event in metadata using the .other directive, specifying whether to include non-public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects representing methods that have been associated with an event in metadata by using the .other directive. If there are no methods matching the specification, an empty array is returned.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include non-public methods; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRaiseMethod">
@@ -385,16 +423,18 @@ for the event reflected by the current instance, if found; otherwise, returns
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method usually returns null for events declared with the C# event keyword or the Visual Basic Event keyword. This is because the C# and Visual Basic compilers do not generate such a method by default.</para>
+        </remarks>
         <summary>
-          <para> Returns the public method that is called when the event reflected by the
-      current instance is raised.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method that is called when the event is raised.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public method that
-   is called when the event reflected by the current instance is raised, if
-   found; otherwise, returns <see langword="null" /> . </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method that is called when the event is raised.</para>
         </returns>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -415,27 +455,23 @@ for the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
-        <summary>
-          <para> Returns the method that is called when the event reflected by the current instance is raised, specifying whether the method to
-      be returned is public or non-public.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the method that is
-   called when the event reflected by the current instance is raised, if found;
-   otherwise, returns <see langword="null" />
-   
-   . </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.MethodAccessException">
           <paramref name="nonPublic" /> is <see langword="true" />, the method used to raise the event is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method usually returns null for events declared with the C# event keyword or the Visual Basic Event keyword. This is because the C# and Visual Basic compilers do not generate such a method by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the method that is called when the event is raised, specifying whether to return non-public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object that was called when the event was raised.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if non-public methods can be returned; otherwise, false. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -454,17 +490,6 @@ for the event reflected by the current instance, if found; otherwise, returns
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Returns the public method used to remove an event-handler delegate from the event reflected by the
-      current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" />
-instance that reflects the public method used to remove an event handler
-delegate from the event reflected by the current instance, if found; otherwise,
-returns <see langword="null" />
-.</para>
-        </returns>
         <remarks>
           <para>This method is equivalent to <see cref="M:System.Reflection.EventInfo.GetRemoveMethod" />(<see langword="false" />).</para>
           <block subset="none" type="note">
@@ -476,6 +501,14 @@ returns <see langword="null" />
             </para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method used to remove an event handler delegate from the event source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to remove an event handler delegate from the event source.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -496,19 +529,6 @@ returns <see langword="null" />
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
-        <summary>
-          <para> Returns the method used to remove an event-handler delegate from the event
-      reflected by the current
-      instance, specifying whether or not to return non-public methods.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" />
-instance that reflects the method used to remove an event handler delegate from
-the event reflected by the current instance, if found; otherwise, returns
-<see langword="null" /> 
-.</para>
-        </returns>
         <remarks>
           <block subset="none" type="note">
             <para>Typically, the method has the
@@ -524,6 +544,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <exception cref="T:System.MethodAccessException">
           <paramref name="nonPublic" /> is <see langword="true" />, the method used to remove an event handler delegate is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, retrieves the MethodInfo object for removing a method of the event, specifying whether to return non-public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to remove an event handler delegate from the event source.</para>
+        </returns>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if non-public methods can be returned; otherwise, false. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -556,9 +586,12 @@ the event reflected by the current instance, if found; otherwise, returns
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the event is multicast.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSpecialName">
@@ -574,9 +607,15 @@ the event reflected by the current instance, if found; otherwise, returns
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property determines whether the event's name has a special meaning. Names that begin with or contain an underscore character (_), property accessors, and operator overloading methods are examples of names that might require special treatment by some compilers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the EventInfo has a name with a special meaning.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberType">
@@ -592,10 +631,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <ReturnType>System.Reflection.MemberTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property overrides <see cref="P:System.Reflection.MemberInfo.MemberType" />. Therefore, when you examine a set of <see cref="T:System.Reflection.MemberInfo" /> objects — for example, the array returned by <see cref="Overload:System.Type.GetMembers" /> — the <see cref="P:System.Reflection.MemberInfo.MemberType" /> property returns <see cref="F:System.Reflection.MemberTypes.Event" /> only when a given member is an event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.MemberTypes" /> value indicating that this member is an event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -613,11 +658,19 @@ the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="right" Type="System.Reflection.EventInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.EventInfo" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -635,11 +688,19 @@ the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="right" Type="System.Reflection.EventInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.EventInfo" /> objects are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="RaiseMethod">
@@ -653,9 +714,15 @@ the event reflected by the current instance, if found; otherwise, returns
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is the equivalent of calling the <see cref="M:System.Reflection.EventInfo.GetRaiseMethod(System.Boolean)" /> with a value of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method that is called when the event is raised, including non-public methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveEventHandler">
@@ -681,24 +748,23 @@ the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="handler" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="target">An object that represents an event source.</param>
-        <param name="handler">
-          <para>A <see cref="T:System.Delegate" /> instance to be disassociated from the events reflected by the current instance that are raised by <paramref name="target" />.</para>
-        </param>
-        <summary>
-          <para>Removes the specified event handler delegate from the specified event source.</para>
-        </summary>
-        <remarks>
-          <para>After this method is invoked, subsequent events 
-      reflected by the current instance that are raised by <paramref name="target" /> will
-      no longer cause <paramref name="handler" /> to
-      
-      invoke its methods.</para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="handler " />is not the same type <see cref="T:System.Type" /> as the event handler delegate declared for the event reflected by the current instance.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method attempts to remove the delegate that may synchronize this event on the target object.</para>
+          <para>When an event is raised by target, the method or methods encapsulated by <paramref name="handler" /> will no longer be invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an event handler from an event source.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event source. </param>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be disassociated from the events raised by target. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -713,9 +779,15 @@ the event reflected by the current instance, if found; otherwise, returns
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is the equivalent of calling the <see cref="M:System.Reflection.EventInfo.GetRemoveMethod(System.Boolean)" /> with a value of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the MethodInfo object for removing a method of the event, including non-public methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._EventInfo.GetIDsOfNames">
@@ -759,9 +831,15 @@ the event reflected by the current instance, if found; otherwise, returns
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <unmanagedCodeEntityReference>T:System.Type</unmanagedCodeEntityReference> object representing the <see cref="T:System.Reflection.EventInfo" /> type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <unmanagedCodeEntityReference>T:System.Type</unmanagedCodeEntityReference> object representing the <see cref="T:System.Reflection.EventInfo" /> type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfo">
@@ -782,11 +860,20 @@ the event reflected by the current instance, if found; otherwise, returns
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfoCount">

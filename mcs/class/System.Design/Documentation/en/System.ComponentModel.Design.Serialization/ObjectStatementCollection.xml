@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectStatementCollection" FullName="System.ComponentModel.Design.Serialization.ObjectStatementCollection">
   <TypeSignature Language="C#" Value="public sealed class ObjectStatementCollection : System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds a table of statements that is offered by the <see cref="T:System.ComponentModel.Design.Serialization.StatementContext" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ContainsKey">
@@ -30,10 +34,17 @@
         <Parameter Name="statementOwner" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="statementOwner">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the table contains the given statement owner.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="statementOwner" /> is in the table; otherwise, false.</para>
+        </returns>
+        <param name="statementOwner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The owner of the statement collection.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -47,9 +58,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.ComponentModel.Design.Serialization.ObjectStatementCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.ComponentModel.Design.Serialization.ObjectStatementCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -84,9 +101,16 @@
         <Parameter Name="statementOwners" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="statementOwners">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are the creator of the statement context, you should call the <see cref="M:System.ComponentModel.Design.Serialization.ObjectStatementCollection.Populate(System.Collections.ICollection)" /> method if you want statement tables to be used to store values for certain objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the statement table with a collection of statement owners.</para>
+        </summary>
+        <param name="statementOwners">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of statement owners to add to the table.</param>
       </Docs>
     </Member>
     <Member MemberName="Populate">
@@ -102,9 +126,16 @@
         <Parameter Name="owner" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are the creator of the statement context, you should call the <see cref="M:System.ComponentModel.Design.Serialization.ObjectStatementCollection.Populate(System.Object)" /> method if you want statement tables to be used to store values for certain objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the statement table with a statement owner.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement owner to add to the table.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -118,9 +149,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.Serialization.ObjectStatementCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

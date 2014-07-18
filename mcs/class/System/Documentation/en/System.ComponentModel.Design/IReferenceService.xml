@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IReferenceService" FullName="System.ComponentModel.Design.IReferenceService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IReferenceService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IReferenceService" />
@@ -12,8 +13,28 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.IReferenceService" /> interface provides the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.ComponentModel.Design.IReferenceService.GetReference(System.String)" /> method returns the component with the specified name, or null if no component with the specified name was found.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ComponentModel.Design.IReferenceService.GetName(System.Object)" /> method returns the name associated with the specified component.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ComponentModel.Design.IReferenceService.GetComponent(System.Object)" /> method returns the parent container of the specified component.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ComponentModel.Design.IReferenceService.GetReferences" /> method returns an array of references to all project components, or all project components of an optionally specified type.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for obtaining references to objects within a project by name or type, obtaining the name of a specified object, and for locating the parent of a specified object within a designer project.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetComponent">
@@ -32,10 +53,17 @@
         <Parameter Name="reference" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="reference">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.IComponent'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component that contains the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base <see cref="T:System.ComponentModel.IComponent" /> that contains the specified object, or null if no parent component exists.</para>
+        </returns>
+        <param name="reference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to retrieve the parent component for. </param>
       </Docs>
     </Member>
     <Member MemberName="GetName">
@@ -54,10 +82,20 @@
         <Parameter Name="reference" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="reference">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of each component sited in a design time project is set in the <see cref="P:System.ComponentModel.ISite.Name" /> property of the <see cref="T:System.ComponentModel.ISite" /> where the component is sited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object referenced, or null if the object reference is not valid.</para>
+        </returns>
+        <param name="reference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to return the name of. </param>
       </Docs>
     </Member>
     <Member MemberName="GetReference">
@@ -76,10 +114,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the component whose name matches the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object the specified name refers to, or null if no reference is found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the component to return a reference to. </param>
       </Docs>
     </Member>
     <Member MemberName="GetReferences">
@@ -96,9 +141,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all available references to project components.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of all objects with references available to the <see cref="T:System.ComponentModel.Design.IReferenceService" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetReferences">
@@ -117,10 +168,17 @@
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="baseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all available references to components of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of all available objects of the specified type.</para>
+        </returns>
+        <param name="baseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to return references to instances of. </param>
       </Docs>
     </Member>
   </Members>

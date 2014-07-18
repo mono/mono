@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerRegionMouseEventArgs" FullName="System.Web.UI.Design.DesignerRegionMouseEventArgs">
   <TypeSignature Language="C#" Value="public sealed class DesignerRegionMouseEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is raised by the designer host for certain actions on a control on the design surface. For example, an event is raised when you click a selected control or a designer region in a selected control on the design surface.</para>
+      <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default delegate to handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. When you click a selected control or a designer region of a selected control at design time, the designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event type, and then sets the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property with a <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object.</para>
+      <para>When the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object indicates that you clicked a designer region, the default delegate in the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class passes the <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object to the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" /> method. Classes deriving from the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" /> method to process events that are raised when you click a control in the design host.</para>
+      <para>The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Region" /> property represents the control designer region that the event applies to, if any. The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Location" /> property represents the location on the design surface that was clicked.</para>
+      <para>For more information about events and delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for a <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event that is raised when you click on a selected control or a designer region in a selected control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +35,19 @@
         <Parameter Name="location" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="region">To be added.</param>
-        <param name="location">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> delegate method uses the <see cref="M:System.Web.UI.Design.DesignerRegionMouseEventArgs.#ctor(System.Web.UI.Design.DesignerRegion,System.Drawing.Point)" /> constructor to initialize a <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object for use with a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object.</para>
+          <para>When you click a control region at design time, the designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event type, and then sets the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property with a <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> class with the specified region and location. </para>
+        </summary>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer region that was clicked; used to initialize the <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Region" />.</param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location that was clicked, relative to the upper left corner of the region; used to initialize the <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Location" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Location">
@@ -40,9 +60,16 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Location" /> property contains the coordinates that identify where you clicked, relative to the upper left corner of the region.</para>
+          <para>The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Location" /> property is initialized by the <see cref="M:System.Web.UI.Design.DesignerRegionMouseEventArgs.#ctor(System.Web.UI.Design.DesignerRegion,System.Drawing.Point)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location within the control that was clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Region">
@@ -55,9 +82,16 @@
         <ReturnType>System.Web.UI.Design.DesignerRegion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Region" /> property represents the control designer region that was clicked, if any.</para>
+          <para>The <see cref="P:System.Web.UI.Design.DesignerRegionMouseEventArgs.Region" /> property is initialized by the <see cref="M:System.Web.UI.Design.DesignerRegionMouseEventArgs.#ctor(System.Web.UI.Design.DesignerRegion,System.Drawing.Point)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer region that was clicked, if any.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

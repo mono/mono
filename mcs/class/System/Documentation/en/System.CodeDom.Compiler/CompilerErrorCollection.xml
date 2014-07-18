@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerErrorCollection" FullName="System.CodeDom.Compiler.CompilerErrorCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CompilerErrorCollection : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CompilerErrorCollection extends System.Collections.CollectionBase" />
@@ -16,8 +17,17 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> class provides a simple collection object that can be used to store a set of <see cref="T:System.CodeDom.Compiler.CompilerError" /> objects.</para>
+      <block subset="none" type="note">
+        <para>This class contains an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the derived class does not have full-trust permission. For details about inheritance demands, see  <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.CodeDom.Compiler.CompilerError" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +63,13 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> that contains the specified array of <see cref="T:System.CodeDom.Compiler.CompilerError" /> objects.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.Compiler.CompilerError" /> objects to initialize the collection with. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,9 +86,13 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerErrorCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerErrorCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> class that contains the contents of the specified <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> object with which to initialize the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -90,10 +111,17 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.CodeDom.Compiler.CompilerError" /> object to the error collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.Compiler.CompilerError" /> object to add. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -112,9 +140,13 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of an array to the end of the error collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.Compiler.CompilerError" /> that contains the objects to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -133,9 +165,13 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerErrorCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerErrorCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of the specified compiler error collection to the end of the error collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" /> object that contains the objects to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -154,10 +190,17 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection contains the specified <see cref="T:System.CodeDom.Compiler.CompilerError" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.CodeDom.Compiler.CompilerError" /> is contained in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.Compiler.CompilerError" /> to locate. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -177,10 +220,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'CompilerError []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection values to a one-dimensional <see cref="T:System.Array" /> instance at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the values copied from <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" />. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the array at which to start copying. </param>
       </Docs>
     </Member>
     <Member MemberName="HasErrors">
@@ -196,9 +244,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection contains errors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasWarnings">
@@ -214,9 +265,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection contains warnings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -235,10 +289,17 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the specified <see cref="T:System.CodeDom.Compiler.CompilerError" /> object in the collection, if it exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.CodeDom.Compiler.CompilerError" /> in the <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" />, if found; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.Compiler.CompilerError" /> to locate. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -258,10 +319,15 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'CompilerError'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.CodeDom.Compiler.CompilerError" /> into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index where the compiler error should be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.Compiler.CompilerError" /> to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -302,9 +368,13 @@
         <Parameter Name="value" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CompilerError'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specific <see cref="T:System.CodeDom.Compiler.CompilerError" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.Compiler.CompilerError" /> to remove from the <see cref="T:System.CodeDom.Compiler.CompilerErrorCollection" />. </param>
       </Docs>
     </Member>
   </Members>

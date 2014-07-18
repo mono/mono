@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RichTextBoxFinds" FullName="System.Windows.Forms.RichTextBoxFinds">
   <TypeSignature Language="C#" Value="public enum RichTextBoxFinds" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An application locates text in the <see cref="T:System.Windows.Forms.RichTextBox" /> control by calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method of the <see cref="T:System.Windows.Forms.RichTextBox" /> control. This enumeration enables you to specify how the search is performed when the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method is called. You can combine one or more values from this enumeration to specify more than one search option when calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how a text search is carried out in a <see cref="T:System.Windows.Forms.RichTextBox" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MatchCase">
@@ -25,7 +32,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxFinds</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locate only instances of the search text that have the exact casing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +49,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxFinds</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search text, if found, should not be highlighted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +66,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxFinds</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locate all instances of the search text, whether the instances found in the search are whole words or not.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +83,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxFinds</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search starts at the end of the control's document and searches to the beginning of the document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +100,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxFinds</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locate only instances of the search text that are whole words.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SslSecurityTokenParameters" FullName="System.ServiceModel.Security.Tokens.SslSecurityTokenParameters">
   <TypeSignature Language="C#" Value="public class SslSecurityTokenParameters : System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SslSecurityTokenParameters extends System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is a collection of token properties and methods, and is used in creating security binding elements and tokens.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the parameters for an SSL security token that is obtained when doing the SOAP-level SSL protocol with the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,28 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode.AlwaysToRecipient" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle.Internal" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +65,34 @@
         <Parameter Name="requireClientCertificate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="requireClientCertificate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode.AlwaysToRecipient" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle.Internal" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+          <para>
+            <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireCancellation" /> is set to false.</para>
+          <para>
+            <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireClientCertificate" /> is set to <paramref name="requireClientCertificate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters" /> class.</para>
+        </summary>
+        <param name="requireClientCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require client certificate; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,8 +107,14 @@
       </Parameters>
       <Docs>
         <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to the corresponding values in <paramref name="other" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters" /> class from another instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -71,10 +129,36 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="requireClientCertificate">To be added.</param>
-        <param name="requireCancellation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode.AlwaysToRecipient" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle.Internal" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+          <para>
+            <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireCancellation" /> is set to <paramref name="requireCancellation" />.</para>
+          <para>
+            <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireClientCertificate" /> is set to <paramref name="requireClientCertificate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters" /> class.</para>
+        </summary>
+        <param name="requireClientCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require client certificate; otherwise, false.</param>
+        <param name="requireCancellation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require cancellation; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="CloneCore">
@@ -89,9 +173,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern. <see cref="M:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.CloneCore" /> overrides <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" />.</para>
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.CloneCore" /> method calls the <see cref="M:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.#ctor(System.ServiceModel.Security.Tokens.SslSecurityTokenParameters)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones another instance of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> instance that represents the copy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause">
@@ -109,11 +203,22 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <param name="referenceStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a key identifier clause using the <see cref="M:System.IdentityModel.Tokens.SecurityToken.CreateKeyIdentifierClause``1" /> method, with <paramref name="referenceStyle" /> as a generic parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a key identifier clause for a token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key identifier clause for a token.</para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
+        <param name="referenceStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference style of the security token.</param>
       </Docs>
     </Member>
     <Member MemberName="HasAsymmetricKey">
@@ -127,9 +232,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false.</para>
+          <para>Asymmetric keys are used in public-key cryptography, which uses two keys, a public key and a private key, which are related mathematically. The public key is distributed widely, but the private key is kept secret. In public-key cryptography, there is no need to exchange a common key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token has an asymmetric key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeSecurityTokenRequirement">
@@ -146,9 +258,35 @@
         <Parameter Name="requirement" Type="System.IdentityModel.Selectors.SecurityTokenRequirement" />
       </Parameters>
       <Docs>
-        <param name="requirement">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following properties of the <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" /> are initialized:</para>
+          <list type="bullet">
+            <item>
+              <para>If <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireClientCertificate" /> is true, <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.TokenType" /> = <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenTypes.MutualSslNego" />; otherwise, it is set to <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenTypes.AnonymousSslNego" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.RequireCryptographicToken" /> = true.</para>
+            </item>
+            <item>
+              <para>The SupportSecurityContextCancellation property in <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.Properties" /> is set to <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireCancellation" />.</para>
+            </item>
+            <item>
+              <para>The IssuedSecurityTokenParameters property in <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.Properties" /> is set to a clone of the current instance.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.KeyType" /> = <see cref="F:System.IdentityModel.Tokens.SecurityKeyType.SymmetricKey" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a security token requirement.</para>
+        </summary>
+        <param name="requirement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The requirement of the security token.</param>
       </Docs>
     </Member>
     <Member MemberName="RequireCancellation">
@@ -162,9 +300,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If cancellation is required, then the security context token issued at the end of the SSL protocol is session based; otherwise, it is cookie based.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether cancellation is required.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequireClientCertificate">
@@ -178,9 +322,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a client certificate is required.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsClientAuthentication">
@@ -194,9 +341,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets a value that indicates whether the token supports client authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsClientWindowsIdentity">
@@ -210,9 +360,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets a value that indicates whether the token supports a Windows identity for authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsServerAuthentication">
@@ -226,9 +379,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets a value that indicates whether the token supports server authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -243,9 +402,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method displays the name of this class, <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireCancellation" />, and <see cref="P:System.ServiceModel.Security.Tokens.SslSecurityTokenParameters.RequireClientCertificate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a text representation of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of the class.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

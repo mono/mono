@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Rss20FeedFormatter&lt;TSyndicationFeed&gt;" FullName="System.ServiceModel.Syndication.Rss20FeedFormatter&lt;TSyndicationFeed&gt;">
   <TypeSignature Language="C#" Value="public class Rss20FeedFormatter&lt;TSyndicationFeed&gt; : System.ServiceModel.Syndication.Rss20FeedFormatter where TSyndicationFeed : SyndicationFeednew()" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Rss20FeedFormatter`1&lt;.ctor (class System.ServiceModel.Syndication.SyndicationFeed) TSyndicationFeed&gt; extends System.ServiceModel.Syndication.Rss20FeedFormatter" />
@@ -24,8 +25,14 @@
   </Attributes>
   <Docs>
     <typeparam name="TSyndicationFeed">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this class to serialize instances of <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> derived classes. If you need to serialize a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance, use the <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> formatter instead.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class that serializes <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />-derived classes to RSS 2.0 format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +44,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter`1" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -87,9 +97,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> derived class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

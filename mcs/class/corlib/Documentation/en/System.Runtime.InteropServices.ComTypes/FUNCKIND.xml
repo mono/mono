@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FUNCKIND" FullName="System.Runtime.InteropServices.ComTypes.FUNCKIND">
   <TypeSignature Language="C#" Value="public enum FUNCKIND" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FUNCKIND extends System.Enum" />
@@ -10,9 +11,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about FUNCKIND, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines how to access a function.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FUNC_DISPATCH">
@@ -27,8 +35,11 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.FUNCKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function can be accessed only through IDispatch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_NONVIRTUAL">
@@ -43,8 +54,11 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.FUNCKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed by static address and takes an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_PUREVIRTUAL">
@@ -59,8 +73,11 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.FUNCKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed through the virtual function table (VTBL), and takes an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_STATIC">
@@ -75,8 +92,11 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.FUNCKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed by static address and does not take an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_VIRTUAL">
@@ -91,8 +111,11 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.FUNCKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed in the same way as <see cref="F:System.Runtime.InteropServices.FUNCKIND.FUNC_PUREVIRTUAL" />, except the function has an implementation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

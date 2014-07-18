@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IControlDesignerTag" FullName="System.Web.UI.Design.IControlDesignerTag">
   <TypeSignature Language="C#" Value="public interface IControlDesignerTag" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.IControlDesignerTag" /> interface is the contract between the control designer and a design host that enables the design host to manipulate the HTML tag at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for design-time access to the HTML markup for a control that is associated with a control designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetAttribute">
@@ -23,10 +30,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of the identified attribute on the tag.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the value of the attribute.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="GetContent">
@@ -40,9 +54,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the HTML markup for the content of the tag.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML markup for the content of the tag.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOuterContent">
@@ -56,9 +76,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the complete HTML markup for the control, including the outer tags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outer HTML markup for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDirty">
@@ -71,9 +97,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether or not an attribute or the content of a tag has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttribute">
@@ -89,9 +118,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified attribute from the tag.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAttribute">
@@ -108,10 +141,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the specified attribute and creates the attribute, if necessary.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute name.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute value.</param>
       </Docs>
     </Member>
     <Member MemberName="SetContent">
@@ -127,9 +165,13 @@
         <Parameter Name="content" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the HTML markup for the content of the tag.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML markup for the content of the tag.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDirty">
@@ -145,9 +187,13 @@
         <Parameter Name="dirty" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dirty">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Web.UI.Design.IControlDesignerTag.IsDirty" /> property of the tag.</para>
+        </summary>
+        <param name="dirty">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value for the <see cref="P:System.Web.UI.Design.IControlDesignerTag.IsDirty" /> property.</param>
       </Docs>
     </Member>
   </Members>

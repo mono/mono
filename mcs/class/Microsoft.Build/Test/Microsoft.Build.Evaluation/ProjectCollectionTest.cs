@@ -40,6 +40,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 	public class ProjectCollectionTest
 	{
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void GlobalProperties ()
 		{
 			var g = ProjectCollection.GlobalProjectCollection;

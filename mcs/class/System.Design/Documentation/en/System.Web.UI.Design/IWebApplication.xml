@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebApplication" FullName="System.Web.UI.Design.IWebApplication">
   <TypeSignature Language="C#" Value="public interface IWebApplication : IServiceProvider" />
   <AssemblyInfo>
@@ -15,9 +16,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for accessing a Web application in a design host, such as vsprvsext, at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetProjectItemFromUrl">
@@ -30,11 +34,18 @@
         <Parameter Name="appRelativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="appRelativeUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a project item from a design host based on its URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A project item from a design host based on its URL.</para>
+        </returns>
+        <param name="appRelativeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relative path to the project item to retrieve.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,11 +61,18 @@
         <Parameter Name="isReadOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isReadOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Configuration.Configuration" /> object representing the current Web application in the design host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the current Web application in the design host.</para>
+        </returns>
+        <param name="isReadOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the returned <see cref="T:System.Configuration.Configuration" /> is editable; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,10 +85,13 @@
         <ReturnType>System.Web.UI.Design.IProjectItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root project item from the design host.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

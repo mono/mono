@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionStateStoreProviderBase" FullName="System.Web.SessionState.SessionStateStoreProviderBase">
   <TypeSignature Language="C#" Value="public abstract class SessionStateStoreProviderBase : System.Configuration.Provider.ProviderBase" />
   <AssemblyInfo>
@@ -9,8 +10,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET session state reads and writes session data from and to a data store using a session-state store provider. A session-state store provider is a class that inherits the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> abstract class and overrides its members with implementations specific to the data store. The session-state store provider is called by the <see cref="T:System.Web.SessionState.SessionStateModule" /> class during the processing of an ASP.NET page to communicate with the data store for the storage and retrieval of session variables and related session information such as the time-out value.</para>
+      <para>Session data within each ASP.NET application is stored separately for each <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property. ASP.NET applications do not share session data.</para>
+      <para>You can specify a custom <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation for an ASP.NET application by setting the mode attribute of the sessionState configuration element to <see cref="F:System.Web.SessionState.SessionStateMode.Custom" /> and the customProvider attribute to the name of the custom provider, as shown in the example for this topic.</para>
+      <format type="text/html">
+        <h2>Locking Session Store Data</h2>
+      </format>
+      <para>Because ASP.NET applications are multithreaded to support responding to concurrent requests, it is possible that concurrent requests might attempt to access the same session information. Consider a scenario where multiple frames in a frameset all access the same application. The separate requests for each frame in the frameset can be executed on the Web server concurrently on different threads. If the ASP.NET pages for each frame source access session-state variables, then you could have multiple threads accessing the session store concurrently.</para>
+      <para>To avoid data collisions at the session store and unexpected session-state behavior, the <see cref="T:System.Web.SessionState.SessionStateModule" /> and <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> classes include lock functionality that exclusively locks the session store item for a particular session for the duration of the execution of an ASP.NET page. Note that even if the <see cref="P:System.Web.Configuration.PagesSection.EnableSessionState" /> attribute is marked as ReadOnly, other ASP.NET pages in the same application might be able to write to the session store, so a request for read-only session data from the store might still end up waiting for locked data to be freed.</para>
+      <para>A lock is set on session-store data at the beginning of the request, in the call to the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> method. When the request completes, the lock is released during the call to the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method.</para>
+      <para>If the <see cref="T:System.Web.SessionState.SessionStateModule" /> object encounters locked session data during the call to either the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> or the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> method, it will re-request the session data at half-second intervals until either the lock is released or the amount of time that the session data has been locked exceeds the value of the <see cref="P:System.Web.Configuration.HttpRuntimeSection.ExecutionTimeout" /> property. If the execution time out is exceeded, the <see cref="T:System.Web.SessionState.SessionStateModule" /> object will call the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method to free the session-store data and request the session-store data at that time.</para>
+      <para>Because locked session-store data might have been freed by a call to the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method on a separate thread before the call to the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method for the current response, an attempt could be made to set and release session-state store data that has already been released and modified by another session. To avoid this situation, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods return a lock identifier. This lock identifier must be included with each request to modify locked session-store data. Session-store data is modified only if the lock identifier in the data store matches the lock identifier supplied by the <see cref="T:System.Web.SessionState.SessionStateModule" />.</para>
+      <format type="text/html">
+        <h2>Deleting Expired Session Store Data</h2>
+      </format>
+      <para>When the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method is called for a particular session, the data for that session is deleted from the data store using the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.RemoveItem(System.Web.HttpContext,System.String,System.Object,System.Web.SessionState.SessionStateStoreData)" /> method; otherwise, the data will remain in the session data store to server future requests for the session. It is up to the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation to delete expired session data.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the required members of a session-state provider for a data store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +42,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You are not required to implement a constructor for a class that inherits the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> abstract class. Initialization values for a <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation are passed to the <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" /> method implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateNewStoreData">
@@ -39,11 +66,31 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateNewStoreData(System.Web.HttpContext,System.Int32)" /> method at the beginning of a request for an ASP.NET page, during the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event. The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateNewStoreData(System.Web.HttpContext,System.Int32)" /> method is called if:</para>
+          <list type="bullet">
+            <item>
+              <para>the incoming request has no session ID, or</para>
+            </item>
+            <item>
+              <para>the incoming request has a session ID, but the session is not found in the data store.</para>
+            </item>
+          </list>
+          <para>The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateNewStoreData(System.Web.HttpContext,System.Int32)" /> method creates a new <see cref="T:System.Web.SessionState.SessionStateStoreData" /> object with an empty <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> object, an <see cref="T:System.Web.HttpStaticObjectsCollection" /> collection, and the specified <paramref name="timeout" /> value. The <see cref="T:System.Web.HttpStaticObjectsCollection" /> collection for the ASP.NET application can be retrieved using the <see cref="M:System.Web.SessionState.SessionStateUtility.GetSessionStaticObjects(System.Web.HttpContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.SessionState.SessionStateStoreData" /> object to be used for the current request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.SessionState.SessionStateStoreData" /> for the current request.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session-state <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> value for the new <see cref="T:System.Web.SessionState.SessionStateStoreData" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateUninitializedItem">
@@ -61,11 +108,23 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateUninitializedItem(System.Web.HttpContext,System.String,System.Int32)" /> method is used with sessions when the cookieless and regenerateExpiredSessionId attributes are both true. Having the regenerateExpiredSessionId attribute set to true causes the <see cref="T:System.Web.SessionState.SessionStateModule" /> object to generate a new <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value when an expired <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is encountered.</para>
+          <para>The process of generating a new <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value requires redirecting the browser to a URL that contains the newly generated <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value. The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateUninitializedItem(System.Web.HttpContext,System.String,System.Int32)" /> method is called during the initial request that contains an expired <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value. After the <see cref="T:System.Web.SessionState.SessionStateModule" /> object acquires a new <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value to replace the expired value, it calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateUninitializedItem(System.Web.HttpContext,System.String,System.Int32)" /> method to add an uninitialized entry to the session-state data store. The browser is then redirected to the URL containing the newly generated <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value. The existence of the uninitialized entry in the session data store ensures that the redirected request that includes the newly generated <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is not mistaken for a request for an expired session and is, instead, treated as a new session. </para>
+          <para>The uninitialized entry in the session data store is associated with the newly generated <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value and contains only default values, including an expiration date and time and a value that corresponds to the <paramref name="actionFlags" /> parameter of the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods. The uninitialized entry in the session-state store should include an <paramref name="actionFlags" /> value equal to the <see cref="F:System.Web.SessionState.SessionStateActions.InitializeItem" /> enumeration value. This value is passed to the <see cref="T:System.Web.SessionState.SessionStateModule" /> object by the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods, and informs the <see cref="T:System.Web.SessionState.SessionStateModule" /> object that the current session is a new but uninitialized session. The <see cref="T:System.Web.SessionState.SessionStateModule" /> object will then initialize the new session and raise the Session_OnStart event.</para>
+          <para>For more information about cookieless sessions, see the <see cref="P:System.Web.SessionState.HttpSessionState.IsCookieless" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new session-state item to the data store.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> for the current request.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> for the current request.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -79,8 +138,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.Dispose" /> method is called when the <see cref="M:System.Web.SessionState.SessionStateModule.Dispose" /> method executes at the closing of the application domain. Classes that inherit the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class can use this method to free any resources no longer in use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndRequest">
@@ -96,9 +161,16 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.EndRequest(System.Web.HttpContext)" /> method at the end of a request for an ASP.NET page, during the <see cref="E:System.Web.HttpApplication.EndRequest" /> event. You can use the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.EndRequest(System.Web.HttpContext)" /> method to perform any per-request cleanup required by your session-state store provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the <see cref="T:System.Web.SessionState.SessionStateModule" /> object at the end of a request.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
       </Docs>
     </Member>
     <Member MemberName="GetItem">
@@ -172,9 +244,16 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.InitializeRequest(System.Web.HttpContext)" /> method before calling any other <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> method. You can use the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.InitializeRequest(System.Web.HttpContext)" /> method to perform any per-request initialization required by your session-state store provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the <see cref="T:System.Web.SessionState.SessionStateModule" /> object for per-request initialization.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseItemExclusive">
@@ -192,11 +271,22 @@
         <Parameter Name="lockId" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="lockId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method to update the expiration date and release a lock on an item in the session data store. It is called at the end of a request, during the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event, if session values are unchanged. If session values have been modified, the <see cref="T:System.Web.SessionState.SessionStateModule" /> object instead calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method.</para>
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object also calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method when a lock on an item in the session data store has exceeded the <see cref="P:System.Web.Configuration.HttpRuntimeSection.ExecutionTimeout" /> value. For more information about locking and details about the lock identifier, see "Locking Session-Store Data" in the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class overview.</para>
+          <para>The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method only removes the lock from an item in the session data store for the current application that matches the supplied session <paramref name="id" /> and <paramref name="lockId" /> values. If the <paramref name="lockId" /> does not match the one in the data store, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a lock on an item in the session data store.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier for the current request.</param>
+        <param name="lockId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lock identifier for the current request. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
@@ -215,12 +305,22 @@
         <Parameter Name="item" Type="System.Web.SessionState.SessionStateStoreData" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="lockId">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.RemoveItem(System.Web.HttpContext,System.String,System.Object,System.Web.SessionState.SessionStateStoreData)" /> method at the end of a request, during the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event, to delete the data for a session item from the session data store if the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method has been called. Only session data for the current application that matches the supplied session <paramref name="id" /> and <paramref name="lockId" /> values is deleted. For more information about locking and details about the lock identifier, see "Locking Session-Store Data" in the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes item data from the session data store.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier for the current request.</param>
+        <param name="lockId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lock identifier for the current request.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SessionState.SessionStateStoreData" /> that represents the item to delete from the data store.</param>
       </Docs>
     </Member>
     <Member MemberName="ResetItemTimeout">
@@ -237,10 +337,27 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ResetItemTimeout(System.Web.HttpContext,System.String)" /> method to update the expiration date and time for a session to the current date and time plus the session <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> value when either:</para>
+          <list type="bullet">
+            <item>
+              <para>the <see cref="P:System.Web.Configuration.PagesSection.EnableSessionState" /> attribute is true, or</para>
+            </item>
+            <item>
+              <para>the request did not raise the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> and <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> events due to an error.</para>
+            </item>
+          </list>
+          <para>If an ASP.NET page is requested and the <see cref="P:System.Web.Configuration.PagesSection.EnableSessionState" /> attribute is set to false, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ResetItemTimeout(System.Web.HttpContext,System.String)" /> method is still called to update the expiration date and time of the data in the session data store.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the expiration date and time of an item in the session data store.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier for the current request.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAndReleaseItemExclusive">
@@ -260,13 +377,26 @@
         <Parameter Name="newItem" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="lockId">To be added.</param>
-        <param name="newItem">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method at the end of a request, during the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event, to insert current session-item information into the data store or update existing session-item information in the data store with current values, to update the expiration time on the item, and to release the lock on the data. Only session data for the current application that matches the supplied session <paramref name="id" /> and <paramref name="lockId" /> values is updated. For more information about locking, see "Locking Session Store Data" in the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class overview.</para>
+          <para>If the session values for the current request have not been modified, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method is not called. Instead, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.ReleaseItemExclusive(System.Web.HttpContext,System.String,System.Object)" /> method is called.</para>
+          <para>If the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method has been called, the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetAndReleaseItemExclusive(System.Web.HttpContext,System.String,System.Web.SessionState.SessionStateStoreData,System.Object,System.Boolean)" /> method is not called. Instead, the <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.RemoveItem(System.Web.HttpContext,System.String,System.Object,System.Web.SessionState.SessionStateStoreData)" /> method to delete session-item data from the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the session-item information in the session-state data store with values from the current request, and clears the lock on the data.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier for the current request.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SessionState.SessionStateStoreData" /> object that contains the current session values to be stored.</param>
+        <param name="lockId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lock identifier for the current request. </param>
+        <param name="newItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to identify the session item as a new item; false to identify the session item as an existing item.</param>
       </Docs>
     </Member>
     <Member MemberName="SetItemExpireCallback">
@@ -282,10 +412,21 @@
         <Parameter Name="expireCallback" Type="System.Web.SessionState.SessionStateItemExpireCallback" />
       </Parameters>
       <Docs>
-        <param name="expireCallback">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetItemExpireCallback(System.Web.SessionState.SessionStateItemExpireCallback)" /> method when the module is initialized to determine whether calls to the Session_OnEnd event are supported by the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation and to associate the <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate with the Session_OnEnd event.</para>
+          <para>Custom session-state store provider implementers should use the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetItemExpireCallback(System.Web.SessionState.SessionStateItemExpireCallback)" /> method to inform the <see cref="T:System.Web.SessionState.SessionStateModule" /> object whether calls to the Session_OnEnd event are supported and to set a local reference to the <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate supplied by the <paramref name="expireCallback" /> parameter. The custom implementation must decide when the local <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate will be called. For example, the delegate could be called during the call to the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.RemoveItem(System.Web.HttpContext,System.String,System.Object,System.Web.SessionState.SessionStateStoreData)" /> method, which is called when a session is abandoned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a reference to the <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate for the Session_OnEnd event defined in the Global.asax file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the session-state store provider supports calling the Session_OnEnd event; otherwise, false.</para>
+        </returns>
+        <param name="expireCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" />  delegate for the Session_OnEnd event defined in the Global.asax file.</param>
       </Docs>
     </Member>
   </Members>

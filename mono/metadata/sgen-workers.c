@@ -246,7 +246,17 @@ workers_steal (WorkerData *data, WorkerData *victim_data, gboolean lock)
 		memcpy (queue->first->objects,
 				victim_data->stealable_stack + victim_data->stealable_stack_fill - num + n,
 				sizeof (char*) * m);
-		queue->first->end = m;
+		queue->first->size = m;
+
+		/*
+		 * DO NOT move outside this loop
+		 * Doing so trigger "assert not reached" in sgen-scan-object.h : we use the queue->cursor
+		 * to compute the size of the first section during section allocation (via alloc_prepare_func
+		 * -> workers_gray_queue_share_redirect -> sgen_gray_object_dequeue_section) which will be then
+		 * set to 0, because queue->cursor is still pointing to queue->first->objects [-1], thus
+		 * losing objects in the gray queue.
+		 */
+		queue->cursor = (char**)queue->first->objects + queue->first->size - 1;
 	}
 
 	victim_data->stealable_stack_fill -= num;
@@ -279,10 +289,9 @@ workers_get_work (WorkerData *data)
 		return TRUE;
 
 	/* From another worker. */
-	for (i = 0; i < workers_num; ++i) {
-		WorkerData *victim_data = &workers_data [i];
-		if (data == victim_data)
-			continue;
+	for (i = data->index + 1; i < workers_num + data->index; ++i) {
+		WorkerData *victim_data = &workers_data [i % workers_num];
+		g_assert (data != victim_data);
 		if (workers_steal (data, victim_data, TRUE))
 			return TRUE;
 	}
@@ -326,16 +335,16 @@ workers_gray_queue_share_redirect (SgenGrayQueue *queue)
 
 	while (data->stealable_stack_fill < STEALABLE_STACK_SIZE &&
 			(section = sgen_gray_object_dequeue_section (queue))) {
-		int num = MIN (section->end, STEALABLE_STACK_SIZE - data->stealable_stack_fill);
+		int num = MIN (section->size, STEALABLE_STACK_SIZE - data->stealable_stack_fill);
 
 		memcpy (data->stealable_stack + data->stealable_stack_fill,
-				section->objects + section->end - num,
+				section->objects + section->size - num,
 				sizeof (char*) * num);
 
-		section->end -= num;
+		section->size -= num;
 		data->stealable_stack_fill += num;
 
-		if (section->end)
+		if (section->size)
 			sgen_gray_object_enqueue_section (queue, section);
 		else
 			sgen_gray_object_free_queue_section (section);
@@ -459,6 +468,8 @@ sgen_workers_init (int num_workers)
 		workers_gc_thread_major_collector_data = sgen_get_major_collector ()->alloc_worker_data ();
 
 	for (i = 0; i < workers_num; ++i) {
+		workers_data [i].index = i;
+
 		/* private gray queue is inited by the thread itself */
 		mono_mutex_init (&workers_data [i].stealable_stack_mutex);
 		workers_data [i].stealable_stack_fill = 0;

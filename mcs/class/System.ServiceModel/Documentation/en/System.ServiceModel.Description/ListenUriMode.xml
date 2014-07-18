@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListenUriMode" FullName="System.ServiceModel.Description.ListenUriMode">
   <TypeSignature Language="C#" Value="public enum ListenUriMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ListenUriMode extends System.Enum" />
@@ -9,8 +10,25 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The URI for the endpoint on which a service listens can be set programmatically using the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> property and the value of the <see cref="T:System.ServiceModel.Description.ListenUriMode" /> for that endpoint is set using the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUriMode" /> property. The default value for <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> is <see cref="P:System.ServiceModel.Description.ServiceEndpoint.Address" />. The default value for <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUriMode" /> is <see cref="F:System.ServiceModel.Description.ListenUriMode.Explicit" />.</para>
+      <para>The value of these properties may also be set using the <see cref="P:System.ServiceModel.Configuration.ServiceEndpointElement.ListenUri" /> property and the <see cref="P:System.ServiceModel.Configuration.ServiceEndpointElement.ListenUriMode" /> property.</para>
+      <para>When the value of the <see cref="T:System.ServiceModel.Description.ListenUriMode" /> is set to <see cref="F:System.ServiceModel.Description.ListenUriMode.Unique" /> the transport is responsible for creating a unique URI. Different transports used by indigo1 generate this unique URI differently </para>
+      <list type="bullet">
+        <item>
+          <para>For TCP in exclusive mode (<see cref="P:System.ServiceModel.Channels.TcpTransportBindingElement.PortSharingEnabled" /> is false) this means binding to a uniquely available port number.</para>
+        </item>
+        <item>
+          <para> For TCP in port sharing mode (<see cref="P:System.ServiceModel.Channels.TcpTransportBindingElement.PortSharingEnabled" /> is true) and for all of the other existing indigo2 transports, this means appending a unique path (a GUID) to the end of the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" />.</para>
+        </item>
+      </list>
+      <para>When the value of the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUriMode" /> is set to <see cref="F:System.ServiceModel.Description.ListenUriMode.Explicit" /> mode, the transport uses the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> exactly as it is provided, without modifying it to make it unique. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether the transport must ensure that the URI provided for the service to listen on is unique or can be used exactly as provided.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Explicit">
@@ -24,7 +42,10 @@
         <ReturnType>System.ServiceModel.Description.ListenUriMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> exactly as provided. This is the default value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unique">
@@ -38,7 +59,10 @@
         <ReturnType>System.ServiceModel.Description.ListenUriMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the transport should use a transport-specific mechanism to ensure that the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> is unique.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridItemCollection" FullName="System.Windows.Forms.GridItemCollection">
   <TypeSignature Language="C#" Value="public class GridItemCollection : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents a collection of <see cref="T:System.Windows.Forms.GridItem" /> objects stored in a <see cref="T:System.Windows.Forms.PropertyGrid" />.</para>
+      <para>You can retrieve a specific <see cref="T:System.Windows.Forms.GridItem" /> by using either an index into the collection or the label of a grid item in the collection that you access through the indexer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of <see cref="T:System.Windows.Forms.GridItem" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Count">
@@ -25,9 +33,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of grid items in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,8 +52,11 @@
         <ReturnType>System.Windows.Forms.GridItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="T:System.Windows.Forms.GridItemCollection" /> has no entries. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +71,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumeration of all the grid items in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Windows.Forms.GridItemCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,10 +141,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dest">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.GridItemCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" />.</para>
+        </summary>
+        <param name="dest">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional array that is the destination of the elements copied from the collection. The array must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in the array at which copying begins.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -138,9 +166,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.GridItemCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.IsSynchronized" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -154,9 +188,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.GridItemCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.SyncRoot" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -28,6 +28,7 @@
 
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
@@ -125,6 +126,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			// save the drawing
 			string file =  "TestHatchBrush" + getOutSufix() + ".png";
 			bmp.Save (file, ImageFormat.Png);
+			File.Delete (file);
 		}
 
 		private void Constructors ()

@@ -2961,6 +2961,21 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (c.ClientRectangle, c.DisplayRectangle);
 			}
 		}
+
+		[Test]
+		public void Remove_NoChangeIfNoChild () // #19818
+		{
+			var c1 = new Control();
+			var c2 = new Control();
+			var c3 = new Control();
+
+			c2.Controls.Add(c3);
+			c1.Controls.Add(c2);
+			Assert.AreEqual (c2, c3.Parent);
+
+			c1.Controls.Remove(c3);
+			Assert.AreEqual (c2, c3.Parent);
+		}
 	}
 
 	[TestFixture]

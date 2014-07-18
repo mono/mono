@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberTypes" FullName="System.Reflection.MemberTypes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum MemberTypes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed MemberTypes extends System.Enum" />
@@ -21,8 +22,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These enum values are returned by <see cref="P:System.Type.MemberType" /> and are useful in switch statements. MemberTypes matches CorTypeAttr as defined in the corhdr.h file.</para>
+      <para>To obtain the MemberTypes value for a method: </para>
+      <list type="bullet">
+        <item>
+          <para>First get a <see cref="T:System.Type" />.</para>
+        </item>
+        <item>
+          <para>From the Type, get the MemberInfo array.</para>
+        </item>
+        <item>
+          <para>From the MemberInfo array, get the MemberType.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks each type of member that is defined as a derived class of MemberInfo.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -39,8 +58,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies all member types.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Constructor">
@@ -57,8 +79,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a constructor, representing a <see cref="T:System.Reflection.ConstructorInfo" /> member. Hexadecimal value of 0x01.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Custom">
@@ -75,8 +100,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a custom member type. Hexadecimal value of 0x40.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Event">
@@ -93,8 +121,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is an event, representing an <see cref="T:System.Reflection.EventInfo" /> member. Hexadecimal value of 0x02.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Field">
@@ -111,8 +142,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a field, representing a <see cref="T:System.Reflection.FieldInfo" /> member. Hexadecimal value of 0x04.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
@@ -129,8 +163,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a method, representing a <see cref="T:System.Reflection.MethodInfo" /> member. Hexadecimal value of 0x08.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NestedType">
@@ -147,8 +184,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a nested type, extending <see cref="T:System.Reflection.MemberInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Property">
@@ -165,8 +205,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a property, representing a <see cref="T:System.Reflection.PropertyInfo" /> member. Hexadecimal value of 0x10.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeInfo">
@@ -183,8 +226,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the member is a type, representing a <see cref="F:System.Reflection.MemberTypes.TypeInfo" /> member. Hexadecimal value of 0x20.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

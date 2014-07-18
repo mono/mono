@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Border3DSide" FullName="System.Windows.Forms.Border3DSide">
   <TypeSignature Language="C#" Value="public enum Border3DSide" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the members of this enumeration with the <see cref="M:System.Windows.Forms.ControlPaint.DrawBorder3D(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method of the <see cref="T:System.Windows.Forms.ControlPaint" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the sides of a rectangle to apply a three-dimensional border to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -28,7 +35,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A three-dimensional border on all four sides of the rectangle. The middle of the rectangle is filled with the color defined for three-dimensional controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,7 +52,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A three-dimensional border on the bottom side of the rectangle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,7 +69,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A three-dimensional border on the left edge of the rectangle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,7 +86,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interior of the rectangle is filled with the color defined for three-dimensional controls instead of the background color for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,7 +103,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A three-dimensional border on the right side of the rectangle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,7 +120,10 @@
         <ReturnType>System.Windows.Forms.Border3DSide</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A three-dimensional border on the top edge of the rectangle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

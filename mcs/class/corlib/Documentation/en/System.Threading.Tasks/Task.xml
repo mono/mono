@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Task" FullName="System.Threading.Tasks.Task">
   <TypeSignature Language="C#" Value="public class Task : IAsyncResult, IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Task extends System.Object implements class System.IAsyncResult, class System.IDisposable" />
@@ -25,8 +26,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.Tasks.Task" /> instances may be created in a variety of ways. The most common approach is by using the task’s <see cref="P:System.Threading.Tasks.Task.Factory" /> property to retrieve a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance that can be used to create tasks for several purposes. For example, to create a <see cref="T:System.Threading.Tasks.Task" /> that runs an action, the factory's <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> method may be used: </para>
+      <code>// C#
+var t = Task.Factory.StartNew(() =&gt; DoAction());
+
+' Visual Basic
+ Dim t = Task.Factory.StartNew(Function() DoAction())</code>
+      <para>For more complete examples, see <format type="text/html"><a href="458b5e69-5210-45e5-bc44-3888f86abd6f">Task Parallelism (Task Parallel Library)</a></format>.</para>
+      <para>The <see cref="T:System.Threading.Tasks.Task" /> class also provides constructors that initialize the task but that do not schedule it for execution. For performance reasons, the task factory’s <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> method should be the preferred mechanism for creating and scheduling computational tasks, but for scenarios where creation and scheduling must be separated, the constructors may be used, and the task's <see cref="M:System.Threading.Tasks.Task.Start" /> method may then be used to schedule the task for execution at a later time. </para>
+      <para>For operations that return values, the <see cref="T:System.Threading.Tasks.Task`1" /> class should be used. </para>
+      <format type="text/html">
+        <h2>For Debugger Developers</h2>
+      </format>
+      <para>For developers implementing custom debuggers, several internal and private members of task may be useful (these may change from release to release). The m_taskId field serves as the backing store for the <see cref="P:System.Threading.Tasks.Task.Id" /> property, however accessing this field directly from a debugger may be more efficient than accessing the same value through the property's getter method (the s_taskIdCounter counter is used to retrieve the next available ID for a task). Similarly, the m_stateFlags field stores information about the current lifecycle stage of the task, information also accessible through the <see cref="P:System.Threading.Tasks.Task.Status" /> property. The m_action field stores a reference to the task's delegate, and the m_stateObject field stores the async state passed to the task by the developer. Finally, for debuggers that parse stack frames, the InternalWait method serves a potential marker for when a task is entering a wait operation. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an asynchronous operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +60,16 @@
         <Parameter Name="action" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.Task.Run(System.Action)" /> and <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,10 +84,19 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.Task.Run(System.Action,System.Threading.CancellationToken)" /> and <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action,System.Threading.CancellationToken)" /> methods. </para>
+          <para>For more information, see <format type="text/html"><a href="458b5e69-5210-45e5-bc44-3888f86abd6f">Task Parallelism (Task Parallel Library)</a></format> and <format type="text/html"><a href="eea11fe5-d8b0-4314-bb5d-8a58166fb1c3">Cancellation</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and <see cref="T:System.Threading.CancellationToken" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that the new  task will observe.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,10 +111,18 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action,System.Threading.Tasks.TaskCreationOptions)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and creation options.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -93,10 +137,18 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action{System.Object},System.Object)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and state.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the action.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -112,11 +164,21 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action,System.Threading.CancellationToken,System.Threading.Tasks.TaskCreationOptions,System.Threading.Tasks.TaskScheduler)" /> method. </para>
+          <para>For more information, see <format type="text/html"><a href="458b5e69-5210-45e5-bc44-3888f86abd6f">Task Parallelism (Task Parallel Library)</a></format> and <format type="text/html"><a href="3ecf1ea9-e399-4a6a-a0d6-8475f48dcb28">Task Cancellation</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and creation options.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that the new task will observe.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -132,11 +194,20 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action{System.Object},System.Object,System.Threading.CancellationToken)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the action.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the new task will observe.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -152,11 +223,20 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action{System.Object},System.Object,System.Threading.Tasks.TaskCreationOptions)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the action.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -173,12 +253,22 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than calling this constructor, the most common way to instantiate a <see cref="T:System.Threading.Tasks.Task" /> object and launch a task is by calling the static <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action{System.Object},System.Object,System.Threading.CancellationToken,System.Threading.Tasks.TaskCreationOptions,System.Threading.Tasks.TaskScheduler)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the code to execute in the task.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the action.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the new task will observe..</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
       </Docs>
     </Member>
     <Member MemberName="AsyncState">
@@ -192,9 +282,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cast the object back to the original type to retrieve its data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state object supplied when the <see cref="T:System.Threading.Tasks.Task" /> was created, or null if none was supplied.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConfigureAwait">
@@ -211,10 +307,17 @@
         <Parameter Name="continueOnCapturedContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="continueOnCapturedContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures an awaiter used to await this <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object used to await this task.</para>
+        </returns>
+        <param name="continueOnCapturedContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to attempt to marshal the continuation back to the original context captured; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -231,10 +334,20 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -252,11 +365,22 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation action.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -274,11 +398,22 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new continuation task.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -296,11 +431,22 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed. If the continuation criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes according to the specified <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run according to the specified <paramref name="continuationOptions" />. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -318,11 +464,22 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -341,12 +498,24 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has  completed, whether it completes due to running to completion successfully, faulting due to an  unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation action.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -365,12 +534,24 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed. If the continuation criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation action.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -389,12 +570,24 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has  completed, whether it completes due to running to completion successfully, faulting due to an  unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes.  When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation action.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -414,13 +607,26 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has completed. If the criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes according to the specified <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run according to the specified <paramref name="continuationOptions" />. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -441,14 +647,28 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task" /> will not be scheduled for execution until the current task has  completed. If the criteria specified through the <paramref name="continuationOptions" /> parameter  are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation action.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its  execution.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -468,11 +688,22 @@
         <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -493,12 +724,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has  completed, whether it completes due to running to completion successfully, faulting due to an  unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation function.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -519,12 +762,24 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -545,12 +800,24 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed. If the continuation criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes according to the condition specified in <paramref name="continuationOptions" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run according to the condition specified in <paramref name="continuationOptions" />. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -571,12 +838,24 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed, whether it completes due to running to completion successfully, faulting due to an unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes asynchronously when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -598,13 +877,26 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has  completed, whether it completes due to running to completion successfully, faulting due to an  unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation function.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -626,13 +918,26 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed. If the continuation criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation function.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -654,13 +959,26 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has  completed, whether it completes due to running to completion successfully, faulting due to an  unhandled exception, or exiting out early due to being canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes.  When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation function.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -683,14 +1001,28 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has completed. If the criteria specified through the <paramref name="continuationOptions" /> parameter are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes according to the condition specified in <paramref name="continuationOptions" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run according to the specified <paramref name="continuationOptions." /> When run, the delegate will be passed the completed task as an argument.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its execution.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith&lt;TResult&gt;">
@@ -714,15 +1046,30 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="continuationFunction">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Threading.Tasks.Task`1" /> will not be scheduled for execution until the current task has  completed. If the criteria specified through the <paramref name="continuationOptions" /> parameter  are not met, the continuation task will be canceled instead of scheduled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation that executes when the target <see cref="T:System.Threading.Tasks.Task" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function to run when the <see cref="T:System.Threading.Tasks.Task" /> completes. When run, the delegate will be  passed the completed task and the caller-supplied state object as arguments.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object representing data to be used by the continuation function.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options for when the continuation is scheduled and how it behaves. This includes criteria, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />, as well as execution options, such as <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to associate with the continuation task and to use for its  execution.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result produced by the continuation.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CreationOptions">
@@ -736,9 +1083,12 @@
         <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to create this task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentId">
@@ -752,9 +1102,12 @@
         <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the unique ID of the currently executing <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delay">
@@ -771,10 +1124,20 @@
         <Parameter Name="millisecondsDelay" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsDelay">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After the specified time delay, the task is completed in RanToCompletion state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete after a time delay.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the time delay</para>
+        </returns>
+        <param name="millisecondsDelay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait before completing the returned task</param>
       </Docs>
     </Member>
     <Member MemberName="Delay">
@@ -791,10 +1154,20 @@
         <Parameter Name="delay" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="delay">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After the specified time delay, the task is completed in <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete after a time delay.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the time delay</para>
+        </returns>
+        <param name="delay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before completing the returned task</param>
       </Docs>
     </Member>
     <Member MemberName="Delay">
@@ -812,11 +1185,22 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="millisecondsDelay">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cancellation token is signaled before the specified time delay, then the task is completed in  Canceled state.  Otherwise, the task is completed in RanToCompletion state once the specified time  delay has expired.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete after a time delay.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the time delay</para>
+        </returns>
+        <param name="millisecondsDelay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait before completing the returned task</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token that will be checked prior to completing the returned task</param>
       </Docs>
     </Member>
     <Member MemberName="Delay">
@@ -834,11 +1218,22 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="delay">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cancellation token is signaled before the specified time delay, then the task is completed in <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> state.  Otherwise, the task is completed in <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" /> state once the specified time delay has expired.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete after a time delay.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the time delay</para>
+        </returns>
+        <param name="delay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before completing the returned task</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token that will be checked prior to completing the returned task</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -853,8 +1248,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Threading.Tasks.Task" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -871,9 +1269,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike most of the members of <see cref="T:System.Threading.Tasks.Task" />, this method is not thread-safe.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes the <see cref="T:System.Threading.Tasks.Task" />, releasing all of its unmanaged resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether this method is being called due to a call to <see cref="M:System.Threading.Tasks.Task.Dispose" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Exception">
@@ -887,9 +1292,15 @@
         <ReturnType>System.AggregateException</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tasks that throw unhandled exceptions store the resulting exception and propagate it wrapped in a <see cref="T:System.AggregateException" /> in calls to <see cref="M:System.Threading.Tasks.Task.Wait" /> or in accesses to the <see cref="P:System.Threading.Tasks.Task.Exception" /> property. Any exceptions not observed by the time the task instance is garbage collected will be propagated on the finalizer thread. For more information and an example, see <format type="text/html"><a href="beb51e50-9061-4d3d-908c-56a4f7c2e8c1">Exception Handling (Task Parallel Library)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.AggregateException" /> that caused the <see cref="T:System.Threading.Tasks.Task" /> to end prematurely. If the <see cref="T:System.Threading.Tasks.Task" /> completed successfully or has not yet thrown any exceptions, this will return null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Factory">
@@ -903,9 +1314,15 @@
         <ReturnType>System.Threading.Tasks.TaskFactory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The factory returned from <see cref="P:System.Threading.Tasks.Task.Factory" /> is a default instance of <see cref="T:System.Threading.Tasks.TaskFactory" />, as would result from using the default constructor on task factory. The most common use of this property is to create a new task and start it in one call to <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" />. For an example, see <format type="text/html"><a href="c4bc0f44-eba2-4e96-9e03-1cc787461e61">How to: Return a Value from a Task</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides access to factory methods for creating <see cref="T:System.Threading.Tasks.Task" /> and <see cref="T:System.Threading.Tasks.Task`1" /> instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromResult&lt;TResult&gt;">
@@ -944,9 +1361,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended for compiler user rather than use directly in code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an awaiter used to await this <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An awaiter instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -960,9 +1386,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Task IDs are assigned on-demand and do not necessarily represent the order in the which task instances were created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique ID for this <see cref="T:System.Threading.Tasks.Task" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCanceled">
@@ -976,9 +1408,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task" /> will complete in Canceled state either if its <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> was marked for cancellation before the task started executing, or if the task acknowledged the cancellation request on its already signaled CancellationToken by throwing an <see cref="T:System.OperationCanceledException" /> that bears the same <see cref="T:System.Threading.CancellationToken" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether this <see cref="T:System.Threading.Tasks.Task" /> instance has completed execution due to being canceled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCompleted">
@@ -992,9 +1430,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Threading.Tasks.Task.IsCompleted" /> will return true when the task is in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether this <see cref="T:System.Threading.Tasks.Task" /> has completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsFaulted">
@@ -1008,9 +1453,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Threading.Tasks.Task.IsFaulted" /> is true, the task's <see cref="P:System.Threading.Tasks.Task.Status" /> will be equal to <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, and its <see cref="P:System.Threading.Tasks.Task.Exception" /> property will be non-null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the <see cref="T:System.Threading.Tasks.Task" /> completed due to an unhandled exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -1027,10 +1478,31 @@
         <Parameter Name="action" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.Task.Run(System.Action)" /> method is a simpler alternative to the <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> method. It creates a task with the following default values: </para>
+          <list type="bullet">
+            <item>
+              <para>Its cancellation token is <see cref="P:System.Threading.CancellationToken.None" />. </para>
+            </item>
+            <item>
+              <para>Its <see cref="P:System.Threading.Tasks.Task.CreationOptions" /> property value is <see cref="F:System.Threading.Tasks.TaskCreationOptions.DenyChildAttach" />. </para>
+            </item>
+            <item>
+              <para>It uses the default task scheduler. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a task handle for that work.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the work queued to execute in the ThreadPool.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -1047,10 +1519,17 @@
         <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="function">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a proxy for the  task returned by <paramref name="function" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents a proxy for the task returned by <paramref name="function" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -1068,11 +1547,30 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.Task.Run(System.Action,System.Threading.CancellationToken)" /> method is a simpler alternative to the <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action,System.Threading.CancellationToken)" />  method. It creates a task with the following default values: </para>
+          <list type="bullet">
+            <item>
+              <para>Its <see cref="P:System.Threading.Tasks.Task.CreationOptions" /> property value is <see cref="F:System.Threading.Tasks.TaskCreationOptions.DenyChildAttach" />. </para>
+            </item>
+            <item>
+              <para>It uses the default task scheduler. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a task handle for that work.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the work queued to execute in the ThreadPool.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token that should be used to cancel the work</param>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -1090,11 +1588,19 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="function">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a proxy for the  task returned by <paramref name="function" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents a proxy for the task returned by <paramref name="function" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token that should be used to cancel the work</param>
       </Docs>
     </Member>
     <Member MemberName="Run&lt;TResult&gt;">
@@ -1114,11 +1620,19 @@
         <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a proxy for the  Task(TResult) returned by <paramref name="function" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task(TResult) that represents a proxy for the Task(TResult) returned by <paramref name="function" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result returned by the proxy task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Run&lt;TResult&gt;">
@@ -1138,11 +1652,33 @@
         <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.Task.Run``1(System.Func{``0})" /> method is a simpler alternative to the <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> method. It creates a task with the following default values: </para>
+          <list type="bullet">
+            <item>
+              <para>Its cancellation token is <see cref="P:System.Threading.CancellationToken.None" />. </para>
+            </item>
+            <item>
+              <para>Its <see cref="P:System.Threading.Tasks.Task.CreationOptions" /> property value is <see cref="F:System.Threading.Tasks.TaskCreationOptions.DenyChildAttach" />. </para>
+            </item>
+            <item>
+              <para>It uses the default task scheduler. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a Task(TResult) handle for that work.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task(TResult) that represents the work queued to execute in the ThreadPool.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The result type of the task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Run&lt;TResult&gt;">
@@ -1163,12 +1699,21 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the ThreadPool and returns a proxy for the  Task(TResult) returned by <paramref name="function" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task(TResult) that represents a proxy for the Task(TResult) returned by <paramref name="function" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token that should be used to cancel the work</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result returned by the proxy task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Run&lt;TResult&gt;">
@@ -1189,12 +1734,32 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.Task.Run``1(System.Func{``0},System.Threading.CancellationToken)" /> method is a simpler alternative to the <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> method. It creates a task with the following default values: </para>
+          <list type="bullet">
+            <item>
+              <para>Its <see cref="P:System.Threading.Tasks.Task.CreationOptions" /> property value is <see cref="F:System.Threading.Tasks.TaskCreationOptions.DenyChildAttach" />. </para>
+            </item>
+            <item>
+              <para>It uses the default task scheduler. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues the specified work to run on the thread pool and returns a Task(TResult) handle for that work.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task(TResult) that represents the work queued to execute in the ThreadPool.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />The work to execute asynchronously</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token that should be used to cancel the work</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The result type of the task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="RunSynchronously">
@@ -1209,8 +1774,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> A task may only be started and run only once. Any attempts to schedule a task a second time will result in an exception.</para>
+          <para> Tasks executed with <see cref="M:System.Threading.Tasks.Task.RunSynchronously" /> will be associated with the current <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+          <para>  If the target scheduler does not support running this task on the current thread, the task will be scheduled for execution on the scheduler, and the current thread will block until the task has completed execution.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs the <see cref="T:System.Threading.Tasks.Task" /> synchronously on the current <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RunSynchronously">
@@ -1227,9 +1801,18 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> A task may only be started and run only once. Any attempts to schedule a task a second time will result in an exception.</para>
+          <para>  If the target scheduler does not support running this task on the current thread, the task will be scheduled for execution on the scheduler, and the current thread will block until the task has completed execution.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs the <see cref="T:System.Threading.Tasks.Task" /> synchronously on the <see cref="T:System.Threading.Tasks.TaskScheduler" /> provided.</para>
+        </summary>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheduler on which to attempt to run this task inline.</param>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -1244,8 +1827,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task may only be started and run only once. Any attempts to schedule a task a second time will result in an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the <see cref="T:System.Threading.Tasks.Task" />, scheduling it for execution to the current <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -1262,9 +1851,16 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task may only be started and run only once. Any attempts to schedule a task a second time will result in an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the <see cref="T:System.Threading.Tasks.Task" />, scheduling it for execution to the specified <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+        </summary>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> with which to associate and execute this task.</param>
       </Docs>
     </Member>
     <Member MemberName="Status">
@@ -1278,9 +1874,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and an example, see <format type="text/html"><a href="9cc64281-4346-41d7-8b3a-25eb8f723385">How to: Chain Multiple Tasks with Continuations</a></format> and <format type="text/html"><a href="08574301-8331-4719-ad50-9cf7f6ff3048">How to: Cancel a Task and Its Children</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.TaskStatus" /> of this task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IAsyncResult.AsyncWaitHandle">
@@ -1294,9 +1896,15 @@
         <ReturnType>System.Threading.WaitHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using the wait functionality provided by <see cref="M:System.Threading.Tasks.Task.Wait" /> should be preferred over using <see cref="P:System.IAsyncResult.AsyncWaitHandle" /> for similar functionality. For more information, see <format type="text/html"><a href="79cb522b-9c93-46ed-b23a-c06908f3a374">How to: Wait on One or More Tasks to Complete</a></format> and <format type="text/html"><a href="7add905b-ff60-4353-af79-5089038d9a08">TPL With Other Asynchronous Patterns</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.WaitHandle" /> that can be used to wait for the task to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IAsyncResult.CompletedSynchronously">
@@ -1310,9 +1918,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an indication of whether the operation completed synchronously.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -1327,8 +1938,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and an example, see <format type="text/html"><a href="79cb522b-9c93-46ed-b23a-c06908f3a374">How to: Wait on One or More Tasks to Complete</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the <see cref="T:System.Threading.Tasks.Task" /> to complete execution.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -1345,10 +1962,17 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the <see cref="T:System.Threading.Tasks.Task" /> to complete execution within a specified number of milliseconds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.Tasks.Task" /> completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -1365,9 +1989,13 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the cancellable <see cref="T:System.Threading.Tasks.Task" /> to complete execution.</para>
+        </summary>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for the task to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -1384,10 +2012,17 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the <see cref="T:System.Threading.Tasks.Task" /> to complete execution within a specified time interval.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.Tasks.Task" /> completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -1405,11 +2040,19 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the cancellable <see cref="T:System.Threading.Tasks.Task" /> to complete execution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.Tasks.Task" /> completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for the task to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -1432,9 +2075,13 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for all of the provided <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution.</para>
+        </summary>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -1452,11 +2099,19 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for all of the provided <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified number of milliseconds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the <see cref="T:System.Threading.Tasks.Task" /> instances completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -1474,10 +2129,18 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cancellationToken" /> argument is used to cancel the wait operation. If it is canceled, the Wait returns false (False in Visual Basic). Cancellation of the tasks is a distinct operation, and is signaled by the AggregateException as noted above.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for all of the provided cancellable <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution.</para>
+        </summary>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for the tasks to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -1495,11 +2158,22 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cancellationToken" /> argument is used to cancel the wait operation. If it is canceled, the Wait returns false (False in Visual Basic). Cancellation of the tasks is a distinct operation, and is signaled by the AggregateException as noted above.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for all of the provided cancellable <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified time interval.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the <see cref="T:System.Threading.Tasks.Task" /> instances completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -1518,12 +2192,24 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cancellationToken" /> argument is used to cancel the wait operation. If it is canceled, the Wait returns false (False in Visual Basic). Cancellation of the tasks is a distinct operation, and is signaled by the AggregateException as noted above.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for all of the provided cancellable <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified number of milliseconds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the <see cref="T:System.Threading.Tasks.Task" /> instances completed execution within the allotted time; otherwise, false.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for the tasks to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAny">
@@ -1546,10 +2232,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any of the provided <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the completed task in the <paramref name="tasks" /> array argument.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAny">
@@ -1567,11 +2260,19 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any of the provided <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified number of milliseconds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the completed task in the <paramref name="tasks" /> array argument, or -1 if the timeout occurred.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAny">
@@ -1589,11 +2290,19 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any of the provided cancellable <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the completed task in the <paramref name="tasks" /> array argument.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for a task to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAny">
@@ -1611,11 +2320,19 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any of the provided <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified time interval.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the completed task in the <paramref name="tasks" /> array argument, or -1 if the timeout occurred.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitAny">
@@ -1634,12 +2351,21 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any of the provided cancellable <see cref="T:System.Threading.Tasks.Task" /> objects to complete execution within a specified number of milliseconds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the completed task in the <paramref name="tasks" /> array argument, or -1 if the timeout occurred.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Threading.Tasks.Task" /> instances on which to wait.</param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> to observe while waiting for a task to complete.</param>
       </Docs>
     </Member>
     <Member MemberName="WhenAll">
@@ -1656,10 +2382,23 @@
         <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the supplied tasks completes in a faulted state, the returned task will also complete in a Faulted state,   where its exceptions will contain the aggregation of the set of unwrapped exceptions from each of the supplied tasks.</para>
+          <para>If none of the supplied tasks faulted but at least one of them was canceled, the returned task will end in the Canceled state.</para>
+          <para>If none of the tasks faulted and none of the tasks were canceled, the resulting task will end in the RanToCompletion state.</para>
+          <para>If the supplied array/enumerable contains no tasks, the returned task will immediately transition to a RanToCompletion   state before it's returned to the caller.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when all of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of all of the supplied tasks.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
       </Docs>
     </Member>
     <Member MemberName="WhenAll">
@@ -1682,10 +2421,23 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the supplied tasks completes in a faulted state, the returned task will also complete in a Faulted state,   where its exceptions will contain the aggregation of the set of unwrapped exceptions from each of the supplied tasks.  </para>
+          <para>If none of the supplied tasks faulted but at least one of them was canceled, the returned task will end in the Canceled state.</para>
+          <para>If none of the tasks faulted and none of the tasks were canceled, the resulting task will end in the RanToCompletion state.</para>
+          <para>If the supplied array/enumerable contains no tasks, the returned task will immediately transition to a RanToCompletion   state before it's returned to the caller.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when all of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of all of the supplied tasks.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
       </Docs>
     </Member>
     <Member MemberName="WhenAll&lt;TResult&gt;">
@@ -1705,11 +2457,25 @@
         <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the supplied tasks completes in a faulted state, the returned task will also complete in a Faulted state,   where its exceptions will contain the aggregation of the set of unwrapped exceptions from each of the supplied tasks.</para>
+          <para>If none of the supplied tasks faulted but at least one of them was canceled, the returned task will end in the Canceled state.</para>
+          <para>If none of the tasks faulted and none of the tasks were canceled, the resulting task will end in the RanToCompletion state.    The Result of the returned task will be set to an array containing all of the results of the   supplied tasks in the same order as they were provided (e.g. if the input tasks array contained t1, t2, t3, the output   task's Result will return an TResult[] where arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result). </para>
+          <para>If the supplied array/enumerable contains no tasks, the returned task will immediately transition to a RanToCompletion   state before it's returned to the caller.  The returned TResult[] will be an array of 0 elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when all of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of all of the supplied tasks.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the completed task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="WhenAll&lt;TResult&gt;">
@@ -1735,11 +2501,25 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the supplied tasks completes in a faulted state, the returned task will also complete in a Faulted state,   where its exceptions will contain the aggregation of the set of unwrapped exceptions from each of the supplied tasks.  </para>
+          <para>If none of the supplied tasks faulted but at least one of them was canceled, the returned task will end in the Canceled state.</para>
+          <para>If none of the tasks faulted and none of the tasks were canceled, the resulting task will end in the RanToCompletion state.    The Result of the returned task will be set to an array containing all of the results of the   supplied tasks in the same order as they were provided (e.g. if the input tasks array contained t1, t2, t3, the output   task's Result will return an TResult[] where arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result). </para>
+          <para>If the supplied array/enumerable contains no tasks, the returned task will immediately transition to a RanToCompletion   state before it's returned to the caller.  The returned TResult[] will be an array of 0 elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when all of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of all of the supplied tasks.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the completed task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="WhenAny">
@@ -1756,10 +2536,20 @@
         <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the RanToCompletion state  with its Result set to the first task to complete.  This is true even if the first task to complete ended in the Canceled or Faulted state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when any of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of one of the supplied tasks.  The return task's Result is the task that completed.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
       </Docs>
     </Member>
     <Member MemberName="WhenAny">
@@ -1782,10 +2572,20 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the RanToCompletion state   with its Result set to the first task to complete.  This is true even if the first task to complete ended in the Canceled or Faulted state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when any of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of one of the supplied tasks.  The return task's Result is the task that completed.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
       </Docs>
     </Member>
     <Member MemberName="WhenAny&lt;TResult&gt;">
@@ -1805,11 +2605,22 @@
         <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the RanToCompletion state with its Result set to the first task to complete. This is true even if the first task to complete ended in the Canceled or Faulted state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when any of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of one of the supplied tasks.  The return task's Result is the task that completed.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the completed task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="WhenAny&lt;TResult&gt;">
@@ -1835,11 +2646,22 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the RanToCompletion state with its Result set to the first task to complete. This is true even if the first task to complete ended in the Canceled or Faulted state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a task that will complete when any of the supplied tasks have completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the completion of one of the supplied tasks.  The return task's Result is the task that completed.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tasks to wait on for completion.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the completed task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Yield">
@@ -1854,9 +2676,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use await Task.Yield(); in an asynchronous method to force the method to complete asynchronously. If there is a current synchronization context (<see cref="T:System.Threading.SynchronizationContext" /> object), this will post the remainder of the method’s execution back to that context. However, the context will decide how to prioritize this work relative to other work that may be pending. The synchronization context that is present on a UI thread in most UI environments will often prioritize work posted to the context higher than input and rendering work. For this reason, do not rely on await Task.Yield(); to keep a UI responsive.  For more information, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2008/07/23/8768673.aspx">Useful Abstractions Enabled with ContinueWith</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an awaitable task that asynchronously yields back to the current context when awaited.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A context that, when awaited, will asynchronously transition back into the current context at the time of the await. If the current <see cref="T:System.Threading.SynchronizationContext" /> is non-null, it is treated as the current context. Otherwise, the task scheduler that is associated with the currently executing task is treated as the current context. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

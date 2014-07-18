@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DbConnectionStringBuilder" FullName="System.Data.Common.DbConnectionStringBuilder">
   <TypeSignature Language="C#" Value="public class DbConnectionStringBuilder : System.Collections.IDictionary, System.ComponentModel.ICustomTypeDescriptor" />
   <AssemblyInfo>
@@ -16,9 +17,35 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class provides the base class from which the strongly typed connection string builders (<see cref="T:System.Data.SqlClient.SqlConnectionStringBuilder" />, <see cref="T:System.Data.OleDb.OleDbConnectionStringBuilder" />, and so on) derive. The connection string builders let developers programmatically create syntactically correct connection strings, and parse and rebuild existing connection strings. </para>
+      <para>The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> has been defined in a database-agnostic manner. Because of the addition of the <see cref="N:System.Data.Common" /> namespace, developers require a base class against which they can program in order to build connection strings that can work against an arbitrary database. Therefore, the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class lets users assign arbitrary key/value pairs and pass the resulting connection string to a strongly typed provider. All the data providers that are included as part of the .NET Framework provide a strongly typed class that inherits from <see cref="T:System.Data.Common.DbConnectionStringBuilder" />: <see cref="T:System.Data.SqlClient.SqlConnectionStringBuilder" />, <see cref="T:System.Data.OracleClient.OracleConnectionStringBuilder" />, <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" />, and <see cref="T:System.Data.OleDb.OleDbConnectionStringBuilder" />.</para>
+      <para>The developer can build, assign, and edit connection strings for any arbitrary provider. For providers that support specific key/value pairs, the connection string builder provides strongly typed properties corresponding to the known pairs. In order to support providers that require the ability to support unknown values, developers can also supply arbitrary key/value pairs.</para>
+      <para>The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class implements the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface. This means that the class works with Visual Studio designers at design time. When developers use the designer to build strongly typed DataSets and strongly typed connections within Visual Studio, the strongly typed connection string builder class will display the properties associated with its type and will also have converters that can map common values for known keys.</para>
+      <para>Developers needing to create connection strings as part of applications can use the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class or one of its strongly typed derivatives to build and modify connection strings. The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class also makes it easy to manage connection strings stored in an application configuration file.</para>
+      <para>Developers can create connection strings using either a strongly typed connection string builder class, or they can use the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class. The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> performs no checks for valid key/value pairs. Therefore, it is possible using this class to create invalid connection strings. The <see cref="T:System.Data.SqlClient.SqlConnectionStringBuilder" /> supports only key/value pairs that are supported by SQL Server; trying to add invalid pairs will throw an exception.</para>
+      <para>Both the <see cref="M:System.Data.Common.DbConnectionStringBuilder.Add(System.String,System.Object)" /> method and <see cref="P:System.Data.Common.DbConnectionStringBuilder.Item(System.String)" /> property handle tries to insert malicious entries. For example, the following code correctly escapes the nested key/value pair:</para>
+      <para>[Visual Basic]</para>
+      <code>Dim builder As New System.Data.Common.DbConnectionStringBuilder
+builder("Data Source") = "(local)"
+builder("integrated sSecurity") = True
+builder("Initial Catalog") = "AdventureWorks;NewValue=Bad"</code>
+      <para>[C#]</para>
+      <code>System.Data.Common.DbConnectionStringBuilder builder = 
+    new System.Data.Common.DbConnectionStringBuilder();
+builder["Data Source"] = "(local)";
+builder["integrated Security"] = true;
+builder["Initial Catalog"] = "AdventureWorks;NewValue=Bad";</code>
+      <para>The result is the following connection string that handles the invalid value in a safe manner:</para>
+      <code>data source=(local);integrated security=True;
+initial catalog="AdventureWorks;NewValue=Bad"</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for strongly typed connection string builders.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +53,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +71,17 @@
         <Parameter Name="useOdbcRules" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useOdbcRules">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="useOdbcRules" /> is true, this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> uses ODBC rules for quoting values (surrounding values with curly braces ({})). If <paramref name="useOdbcRules" /> is false, this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> uses quotation mark character ("") to delimit values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class, optionally using ODBC rules for quoting values.</para>
+        </summary>
+        <param name="useOdbcRules">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use {} to delimit fields; false to use quotation marks.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,11 +98,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Common.DbConnectionStringBuilder.Item(System.String)" /> property can also be used to add new elements by setting the value of a key that does not exist in the dictionary. For example: myCollection["myNonexistentKey"] = myValue. </para>
+          <para>Calling the <see cref="M:System.Data.Common.DbConnectionStringBuilder.Add(System.String,System.Object)" /> method by passing a null (Nothing in Visual Basic) key throws an <see cref="T:System.ArgumentNullException" />. However, calling the <see cref="M:System.Data.Common.DbConnectionStringBuilder.Add(System.String,System.Object)" /> method by passing a null value removes the key/value pair. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an entry with the specified key and value into the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to add to the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value for the specified key.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -83,12 +129,21 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="builder">To be added.</param>
-        <param name="keyword">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows developers using a <see cref="T:System.Text.StringBuilder" /> to create a collection of key/value pairs to be able to take advantage of the features included in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class when you add key/value pairs, without having to incur the overhead of creating and maintaining a <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance. The AppendKeyValuePair method formats the key and value correctly and adds the new string to the supplied <see cref="T:System.Text.StringBuilder" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an efficient and safe way to append a key and value to an existing <see cref="T:System.Text.StringBuilder" /> object.</para>
+        </summary>
+        <param name="builder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.StringBuilder" /> to which to add the key/value pair.</param>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to be added.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value for the supplied key.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,13 +162,24 @@
         <Parameter Name="useOdbcRules" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="builder">To be added.</param>
-        <param name="keyword">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="useOdbcRules">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows developers using a <see cref="T:System.Text.StringBuilder" /> to create a collection of key/value pairs to be able to take advantage of the features included in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class when adding key/value pairs, without having to incur the overhead of creating and maintaining a <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance. The AppendKeyValuePair method formats the key and value correctly and adds the new string to the supplied <see cref="T:System.Text.StringBuilder" />.</para>
+          <para>Although most data sources let you delimit fields by using quotation marks, ODBC does not--for ODBC connection strings, you must use curly braces ({}). In order to have the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> use ODBC rules for delimiting fields, set the <paramref name="useOdbcRules" /> parameter to true. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an efficient and safe way to append a key and value to an existing <see cref="T:System.Text.StringBuilder" /> object.</para>
+        </summary>
+        <param name="builder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.StringBuilder" /> to which to add the key/value pair.</param>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to be added.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value for the supplied key.</param>
+        <param name="useOdbcRules">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use {} to delimit fields, false to use quotation marks.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -140,10 +206,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Developers creating designers that take advantage of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class must be able to make the connection string visible or invisible within the designer's property grid. The <see cref="P:System.Data.Common.DbConnectionStringBuilder.BrowsableConnectionString" /> property lets developers indicate that the property should be invisible by setting the property to false. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property is visible in Visual Studio designers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,9 +229,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.Common.DbConnectionStringBuilder.Clear" /> method removes all key/value pairs from the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> and resets all corresponding properties. This includes setting the <see cref="P:System.Data.Common.DbConnectionStringBuilder.Count" /> property to 0 and the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property to an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the contents of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,8 +254,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by designers to clear all associated property descriptors on the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the collection of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects on the associated <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionString">
@@ -192,10 +276,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns a semicolon-delimited list of key/value pairs stored within the collection maintained by the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />. Each pair contains the key and value, separated by an equal sign. The following example illustrates a typical connection string.</para>
+          <code>"Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=AdventureWorks;Data Source=(local)"</code>
+          <para>Data providers may expect specific keys and values for each connection string property. , These values are documented individually. The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class does not validate the key/value pairs associated with its connection string, although classes that inherit from it can.</para>
+          <para>The <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class acts generally as a mechanism for creating and parsing semicolon-delimited lists of key/value pairs separated with equal signs. It provides no validation or other support specific to connection strings. If you add items to the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> collection, the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property will reflect the changes. If you assign a value to the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property, the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> will try to parse the value, using the semicolon and equal-sign delimiters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the connection string associated with the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,11 +304,18 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains a specific key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains an entry with the specified key; otherwise false.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -233,10 +333,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current number of keys that are contained within the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -252,11 +355,22 @@
         <Parameter Name="connectionStringBuilder" Type="System.Data.Common.DbConnectionStringBuilder" />
       </Parameters>
       <Docs>
-        <param name="connectionStringBuilder">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparisons on key names are case insensitive; value comparisons are case sensitive.</para>
+          <para>The <see cref="M:System.Data.Common.DbConnectionStringBuilder.EquivalentTo(System.Data.Common.DbConnectionStringBuilder)" /> method returns true if the key/value pairs are equal, regardless of their order. The connection behavior of the two connection strings are equivalent, because order is never significant within connection strings. However, different order may affect connection pooling behavior of connections based on these connection strings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the connection information in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> object with the connection information in the supplied object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the connection information in both of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> objects causes an equivalent connection string; otherwise false.</para>
+        </returns>
+        <param name="connectionStringBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> to be compared with this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -272,10 +386,14 @@
         <Parameter Name="propertyDescriptors" Type="System.Collections.Hashtable" />
       </Parameters>
       <Docs>
-        <param name="propertyDescriptors">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills a supplied <see cref="T:System.Collections.Hashtable" /> with information about all the properties of this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
+        <param name="propertyDescriptors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Hashtable" /> to be filled with information about this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -293,10 +411,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A fixed-size collection does not allow adding or removing elements after the collection is created, but it does allow modifying existing elements.</para>
+          <para>A fixed-size collection is just a collection with a wrapper that prevents adding and removing elements; therefore, if changes are made to the underlying collection, including adding or removing elements, the fixed-size collection reflects those changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> has a fixed size.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -314,10 +439,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only collection does not allow adding, removing, or modifying elements after the collection is created.</para>
+          <para>A read-only collection is just a collection with a wrapper that prevents modifying the collection; therefore, if changes are made to the underlying collection, the read-only collection reflects those changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -360,10 +492,17 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is the same order as the associated values in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Data.Common.DbConnectionStringBuilder.Values" /> property.</para>
+          <para>The returned <see cref="T:System.Collections.ICollection" /> is not a static copy; instead, the <see cref="T:System.Collections.ICollection" /> refers back to the keys in the original <see cref="T:System.Data.Common.DbConnectionStringBuilder" />. Therefore, changes to the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> are reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> that contains the keys in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -379,11 +518,21 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="M:System.Data.Common.DbConnectionStringBuilder.Remove(System.String)" /> method returns a value that indicates its success, it is not required to look for the key before trying to remove the key/value pair from the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the entry with the specified key from the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key existed within the connection string and was removed; false if the key did not exist.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the key/value pair to be removed from the connection string in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -399,11 +548,21 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method behaves identically to the <see cref="M:System.Data.Common.DbConnectionStringBuilder.ContainsKey(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified key exists in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains an entry with the specified key; otherwise false.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -423,10 +582,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the <see cref="T:System.Collections.ICollection" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.ICollection" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -439,9 +607,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+          <para>For more information, see <see cref="P:System.Collections.ICollection.IsSynchronized" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the <see cref="T:System.Collections.ICollection" /> is synchronized (thread safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -454,9 +629,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+          <para>For more information, see <see cref="P:System.Collections.ICollection.SyncRoot" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the <see cref="T:System.Collections.ICollection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Add">
@@ -473,10 +655,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.Collections.IDictionary.Add(System.Object,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element with the provided key and value to the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </summary>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to use as the key of the element to add.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to use as the value of the element to add.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Contains">
@@ -492,10 +683,21 @@
         <Parameter Name="keyword" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
+          <para>For more information, see <see cref="M:System.Collections.IDictionary.Contains(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.IDictionary" /> object contains an element with the specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.IDictionary" /> contains an element with the key; otherwise, false.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.IDictionary" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.GetEnumerator">
@@ -509,9 +711,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.Collections.IDictionary.GetEnumerator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Item">
@@ -546,9 +758,17 @@
         <Parameter Name="keyword" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.Collections.IDictionary.Remove(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element with the specified key from the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </summary>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the element to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -562,9 +782,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetAttributes">
@@ -578,9 +808,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetAttributes" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of custom attributes for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> containing the attributes for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -594,9 +834,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetClassName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the class name of this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of the object, or null if the class does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -610,9 +860,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetComponentName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -626,9 +886,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetConverter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type converter for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> that is the converter for this object, or null if there is no <see cref="T:System.ComponentModel.TypeConverter" /> for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -642,9 +912,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default event for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents the default event for this object, or null if this object does not have events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -658,9 +938,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default property for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the default property for this object, or null if this object does not have properties.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -676,10 +966,21 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="editorBaseType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEditor(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an editor of the specified type for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -693,9 +994,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the events for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the events for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -711,10 +1022,21 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents(System.Attribute[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the events for this instance of a component using the specified attribute array as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the filtered events for this component instance.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -728,9 +1050,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the properties for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -746,10 +1078,21 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties(System.Attribute[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the properties for this instance of a component using the attribute array as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the filtered properties for this component instance.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetPropertyOwner">
@@ -765,10 +1108,21 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="pd">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetPropertyOwner(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that contains the property described by the specified property descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
+        <param name="pd">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -779,10 +1133,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the connection string associated with this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -822,10 +1182,17 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is the same order as the associated keys in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Data.Common.DbConnectionStringBuilder.Keys" /> method.</para>
+          <para>The returned <see cref="T:System.Collections.ICollection" /> is not a static copy; instead, the <see cref="T:System.Collections.ICollection" /> refers back to the values in the original <see cref="T:System.Data.Common.DbConnectionStringBuilder" />. Therefore, changes to the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> are reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> that contains the values in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -31,9 +31,7 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property, Inherited = true)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class AmbientAttribute : Attribute
 	{
 	}

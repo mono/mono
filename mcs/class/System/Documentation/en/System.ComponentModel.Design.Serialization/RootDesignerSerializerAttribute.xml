@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RootDesignerSerializerAttribute" FullName="System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class RootDesignerSerializerAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RootDesignerSerializerAttribute extends System.Attribute" />
@@ -23,8 +24,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute" /> indicates the serializer to use when the serialization manager serializes the design document, and whether the specified serializer supports automatic reloading of the design document without first completely disposing of the document.</para>
+      <para>This attribute contains the following significant members: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.SerializerTypeName" /> indicates what serialization object to use to serialize the class at design time.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.SerializerBaseTypeName" /> indicates the fully qualified name of the serialization object's base type.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.Reloadable" /> indicates whether the serializer supports reloading a design document without user interaction to open a new designer view.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the base serializer to use for a root designer object. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,11 +66,20 @@
         <Parameter Name="reloadable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serializerTypeName">To be added: an object of type 'string'</param>
-        <param name="baseSerializerTypeName">To be added: an object of type 'string'</param>
-        <param name="reloadable">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new designer serialization attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute" /> class using the specified attributes.</para>
+        </summary>
+        <param name="serializerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the data type of the serializer. </param>
+        <param name="baseSerializerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the base type of the serializer. A class can include multiple serializers as they all have different base types. </param>
+        <param name="reloadable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this serializer supports dynamic reloading of the document; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,11 +98,20 @@
         <Parameter Name="reloadable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serializerTypeName">To be added: an object of type 'string'</param>
-        <param name="baseSerializerType">To be added: an object of type 'Type'</param>
-        <param name="reloadable">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new designer serialization attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute" /> class using the specified attributes.</para>
+        </summary>
+        <param name="serializerTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the data type of the serializer. </param>
+        <param name="baseSerializerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the base type of the serializer. A class can include multiple serializers, as they all have different base types. </param>
+        <param name="reloadable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this serializer supports dynamic reloading of the document; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -89,11 +130,20 @@
         <Parameter Name="reloadable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serializerType">To be added: an object of type 'Type'</param>
-        <param name="baseSerializerType">To be added: an object of type 'Type'</param>
-        <param name="reloadable">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new designer serialization attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute" /> class using the specified attributes.</para>
+        </summary>
+        <param name="serializerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type of the serializer. </param>
+        <param name="baseSerializerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type of the serializer. A class can include multiple serializers as they all have different base types. </param>
+        <param name="reloadable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this serializer supports dynamic reloading of the document; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Reloadable">
@@ -109,9 +159,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to false, the design document does not automatically perform a reload on behalf of the user. If this property is set to false, it is the user's responsibility to reopen the designer view window for the design document, if an update or reload is desired.</para>
+          <para>Some serializers require the interaction of external components in the designer loading process in order to rebuild the design document. These serializers sometimes need to create a new designer host each time the design document is loaded. If this is the situation, <see cref="P:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.Reloadable" /> will be set to false, and the designer host must be recreated by user interaction (launching the designer for the document) after the design document is disposed. The events and services that were connected to the designer host, except through deserialization, do not remain and may need to be set again. If <see cref="P:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.Reloadable" /> is true, the design document can be reloaded after changes outside the designer are made to the code, without closing the designer window and reopening it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the root serializer supports reloading of the design document without first disposing the designer host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SerializerBaseTypeName">
@@ -127,9 +184,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified type name of the base type of the serializer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SerializerTypeName">
@@ -145,9 +205,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified type name of the serializer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeId">
@@ -163,9 +226,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by filtering algorithms to identify two attributes that are the same type. For most attributes, this just returns the <see cref="T:System.Type" /> instance for the attribute. <see cref="T:System.ComponentModel.EditorAttribute" /> overrides this to include the type of the editor base type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique ID for this attribute type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebMethodAttribute" FullName="System.Web.Services.WebMethodAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class WebMethodAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Methods that have this attribute are exposed as web services.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Methods within a class that have this attribute set are called XML Web service methods. The method and class must be public and running inside an ASP.NET Web application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adding this attribute to a method within an XML Web service created using ASP.NET makes the method callable from remote Web clients. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +54,13 @@
         <Parameter Name="enableSession" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enableSession">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </summary>
+        <param name="enableSession">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes whether session state is enabled for the XML Web service method. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,10 +76,25 @@
         <Parameter Name="transactionOption" Type="System.EnterpriseServices.TransactionOption" />
       </Parameters>
       <Docs>
-        <param name="enableSession">a <see cref="T:System.Boolean" /></param>
-        <param name="transactionOption">a <see cref="T:System.EnterpriseServices.TransactionOption" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A web service call can only be the root of a transaction, due to the stateless nature of the HTTP protocol. This means that the following two settings are equivalent, with each call creating a new transaction:</para>
+          <code>[WebMethod(TransactionOption = TransactionOption.Required)]
+[WebMethod(TransactionOption = TransactionOption.RequiresNew)]</code>
+          <para>It also means that all the following settings are equivalent; meaning no transaction support:</para>
+          <code>[WebMethod] // TransactionOption.Disabled is the default
+[WebMethod(TransactionOption = TransactionOption.Disabled)]
+[WebMethod(TransactionOption = Transaction.NotSupported)]
+[WebMethod(TransactionOption = Transaction.Supported)]</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </summary>
+        <param name="enableSession">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes whether session state is enabled for the XML Web service method. </param>
+        <param name="transactionOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes the transaction support of an XML Web service method. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,11 +111,27 @@
         <Parameter Name="cacheDuration" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="enableSession">a <see cref="T:System.Boolean" /></param>
-        <param name="transactionOption">a <see cref="T:System.EnterpriseServices.TransactionOption" /></param>
-        <param name="cacheDuration">a <see cref="T:System.Int32" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A web service call can only be the root of a transaction, due to the stateless nature of the HTTP protocol.  This means that the following two settings are equivalent, with each call creating a new transaction:</para>
+          <code>[WebMethod(TransactionOption = TransactionOption.Required)]
+[WebMethod(TransactionOption = TransactionOption.RequiresNew)]</code>
+          <para>It also means that all the following settings are equivalent; meaning no transaction support:</para>
+          <code>[WebMethod] // TransactionOption.Disabled is the default
+[WebMethod(TransactionOption = TransactionOption.Disabled)]
+[WebMethod(TransactionOption = Transaction.NotSupported)]
+[WebMethod(TransactionOption = Transaction.Supported)]</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </summary>
+        <param name="enableSession">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes whether session state is enabled for the XML Web service method. </param>
+        <param name="transactionOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes the transaction support of an XML Web service method. </param>
+        <param name="cacheDuration">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes the number of seconds the response is cached. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,12 +149,29 @@
         <Parameter Name="bufferResponse" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enableSession">a <see cref="T:System.Boolean" /></param>
-        <param name="transactionOption">a <see cref="T:System.EnterpriseServices.TransactionOption" /></param>
-        <param name="cacheDuration">a <see cref="T:System.Int32" /></param>
-        <param name="bufferResponse">a <see cref="T:System.Boolean" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A web service call can only be the root of a transaction, due to the stateless nature of the HTTP protocol.  This means that the following two settings are equivalent, with each call creating a new transaction:</para>
+          <code>[WebMethod(TransactionOption = TransactionOption.Required)]
+[WebMethod(TransactionOption = TransactionOption.RequiresNew)]</code>
+          <para>It also means that all the following settings are equivalent; meaning no transaction support:</para>
+          <code>[WebMethod] // TransactionOption.Disabled is the default
+[WebMethod(TransactionOption = TransactionOption.Disabled)]
+[WebMethod(TransactionOption = Transaction.NotSupported)]
+[WebMethod(TransactionOption = Transaction.Supported)]</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </summary>
+        <param name="enableSession">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes whether session state is enabled for the XML Web service method. </param>
+        <param name="transactionOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes the transaction support of an XML Web service method. </param>
+        <param name="cacheDuration">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes the number of seconds the response is cached. </param>
+        <param name="bufferResponse">
+          <attribution license="cc4" from="Microsoft" modified="false" />Initializes whether the response for this request is buffered. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +186,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting <see cref="P:System.Web.Services.WebMethodAttribute.BufferResponse" /> to true, serializes the response of the XML Web service method into a memory buffer until either the response is completely serialized or the buffer is full. Once the response is buffered, it is returned to the XML Web service client over the network. When <see cref="P:System.Web.Services.WebMethodAttribute.BufferResponse" /> is false, the response to the XML Web service method is sent back to the client as it is serialized. In general, you only want to set <see cref="P:System.Web.Services.WebMethodAttribute.BufferResponse" /> to false, if it is known that an XML Web service method returns large amounts of data to the client. For smaller amounts of data, XML Web service performance is better with <see cref="P:System.Web.Services.WebMethodAttribute.BufferResponse" /> to true.</para>
+          <para>When <see cref="P:System.Web.Services.WebMethodAttribute.BufferResponse" /> is false, SOAP extensions are disabled for the XML Web service method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the response for this request is buffered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,9 +210,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When caching is enabled requests and responses are held in memory on the server for at least the cache duration so caution must be used if you expect requests or responses to be very large or you expect requests to vary widely.</para>
+          <para>There are two issues that can affect output caching in an ASP.NET 2.0 Web service application.</para>
+          <para>In ASP.NET 2.0 the HTTP method of the test page has changed from GET to POST. However, POSTs are not normally cached. If you change the test page in an ASP.NET 2.0 Web service application to use GET, caching works properly.</para>
+          <para>In addition, HTTP indicates that a user agent (the browser or calling application) should be able to override server caching by setting the "Cache-Control" to "no-cache". ASP.NET applications, therefore, ignore cached results when they find a "no-cache" header.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of seconds the response should be held in the cache.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,9 +237,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The descriptive message is displayed to prospective consumers of the XML Web service when description documents for the XML Web service are generated, such as the Service Description and the Service help page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A descriptive message describing the XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,9 +260,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to store session state in the ASP.NET <see cref="T:System.Web.SessionState.HttpSessionState" /> object, the XML Web service must inherit from <see cref="T:System.Web.Services.WebService" /> and a <see cref="T:System.Web.Services.WebMethodAttribute" /> applied to the XML Web service method, setting the <see cref="P:System.Web.Services.WebMethodAttribute.EnableSession" /> property to true. If session state is not needed for an XML Web service method, then disabling it may improve performance.</para>
+          <para>An XML Web service client is uniquely identified by an HTTP cookie returned by an XML Web service. In order for an XML Web service to maintain session state for a client, the client must persist the cookie. Clients can receive the HTTP cookie by creating a new instance of <see cref="T:System.Net.CookieContainer" /> and assigning that to the <see cref="P:System.Web.Services.Protocols.HttpWebClientProtocol.CookieContainer" /> property of the proxy class before calling the XML Web service method. If you need to maintain session state beyond when the proxy class instance goes out of scope, the client must persist the HTTP cookie between calls to the XML Web service. For instance, a Web Forms client can persist the HTTP cookie by saving the <see cref="T:System.Net.CookieContainer" /> in its own session state. Because not all XML Web services use session state and thus clients are not always required to use the <see cref="P:System.Web.Services.Protocols.HttpWebClientProtocol.CookieContainer" /> property of a client proxy, the documentation for the XML Web service should state whether session state is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether session state is enabled for an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -192,9 +284,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.WebMethodAttribute.MessageName" /> property can be used to alias method or property names. The most common use of the <see cref="P:System.Web.Services.WebMethodAttribute.MessageName" /> property will be to uniquely identify polymorphic methods. By default, <see cref="P:System.Web.Services.WebMethodAttribute.MessageName" /> is set to the name of the XML Web service method. Therefore, if an XML Web service contains two or more XML Web service methods with the same name, you can uniquely identify the individual XML Web service methods by setting the <see cref="P:System.Web.Services.WebMethodAttribute.MessageName" /> to a name unique within the XML Web service, without changing the name of the actual method name in code.</para>
+          <para>When data is passed to an XML Web service it is sent in a request and when it is returned it is sent in a response. Within the request and response, the name used for the XML Web service method is its <see cref="P:System.Web.Services.WebMethodAttribute.MessageName" /> property.</para>
+          <para>The message name associated with an XML Web service method must be unique within the XML Web service.</para>
+          <para>If a new XML Web serivce method with the same name but different parameters is added after clients are calling the original method, a different message name should be specified for the new method but the original message name should be left as is to ensure compatability with existing clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name used for the XML Web service method in the data passed to and returned from an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,9 +310,73 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.EnterpriseServices.TransactionOption" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XML Web service methods can only participate as the root object in a transaction, due to the stateless nature of the HTTP protocol. XML Web service methods can invoke COM objects that participate in the same transaction as the XML Web service method, if the COM object is marked to run within a transaction in the Component Services administrative tool. If an XML Web service method with a <see cref="P:System.Web.Services.WebMethodAttribute.TransactionOption" /> property of Required or RequiresNew invokes another XML Web service method with a <see cref="P:System.Web.Services.WebMethodAttribute.TransactionOption" /> property of Required or RequiresNew, each XML Web service method participates in its own transaction, because an XML Web service method can only act as the root object in a transaction.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Item </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Disabled </para>
+              </term>
+              <description>
+                <para>Indicates that the XML Web service method does not run within the scope of a transaction. When a request is processed, the XML Web service method is executed without a transaction.</para>
+                <para>[WebMethod(TransactionOption= TransactionOption.Disabled)] </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NotSupported </para>
+              </term>
+              <description>
+                <para>Indicates that the XML Web service method does not run within the scope of a transaction. When a request is processed, the XML Web service method is executed without a transaction.</para>
+                <para>[WebMethod(TransactionOption= TransactionOption.NotSupported)] </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Supported </para>
+              </term>
+              <description>
+                <para>Indicates that the XML Web service method does not run within the scope of transactions. When a request is processed, the XML Web service is created without a transaction.</para>
+                <para>[WebMethod(TransactionOption= TransactionOption.Supported)] </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Required </para>
+              </term>
+              <description>
+                <para>Indicates that the XML Web service method requires a transaction. Since XML Web service methods can only participate as the root object in a transaction, a new transaction will be created for the XML Web service method.</para>
+                <para>[WebMethod(TransactionOption= TransactionOption.Required)] </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>RequiresNew </para>
+              </term>
+              <description>
+                <para>Indicates that the XML Web service method requires a new transaction. When a request is processed, the XML Web service is created within a new transaction.</para>
+                <para>[WebMethod(TransactionOption= TransactionOption.RequiresNew)] </para>
+              </description>
+            </item>
+          </list>
+          <para>If an exception is thrown from or not caught by an XML Web service method, the transaction is automatically aborted. If no exceptions occur the transaction is automatically committed unless the method explicitly calls SetAbort.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the transaction support of an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

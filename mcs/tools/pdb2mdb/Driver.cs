@@ -82,7 +82,8 @@ namespace Pdb2Mdb {
 					(int) line.offset,
 					file.CompilationUnit.SourceFile,
 					is_hidden ? last_line : (int) line.lineBegin,
-					(int) line.colBegin, is_hidden);
+					(int) line.colBegin, is_hidden ? -1 : (int)line.lineEnd, is_hidden ? -1 : (int)line.colEnd,
+					is_hidden);
 				if (!is_hidden)
 					last_line = (int) line.lineBegin;
 			}

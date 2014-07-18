@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMITypeComp" FullName="System.Runtime.InteropServices.UCOMITypeComp">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMITypeComp" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMITypeComp" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about the ITypeComp interface, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.ITypeComp" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Bind">

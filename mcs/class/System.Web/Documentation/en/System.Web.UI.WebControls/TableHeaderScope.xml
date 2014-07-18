@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableHeaderScope" FullName="System.Web.UI.WebControls.TableHeaderScope">
   <TypeSignature Language="C#" Value="public enum TableHeaderScope" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TableHeaderScope" /> enumeration is used by the <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> and <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> classes to represent the scope of the header cell when it is rendered. The default Scope property for both of these classes is the <see cref="F:System.Web.UI.WebControls.TableHeaderScope.NotSet" /> value, in which case no HTML scope attribute is written for the header cell. The <see cref="P:System.Web.UI.WebControls.TableHeaderCell.Scope" /> property is used to make HTML tables more accessible by providing information about relationships between the cells and the headers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the HTML scope attribute for classes that represent header cells in a table. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Column">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.TableHeaderScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that represents a header cell of a table is rendered with the scope attribute set to "Column".</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.TableHeaderScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scope attribute is not rendered for the header cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.UI.WebControls.TableHeaderScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that represents a header cell of a table is rendered with the scope attribute set to "Row".</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

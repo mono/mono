@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceCollection" FullName="System.Web.Services.Description.ServiceCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ServiceCollection : System.Web.Services.Description.ServiceDescriptionBaseCollection" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Description.Service" /> class corresponds to the Web Services Description Language (WSDL) &lt; service &gt; element enclosed by the &lt; definitions &gt; root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Service" /> class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -28,10 +35,17 @@
         <Parameter Name="service" Type="System.Web.Services.Description.Service" />
       </Parameters>
       <Docs>
-        <param name="service">To be added: an object of type 'Service'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.Service" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <paramref name="service" /> parameter has been added.</para>
+        </returns>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Service" /> instance to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,10 +62,17 @@
         <Parameter Name="service" Type="System.Web.Services.Description.Service" />
       </Parameters>
       <Docs>
-        <param name="service">To be added: an object of type 'Service'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Service" /> instance is a member of the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="service" /> parameter is a member of the <see cref="T:System.Web.Services.Description.ServiceCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Service" /> for which to check collection membership. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +90,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Service []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire <see cref="T:System.Web.Services.Description.ServiceCollection" /> to a one-dimensional array of type <see cref="T:System.Web.Services.Description.Service" />, starting at the specified zero-based index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Description.Service" /> serving as the destination for the copy action. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to start placing the copied collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,10 +135,17 @@
         <Parameter Name="service" Type="System.Web.Services.Description.Service" />
       </Parameters>
       <Docs>
-        <param name="service">To be added: an object of type 'Service'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified <see cref="T:System.Web.Services.Description.Service" /> and returns the zero-based index of the first occurrence within the ServiceCollection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer.</para>
+        </returns>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Service" /> for which to search in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,10 +163,20 @@
         <Parameter Name="service" Type="System.Web.Services.Description.Service" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="service">To be added: an object of type 'Service'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the number of items in the collection already equals the collection's capacity, the capacity is doubled by automatically reallocating the internal array before the new element is inserted.</para>
+          <para>If the value of the <paramref name="index" /> parameter is equal to <see cref="P:System.Collections.CollectionBase.Count" />, the <paramref name="service" /> parameter is added to the end of the ServiceCollection.</para>
+          <para>The elements after the insertion point move down to accommodate the new element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.Service" /> instance to the <see cref="T:System.Web.Services.Description.ServiceCollection" /> at the specified zero-based index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to insert the <paramref name="service" /> parameter. </param>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Service" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,9 +233,17 @@
         <Parameter Name="service" Type="System.Web.Services.Description.Service" />
       </Parameters>
       <Docs>
-        <param name="service">To be added: an object of type 'Service'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs a linear search; therefore, the average execution time is proportional to <see cref="P:System.Collections.CollectionBase.Count" />.</para>
+          <para>The elements that follow the removed <see cref="T:System.Web.Services.Description.Service" /> move up to occupy the vacated spot.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Service" /> from the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</para>
+        </summary>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Service" /> to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

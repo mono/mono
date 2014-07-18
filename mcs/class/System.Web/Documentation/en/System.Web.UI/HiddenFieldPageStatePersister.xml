@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HiddenFieldPageStatePersister" FullName="System.Web.UI.HiddenFieldPageStatePersister">
   <TypeSignature Language="C#" Value="public class HiddenFieldPageStatePersister : System.Web.UI.PageStatePersister" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET pages can store <see cref="T:System.Web.UI.Page" /> state between the inherently stateless HTTP request and response required to process and serve any Web page. This state is called "view state". The default mechanism used to store view state for a page and its controls is in one or more &lt;hidden&gt; HTML fields included in the page that is served to a client from a Web server. The <see cref="T:System.Web.UI.Page" /> class can use the <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> class to do this work. <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> implements the <see cref="M:System.Web.UI.HiddenFieldPageStatePersister.Save" /> and <see cref="M:System.Web.UI.HiddenFieldPageStatePersister.Load" /> methods of the <see cref="T:System.Web.UI.PageStatePersister" /> class so that the <see cref="T:System.Web.UI.Page" /> can store state in a &lt;hidden&gt; HTML element named "__VIEWSTATE" on a Web client. When the client requests the same page from the Web server (a postback), the &lt;hidden&gt; element is parsed and converted to state information by ASP.NET.</para>
+      <para>If the <see cref="T:System.Web.UI.Page" /> instance that is requested has an associated <see cref="T:System.Web.UI.Adapters.PageAdapter" /> class, it retrieves the <see cref="T:System.Web.UI.PageStatePersister" /> object from this adapter using the <see cref="M:System.Web.UI.Adapters.PageAdapter.GetStatePersister" /> method. Adapters can override the <see cref="M:System.Web.UI.Adapters.PageAdapter.GetStatePersister" /> method to return a <see cref="T:System.Web.UI.PageStatePersister" /> object that stores page and control state in some way that a specific client supports. For example, the <see cref="T:System.Web.UI.SessionPageStatePersister" /> class stores page and controls' state on the Web server, instead of the client, to decrease the amount of information that must be sent and stored on a client that has potentially limited memory and bandwidth.</para>
+      <para>The maximum size of the "_VIEWSTATE" &lt;hidden&gt; HTML element can be set through the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> property or through the <see cref="P:System.Web.Configuration.PagesSection.MaxPageStateFieldLength" /> configuration setting. When this value is set and the length of the "_VIEWSTATE" element would exceed the maximum length, the content is divided into multiple "_VIEWSTATE" elements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores ASP.NET page view state on the Web client in a hidden HTML element. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +30,14 @@
         <Parameter Name="page" Type="System.Web.UI.Page" />
       </Parameters>
       <Docs>
-        <param name="page">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> class.</para>
+        </summary>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Page" /> that the view state persistence mechanism is created for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,8 +51,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> class implements the <see cref="M:System.Web.UI.HiddenFieldPageStatePersister.Load" /> method to load page and control state information from an incoming request to the Web server. The <see cref="T:System.Web.UI.ObjectStateFormatter" /> object accessed by the <see cref="P:System.Web.UI.PageStatePersister.StateFormatter" /> property is used to deserialize the data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes and loads persisted state information from an <see cref="T:System.Web.HttpRequest" /> object when a <see cref="T:System.Web.UI.Page" /> object initializes its control hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +72,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> implements the <see cref="M:System.Web.UI.HiddenFieldPageStatePersister.Save" /> method to persist page and control state to a client by writing it to a &lt;hidden&gt; HTML element in the outgoing response to the client. The <see cref="T:System.Web.UI.ObjectStateFormatter" /> object accessed by the <see cref="P:System.Web.UI.PageStatePersister.StateFormatter" /> property is used to deserialize the data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes any object state contained in the <see cref="P:System.Web.UI.PageStatePersister.ViewState" /> or <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> property and writes the state to the response stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

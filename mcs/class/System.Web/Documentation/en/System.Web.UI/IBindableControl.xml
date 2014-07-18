@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindableControl" FullName="System.Web.UI.IBindableControl">
   <TypeSignature Language="C#" Value="public interface IBindableControl" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method that enables field template controls to implement two-way data-binding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ExtractValues">
@@ -31,9 +35,13 @@
         <Parameter Name="dictionary" Type="System.Collections.Specialized.IOrderedDictionary" />
       </Parameters>
       <Docs>
-        <param name="dictionary">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a set of name/value pairs to implement two-way data-binding in field template controls.</para>
+        </summary>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dictionary that contains the name/value pairs. </param>
       </Docs>
     </Member>
   </Members>

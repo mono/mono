@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataType" FullName="System.ComponentModel.DataAnnotations.DataType">
   <TypeSignature Language="C#" Value="public enum DataType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DataType extends System.Enum" />
@@ -9,8 +10,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used to specify the type of data to associate with a data column or a parameter. You use the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> class to specify the data type you want to associate with the data field or parameter. You select the data type from this enumeration. </para>
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute lets you mark fields by using a type that is more specific than the database intrinsic types. For example, a string data field that contains e-mail addresses can be attributed with the <see cref="F:System.ComponentModel.DataAnnotations.DataType.EmailAddress" /> type. This information can be accessed by the field templates and modify how the data field is processed.</para>
+      <para>The following table lists the data types Dynamic Data provides.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an enumeration of the data types associated with data fields and parameters. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreditCard">
@@ -24,7 +33,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a credit card number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Currency">
@@ -38,7 +50,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a currency value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Custom">
@@ -52,7 +67,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a custom data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Date">
@@ -66,7 +84,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a date value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
@@ -80,7 +101,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an instant in time, expressed as a date and time of day.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Duration">
@@ -94,7 +118,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a continuous time during which an object exists.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EmailAddress">
@@ -108,7 +135,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an e-mail address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Html">
@@ -122,7 +152,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTML file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImageUrl">
@@ -136,7 +169,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a URL to an image.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultilineText">
@@ -150,7 +186,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents multi-line text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Password">
@@ -164,7 +203,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represent a password value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PhoneNumber">
@@ -178,7 +220,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a phone number value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostalCode">
@@ -192,7 +237,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a postal code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -206,7 +254,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents text that is displayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Time">
@@ -220,7 +271,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a time value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Upload">
@@ -234,7 +288,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents file upload data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Url">
@@ -248,7 +305,10 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a URL value.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

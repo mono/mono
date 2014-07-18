@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EnumerableQuery&lt;T&gt;" FullName="System.Linq.EnumerableQuery&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class EnumerableQuery&lt;T&gt; : System.Linq.EnumerableQuery, System.Collections.Generic.IEnumerable&lt;T&gt;, System.Linq.IOrderedQueryable&lt;T&gt;, System.Linq.IQueryable&lt;T&gt;, System.Linq.IQueryProvider" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EnumerableQuery`1&lt;T&gt; extends System.Linq.EnumerableQuery implements class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.IEnumerable, class System.Linq.IOrderedQueryable, class System.Linq.IOrderedQueryable`1&lt;!T&gt;, class System.Linq.IQueryable, class System.Linq.IQueryable`1&lt;!T&gt;, class System.Linq.IQueryProvider" />
@@ -27,8 +28,11 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection as an <see cref="T:System.Linq.IQueryable`1" /> data source.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -58,9 +62,13 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Linq.EnumerableQuery`1" /> class and associates the instance with an expression tree.</para>
+        </summary>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to associate with the new instance.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator">
@@ -92,9 +100,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can iterate through the associated <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection, or, if it is null, through the collection that results from rewriting the associated expression tree as a query on an <see cref="T:System.Collections.Generic.IEnumerable`1" /> data source and executing it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the associated data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryable.ElementType">
@@ -108,9 +122,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the data in the collection that this instance represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryable.Expression">
@@ -124,9 +141,12 @@
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expression tree that is associated with or that represents this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryable.Provider">
@@ -140,9 +160,12 @@
         <ReturnType>System.Linq.IQueryProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the query provider that is associated with this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryProvider.CreateQuery">
@@ -159,10 +182,17 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new <see cref="T:System.Linq.EnumerableQuery`1" /> object and associates it with a specified expression tree that represents an <see cref="T:System.Linq.IQueryable" /> collection of data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.EnumerableQuery`1" /> object that is associated with <paramref name="expression" />.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree that represents an <see cref="T:System.Linq.IQueryable" /> collection of data.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryProvider.CreateQuery&lt;TElem&gt;">
@@ -183,10 +213,17 @@
       </Parameters>
       <Docs>
         <typeparam name="TElem">To be added.</typeparam>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new <see cref="T:System.Linq.EnumerableQuery`1" /> object and associates it with a specified expression tree that represents an <see cref="T:System.Linq.IQueryable`1" /> collection of data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An EnumerableQuery object that is associated with <paramref name="expression" />.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to execute.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryProvider.Execute">
@@ -203,10 +240,17 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes an expression after rewriting it to call <see cref="T:System.Linq.Enumerable" /> methods instead of <see cref="T:System.Linq.Queryable" /> methods on any enumerable data sources that cannot be queried by <see cref="T:System.Linq.Queryable" /> methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that results from executing <paramref name="expression" />.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to execute.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.IQueryProvider.Execute&lt;TResult&gt;">
@@ -227,10 +271,17 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes an expression after rewriting it to call <see cref="T:System.Linq.Enumerable" /> methods instead of <see cref="T:System.Linq.Queryable" /> methods on any enumerable data sources that cannot be queried by <see cref="T:System.Linq.Queryable" /> methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that results from executing <paramref name="expression" />.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to execute.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -245,9 +296,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a textual representation of the enumerable collection or, if it is null, of the expression tree that is associated with this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A textual representation of the enumerable collection or, if it is null, of the expression tree that is associated with this instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceView" FullName="System.Web.UI.WebControls.ObjectDataSourceView">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceView : System.Web.UI.DataSourceView, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -13,9 +14,114 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class is intended primarily to be used by data-bound controls, and not as a programmable object in page code.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the data functionality for the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control, including the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary)" />, and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Insert(System.Collections.IDictionary)" /> operations, sorting, filtering, and management of settings kept in view state. </para>
+      <para>A <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object is created for each instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> class at run time. Calls to data operations of the instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> class are handled by the instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object. Page developers do not access the  instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class directly. Control developers can create custom data controls by extending the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> and <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> classes.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class performs data operations by calling methods on business or data objects using reflection. At run time, the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control creates an instance of the type that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property, and then calls the appropriate method for the data operation. The instantiated object is not cached in memory by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" />. The object is created and destroyed for every data method call. If the method is static (Shared in Visual Basic), an instance is not created but the data operation method is still called.  </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> is not directly exposed to page developers by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control. Instead, the properties and methods of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> are accessed through the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" />. For example, the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" /> of <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> property is set by setting the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" />.</para>
+      <format type="text/html">
+        <h2>Retrieving Data</h2>
+      </format>
+      <para>The most basic operation that a data source view performs is data retrieval from the underlying data storage using the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method, which retrieves an <see cref="T:System.Collections.IEnumerable" /> collection of data items. The following data retrieval methods, properties, and events are implemented by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object and exposed directly by its <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to page developers and other callers: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" /> property </para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectParameters" /> property </para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" /> event</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Updating Data</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object supports data updates by calling a business or data object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property. Data-bound controls that automatically perform updates, such as the <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" /> controls, pass their parameters in an <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and the view object merges these parameters with any parameters that are found in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateParameters" /> collection. </para>
+      <para>The following update methods, properties, and events are implemented by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and exposed directly by its <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to page developers and other callers: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Update" /> method</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateMethod" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateParameters" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" /> event</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" /> event</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Inserting Data</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object supports inserting new rows of data by calling a business or data object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property. Data-bound controls that automatically perform inserts, such as the <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, pass their parameters in an <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and the view object merges these parameters with any parameters that are found in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertParameters" /> collection. </para>
+      <para>The following insert methods, properties, and events are implemented by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and exposed directly by its <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to page developers and other callers: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Insert" /> method</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertMethod" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertParameters" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" /> event</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" /> event</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Deleting Data</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object supports deleting data by calling a business or data object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property. Data-bound controls that automatically perform deletes, such as the <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, pass their parameters in an <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and the view object merges these parameters with any parameters that are found in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteParameters" /> collection. The following delete methods, properties, and events are implemented by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and exposed directly by its <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to page developers and other callers: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Delete" /> method</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteParameters" /> property</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" /> event</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> event</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Filtering and Sorting Data</h2>
+      </format>
+      <para>Data retrieval is more powerful when you can filter the data dynamically. Filtering is supported only by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control if the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataTable" /> or <see cref="T:System.Data.DataSet" /> object. You can use the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> and <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterParameters" /> properties to apply dynamic filtering to data retrieval. These properties are implemented by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object and exposed directly by its <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to data-bound controls and other callers.</para>
+      <para>You can sort the data that you retrieve with the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> by ordering the data in memory after it is retrieved. Sorting is supported only by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control if the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataTable" /> or <see cref="T:System.Data.DataSet" />. The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanSort" /> property always returns true, because the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> cannot determine what type is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method without calling the method. The <see cref="P:System.Web.UI.DataSourceSelectArguments.SortExpression" /> property syntax is the same as for a <see cref="P:System.Data.DataView.Sort" /> property.</para>
+      <format type="text/html">
+        <h2>Tracking View State</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> implements the <see cref="T:System.Web.UI.IStateManager" /> interface and uses view state to track its state across page requests. Implementation of the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.LoadViewState(System.Object)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.SaveViewState" />, and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.TrackViewState" /> methods are provided to enable view state tracking for the control. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control and provides an interface for data-bound controls to perform data operations with business and data objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,12 +133,22 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> constructor is called by the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.GetView(System.String)" /> method to return a new instance of a data source view with the specified <paramref name="viewName" /> parameter. The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control is associated with only one <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> at any time, and always names the view DefaultView, although this naming restriction is imposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control, not the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" />. You can override the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.GetView(System.String)" /> method to support views with a different naming convention.</para>
+          <para>The <see cref="T:System.Web.HttpContext" /> object that is passed by <paramref name="context" /> is used by the data source view to access parameter objects, such as <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterParameters" /> and <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> is associated with. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique name for the data source view, within the scope of the data source control that owns it.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +161,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanDelete" /> property returns true, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property is set. A delete operation could still fail, if all the data properties are not set or are not set correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports the delete operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +183,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanInsert" /> property returns true, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property is set. A insert operation could still fail, if all the data properties are not set or are not set correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports the insert operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +205,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanPage" /> property indicates whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object supports paging. For information on how paging is supported by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" />, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports paging through the retrieved data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +227,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanRetrieveTotalRowCount" /> property returns true, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> property is set. The method that returns the count should return the total number of rows that can be paged, not the number of rows in a page. Data-bound controls use the total number of rows that can be paged to determine how to render paging controls. For example, how many numeric pager buttons to render in a <see cref="T:System.Web.UI.WebControls.GridView" /> control pager. For more information on paging support, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.EnablePaging" />.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanRetrieveTotalRowCount" /> property is checked during a call to the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to ensure that the data source control supports all capabilities requested by setting the various <see cref="T:System.Web.UI.DataSourceSelectArguments" /> properties. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports retrieving the total number of data rows, in addition to the set of data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,10 +250,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control only supports sorting data when the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method returns a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataView" />, or <see cref="T:System.Data.DataTable" /> object, the view object cannot determine whether sorting is supported until the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method is called and returns. For this reason, the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanSort" /> property always returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports a sorted view on the underlying data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +272,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanUpdate" /> property returns true, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property is set. A update operation could still fail, if all the data properties are not set or are not set correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object that is associated with the current <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports the update operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,10 +294,18 @@
         <ReturnType>System.Web.UI.ConflictOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property determines whether parameters for old and new values are applied to the Update method. For example, if the method that is specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property returns a <see cref="T:System.Data.DataTable" /> object with the columns Name and Number, and the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.OverwriteChanges" /> value, parameters are created for Name and Number for the Update method. If the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, parameters are created with the names Name, Number, original_Name, and original_Name. (The exact name of the parameters for the original values depends on the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" />.) The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> then determines if the method that is specified in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property has parameters that match. </para>
+          <para>Concurrency control is a technique data stores use to control how data is read and changed in the store when multiple clients are accessing and manipulating the same data. For example, one client reads data and presents it to a user, while another client reads the same data, and presents it to a different user. If both users update the data and submit it to the data storage, some unexpected result might occur, because both clients might update different values for the same data. This is considered a conflict. By setting the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, the Update method can then compare the old and new values to the original data source to detect conflicts and handle them, as necessary.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines how the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs updates and deletes when data in a row in the underlying data storage changes during the time of the operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,10 +318,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not converting null to the <see cref="F:System.DBNull.Value" /> value can result in errors at run time. Use the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConvertNullToDBNull" /> property to indicate whether the <see cref="T:System.Web.UI.WebControls.Parameter" /> values that are passed to an update, insert, or a delete operation are automatically converted from null to the <see cref="F:System.DBNull.Value" /> value. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.ConvertNullToDBNull" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether <see cref="T:System.Web.UI.WebControls.Parameter" /> values that are passed to an update, insert, or delete operation are automatically converted from null to the <see cref="F:System.DBNull.Value" /> value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,10 +340,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of specifying several parameters that are passed to the Select, Update, Insert, and Delete methods, you can create one object that aggregates several items. This one object is passed to the methods, instead of several parameters. For more information see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DataObjectTypeName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a class that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control uses for a parameter in a data operation. The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control uses the specified class instead of the <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that are in the various parameters collections.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -193,12 +366,24 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <param name="oldValues">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is -1, which means that an unknown number of rows were deleted. To return a different value, set the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.AffectedRows" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> event handler. The number of affected rows is typically returned by the Delete method for the business object, and that value is available from the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> parameter of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> event handler.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary)" /> method calls the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteDelete(System.Collections.IDictionary,System.Collections.IDictionary)" /> method, passing the <paramref name="keys" /> and <paramref name="oldValues" /> collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a delete operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property using the specified <paramref name="keys" /> and <paramref name="oldValues" /> collections.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows deleted; otherwise, -1, if the number is not known.</para>
+        </returns>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of the key values used to identify the item to delete. These parameters are used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property to perform the delete operation. If there are no parameters associated with the method, pass null.</param>
+        <param name="oldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> that contains the additional non-key values used to match the item in the data source. Row values are passed to the method only if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> field.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,9 +396,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleted" /> event to examine the values of a return value and output parameters or to determine whether an exception was thrown after a <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" /> operation has completed. The return value, output parameters, and exception handling properties are available from the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" /> operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -226,10 +418,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property can be an instance method or a static (Shared in Visual Basic) method. If it is an instance method, the business object is created and destroyed each time the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property is called. You can handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event to work with the business object before the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property is called. You can also handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event that is raised after the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property is called. If the method is a static (Shared in Visual Basic) method, the business object is never created and you cannot handle these events.</para>
+          <para>If the business object that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control works with implements more than one method or function with the same name (method overloads), the data source control attempts to invoke the correct one according to a set of conditions, including the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteParameters" /> collection. If the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteParameters" /> collection do not match those of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> method signature, the data source throws an exception.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property is stored in view state.</para>
+          <para>For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method or function that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object invokes to delete data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -242,10 +443,17 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The names and types of the parameters that are contained in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteParameters" /> collection must match the names and types of the parameters that are in the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property signature. The parameter names are affected by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> property and are case sensitive. When working with data-bound controls that supply parameters, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control automatically merges any parameters that are explicitly specified in the collection with those parameters that are provided by the data-bound control. </para>
+          <para>For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,9 +466,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" /> operation. The parameters are available as an <see cref="T:System.Collections.IDictionary" /> collection that is accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> object.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" /> operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,10 +488,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paging by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> control is handled by setting the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" />, <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.StartRowIndexParameterName" />, <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.MaximumRowsParameterName" />, and <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> properties of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> and defining a Select method in the business object with the proper parameters. When the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" /> property is set to true, the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection includes two additional parameters for the first row requested and the number of rows requested. These two parameters are named as defined by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.StartRowIndexParameterName" /> and <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.MaximumRowsParameterName" /> properties. The Select method should return the requested number of rows starting at the specified index. Because the data might not divide evenly by the page size, the last page might contain fewer rows. Thus, the number of rows requested is actually the maximum number of rows that are returned. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.CanRetrieveTotalRowCount" /> property is checked during a call to the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to ensure that the data source control supports all capabilities requested by setting the various <see cref="T:System.Web.UI.DataSourceSelectArguments" /> properties. </para>
+          <para>When paging is enabled on the associated data-bound control, the data-bound control calls the Select method with the start index and number of rows that are required. Additionally, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> property is set, the data-bound control calls the method before rendering the pager controls. For example, if a <see cref="T:System.Web.UI.WebControls.GridView" /> control has paging enabled with a page size of 5, and the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> method returns 20, only 4 pages are displayed in the pager.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the data source control supports paging through the set of data that it retrieves.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -293,12 +517,25 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <param name="oldValues">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteDelete(System.Collections.IDictionary,System.Collections.IDictionary)" /> method to delete data from an underlying data store using a business object. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteDelete(System.Collections.IDictionary,System.Collections.IDictionary)" /> method directly; instead, use the publicly exposed <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Delete" /> method.</para>
+          <para>Before the delete operation is performed, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleting" /> event. You can handle this event to examine the values of the parameters and perform any preprocessing before the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary)" /> method is called.</para>
+          <para>To perform a delete operation, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> uses reflection to call the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property and any associated parameters in the <paramref name="keys" /> and <paramref name="oldValues" /> collections, and then executes it. After the operation completes, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleted" /> event. You can handle this event to examine any return values and error codes, and to perform any post-processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a delete operation using the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> method and the specified <paramref name="keys" /> and <paramref name="oldValues" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows deleted; otherwise, -1, if the number is not known. For more information, see <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" />.</para>
+        </returns>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property to perform the delete operation. If there are no parameters associated with the method, pass null.</param>
+        <param name="oldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> that contains row values that are evaluated, only if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the  <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> field.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -314,11 +551,24 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteInsert(System.Collections.IDictionary)" /> method to insert data into an underlying data store using a business object. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteInsert(System.Collections.IDictionary)" /> method directly; instead, use the publicly exposed <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" /> method.</para>
+          <para>Before the insert is performed, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserting" /> event. You can handle this event to examine the values of the parameters and perform any preprocessing before the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Insert(System.Collections.IDictionary)" /> method is called.</para>
+          <para>To perform an insert operation, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> control uses reflection to call the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property and any associated parameters that are in the <paramref name="values" /> collection, and then executes it. After the operation completes, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserted" /> event. You can handle this event to examine any return values, error codes, and perform any post-processing.</para>
+          <para>For more information on returning the number of rows inserted, see <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Insert(System.Collections.IDictionary)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an insert operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property using the specified <paramref name="values" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows inserted; otherwise, -1, if the number is not known. For more information, see <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" />.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property to perform the insert operation. If there are no parameters associated with the method, pass null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -337,10 +587,78 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve data using a business object. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method directly; instead, use the publicly exposed <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Select" /> method.</para>
+          <para>The specified method can have any method signature, but must return one of the types for the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control that are listed in the following table to call it successfully.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return type</para>
+                </term>
+                <description>
+                  <para>Action</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Collections.IEnumerable" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Collections.IEnumerable" /> is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Data.DataTable" />
+                </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Data.DataView" /> is created using the <see cref="T:System.Data.DataTable" /> and returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Data.DataSet" />
+                </para>
+              </term>
+              <description>
+                <para>The first <see cref="T:System.Data.DataTable" /> of the <see cref="T:System.Data.DataSet" /> is extracted and a <see cref="T:System.Data.DataView" /> is created and returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Object" />
+                </para>
+              </term>
+              <description>
+                <para>The object is wrapped in a one-element <see cref="T:System.Collections.IEnumerable" /> and returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+              </description>
+            </item>
+          </list>
+          <para>Before the data retrieval is performed, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelecting(System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selecting" /> event. You can handle this event to examine the values of the parameters and to perform any preprocessing before an operation.</para>
+          <para>To perform a select operation, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> control uses reflection to call the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property and any associated parameters that are in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection, and then executes it. After the operation completes, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelected(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selected" /> event. You can handle this event to examine any return values and error codes, and to perform any post-processing.</para>
+          <para>If the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataSet" /> object and caching is enabled, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> retrieves data from and saves data to the cache during the operation. The cache is created, discarded, or refreshed based on the caching behavior that is specified by the combination of the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.CacheDuration" /> and <see cref="P:System.Web.UI.WebControls.ObjectDataSource.CacheExpirationPolicy" /> properties.</para>
+          <para>If the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataSet" /> object and a <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> property has been specified, it is evaluated along with any supplied <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterParameters" /> properties and the resulting filter is applied to the list of data during the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Select" /> operation.</para>
+          <para>For information on returning the number of rows selected, see <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the object that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property and passing any values in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
     </Member>
     <Member MemberName="ExecuteUpdate">
@@ -355,13 +673,28 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <param name="values">To be added.</param>
-        <param name="oldValues">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteUpdate(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" /> method to update data using a business object. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteUpdate(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" /> method directly; instead, use the publicly exposed <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Update" /> method.</para>
+          <para>The values that are contained in the <paramref name="keys" /> and <paramref name="values" /> collections are evaluated and merged with any values that are contained by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateParameters" /> collection. If the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, the values that are contained in the <paramref name="oldValues" /> collection are formatted with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> property and are also merged. </para>
+          <para>Before the update operation is performed, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdating(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updating" /> event. You can handle this event to examine the values of the parameters and to perform any preprocessing before an update. To perform an update operation, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> uses reflection to call the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property and any associated parameters in the <paramref name="keys" /> collection, and then executes it. After the operation completes, the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdated(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updated" /> event. You can handle this event to examine any return values, error codes, and perform any post-processing.</para>
+          <para>For more information on returning the number of rows updated, see <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an update operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property and using any parameters that are supplied in the <paramref name="keys" />, <paramref name="values" />, or <paramref name="oldValues" /> collections.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows updated; or -1, if the number is not known. For more information, see <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Update" />.</para>
+        </returns>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of primary keys to use with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property to perform the update database operation. If there are no keys associated with the method, pass null.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of values to be used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> to perform the update database operation. If there are no parameters associated with the method, pass null. </param>
+        <param name="oldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> that represents the original values in the underlying data store. If there are no parameters associated with the query, pass null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -374,10 +707,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports filtering data only when the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataView" />, or <see cref="T:System.Data.DataTable" /> object.</para>
+          <para>The syntax that is used for the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property is a format string-style expression. The filter expression syntax is the same syntax that is accepted by the <see cref="P:System.Data.DataView.RowFilter" /> property because the filter expression is applied to the <see cref="P:System.Data.DataView.RowFilter" /> property of the <see cref="T:System.Data.DataView" /> object that is returned from executing the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method. (For more information, see <see cref="P:System.Data.DataColumn.Expression" />.) If you add parameters to the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterParameters" /> collection, you can also include format string placeholders, for example "{0}", in the expression to substitute for parameter values. The placeholders are replaced according to the index of the parameter in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterParameters" /> collection.</para>
+          <para>You can include parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" />. If the type of the parameter is a string or character type, enclose the parameter in single quotation marks. Quotation marks are not needed if the parameter is a numeric type.The <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterParameters" /> collection contains the parameters that are evaluated for the placeholders found in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" />.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> property is stored in view state.</para>
+          <block subset="none" type="note">
+            <para>It is recommended that you validate any filter parameter value that you receive from the client. The runtime simply substitutes the parameter value into the filter expression and applies it to the <see cref="T:System.Data.DataView" /> object that is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method. If you are using the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property as a security measure to limit the number of items that are returned, you must validate the parameter values before the filtering occurs.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a filtering expression that is applied when the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -390,9 +735,19 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceFilteringEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Filtering" /> event to perform validation operations on filter parameter values before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs a filter operation. You can cancel the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Select" /> operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> object to true. The event is raised, only if the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property is set.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <block subset="none" type="note">
+            <para>You should validate any filter parameter value that you receive from the client. The runtime simply substitutes the parameter value into the filter expression and applies it to the <see cref="T:System.Data.DataView" /> object that is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method. If you are using the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property as a security measure to limit the number of items that are returned, you must validate the parameter values before the filtering occurs.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a filter operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -405,10 +760,17 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control supports filtering data only when the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method returns a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataTable" />, or <see cref="T:System.Data.DataView" /> object.</para>
+          <para>The parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterParameters" /> collection are associated with any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> property. The parameter placeholders that are specified in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> property are matched to parameter objects in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterParameters" /> collection when the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of parameters that are associated with any parameter placeholders that are in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.FilterExpression" /> string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -424,11 +786,22 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default return value is -1, which means that an unknown number of rows were inserted. To return a different value, set the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.AffectedRows" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" /> event. The number of affected rows is typically returned by the Insert method for the business object, and that value is available from the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" /> event.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Insert(System.Collections.IDictionary)" /> method calls the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteInsert(System.Collections.IDictionary)" /> method, passing the <paramref name="values" /> collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an insert operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property using the specified <paramref name="values" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows inserted; otherwise, -1, if the number is not known.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> collection of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property to perform the insert operation. If there are no parameters associated with the method, pass null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -441,9 +814,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserted" /> event to examine the values of a return value and output parameters or to determine whether an exception was thrown after an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" /> operation has completed. The return value, output parameters, and exception handling properties are available from the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" /> operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -456,9 +836,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" /> operation. The parameters are available as an <see cref="T:System.Collections.IDictionary" /> collection that is accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> object.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" /> operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -471,10 +858,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property can be an instance method or a static (Shared in Visual Basic) method. If it is an instance method, the business object is created and destroyed each time the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property is called. You can handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event to work with the business object before the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property is called. You can also handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event that is raised after the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property is called. (Dispose is called, only if the business object implements the <see cref="T:System.IDisposable" /> interface.) If the method is a static (Shared in Visual Basic) method, the business object is never created and you cannot handle these events.</para>
+          <para>If the business object that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object implements more than one method or function with the same name (method overloads), the data source control attempts to invoke the correct one according to a set of conditions, including the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertParameters" /> collection. If the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertParameters" /> collection do not match those of the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property signature, the data source throws an exception.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property is stored in view state.</para>
+          <para>For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method or function that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object invokes to insert data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -487,10 +883,16 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The names and types of the parameters that are contained in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertParameters" /> collection must match the names and types of the parameters that are in the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property signature. When working with data-bound controls that supply parameters, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control automatically merges any parameters that are explicitly specified in the collection with those parameters that are provided by the data-bound control. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -503,10 +905,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -522,10 +927,18 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code.  However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.LoadViewState(System.Object)" /> method restores view-state information for the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.SaveViewState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores previously saved view state for the data source view.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> state to restore.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -538,10 +951,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.MaximumRowsParameterName" /> property is used to support data source paging. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" />.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.MaximumRowsParameterName" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the data retrieval method parameter that is used to indicate the number of records to retrieve for data source paging support.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -554,9 +974,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event to call other methods on the business object, set properties, or to perform other initialization that is specific to the business object before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control calls the Data methods for the business object. A reference to the object is accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceEventArgs.ObjectInstance" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> object.</para>
+          <para>If the method that is identified to perform the data operation is static (Shared in Visual Basic), the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" /> and <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> events are never raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object creates an instance of the type that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -569,9 +996,17 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control automatically calls the default constructor of a business object to create and instance of it using reflection. Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" /> event to explicitly call another constructor and to set the instance of the object that results to the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceEventArgs.ObjectInstance" /> property of the associated <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> object.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>If the method that is identified to perform the data operation is static (Shared in Visual Basic), the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" /> and <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> events are never raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object creates an instance of the type that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -584,9 +1019,17 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceDisposingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event is raised before the instance of the  business object is discarded. If the business object implements the <see cref="T:System.IDisposable" /> interface, the <see cref="M:System.IDisposable.Dispose" /> method is called after The <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event is raised.</para>
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event to call other methods on the object and set properties or to perform clean-up that is specific to the object before the object is destroyed. A reference to the object is accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceEventArgs.ObjectInstance" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> object.</para>
+          <para>If the method that is identified to perform the data operation is static (Shared in Visual Basic), the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event is never raised. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object discards an instance of an object that it has created. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -599,10 +1042,26 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> format string is applied to primary keys only, such as those that are identified with the DataKeyNames property of a data-bound control or in delete and update scenarios, where the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value and the set of original values that are passed to the corresponding data method. </para>
+          <para>Two common scenarios where you might change the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> property are as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>To differentiate between old and new values in updates. When the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, parameters for both the original and new values are added to the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateParameters" /> collection. Without the formatting string, two parameters with the same name would be created for each data field. By changing the name of the original value parameter, you can compare the data to the original data source to detect conflicts and compare key values.</para>
+            </item>
+            <item>
+              <para>Some visual designers implement a particular naming scheme for original values and keys.</para>
+            </item>
+          </list>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a format string to apply to the names of the parameters for original values that are passed to the Delete or Update methods.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -618,10 +1077,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleted" /> event after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object has completed a delete operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -637,10 +1104,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleting" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object attempts a delete operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -656,10 +1131,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnFiltering(System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Filtering" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object attempts a filtering operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -675,10 +1158,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserted" /> event after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object has completed an insert operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -694,10 +1185,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreating(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> method is called, only if the method that is identified to perform the data operation is not static (Shared in Visual Basic).</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserting" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object attempts an insert operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -713,10 +1213,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreated(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> method is called, only if the method that is identified to perform the data operation is not static (Shared in Visual Basic). </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" />.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreated(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> creates an instance of the object that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -732,10 +1241,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreating(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object creates an instance of a business object to perform a data operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -751,10 +1268,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectDisposing(System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs)" /> is called when the instance of an object that was created to perform a data operation is discarded. The Dispose method is called, only if the type that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property implements the <see cref="T:System.IDisposable" /> interface. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectDisposing(System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object discards an instantiated type. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -770,10 +1296,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelected(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selected" /> event after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object has completed a data retrieval operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -789,10 +1323,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelecting(System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selecting" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object attempts a data retrieval operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -808,10 +1350,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdated(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updated" /> event after the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object has completed an update operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -827,10 +1377,18 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdating(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updating" /> event before the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object attempts an update operation.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -844,10 +1402,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.SaveViewState" /> method is primarily used by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the <see cref="P:System.Web.UI.Control.ViewState" /> property for the server control, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. The <see cref="P:System.Web.UI.Control.ViewState" /> value is then persisted to a string object after the save-state stage of the server control life cycle.</para>
+          <para>When view state is saved, view state contents are returned to the client as a variable that is stored in an HTML Hidden element. When you author custom server controls, you can improve efficiency by overriding the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.SaveViewState" /> method and modifying the ViewState property for your server control. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the view state for the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object since the time when the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> view state; otherwise null, if there is no view state associated with the object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -863,11 +1432,21 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method calls the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> passing the <paramref name="arguments" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the object that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property and passing any values in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" />.</para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -880,10 +1459,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> identifies a business object method that is used to retrieve a total row count to support data source paging. The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> property is evaluated, only if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" /> property is set to true. For information on how paging is supported by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" />, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" />.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectCountMethod" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method or function that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> control invokes to retrieve a row count.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -896,9 +1482,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selected" /> event to examine the values of a return value and output parameters or to determine whether an exception was thrown after a data retrieval operation has completed. The return value, output parameters, and exception handling properties are available from the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a data retrieval operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -911,9 +1504,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selecting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs the data retrieval operation. The parameters are available as an <see cref="T:System.Collections.IDictionary" /> collection that is accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> object.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a data retrieval operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -926,10 +1526,71 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified method can have any method signature but must return one of the types listed in the following table in order for the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to call it successfully</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return type</para>
+                </term>
+                <description>
+                  <para>Action</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Collections.IEnumerable" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Collections.IEnumerable" /> is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Data.DataTable" />
+                </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Data.DataView" /> is created using the <see cref="T:System.Data.DataTable" /> and returned by the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Select" /> method.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Data.DataSet" />
+                </para>
+              </term>
+              <description>
+                <para>The first <see cref="T:System.Data.DataTable" /> of the <see cref="T:System.Data.DataSet" /> is extracted and a <see cref="T:System.Data.DataView" /> is created and returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Object" />
+                </para>
+              </term>
+              <description>
+                <para>The object is wrapped in a one-element <see cref="T:System.Collections.IEnumerable" /> and returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+              </description>
+            </item>
+          </list>
+          <para>The method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property can be an instance method or a static (Shared in Visual Basic) method. If it is an instance method, the business object is created and destroyed each time the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> method is called. You can handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event to work with the business object before the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property is called. You can also handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event that is raised after the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property is called. (Dispose is called only if the business object implements the <see cref="T:System.IDisposable" /> interface.) If the method is a static (Shared in Visual Basic) method, the business object is never created and you cannot handle these events.</para>
+          <para>If the business object that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control works with implements more than one method or function with the same name (method overloads), the data source control attempts to invoke the correct one according to a set of conditions, including the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection. If the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection do not match those of the signature of the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property, the data source throws an exception.</para>
+          <para>For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method or function that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> control invokes to retrieve data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -942,10 +1603,16 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The names and types of the parameters that are contained in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection must match the names and types of the parameters that are in the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property signature. When working with data-bound controls that supply parameters, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control automatically merges any parameters that are explicitly specified in the collection with those parameters that are provided by the data-bound control. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection containing the parameters that are used by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -958,10 +1625,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SortParameterName" /> property is used to support data source sorting. When a <see cref="P:System.Web.UI.DataSourceSelectArguments.SortExpression" /> property is set on the <see cref="T:System.Web.UI.DataSourceSelectArguments" /> object and passed to the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method, the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SortParameterName" /> property identifies the parameter name of the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> business object property that accepts the sort expression value.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SortParameterName" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the data retrieval method parameter that is used to specify a sort expression for data source sorting support.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -974,10 +1648,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.StartRowIndexParameterName" /> property must be set to enable paging. For information on how paging is supported by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.EnablePaging" />.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.StartRowIndexParameterName" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the data retrieval method parameter that is used to indicate the integer index of the first record to retrieve from the results set for data source paging support.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -993,9 +1674,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> instance is cast to the <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IStateManager.IsTrackingViewState" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -1011,9 +1698,16 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IStateManager.LoadViewState(System.Object)" />.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> state to restore.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -1027,9 +1721,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IStateManager.SaveViewState" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> view state; otherwise, null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -1043,8 +1746,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IStateManager.TrackViewState" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TrackViewState">
@@ -1055,9 +1764,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.TrackViewState" /> method is primarily used by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object to track changes to its view state so that the changes can be stored in the <see cref="P:System.Web.UI.Control.ViewState" /> object for the control and persisted across requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1070,10 +1785,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an instance of the object that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control binds to, the control uses reflection to load the type that is identified by the type name at run time. Therefore, the value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property can be a partially qualified type for code that is located in the Bin or App_Code directory or a fully qualified type name for code that is registered in the global assembly cache. If you use the global assembly cache, you must add the appropriate reference to the assemblies section of the Machine.config or Web.config configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the class that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1091,13 +1812,26 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <param name="values">To be added.</param>
-        <param name="oldValues">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default return value is -1, which means that an unknown number of rows were updated. To return a different value, set the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.AffectedRows" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" /> event. The number of affected rows is typically returned by the Update method for the business object, and that value is available from the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />  parameter of the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" /> event.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" /> method calls the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteUpdate(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)" /> method, passing the <paramref name="keys" />, <paramref name="values" />, and <paramref name="oldValues" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an update operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property and using any parameters that are supplied in the <paramref name="keys" />, <paramref name="values" />, or <paramref name="oldValues" /> collections.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows updated; otherwise, -1, if the number is not known.</para>
+        </returns>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of the key values used to identify the item to update. These parameters are used with the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property to perform the update operation. If there are no parameters associated with the method, pass null.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of new values to apply to the data source. These parameters are used with the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property to perform the update database operation. If there are no parameters associated with the method, pass null. </param>
+        <param name="oldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> that contains the additional non-key values used to match the item in the data source. Row values are passed to the delete method, only if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> field.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1110,9 +1844,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updated" /> event to examine the values of a return value and output parameters or to determine whether an exception was thrown after an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Update" /> operation has completed. The return value, output parameters, and exception handling properties are available from the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Update" /> operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1125,10 +1866,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object assumes that the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property performs updates one at a time, rather than in a batch.</para>
+          <para>The method can be an instance method or a static (Shared in Visual Basic) method. If it is an instance method, the business object is created and destroyed each time the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property is called. You can handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreated" /> event to work with the business object before the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property is called. You can also handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectDisposing" /> event that is raised after the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> method is called. (Dispose is called, only if the business object implements the <see cref="T:System.IDisposable" /> interface.) If the method is a static (Shared in Visual Basic) method, the business object is never created and you cannot handle these events.</para>
+          <para>If the business object that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object works with implements more than one method or function with the same name (method overloads), the data source control attempts to invoke the correct one according to a set of conditions, including the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateParameters" /> collection. If the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateParameters" /> collection do not match those of the signature of the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property, the data source throws an exception.</para>
+          <para>For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateMethod" />.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method or function that the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object invokes to update data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1141,10 +1892,16 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The names and types of the parameters that are contained in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateParameters" /> collection must match the names and types of the parameters that are in the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property signature. The parameter names are affected by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.OldValuesParameterFormatString" /> property and are case sensitive. When working with data-bound controls that supply parameters, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />, the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control automatically merges any parameters that are explicitly specified in the collection with those parameters that are provided by the data-bound control. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection containing the parameters that are used by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1157,9 +1914,16 @@
         <ReturnType>System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updating" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs the <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Update" /> operation. The parameters are available as an <see cref="T:System.Collections.IDictionary" /> collection, accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property, which is exposed by the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> object.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Update" /> operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

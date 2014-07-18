@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SiteMapNode" FullName="System.Web.SiteMapNode">
   <TypeSignature Language="C#" Value="public class SiteMapNode : ICloneable, System.Web.UI.IHierarchyData, System.Web.UI.INavigateUIData" />
   <AssemblyInfo>
@@ -19,9 +20,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.SiteMapNode" /> object represents a Web site page in a site map structure. <see cref="T:System.Web.SiteMapNode" /> objects are loaded by the static <see cref="T:System.Web.SiteMap" /> class at run time using one or more site map providers to load site map data from persistent storage into memory. <see cref="T:System.Web.SiteMapNode" /> objects are wrapped by the <see cref="T:System.Web.UI.WebControls.SiteMapNodeItem" /> class for use by Web server controls, such as the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control.</para>
+      <para>The <see cref="T:System.Web.SiteMapNode" /> class includes several properties that are used to describe a single page in a Web site, including properties that describe a page, such as the <see cref="P:System.Web.SiteMapNode.Url" />, <see cref="P:System.Web.SiteMapNode.Title" />, and <see cref="P:System.Web.SiteMapNode.Description" /> properties. Whereas the <see cref="P:System.Web.SiteMapNode.Url" /> property is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default site map provider for ASP.NET, as a lookup key in the internal collections that the provider uses to track nodes, the <see cref="T:System.Web.SiteMapNode" /> class supports a basic <see cref="P:System.Web.SiteMapNode.Key" /> property that can be used by site map providers to track nodes. Additionally, the <see cref="P:System.Web.SiteMapNode.Url" /> property is used by navigation controls to render hyperlinks to pages within a navigation structure. The <see cref="P:System.Web.SiteMapNode.Title" /> property is a friendly name for the <see cref="T:System.Web.SiteMapNode" />, is often the same as the HTML title of a Web Form, and is used by navigation controls to render simple labels. Finally, a <see cref="T:System.Collections.Specialized.NameValueCollection" /> collection of additional <see cref="P:System.Web.SiteMapNode.Attributes" /> attributes is available to site map providers that use <see cref="T:System.Web.SiteMapNode" /> objects, but require additional properties that are not available in the base <see cref="T:System.Web.SiteMapNode" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node in the hierarchical site map structure such as that described by the <see cref="T:System.Web.SiteMap" /> class and classes that implement the abstract <see cref="T:System.Web.SiteMapProvider" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,11 +40,19 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default <see cref="T:System.Web.SiteMapProvider" /> provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key, if one is provided for the node (if a URL is not provided, a tracking identifier is generated for the node). Therefore, any <see cref="T:System.Web.SiteMapNode" /> control that provides a URL and is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SiteMapNode" /> class, using the specified <paramref name="key" /> to identify the page that the node represents and the site map provider that manages the node.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapProvider" /> with which the node is associated. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A provider-specific lookup key.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,12 +67,21 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default <see cref="T:System.Web.SiteMapProvider" /> provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key, if one is provided for the node (if a URL is not provided, a tracking identifier is generated for the node). Therefore, any <see cref="T:System.Web.SiteMapNode" /> object that provides a URL and is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SiteMapNode" /> class using the specified URL, a <paramref name="key" /> to identify the page that the node represents, and the site map provider that manages the node.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapProvider" /> with which the node is associated. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A provider-specific lookup key.</param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the page that the node represents within the site. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,13 +97,24 @@
         <Parameter Name="title" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="url">To be added.</param>
-        <param name="title">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default <see cref="T:System.Web.SiteMapProvider" /> provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key, if one is provided for the node (if a URL is not provided, a tracking identifier is generated for the node). Therefore, any <see cref="T:System.Web.SiteMapNode" /> object that provides a URL and is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+          <para>If no <paramref name="title" /> is provided, calls to the <see cref="P:System.Web.SiteMapNode.Title" /> property return the <see cref="F:System.String.Empty" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SiteMapNode" /> class using the specified URL, a <paramref name="key" /> to identify the page that the node represents, a title, and the site map provider that manages the node.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapProvider" /> with which the node is associated. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A provider-specific lookup key.</param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the page that the node represents within the site. </param>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />A label for the node, often displayed by navigation controls. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,14 +131,26 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="url">To be added.</param>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default <see cref="T:System.Web.SiteMapProvider" /> provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key, if one is provided for the node (if a URL is not provided, a tracking identifier is generated for the node). Therefore, any <see cref="T:System.Web.SiteMapNode" /> object that provides a URL and is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+          <para>If no <paramref name="title" /> or <paramref name="description" /> is provided, calls to the <see cref="P:System.Web.SiteMapNode.Title" /> or <see cref="P:System.Web.SiteMapNode.Description" /> properties return an <see cref="F:System.String.Empty" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SiteMapNode" /> class using the specified URL, a <paramref name="key" /> to identify the page that the node represents, a title and description, and the site map provider that manages the node.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapProvider" /> with which the node is associated. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A provider-specific lookup key.</param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the page that the node represents within the site. </param>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />A label for the node, often displayed by navigation controls. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the page that the node represents. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,18 +171,38 @@
         <Parameter Name="implicitResourceKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="url">To be added.</param>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="roles">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="explicitResourceKeys">To be added.</param>
-        <param name="implicitResourceKey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default <see cref="T:System.Web.SiteMapProvider" /> provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key, if one is provided for the node (if a URL is not provided, a tracking identifier is generated for the node). Therefore, any <see cref="T:System.Web.SiteMapNode" /> object that provides a URL and is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+          <para>The <see cref="T:System.Collections.Specialized.NameValueCollection" /> collection of attributes that the <see cref="T:System.Web.SiteMapNode" /> is created with is available through the <see cref="P:System.Web.SiteMapNode.Attributes" /> property, and makes it easy to apply additional attributes to a site map node and extend its capabilities without deriving a custom class to do so. </para>
+          <para>Supply an <see cref="T:System.Collections.IList" /> collection of roles to provide a set of roles that can view the node when the <see cref="P:System.Web.SiteMapProvider.SecurityTrimmingEnabled" /> property returns true.  For more information, see <see cref="P:System.Web.SiteMapProvider.SecurityTrimmingEnabled" />.</para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> provider uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key. Therefore, any <see cref="T:System.Web.SiteMapNode" /> that is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> must have a unique URL within the scope of the provider.</para>
+          <para>If no <paramref name="title" /> or <paramref name="description" /> is provided, calls to the <see cref="P:System.Web.SiteMapNode.Title" /> or <see cref="P:System.Web.SiteMapNode.Description" /> properties return an <see cref="F:System.String.Empty" /> field.</para>
+          <para>To programmatically specify resources for localization, either set the value of <paramref name="implicitResourceKey" /> to a unique name that will be used to identify localized resources for the node or set <paramref name="explicitResourceKeys" /> to a <see cref="T:System.Collections.Specialized.NameValueCollection" /> collection of <paramref name="name/value" /> pairs where <paramref name="name" /> is the node property or custom attribute to localize and <paramref name="value" /> contains localization values for the node property or custom attribute. The localized values can then be set in the appropriate .resx files. For more information about how to localize the <see cref="P:System.Web.SiteMapNode.Title" />, <see cref="P:System.Web.SiteMapNode.Description" />, and any custom properties of a <see cref="T:System.Web.SiteMapNode" /> object, see <format type="text/html"><a href="be63b4a0-fb82-44b4-bdbb-df1d2548cedc">How to: Localize Site-Map Data</a></format>. For the syntax requirements of the <paramref name="explicitResourceKeys" /> collection, see <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.SiteMapNode" /> class using the specified site map provider that manages the node, URL, title, description, roles, additional attributes, and explicit and implicit resource keys for localization.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapProvider" /> with which the node is associated. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A provider-specific lookup key. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the page that the node represents within the site. </param>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />A label for the node, often displayed by navigation controls. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the page that the node represents. </param>
+        <param name="roles">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IList" /> of roles that are allowed to view the page represented by the <see cref="T:System.Web.SiteMapNode" />. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of additional attributes used to initialize the <see cref="T:System.Web.SiteMapNode" />. </param>
+        <param name="explicitResourceKeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of explicit resource keys used for localization. </param>
+        <param name="implicitResourceKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implicit resource key used for localization.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -147,10 +215,17 @@
         <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.Attributes" /> collection is typically used when you need to apply additional attributes to a site map node, but do not want to derive a custom class in order to do so. </para>
+          <para>The protected <see cref="P:System.Web.SiteMapNode.Attributes" /> attribute does not perform in the same manner as the <see cref="P:System.Web.SiteMapNode.Title" /> or <see cref="P:System.Web.SiteMapNode.Description" /> properties. For localization support, developers must use the default indexer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of additional attributes beyond the strongly typed properties that are defined for the <see cref="T:System.Web.SiteMapNode" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -163,10 +238,17 @@
         <ReturnType>System.Web.SiteMapNodeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SiteMapNode" /> relies on the <see cref="T:System.Web.SiteMapProvider" /> that it is associated with to keep track of its relationships to other nodes in the site map. This property calls the <see cref="M:System.Web.SiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" /> method, passing a reference to itself, to retrieve the <see cref="T:System.Web.SiteMapNodeCollection" />.</para>
+          <para>If security trimming is enabled, only nodes that the current user is permitted to see are returned. If the user is not permitted to see any child nodes, an empty collection is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets all the child nodes of the current <see cref="T:System.Web.SiteMapNode" /> object from the associated <see cref="T:System.Web.SiteMapProvider" /> provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -180,10 +262,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls the <see cref="M:System.Web.SiteMapNode.Clone(System.Boolean)" /> method with the parameter set to false. The provider, <see cref="P:System.Web.SiteMapNode.Title" />, <see cref="P:System.Web.SiteMapNode.Url" />, <see cref="P:System.Web.SiteMapNode.Description" />, and <see cref="P:System.Web.SiteMapNode.Key" /> properties are copied. The <see cref="P:System.Web.SiteMapNode.Roles" /> and <see cref="P:System.Web.SiteMapNode.Attributes" /> collections are copied to new collections. Ancestor and child nodes are not cloned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new node that is a copy of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,11 +290,22 @@
         <Parameter Name="cloneParentNodes" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cloneParentNodes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="cloneParentNodes" /> parameter is true, the <see cref="M:System.Web.SiteMapNode.Clone(System.Boolean)" /> method recursively clones all direct ancestor nodes and associates them with the current cloned node. Child nodes are not cloned.</para>
+          <para>The <see cref="P:System.Web.SiteMapNode.Roles" /> and <see cref="P:System.Web.SiteMapNode.Attributes" /> collections are applied to new collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new copy that is a copy of the current node, optionally cloning all parent and ancestor nodes of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
+        <param name="cloneParentNodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to clone all parent and ancestor nodes of the current node; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +323,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>While the <see cref="P:System.Web.SiteMapNode.Title" /> of a <see cref="T:System.Web.SiteMapNode" /> is used by some navigation controls as a label or hyperlink, the <see cref="P:System.Web.SiteMapNode.Description" /> is used as a ToolTip element for mouse over events.</para>
+          <para>A localized value of the <see cref="P:System.Web.SiteMapNode.Description" /> property is returned if the <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a description for the <see cref="T:System.Web.SiteMapNode" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -241,10 +350,27 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Web.SiteMapNode" /> objects are considered equal if both of the following conditions are met:</para>
+          <list type="bullet">
+            <item>
+              <para>Both <see cref="T:System.Web.SiteMapNode" /> objects have the same value for the <see cref="P:System.Web.SiteMapNode.Key" /> property.</para>
+            </item>
+            <item>
+              <para>The culture-invariant, case-insensitive comparison of both <see cref="P:System.Web.SiteMapNode.Url" /> properties returns true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Web.SiteMapNode" /> is identical to the specified object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is both a <see cref="T:System.Web.SiteMapNode" /> and identical to the current <see cref="T:System.Web.SiteMapNode" />; otherwise, false. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,10 +384,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method retrieves immediate child nodes, and all their child nodes, recursively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a read-only collection of all <see cref="T:System.Web.SiteMapNode" /> objects that are descendants of the calling node, regardless of the degree of separation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Web.SiteMapNodeCollection" /> that represents all the descendants of a <see cref="T:System.Web.SiteMapNode" /> within the scope of the current provider.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -278,12 +413,20 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> object that is associated with the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A named <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> for the current node.</para>
+        </returns>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control that the view is associated with.</param>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the view.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -301,13 +444,30 @@
         <Parameter Name="throwIfNotFound" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeName">To be added.</param>
-        <param name="defaultValue">To be added.</param>
-        <param name="throwIfNotFound">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> method is invoked in the get accessor of the <see cref="P:System.Web.SiteMapNode.Title" /> property, the <see cref="P:System.Web.SiteMapNode.Description" /> property, and any custom attributes that are defined in the <see cref="P:System.Web.SiteMapNode.Attributes" /> property. The <see cref="T:System.Web.SiteMapProvider" /> object by which the <see cref="T:System.Web.SiteMapNode" /> is tracked must have its <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> property set to true for the <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> method to return a localized string. If the <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> is set to false, localization is not performed and the <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> method is never called. </para>
+          <para>The <see cref="P:System.Web.SiteMapNode.Title" /> property, the <see cref="P:System.Web.SiteMapNode.Description" /> property, and any custom attributes that are defined in the <see cref="P:System.Web.SiteMapNode.Attributes" /> property first invoke the <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method. If it returns null, the <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> method is invoked with <paramref name="defaultValue" /> set to the value of the default value from the explicit resource expression (assuming one was defined) and <paramref name="throwIfNotFound" /> set to true.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class imposes the restriction that the <see cref="T:System.Web.SiteMapNode" /> object cannot define both implicit resource expressions and explicit resource expressions for attributes. However, a custom provider implementation can choose to allow both.</para>
+          </block>
+          <para>The <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> method uses the <see cref="T:System.Collections.Specialized.NameValueCollection" /> collection of resource keys that the <see cref="T:System.Web.SiteMapNode" /> object was initialized with. If a collection of resource keys was not specified, the <see cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a localized string based on a <see cref="T:System.Web.SiteMapNode" /> attribute to localize, a default string to return if no resource is found, and a Boolean value indicating whether to throw an exception if no resource is found. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the localized attribute.</para>
+        </returns>
+        <param name="attributeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> attribute to localize. </param>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value to return if a matching resource is not found.</param>
+        <param name="throwIfNotFound">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an <see cref="T:System.InvalidOperationException" />, if an explicit resource is defined for <paramref name="attributeName" />, <paramref name="defaultValue" /> is null, and a localized value is not found; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,10 +481,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code is generated using the lookup key (that is, a hash of the <see cref="P:System.Web.SiteMapNode.Key" /> property) for a site map node. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code of the <see cref="T:System.Web.SiteMapNode" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer representing the hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -338,10 +507,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> object that is associated with the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> for the current node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -357,11 +532,26 @@
         <Parameter Name="attributeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="attributeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method is invoked in the get accessor of the <see cref="P:System.Web.SiteMapNode.Title" /> property, the <see cref="P:System.Web.SiteMapNode.Description" /> property, and any custom attributes that are defined in the <see cref="P:System.Web.SiteMapNode.Attributes" /> property. The <see cref="T:System.Web.SiteMapProvider" /> provider by which the  <see cref="T:System.Web.SiteMapNode" /> object is tracked must have its <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> property set to true for the <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method to be called. If the <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> is set to false, localization is not performed and the <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method is never called.</para>
+          <para>If the <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method returns a string that is not empty, this becomes the value of the <see cref="P:System.Web.SiteMapNode.Title" />, <see cref="P:System.Web.SiteMapNode.Description" />, or custom attribute property.</para>
+          <para>The <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> method uses the value of the <see cref="P:System.Web.SiteMapNode.ResourceKey" /> property to localize the attribute. If the <see cref="P:System.Web.SiteMapNode.ResourceKey" /> is not specified, the <see cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" /> returns null.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class imposes the restriction that the <see cref="T:System.Web.SiteMapNode" /> object cannot define both implicit resource expressions and explicit resource expressions for attributes. However, a custom provider implementation can choose to allow both.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a localized string based on the attribute name and <see cref="P:System.Web.SiteMapProvider.ResourceKey" /> property that is specified by the <see cref="T:System.Web.SiteMapProvider" /> by which the <see cref="T:System.Web.SiteMapNode" /> is tracked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the localized attribute. The default is null.</para>
+        </returns>
+        <param name="attributeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> attribute to localize.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -374,10 +564,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a convenience property that calls the <see cref="P:System.Web.SiteMapNode.ChildNodes" /> property internally, so it will not perform better than if you call the <see cref="P:System.Web.SiteMapNode.ChildNodes" /> property yourself and check to see if it is empty.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Web.SiteMapNode" /> has any child nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -394,10 +590,19 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.IsAccessibleToUser(System.Web.HttpContext)" /> method calls the <see cref="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" /> method of the provider that the node is associated with, passing the specified <paramref name="context" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified site map node can be viewed by the user in the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any one of the following conditions is met: the security trimming is enabled and the current user is a member of at least one of the roles allowing access to view the site map node; the current user is authorized specifically for the requested node's URL in the authorization element for the current application and the URL is located within the directory structure for the application; the current thread has an associated <see cref="T:System.Security.Principal.WindowsIdentity" /> that has file access to the requested node's URL and the URL is located within the directory structure for the application; or security trimming is not enabled and therefore any user is allowed to view the site map node; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -413,11 +618,18 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current site map node is a child or a direct descendant of the specified node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node is a child or descendant of the specified node; otherwise, false.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to check if the current node is a child or descendant of.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -450,10 +662,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internally, site navigation classes can use this lookup key when searching for site map nodes, as well as for establishing relationships between nodes. The <see cref="T:System.Web.SiteMapProvider" /> class also exposes the <see cref="M:System.Web.SiteMapProvider.FindSiteMapNodeFromKey(System.String)" /> method as a means for getting a reference to a <see cref="T:System.Web.SiteMapNode" /> object that matches the key value.</para>
+          <para>The specific value that is used for the key is provider specific; however, it is guaranteed to not be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representing a lookup key for a site map node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -466,10 +685,16 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.NextSibling" /> property presumes that the <see cref="T:System.Web.SiteMapProvider" /> object implements its internal collections such that when a parent node retrieves its <see cref="P:System.Web.SiteMapNode.ChildNodes" /> property, the nodes are in the same order as they appear in the site map. If you use .NET Framework collection classes in an implementation of a site map provider, choose collections that implement the <see cref="T:System.Collections.IList" /> interface, such as the <see cref="T:System.Collections.ArrayList" /> or <see cref="T:System.Collections.Specialized.ListDictionary" /> classes. If you choose collections that do not implement the <see cref="T:System.Collections.IList" /> interface, such as the <see cref="T:System.Collections.Hashtable" /> class, unexpected results can occur for simple site navigation operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next <see cref="T:System.Web.SiteMapNode" /> node on the same hierarchical level as the current one, relative to the <see cref="P:System.Web.SiteMapNode.ParentNode" /> property (if one exists).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -482,10 +707,16 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SiteMapNode" /> class relies on the site map provider with which it is associated to track its relationships to other nodes in the site map. The <see cref="P:System.Web.SiteMapNode.ParentNode" /> property calls the <see cref="M:System.Web.SiteMapProvider.GetParentNode(System.Web.SiteMapNode)" /> method, passing a reference to itself, to retrieve the parent <see cref="T:System.Web.SiteMapNode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.SiteMapNode" /> object that is the parent of the current node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -498,10 +729,16 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.PreviousSibling" /> property presumes that the site map provider implements its internal collections such that when a parent node retrieves its <see cref="P:System.Web.SiteMapNode.ChildNodes" /> objects, the nodes are in the same order as they appear in the site map. If you use .NET Framework collection classes in an implementation of a <see cref="T:System.Web.SiteMapProvider" /> provider, choose collections that implement the <see cref="T:System.Collections.IList" /> interface, such as the <see cref="T:System.Collections.ArrayList" /> or <see cref="T:System.Collections.Specialized.ListDictionary" /> class. If you choose collections that do not implement the <see cref="T:System.Collections.IList" /> interface, such as the <see cref="T:System.Collections.Hashtable" /> class, unexpected results can occur for simple site navigation operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous <see cref="T:System.Web.SiteMapNode" /> object on the same level as the current one, relative to the <see cref="P:System.Web.SiteMapNode.ParentNode" /> object (if one exists).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -514,10 +751,16 @@
         <ReturnType>System.Web.SiteMapProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A provider is always returned; passing null to the <see cref="T:System.Web.SiteMapNode" /> constructor results in an <see cref="T:System.ArgumentException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.SiteMapProvider" /> provider that the <see cref="T:System.Web.SiteMapNode" /> object is tracked by.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -530,10 +773,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> object is modifiable by default. </para>
+          <block subset="none" type="note">
+            <para>All nodes that are returned by the <see cref="T:System.Web.XmlSiteMapProvider" /> are read-only, by default.</para>
+          </block>
+          <para>The <see cref="P:System.Web.SiteMapNode.Attributes" />, <see cref="P:System.Web.SiteMapNode.ChildNodes" />, <see cref="P:System.Web.SiteMapNode.Description" />, <see cref="P:System.Web.SiteMapNode.ParentNode" />, <see cref="P:System.Web.SiteMapNode.Roles" />, <see cref="P:System.Web.SiteMapNode.Title" />, and <see cref="P:System.Web.SiteMapNode.Url" /> property mutators check the <see cref="P:System.Web.SiteMapNode.ReadOnly" /> property before attempting to modify the property of a site map node. If the node is read-only when a mutator is called, the <see cref="T:System.Web.SiteMapNode" /> object throws an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the site map node can be modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -546,10 +799,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using the set accessor of the <see cref="P:System.Web.SiteMapNode.ResourceKey" /> property when the <see cref="P:System.Web.SiteMapNode.ReadOnly" /> property is true will result in an <see cref="T:System.InvalidOperationException" /> exception. To set the <see cref="P:System.Web.SiteMapNode.ResourceKey" /> for a <see cref="T:System.Web.SiteMapNode" /> object, use the <see cref="M:System.Web.SiteMapNode.#ctor(System.Web.SiteMapProvider,System.String,System.String,System.String,System.String,System.Collections.IList,System.Collections.Specialized.NameValueCollection,System.Collections.Specialized.NameValueCollection,System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the resource key that is used to localize the <see cref="T:System.Web.SiteMapNode" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -562,10 +821,17 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If security trimming is enabled, a site map provider builds a node tree of nodes that the current user is able to view, based in part on whether the current user's assigned role is included in the <see cref="P:System.Web.SiteMapNode.Roles" /> collection. URL authorization and file authorization are also used to determine whether a user has the rights to access a <see cref="T:System.Web.SiteMapNode" /> object. For more information on authorization, see <format type="text/html"><a href="ba7c17d4-f709-4501-8441-2340e2d6db05">ASP.NET Authorization</a></format>. </para>
+          <para>You can use the <see cref="M:System.Web.SiteMapNode.#ctor(System.Web.SiteMapProvider,System.String,System.String,System.String,System.String,System.Collections.IList,System.Collections.Specialized.NameValueCollection,System.Collections.Specialized.NameValueCollection)" /> constructor to supply a list of roles to the <see cref="T:System.Web.SiteMapNode" /> object when it is first created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of roles that are associated with the <see cref="T:System.Web.SiteMapNode" /> object, used during security trimming. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -578,10 +844,16 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SiteMapNode" /> class relies on the site map provider with which it is associated to track its relationships to other nodes in the site map. The <see cref="P:System.Web.SiteMapNode.RootNode" /> property calls the <see cref="P:System.Web.SiteMapProvider.RootNode" /> property of the root provider (the <see cref="P:System.Web.SiteMapProvider.RootProvider" /> property) to retrieve the root node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root node of the root provider in a site map provider hierarchy. If no provider hierarchy exists, the <see cref="P:System.Web.SiteMapNode.RootNode" /> property gets the root node of the current provider. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -598,9 +870,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.Roles" /> and <see cref="P:System.Web.SiteMapNode.Attributes" /> collections are copied to new collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new node that is a copy of the current node. For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.GetChildren">
@@ -614,9 +895,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.GetChildren" /> method delegates to the <see cref="P:System.Web.SiteMapNode.ChildNodes" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the hierarchical children data items of the current item. For a description of this member, see <see cref="M:System.Web.UI.IHierarchyData.GetChildren" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> that represents the immediate children of the current item in the hierarchy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.GetParent">
@@ -630,9 +921,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.GetParent" /> method delegates to the <see cref="P:System.Web.SiteMapNode.ParentNode" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the hierarchical parent of the current item. For a description of this member, see <see cref="M:System.Web.UI.IHierarchyData.GetParent" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> that represents the parent of the current item in the hierarchy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.HasChildren">
@@ -645,9 +946,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.HasChildren" /> property delegates to the <see cref="P:System.Web.SiteMapNode.HasChildNodes" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current <see cref="T:System.Web.SiteMapNode" /> object has any child nodes. For a description of this member, see <see cref="P:System.Web.UI.IHierarchyData.HasChildren" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.Item">
@@ -660,9 +968,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hierarchical data item. For a description of this member, see <see cref="P:System.Web.UI.IHierarchyData.Item" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.Path">
@@ -675,9 +989,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.Path" /> property delegates to the <see cref="P:System.Web.SiteMapNode.Url" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path of the hierarchical data item. For a description of this member, see <see cref="P:System.Web.UI.IHierarchyData.Path" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.Type">
@@ -690,9 +1011,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.IHierarchyData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that represents the type name of the hierarchical data item. For a description of this member, see <see cref="P:System.Web.UI.IHierarchyData.Type" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.INavigateUIData.Name">
@@ -705,9 +1032,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.System.Web.UI.INavigateUIData.Name" /> property delegates to the <see cref="P:System.Web.SiteMapNode.Title" /> property. </para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.INavigateUIData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.Web.SiteMapNode.Title" /> property of the site map node. For a description of this member, see <see cref="P:System.Web.UI.INavigateUIData.Name" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.INavigateUIData.NavigateUrl">
@@ -720,9 +1054,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.System.Web.UI.INavigateUIData.NavigateUrl" /> property delegates to the <see cref="P:System.Web.SiteMapNode.Url" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.INavigateUIData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.Web.SiteMapNode.Url" /> property of the site map node. For a description of this member, see <see cref="P:System.Web.UI.INavigateUIData.NavigateUrl" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.INavigateUIData.Value">
@@ -735,9 +1076,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.System.Web.UI.INavigateUIData.Value" /> property delegates to the <see cref="P:System.Web.SiteMapNode.Title" /> property and is used to store additional data about the navigation node, such as the data that is used for handling postback events.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.SiteMapNode" /> instance is cast to an <see cref="T:System.Web.UI.INavigateUIData" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.Web.SiteMapNode.Title" /> property of the site map node. For a description of this member, see <see cref="P:System.Web.UI.INavigateUIData.Value" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Title">
@@ -752,10 +1100,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SiteMapNode.Title" /> property is used by navigation controls to render a label for the node, instead of using the <see cref="P:System.Web.SiteMapNode.Url" /> property, while the <see cref="P:System.Web.SiteMapNode.Description" /> property is used as a ToolTip element for mouse-over events.</para>
+          <para>A localized value of the <see cref="P:System.Web.SiteMapNode.Title" /> property is returned if the <see cref="P:System.Web.SiteMapProvider.EnableLocalization" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the title of the <see cref="T:System.Web.SiteMapNode" /> object. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -769,10 +1124,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SiteMapNode.ToString" /> method returns the <see cref="P:System.Web.SiteMapNode.Title" /> property of a <see cref="T:System.Web.SiteMapNode" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance of the <see cref="T:System.Web.SiteMapNode" /> class to its equivalent string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this <see cref="T:System.Web.SiteMapNode" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -785,10 +1149,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, which is the default site map provider implementation for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property as a lookup key. Therefore, any <see cref="T:System.Web.SiteMapNode" /> object that is used by the <see cref="T:System.Web.XmlSiteMapProvider" /> class must have a unique URL within the scope of the provider.</para>
+          <para>Leading and trailing white-space characters are ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the page that the <see cref="T:System.Web.SiteMapNode" /> object represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

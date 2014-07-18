@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataAdapter" FullName="System.Data.SqlClient.SqlDataAdapter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SqlDataAdapter : System.Data.Common.DbDataAdapter" />
   <AssemblyInfo>
@@ -25,8 +26,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.SqlClient.SqlDataAdapter" />, serves as a bridge between a <see cref="T:System.Data.DataSet" /> and SQL Server for retrieving and saving data. The <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> provides this bridge by mapping <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" />, which changes the data in the <see cref="T:System.Data.DataSet" /> to match the data in the data source, and <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, which changes the data in the data source to match the data in the <see cref="T:System.Data.DataSet" />, using the appropriate Transact-SQL statements against the data source. The update is performed on a by-row basis. For every inserted, modified, and deleted row, the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method determines the type of change that has been performed on it (Insert, Update, or Delete). Depending on the type of change, the Insert, Update, or Delete command template executes to propagate the modified row to the data source. When the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> fills a <see cref="T:System.Data.DataSet" />, it creates the necessary tables and columns for the returned data if they do not already exist. However, primary key information is not included in the implicitly created schema unless the <see cref="P:System.Data.Common.DataAdapter.MissingSchemaAction" /> property is set to <see cref="F:System.Data.MissingSchemaAction.AddWithKey" />. You may also have the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> create the schema of the <see cref="T:System.Data.DataSet" />, including primary key information, before filling it with data using FillSchema. For more information, see <format type="text/html"><a href="307d2809-208b-4cf8-b6a9-5d16f15fc16c">Adding Existing Constraints to a DataSet</a></format>.</para>
+      <para>
+        <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is used in conjunction with <see cref="T:System.Data.SqlClient.SqlConnection" /> and <see cref="T:System.Data.SqlClient.SqlCommand" /> to increase performance when connecting to a SQL Server database.</para>
+      <block subset="none" type="note">
+        <para>If you are using SQL Server stored procedures to edit or delete data using a DataAdapter, make sure that you do not use SET NOCOUNT ON in the stored procedure definition. This causes the rows affected count returned to be zero, which the DataAdapter interprets as a concurrency conflict. In this event, a <see cref="T:System.Data.DBConcurrencyException" /> will be thrown.</para>
+      </block>
+      <para>The <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> also includes the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" />, <see cref="P:System.Data.SqlClient.SqlDataAdapter.InsertCommand" />, <see cref="P:System.Data.SqlClient.SqlDataAdapter.DeleteCommand" />, <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateCommand" />, and <see cref="P:System.Data.Common.DataAdapter.TableMappings" /> properties to facilitate the loading and updating of data.</para>
+      <para>When an instance of <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is created, the read/write properties are set to initial values. For a list of these values, see the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> constructor. </para>
+      <para>The <see cref="P:System.Data.SqlClient.SqlDataAdapter.InsertCommand" />, <see cref="P:System.Data.SqlClient.SqlDataAdapter.DeleteCommand" />, and <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateCommand" /> are generic templates that are automatically filled with individual values from every modified row through the parameters mechanism.</para>
+      <para>For every column that you propagate to the data source on <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, a parameter should be added to the InsertCommand, UpdateCommand, or DeleteCommand. The <see cref="P:System.Data.Common.DbParameter.SourceColumn" /> property of the <see cref="T:System.Data.Common.DbParameter" /> object should be set to the name of the column. This setting indicates that the value of the parameter is not set manually, but is taken from the particular column in the currently processed row.</para>
+      <block subset="none" type="note">
+        <para>An <see cref="T:System.InvalidOperationException" /> will occur if the <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method is called and the table contains a user-defined type that is not available on the client computer. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=139492">Creating and Using User-Defined Types</see> in SQL Server Books Online.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of data commands and a database connection that are used to fill the <see cref="T:System.Data.DataSet" /> and update a SQL Server database. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +54,45 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an instance of <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is created, the following read/write properties are set to the following initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingMappingAction" /> </para>
+              </term>
+              <description>
+                <para>MissingMappingAction.Passthrough </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingSchemaAction" /> </para>
+              </term>
+              <description>
+                <para>MissingSchemaAction.Add </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value of any of these properties through a separate call to the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,9 +107,49 @@
         <Parameter Name="selectCommand" Type="System.Data.SqlClient.SqlCommand" />
       </Parameters>
       <Docs>
-        <param name="selectCommand">To be added: an object of type 'SqlCommand'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> constructor sets the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property to the value specified in the <paramref name="selectCommand" /> parameter.</para>
+          <para>When an instance of <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is created, the following read/write properties are set to the following initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingMappingAction" /> </para>
+              </term>
+              <description>
+                <para>MissingMappingAction.Passthrough </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingSchemaAction" /> </para>
+              </term>
+              <description>
+                <para>MissingSchemaAction.Add </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value of any of these properties through a separate call to the property.</para>
+          <para>When <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> (or any of the other command properties) is assigned to a previously created <see cref="T:System.Data.SqlClient.SqlCommand" />, the <see cref="T:System.Data.SqlClient.SqlCommand" /> is not cloned. The <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> maintains a reference to the previously created <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> class with the specified <see cref="T:System.Data.SqlClient.SqlCommand" /> as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property.</para>
+        </summary>
+        <param name="selectCommand">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +165,50 @@
         <Parameter Name="selectConnection" Type="System.Data.SqlClient.SqlConnection" />
       </Parameters>
       <Docs>
-        <param name="selectCommandText">To be added: an object of type 'string'</param>
-        <param name="selectConnection">To be added: an object of type 'SqlConnection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> opens and closes a <see cref="T:System.Data.SqlClient.SqlConnection" /> if it is not already open. This can be useful in an application that must call the <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method for two or more <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> objects. If the <see cref="T:System.Data.SqlClient.SqlConnection" /> is already open, you must explicitly call Close or Dispose to close it.</para>
+          <para>When an instance of <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is created, the following read/write properties are set to the following initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingMappingAction" /> </para>
+              </term>
+              <description>
+                <para>MissingMappingAction.Passthrough </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingSchemaAction" /> </para>
+              </term>
+              <description>
+                <para>MissingSchemaAction.Add </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value of either of these properties through a separate call to the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> class with a <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> and a <see cref="T:System.Data.SqlClient.SqlConnection" /> object.</para>
+        </summary>
+        <param name="selectCommandText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />. </param>
+        <param name="selectConnection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlConnection" /> that represents the connection. If your connection string does not use Integrated Security = true, you can use <see cref="T:System.Data.SqlClient.SqlCredential" /> to pass the user ID and password more securely than by specifying the user ID and password as text in the connection string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,10 +224,50 @@
         <Parameter Name="selectConnectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="selectCommandText">To be added: an object of type 'string'</param>
-        <param name="selectConnectionString">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> constructor uses the <paramref name="selectCommandText" /> parameter to set the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property. The <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> will create and maintain the connection created with the <paramref name="selectConnectionString" /> parameter.</para>
+          <para>When an instance of <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> is created, the following read/write properties are set to the following initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial value  </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingMappingAction" /> </para>
+              </term>
+              <description>
+                <para>MissingMappingAction.Passthrough </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Common.DataAdapter.MissingSchemaAction" /> </para>
+              </term>
+              <description>
+                <para>MissingSchemaAction.Add </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value of any of these properties through a separate call to the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> class with a <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> and a connection string.</para>
+        </summary>
+        <param name="selectCommandText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />. </param>
+        <param name="selectConnectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string. If your connection string does not use Integrated Security = true, you can use <see cref="M:System.Data.SqlClient.SqlDataAdapter.#ctor(System.String,System.Data.SqlClient.SqlConnection)" /> and <see cref="T:System.Data.SqlClient.SqlCredential" /> to pass the user ID and password more securely than by specifying the user ID and password as text in the connection string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,9 +369,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SqlCommand'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, if this property is not set and primary key information is present in the <see cref="T:System.Data.DataSet" />, the <see cref="P:System.Data.SqlClient.SqlDataAdapter.DeleteCommand" /> can be generated automatically if you set the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property and use the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. Then, any additional commands that you do not set are generated by the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. This generation logic requires key column information to be present in the <see cref="T:System.Data.DataSet" />. For more information, see <format type="text/html"><a href="6e3fb8b5-373b-4f9e-ab03-a22693df8e91">Automatically Generated Commands</a></format>.</para>
+          <para>When <see cref="P:System.Data.SqlClient.SqlDataAdapter.DeleteCommand" /> is assigned to a previously created <see cref="T:System.Data.SqlClient.SqlCommand" />, the <see cref="T:System.Data.SqlClient.SqlCommand" /> is not cloned. The <see cref="P:System.Data.SqlClient.SqlDataAdapter.DeleteCommand" /> maintains a reference to the previously created <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          <para>For every column that you propagate to the data source on <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, a parameter should be added to the InsertCommand, UpdateCommand, or DeleteCommand. The SourceColumn property of the parameter should be set to the name of the column. This indicates that the value of the parameter is not set manually, but is taken from the particular column in the currently processed row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Transact-SQL statement or stored procedure to delete records from the data set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -289,9 +473,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SqlCommand'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, if this property is not set and primary key information is present in the <see cref="T:System.Data.DataSet" />, the <see cref="P:System.Data.SqlClient.SqlDataAdapter.InsertCommand" /> can be generated automatically if you set the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property and use the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. Then, any additional commands that you do not set are generated by the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. This generation logic requires key column information to be present in the <see cref="T:System.Data.DataSet" />. For more information, see <format type="text/html"><a href="6e3fb8b5-373b-4f9e-ab03-a22693df8e91">Automatically Generated Commands</a></format>.</para>
+          <para>When <see cref="P:System.Data.SqlClient.SqlDataAdapter.InsertCommand" /> is assigned to a previously created <see cref="T:System.Data.SqlClient.SqlCommand" />, the <see cref="T:System.Data.SqlClient.SqlCommand" /> is not cloned. The <see cref="P:System.Data.SqlClient.SqlDataAdapter.InsertCommand" /> maintains a reference to the previously created <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          <para>If execution of this command returns rows, these rows can be added to the <see cref="T:System.Data.DataSet" /> depending on how you set the UpdatedRowSource property of the <see cref="T:System.Data.SqlClient.SqlCommand" /> object. </para>
+          <para>For every column that you propagate to the data source on <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, a parameter should be added to InsertCommand, UpdateCommand, or DeleteCommand. The SourceColumn property of the parameter should be set to the name of the column. This indicates that the value of the parameter is not set manually, but is taken from the particular column in the currently processed row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Transact-SQL statement or stored procedure to insert new records into the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,8 +545,38 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, there are two events that occur per data row updated. The order of execution is as follows: </para>
+          <list type="ordered">
+            <item>
+              <para>The values in the <see cref="T:System.Data.DataRow" /> are moved to the parameter values.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Data.Common.DbDataAdapter.OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)" /> event is raised.</para>
+            </item>
+            <item>
+              <para>The command executes.</para>
+            </item>
+            <item>
+              <para>If the command is set to FirstReturnedRecord, the first returned result is placed in the <see cref="T:System.Data.DataRow" />.</para>
+            </item>
+            <item>
+              <para>If there are output parameters, they are placed in the <see cref="T:System.Data.DataRow" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Data.Common.DbDataAdapter.OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)" /> event is raised.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Data.DataRow.AcceptChanges" /> is called.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> after a command is executed against the data source. The attempt to update is made, so the event fires.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -368,8 +591,38 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, there are two events that occur per data row updated. The order of execution is as follows: </para>
+          <list type="ordered">
+            <item>
+              <para>The values in the <see cref="T:System.Data.DataRow" /> are moved to the parameter values.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Data.Common.DbDataAdapter.OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)" /> event is raised.</para>
+            </item>
+            <item>
+              <para>The command executes.</para>
+            </item>
+            <item>
+              <para>If the command is set to FirstReturnedRecord, the first returned result is placed in the <see cref="T:System.Data.DataRow" />.</para>
+            </item>
+            <item>
+              <para>If there are output parameters, they are placed in the <see cref="T:System.Data.DataRow" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Data.Common.DbDataAdapter.OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)" /> event is raised.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Data.DataRow.AcceptChanges" /> is called.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> before a command is executed against the data source. The attempt to update is made, so the event fires.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -385,9 +638,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SqlCommand'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> is assigned to a previously created <see cref="T:System.Data.SqlClient.SqlCommand" />, the <see cref="T:System.Data.SqlClient.SqlCommand" /> is not cloned. The <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> maintains a reference to the previously created <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          <para>If the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> does not return any rows, no tables are added to the <see cref="T:System.Data.DataSet" />, and no exception is raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Transact-SQL statement or stored procedure used to select records in the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -429,9 +689,15 @@
         <ReturnType>System.Data.IDbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> instance is cast to an <see cref="T:System.Data.IDbDataAdapter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Data.IDbDataAdapter.DeleteCommand" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Data.IDbDataAdapter.InsertCommand">
@@ -445,9 +711,15 @@
         <ReturnType>System.Data.IDbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> instance is cast to an <see cref="T:System.Data.IDbDataAdapter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Data.IDbDataAdapter.InsertCommand" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Data.IDbDataAdapter.SelectCommand">
@@ -461,9 +733,15 @@
         <ReturnType>System.Data.IDbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> instance is cast to an <see cref="T:System.Data.IDbDataAdapter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Data.IDbDataAdapter.UpdateCommand">
@@ -477,9 +755,15 @@
         <ReturnType>System.Data.IDbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> instance is cast to an <see cref="T:System.Data.IDbDataAdapter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Data.IDbDataAdapter.UpdateCommand" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -494,9 +778,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TerminateBatching">
@@ -524,9 +817,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that enables or disables batch processing support, and specifies the number of commands that can be executed in a batch.</para>
+          <para>Use the <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateBatchSize" /> property to update a data source with changes from a <see cref="T:System.Data.DataSet" />. This can increase application performance by reducing the number of round-trips to the server. </para>
+          <para>Executing an extremely large batch could decrease performance. Therefore, you should test for the optimum batch size setting before implementing your application.</para>
+          <para>An <see cref="T:System.ArgumentOutOfRangeException" /> is thrown if the value is set to a number less than zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of rows that are processed in each round-trip to the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UpdateCommand">
@@ -538,9 +840,21 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SqlCommand'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, if this property is not set and primary key information is present in the <see cref="T:System.Data.DataSet" />, the <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateCommand" /> can be generated automatically if you set the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property and use the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. Then, any additional commands that you do not set are generated by the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />. This generation logic requires key column information to be present in the <see cref="T:System.Data.DataSet" />. For more information, see <format type="text/html"><a href="6e3fb8b5-373b-4f9e-ab03-a22693df8e91">Automatically Generated Commands</a></format>.</para>
+          <para>When <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateCommand" /> is assigned to a previously created <see cref="T:System.Data.SqlClient.SqlCommand" />, the <see cref="T:System.Data.SqlClient.SqlCommand" /> is not cloned. The <see cref="P:System.Data.SqlClient.SqlDataAdapter.UpdateCommand" /> maintains a reference to the previously created <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          <block subset="none" type="note">
+            <para>If execution of this command returns rows, the updated rows may be merged with the <see cref="T:System.Data.DataSet" /> depending on how you set the UpdatedRowSource property of the <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          </block>
+          <para>For every column that you propagate to the data source on <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />, a parameter should be added to InsertCommand, UpdateCommand, or DeleteCommand.</para>
+          <para>The SourceColumn property of the parameter should be set to the name of the column. This indicates that the value of the parameter is not set manually, but taken from the particular column in the currently processed row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Transact-SQL statement or stored procedure used to update records in the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListViewVirtualItemsSelectionRangeChangedEventArgs" FullName="System.Windows.Forms.ListViewVirtualItemsSelectionRangeChangedEventArgs">
   <TypeSignature Language="C#" Value="public class ListViewVirtualItemsSelectionRangeChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ListView.VirtualItemsSelectionRangeChanged" /> event occurs when the <see cref="T:System.Windows.Forms.ListView" /> is in virtual mode, and the selection state of a range of items is changed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.VirtualItemsSelectionRangeChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +30,21 @@
         <Parameter Name="isSelected" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="startIndex">To be added.</param>
-        <param name="endIndex">To be added.</param>
-        <param name="isSelected">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ListViewVirtualItemsSelectionRangeChangedEventArgs" /> occurs when items are changed from selected to deselected, and deselected to selected. The <paramref name="isSelected" /> parameter indicates the current state of the range of items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewVirtualItemsSelectionRangeChangedEventArgs" /> class. </para>
+        </summary>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first item in the range that has changed.</param>
+        <param name="endIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the last item in the range that has changed.</param>
+        <param name="isSelected">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the items are selected; false to indicate the items are deselected.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +57,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index for the last item in the range of items whose selection state has changed</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +76,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ListViewVirtualItemsSelectionRangeChangedEventArgs" /> occurs when items are changed from selected to deselected, and deselected to selected. The <paramref name="isSelected" /> parameter indicates the current state of the range of items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the range of items is selected. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +98,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index for the first item in the range of items whose selection state has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

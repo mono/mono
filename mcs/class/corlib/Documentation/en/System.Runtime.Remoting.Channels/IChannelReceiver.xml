@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IChannelReceiver" FullName="System.Runtime.Remoting.Channels.IChannelReceiver">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IChannelReceiver : System.Runtime.Remoting.Channels.IChannel" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelReceiver implements class System.Runtime.Remoting.Channels.IChannel" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The receiving side of channels must expose the <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiver" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides required functions and properties for the receiver channels.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChannelData">
@@ -37,9 +44,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used when <see cref="M:System.Runtime.Remoting.RemotingServices.Marshal(System.MarshalByRefObject)" /> is called and a <see cref="T:System.Runtime.Remoting.ObjRef" /> is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the channel-specific data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetUrlsForUri">
@@ -58,10 +71,20 @@
         <Parameter Name="objectURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="objectURI">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by the <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetUrlsForObject(System.MarshalByRefObject)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of all the URLs for a URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs.</para>
+        </returns>
+        <param name="objectURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI for which URLs are required. </param>
       </Docs>
     </Member>
     <Member MemberName="StartListening">
@@ -80,9 +103,16 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data object can be used to pass specific initialization state to the channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to start listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional initialization information. </param>
       </Docs>
     </Member>
     <Member MemberName="StopListening">
@@ -101,9 +131,16 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data object can be used to pass the specific state to the channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to stop listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional state information for the channel. </param>
       </Docs>
     </Member>
   </Members>

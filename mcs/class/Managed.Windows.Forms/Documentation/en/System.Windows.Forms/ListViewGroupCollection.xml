@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListViewGroupCollection" FullName="System.Windows.Forms.ListViewGroupCollection">
   <TypeSignature Language="C#" Value="public class ListViewGroupCollection : System.Collections.IList" />
   <AssemblyInfo>
@@ -18,9 +19,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="P:System.Windows.Forms.ListView.Groups" /> property to get the <see cref="T:System.Windows.Forms.ListViewGroupCollection" /> associated with a <see cref="T:System.Windows.Forms.ListView" /> control. This collection contains the <see cref="T:System.Windows.Forms.ListViewGroup" /> objects that represent the groups shown in the control when the <see cref="P:System.Windows.Forms.ListView.View" /> property is set to a value other than <see cref="F:System.Windows.Forms.View.List" />. Any items that are not assigned to a group will appear in the default group, which has the header label "DefaultGroup{0}". The default group is not contained in the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection, and cannot be altered. It is primarily useful in debugging to ensure that all items have been properly added to groups. If there are no groups in the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection, the grouping feature is disabled.</para>
+      <para>Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method to add a single group to the collection. Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Insert(System.Int32,System.Windows.Forms.ListViewGroup)" /> method to add a group at a particular index within the collection. To remove a group, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Remove(System.Windows.Forms.ListViewGroup)" /> method. Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.RemoveAt(System.Int32)" /> method to remove the group at a particular index.</para>
+      <para>You cannot add a <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection more than once. To reposition a group within the collection, it must first be removed from the collection, and then inserted at the desired location. Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Contains(System.Windows.Forms.ListViewGroup)" /> method to determine whether a particular group is already in the collection. To retrieve the index of a group within the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.IndexOf(System.Windows.Forms.ListViewGroup)" /> method. You can get or set the group at a particular index with the <see cref="P:System.Windows.Forms.ListViewGroupCollection.Item(System.Int32)" /> indexer.</para>
+      <para>Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add multiple groups to the collection. You can add multiple groups either as an array of groups or as a <see cref="T:System.Windows.Forms.ListViewGroupCollection" /> that you retrieve through the <see cref="P:System.Windows.Forms.ListView.Groups" /> property of another <see cref="T:System.Windows.Forms.ListView" /> control. Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="M:System.Windows.Forms.ListViewGroupCollection.Remove(System.Windows.Forms.ListViewGroup)" />, <see cref="M:System.Windows.Forms.ListViewGroupCollection.RemoveAt(System.Int32)" />, and <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> methods remove groups from the collection, but do not remove any items from the <see cref="T:System.Windows.Forms.ListView" /> control. If there are no groups in the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection, the grouping feature is disabled and all items in the control are displayed normally.</para>
+      </block>
+      <para>The <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> and <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> methods are useful when you want to provide multiple ways to group the items in a <see cref="T:System.Windows.Forms.ListView" /> control. To do this, create multiple group arrays. To change the grouping, first use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection, then use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add the next array of groups to display.</para>
+      <para>Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.CopyTo(System.Array,System.Int32)" /> method to copy the groups in a collection to a compatible array starting at a specified index. This is useful, for example, when you want to sort the groups in the collection using the <see cref="Overload:System.Array.Sort" /> method. To do this, copy the groups into a compatible array, then sort the array. Next, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection, then use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add the sorted array back to the collection.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.ListViewGroupCollection.Count" /> property to determine how many groups are in the collection. To iterate through the collection, use the <see cref="T:System.Collections.IEnumerator" /> returned from the <see cref="M:System.Windows.Forms.ListViewGroupCollection.GetEnumerator" /> method.</para>
+      <block subset="none" type="note">
+        <para>The grouping feature is available only on Windows XP and the Windows Server 2003 family when your application calls the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method. On earlier operating systems, any code relating to groups will be ignored and the groups will not appear. As a result, any code that depends on the grouping feature might not work correctly. You might want to include a test that determines whether the grouping feature is available, and provide alternate functionality when it is unavailable. For example, you might want to provide alternate sorting when running on operating systems that do not support sorting by group.</para>
+        <para>The insertion mark feature is provided by the same library that provides the operating system themes feature. To check for the availability of this library, call the <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.Object)" /> method overload and pass in the <see cref="F:System.Windows.Forms.OSFeature.Themes" /> value.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the collection of groups within a <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -33,11 +53,22 @@
         <Parameter Name="group" Type="System.Windows.Forms.ListViewGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to add an existing <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection. You cannot add a <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection more than once. When you call the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method using a <see cref="T:System.Windows.Forms.ListViewGroup" /> that is already in the collection, the addition fails and -1 is returned.</para>
+          <para>To add multiple groups to the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the group within the collection, or -1 if the group is already present in the collection.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,12 +85,20 @@
         <Parameter Name="headerText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="headerText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection using the specified values to initialize the <see cref="P:System.Windows.Forms.ListViewGroup.Name" /> and <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> properties </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Windows.Forms.ListViewGroup" />.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value of the <see cref="P:System.Windows.Forms.ListViewGroup.Name" /> property for the new group.</param>
+        <param name="headerText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value of the <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> property for the new group.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +114,19 @@
         <Parameter Name="groups" Type="System.Windows.Forms.ListViewGroup[]" />
       </Parameters>
       <Docs>
-        <param name="groups">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this version of the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add an array of groups to the group collection. This method is useful when you create multiple <see cref="T:System.Windows.Forms.ListViewGroup" /> objects and want to add them to the collection with a single method call. To add individual groups to the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method.</para>
+          <para>This method is also useful when you want to provide multiple ways to group the items in a <see cref="T:System.Windows.Forms.ListView" /> control. To do this, create multiple group arrays. To change the grouping, first use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection, then use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add a different array of groups.</para>
+          <para>Unlike the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method, the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method does not have a return value that can be used to determine whether a group being added is already in the collection. If you need this information, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Contains(System.Windows.Forms.ListViewGroup)" /> method before using the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an array of groups to the collection.</para>
+        </summary>
+        <param name="groups">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Windows.Forms.ListViewGroup" /> that specifies the groups to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +142,18 @@
         <Parameter Name="groups" Type="System.Windows.Forms.ListViewGroupCollection" />
       </Parameters>
       <Docs>
-        <param name="groups">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this version of the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add the elements of a <see cref="T:System.Windows.Forms.ListViewGroupCollection" /> that you retrieve through the <see cref="P:System.Windows.Forms.ListView.Groups" /> property of a different <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+          <para>Unlike the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method, the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method does not have a return value that can be used to determine whether a group being added is already in the collection. If you need this information, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Contains(System.Windows.Forms.ListViewGroup)" /> method before using the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the groups in an existing <see cref="T:System.Windows.Forms.ListViewGroupCollection" /> to the collection.</para>
+        </summary>
+        <param name="groups">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ListViewGroupCollection" /> containing the groups to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,9 +167,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove all the groups from the collection. Note that removing groups from the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection does not remove items from the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+          <para>This method is useful to disable the grouping feature. When there are no groups in a <see cref="T:System.Windows.Forms.ListView" /> control, the items appear normally. To remove individual groups from the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Remove(System.Windows.Forms.ListViewGroup)" /> or <see cref="M:System.Windows.Forms.ListViewGroupCollection.RemoveAt(System.Int32)" /> method.</para>
+          <para>This method is also useful when you want to provide multiple ways to group the items. To change the grouping, first use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection, then use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add a different array of groups.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all groups from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -129,11 +193,21 @@
         <Parameter Name="value" Type="System.Windows.Forms.ListViewGroup" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot add a <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection more than once. However, attempting to add another copy will not throw an exception. Instead, the addition will simply fail. The <see cref="M:System.Windows.Forms.ListViewGroupCollection.Add(System.Windows.Forms.ListViewGroup)" /> method will return a value of –1 in this case. The <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> and <see cref="M:System.Windows.Forms.ListViewGroupCollection.Insert(System.Int32,System.Windows.Forms.ListViewGroup)" /> methods, however, do not have return values. When adding groups using one of these methods, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Contains(System.Windows.Forms.ListViewGroup)" /> method to determine whether a particular <see cref="T:System.Windows.Forms.ListViewGroup" /> is already in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified group is located in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the group is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to locate in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,11 +224,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.CopyTo(System.Array,System.Int32)" /> method to copy the groups in a collection (including the item references they contain) to a compatible array, starting at a specified index. This is useful, for example, when you want to sort the groups in the collection using the <see cref="Overload:System.Array.Sort" /> method. To do this, copy the groups into a compatible array, then sort the array. Next, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method to remove all the groups from the collection, then use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.AddRange(System.Windows.Forms.ListViewGroup[])" /> method to add the sorted array back to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the groups in the collection to a compatible one-dimensional <see cref="T:System.Array" />, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> to which the groups are copied. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index within the array to which the groups are copied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,10 +249,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine the number of groups in the collection. This is useful when you need to loop through the collection and perform the same operation on each group. You can also use the <see cref="T:System.Collections.IEnumerator" /> returned by the <see cref="M:System.Windows.Forms.ListViewGroupCollection.GetEnumerator" /> method to iterate through the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of groups in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,10 +272,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful when you need to iterate through the collection to perform the same operation on each group. You can also loop through the collection once for each group, using the <see cref="P:System.Windows.Forms.ListViewGroupCollection.Count" /> property to determine the number of loops.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator used to iterate through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that represents the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -203,11 +300,21 @@
         <Parameter Name="value" Type="System.Windows.Forms.ListViewGroup" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine the index of a group within the collection. This is useful, for example, to determine the index of each group when you iterate through the collection using the <see cref="T:System.Collections.IEnumerator" /> returned by the <see cref="M:System.Windows.Forms.ListViewGroupCollection.GetEnumerator" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the specified <see cref="T:System.Windows.Forms.ListViewGroup" /> within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the group within the collection, or -1 if the group is not in the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to locate in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -224,11 +331,20 @@
         <Parameter Name="group" Type="System.Windows.Forms.ListViewGroup" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to insert an existing <see cref="T:System.Windows.Forms.ListViewGroup" /> at a particular index within the collection.</para>
+          <para>You cannot add a <see cref="T:System.Windows.Forms.ListViewGroup" /> to the collection more than once. When you call the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Insert(System.Int32,System.Windows.Forms.ListViewGroup)" /> method using a group that is already in the collection, the insertion simply fails. Use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Contains(System.Windows.Forms.ListViewGroup)" /> method before the insertion to determine whether a particular group is already in the collection. To reposition a group within the collection, you must first remove it, and then insert it at the desired index.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.Windows.Forms.ListViewGroup" /> into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the collection at which to insert the group. </param>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to insert into the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -284,10 +400,18 @@
         <Parameter Name="group" Type="System.Windows.Forms.ListViewGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove a group from the collection when you have a reference to the group. Note that removing a group from the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection does not remove items from the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+          <para>To remove a group at a particular index, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.RemoveAt(System.Int32)" /> method instead. To remove all the groups from the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Windows.Forms.ListViewGroup" /> from the collection.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -303,10 +427,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove a group from the collection when you have the index of the group within the collection. Note that removing groups from the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection does not remove items from the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+          <para>To remove a group using a reference to the object, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Remove(System.Windows.Forms.ListViewGroup)" /> method instead. To remove all the groups from the collection, use the <see cref="M:System.Windows.Forms.ListViewGroupCollection.Clear" /> method. When you remove an item from the collection, the indexes change for subsequent items in the collection. All information about the removed item is deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Windows.Forms.ListViewGroup" /> at the specified index within the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the collection of the <see cref="T:System.Windows.Forms.ListViewGroup" /> to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -322,9 +454,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -337,9 +472,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -355,10 +493,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new <see cref="T:System.Windows.Forms.ListViewGroup" /> to the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the <see cref="T:System.Windows.Forms.ListViewGroup" /> has been added.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to add to the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -374,10 +519,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified value is located in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is a <see cref="T:System.Windows.Forms.ListViewGroup" /> contained in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the <see cref="T:System.Windows.Forms.ListViewGroup" /> to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -393,10 +545,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index within the collection of the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of <paramref name="value" /> if it is in the collection; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to find in the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -413,10 +572,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="value" /> is not a <see cref="T:System.Windows.Forms.ListViewGroup" />, it is not added to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Windows.Forms.ListViewGroup" /> into the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which the <see cref="T:System.Windows.Forms.ListViewGroup" /> is added to the collection.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -429,9 +596,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -444,9 +614,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -481,9 +654,13 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Windows.Forms.ListViewGroup" /> from the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewGroup" /> to remove from the <see cref="T:System.Windows.Forms.ListViewGroupCollection" />.</param>
       </Docs>
     </Member>
   </Members>

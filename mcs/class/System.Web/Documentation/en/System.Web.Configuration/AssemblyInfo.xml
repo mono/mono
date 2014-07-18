@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyInfo" FullName="System.Web.Configuration.AssemblyInfo">
   <TypeSignature Language="C#" Value="public sealed class AssemblyInfo : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET automatically links assemblies to a resource when compiling each code module. An <see cref="T:System.Web.Configuration.AssemblyInfo" /> object references an assembly. An assembly is a collection of types and resources that are built to work together and form a logical unit of functionality. An assembly provides the common language runtime with the information it needs to identify type implementations. To the runtime, a type does not exist outside the context of an assembly.</para>
+      <para>Commonly linked assemblies are listed in the assemblies node of the compilation section of the configuration. Additionally, assemblies can be manually added to a code resource when additional functionality for an application is needed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References an assembly to be linked to during compilation of a dynamic resource. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +29,17 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.Configuration.AssemblyInfo" /> instance is not initialized with assembly information, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of an <see cref="T:System.Web.Configuration.AssemblyInfo" /> class.</para>
+        </summary>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies a comma-separated assembly name combination consisting of version, culture, and public-key tokens.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +60,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET first searches for the assembly DLL in the application's private Bin directory and then in the system assembly cache.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an assembly reference to use during compilation of a dynamic resource.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompositionScopeDefinition" FullName="System.ComponentModel.Composition.Hosting.CompositionScopeDefinition">
   <TypeSignature Language="C#" Value="public class CompositionScopeDefinition : System.ComponentModel.Composition.Primitives.ComposablePartCatalog, System.ComponentModel.Composition.Hosting.INotifyComposablePartCatalogChanged" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CompositionScopeDefinition extends System.ComponentModel.Composition.Primitives.ComposablePartCatalog implements class System.ComponentModel.Composition.Hosting.INotifyComposablePartCatalogChanged" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node in a tree of scoped catalogs, reflecting an underlying catalog and its child scopes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +36,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,10 +55,15 @@
         <Parameter Name="children" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.CompositionScopeDefinition&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="children">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class with the specified underlying catalog and children.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying catalog for this catalog.</param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of the child scopes of this catalog.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,11 +79,17 @@
         <Parameter Name="publicSurface" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.ExportDefinition&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="children">To be added.</param>
-        <param name="publicSurface">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class with the specified underlying catalog, children, and public surface.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying catalog for this catalog.</param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of the child scopes of this catalog.</param>
+        <param name="publicSurface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The public surface for this catalog.</param>
       </Docs>
     </Member>
     <Member MemberName="Changed">
@@ -85,8 +103,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the underlying catalog has changed, if that catalog supports notifications.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Changing">
@@ -100,8 +121,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the underlying catalog is changing, if that catalog supports notifications.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Children">
@@ -115,9 +139,12 @@
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.CompositionScopeDefinition&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child scopes of this catalog.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -134,9 +161,25 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called only by the public Dispose() and Finalize() methods; do not call this method directly.When you implement the dispose pattern, the Boolean parameter of the Dispose(Boolean) method should be used as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>The Dispose() method of the current object should call Dispose(Boolean) with the Boolean parameter set to true to release both managed and unmanaged resources.</para>
+            </item>
+            <item>
+              <para>The Finalize() method of the current object should call Dispose(Boolean) with the Boolean parameter set to false to release only unmanaged resources.</para>
+            </item>
+          </list>
+          <para>For more information, see <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the Dispose() and Finalize() methods to release the managed and unmanaged resources used by the current instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -151,9 +194,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the catalog.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the catalog.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -170,10 +219,17 @@
         <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of exports that match the conditions specified by the import definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of exports that match the specified conditions.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />Conditions that specify which exports to match.</param>
       </Docs>
     </Member>
     <Member MemberName="OnChanged">
@@ -190,9 +246,13 @@
         <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition.Changed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contains data for the <see cref="E:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition.Changed" /> event.</param>
       </Docs>
     </Member>
     <Member MemberName="OnChanging">
@@ -209,9 +269,13 @@
         <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition.Changing" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contains data for the <see cref="E:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition.Changing" /> event.</param>
       </Docs>
     </Member>
     <Member MemberName="PublicSurface">
@@ -225,9 +289,12 @@
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.ExportDefinition&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of parts visible to the parent scope of this catalog.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

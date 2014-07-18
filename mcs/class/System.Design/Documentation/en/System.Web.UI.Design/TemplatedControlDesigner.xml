@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplatedControlDesigner" FullName="System.Web.UI.Design.TemplatedControlDesigner">
   <TypeSignature Language="C#" Value="public abstract class TemplatedControlDesigner : System.Web.UI.Design.ControlDesigner" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extends design-time behavior for template-based server controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +23,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +41,17 @@
         <ReturnType>System.Web.UI.Design.ITemplateEditingFrame</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.ActiveTemplateEditingFrame" /> property is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> property to expose or enumerate templates within a designer for template-based controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the active template editing frame.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,9 +70,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether or not this designer will allow the viewing or editing of templates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -74,10 +92,17 @@
         <Parameter Name="verb" Type="System.Web.UI.Design.TemplateEditingVerb" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a template editing frame for the specified verb.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new template editing frame.</para>
+        </returns>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template editing verb to create a template editing frame for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +124,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer allows data binding. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnterTemplateMode">
@@ -114,9 +142,19 @@
         <Parameter Name="newTemplateEditingFrame" Type="System.Web.UI.Design.ITemplateEditingFrame" />
       </Parameters>
       <Docs>
-        <param name="newTemplateEditingFrame">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.EnterTemplateMode(System.Web.UI.Design.ITemplateEditingFrame)" /> method is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> property to manipulate templates within a designer for template-based controls.</para>
+          </block>
+          <para>If already in template mode and editing a different template frame, this method calls <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.ExitTemplateMode(System.Boolean,System.Boolean,System.Boolean)" /> to save all its templates and close that frame.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a particular template frame object for editing in the designer.</para>
+        </summary>
+        <param name="newTemplateEditingFrame">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template editing frame object to open in the designer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,11 +178,22 @@
         <Parameter Name="fSave" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="fSwitchingTemplates">To be added.</param>
-        <param name="fNested">To be added.</param>
-        <param name="fSave">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.ExitTemplateMode(System.Boolean,System.Boolean,System.Boolean)" /> method is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> property to manipulate templates within a designer for template-based controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the currently active template editing frame after saving any relevant changes.</para>
+        </summary>
+        <param name="fSwitchingTemplates">
+          <attribution license="cc4" from="Microsoft" modified="false" />true when switching from one template editing frame to another; otherwise false. </param>
+        <param name="fNested">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this designer is nested (one or more levels) within another control whose designer is also in template editing mode; otherwise false. </param>
+        <param name="fSave">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if templates should be saved on exit; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -164,9 +213,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.GetCachedTemplateEditingVerbs" /> method is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> property to manipulate templates within a designer for template-based controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cached template editing verbs.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Design.TemplateEditingVerb" /> objects, if any.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,9 +246,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup to persist for the content that is in the associated server control runtime.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The persistable inner HTML.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -204,10 +270,22 @@
         <Parameter Name="templateName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="templateName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.GetTemplateContainerDataItemProperty(System.String)" /> method is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplateGroup.Templates" /> property of the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> collection elements to examine template metadata within a designer for template-based controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data item property of the template's container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the data.</para>
+        </returns>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,10 +307,17 @@
         <Parameter Name="templateName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="templateName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data source of the template's container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data source of the container of the specified template.</para>
+        </returns>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -281,9 +366,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the template editing verbs available to the designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The template editing verbs available to the designer.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,10 +396,17 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a template from the specified text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.ITemplate" /> from the specified text.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to retrieve a template from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -325,10 +423,22 @@
         <Parameter Name="templateName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="templateName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.GetTemplatePropertyParentType(System.String)" /> method is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplateGroup.Templates" /> property of the <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.TemplateGroups" /> collection elements to examine template metadata within a designer for template-based controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the parent of the template property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the object that has the template property.</para>
+        </returns>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template to return the type of the parent for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -350,10 +460,17 @@
         <Parameter Name="template" Type="System.Web.UI.ITemplate" />
       </Parameters>
       <Docs>
-        <param name="template">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of text that represents the specified template.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the specified template.</para>
+        </returns>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.ITemplate" /> to convert to text. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -367,9 +484,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ControlDesigner.ID" /> property is never hidden.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the properties of the control will be hidden when the control is placed into template editing mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,9 +512,13 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the designer and loads the specified component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control element being designed.</param>
       </Docs>
     </Member>
     <Member MemberName="InTemplateMode">
@@ -401,9 +528,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.Design.TemplatedControlDesigner.InTemplateMode" /> property is obsolete. Use the <see cref="P:System.Web.UI.Design.ControlDesigner.InTemplateMode" /> property for equivalent control designer functionality.</para>
+          </block>
+          <para>A document is in template mode when a template is currently being viewed or edited in the forms designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer document is in template mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -423,8 +559,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnBehaviorAttached" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.IControlDesignerTag.SetAttribute(System.String,System.String)" /> and <see cref="M:System.Web.UI.Design.IControlDesignerTag.GetAttribute(System.String)" /> methods on the <see cref="P:System.Web.UI.Design.ControlDesigner.Tag" /> property to map properties to styles.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an opportunity to perform additional processing when a behavior is attached to the designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -447,10 +591,18 @@
         <Parameter Name="ce" Type="System.ComponentModel.Design.ComponentChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="ce">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called after a property has been changed. It allows the implementer to perform any post-processing that may be needed after a property change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Delegate to handle the component changed event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object sending the event. </param>
+        <param name="ce">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ComponentChangedEventArgs" /> that provides data for the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -465,8 +617,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an opportunity to perform additional processing when the parent of this designer is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -481,8 +636,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is raised by the designer host for certain actions on a control in the design surface. For example, an event is raised when the user enters or exits template editing mode for a control.</para>
+          <para>The <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class supplies a default delegate to handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. Classes deriving from the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> override the <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method to process events that are raised when the template mode changes for the associated control.</para>
+          <para>The <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>The default delegate performs the updates that are required for a template mode change event in the base <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class, and then calls the <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method. The base <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method in the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class returns without performing any additional processing for the event. If a class derives from the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> and overrides the base <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method, the default delegate calls the override method in the derived class.</para>
+          <para>Use the <see cref="P:System.Web.UI.Design.ControlDesigner.InTemplateMode" /> property to determine whether the control designer is in template editing mode currently.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an opportunity to perform additional processing when the template mode is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -499,9 +664,20 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called immediately before its corresponding Post method. If you are overriding this method, you should call the base implementation before you perform your own filtering.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to filter the set of member attributes the component it is designing through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The augmented set of attributes. If the method does not modify any attributes, it returns a reference to its input parameter. If you do make a change to the attributes, you must create a new array.</para>
+        </returns>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member attributes for component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -515,8 +691,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the active template editing frame.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -535,11 +714,17 @@
         <Parameter Name="templateContent" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="editingFrame">To be added.</param>
-        <param name="templateName">To be added.</param>
-        <param name="templateContent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, sets the specified template's content to the specified content.</para>
+        </summary>
+        <param name="editingFrame">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template editing frame to provide content for. </param>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template. </param>
+        <param name="templateContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content to set for the template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -561,9 +746,12 @@
         <ReturnType>System.Web.UI.Design.TemplateGroupCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of template groups, each containing a template definition.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UpdateDesignTimeHtml">
@@ -574,8 +762,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should call this method to refresh the design-time display if the template frames have been changed without calling methods that update the design-time HTML automatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the design-time HTML.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

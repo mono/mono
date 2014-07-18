@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StatusBarPanel" FullName="System.Windows.Forms.StatusBarPanel">
   <TypeSignature Language="C#" Value="public class StatusBarPanel : System.ComponentModel.Component, System.ComponentModel.ISupportInitialize" />
   <AssemblyInfo>
@@ -25,8 +26,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.StatusBarPanel" /> represents an individual panel in the <see cref="T:System.Windows.Forms.StatusBar.StatusBarPanelCollection" /> of a <see cref="T:System.Windows.Forms.StatusBar" /> control. A <see cref="T:System.Windows.Forms.StatusBarPanel" /> can contain text and/or an icon that can be used to reflect the status of an application. Use the <see cref="T:System.Windows.Forms.StatusBar.StatusBarPanelCollection" />, accessible through the <see cref="P:System.Windows.Forms.StatusBar.Panels" /> property of a <see cref="T:System.Windows.Forms.StatusBar" /> control, to retrieve, add, or remove an individual <see cref="T:System.Windows.Forms.StatusBarPanel" />.</para>
+      <para>The <see cref="T:System.Windows.Forms.StatusBarPanel" /> provides properties that enable you to modify the display behavior of a panel within a <see cref="T:System.Windows.Forms.StatusBar" /> control. You can use the <see cref="P:System.Windows.Forms.StatusBarPanel.Icon" /> property to display an icon within a panel. This property can be used to provide a graphical representation of state in an application. The <see cref="P:System.Windows.Forms.StatusBarPanel.Alignment" /> property enables you to specify how text and/or an icon is aligned within the panel. To ensure that your panel is sized properly to fit the text of the panel, you can use the <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property to automatically resize the panel to fit the text of the panel or to fill the remaining space within the <see cref="T:System.Windows.Forms.StatusBar" /> control. The <see cref="P:System.Windows.Forms.StatusBarPanel.MinWidth" /> property enables you to specify a minimum width for the panel to ensure that it does not get smaller than the data it is intended to display.</para>
+      <para>The <see cref="T:System.Windows.Forms.StatusBar" /> control is typically used to display Help information or state information about your application. Often, it is important to display additional information about data that is presented in a panel. You can use the <see cref="P:System.Windows.Forms.StatusBarPanel.ToolTipText" /> property to display information whenever the mouse pointer rests on a panel.</para>
+      <para>Although the <see cref="T:System.Windows.Forms.StatusBar" /> control is typically used to display textual information, you can also provide your own type of display to a <see cref="T:System.Windows.Forms.StatusBarPanel" />. The <see cref="P:System.Windows.Forms.StatusBarPanel.Style" /> property enables you to specify how the <see cref="T:System.Windows.Forms.StatusBarPanel" /> will be drawn. By default, the <see cref="P:System.Windows.Forms.StatusBarPanel.Style" /> property is used to display the value of the <see cref="P:System.Windows.Forms.StatusBarPanel.Text" /> property (and an icon, if specified in the <see cref="P:System.Windows.Forms.StatusBarPanel.Icon" /> property). If the property is set to <see cref="F:System.Windows.Forms.StatusBarPanelStyle.OwnerDraw" />, you can draw your own information into the panel. You can use this feature to draw a progress bar or an animated icon in the panel.</para>
+      <para>When you create an instance of the <see cref="T:System.Windows.Forms.StatusBarPanel" /> class, the read/write properties are set to initial values. For a list of these values, see the <see cref="M:System.Windows.Forms.StatusBarPanel.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a panel in a <see cref="T:System.Windows.Forms.StatusBar" /> control. Although the <see cref="T:System.Windows.Forms.StatusStrip" /> control replaces and adds functionality to the <see cref="T:System.Windows.Forms.StatusBar" /> control of previous versions, <see cref="T:System.Windows.Forms.StatusBar" /> is retained for both backward compatibility and future use if you choose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,8 +45,112 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create an instance of <see cref="T:System.Windows.Forms.StatusBarPanel" />, the following read/write properties are set to initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.Alignment" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.HorizontalAlignment.Left" />  </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.None" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.BorderStyle" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.StatusBarPanelBorderStyle.Sunken" />  </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.Icon" /> </para>
+              </term>
+              <description>
+                <para>null </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.MinWidth" /> </para>
+              </term>
+              <description>
+                <para>10 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.Style" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.StatusBarPanelStyle.Text" />  </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.Text" /> </para>
+              </term>
+              <description>
+                <para>A zero-length string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.ToolTipText" /> </para>
+              </term>
+              <description>
+                <para>A zero-length string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.StatusBarPanel.Width" /> </para>
+              </term>
+              <description>
+                <para>100 </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value for any of these properties through a separate call to the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.StatusBarPanel" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +172,15 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to horizontally align the text and/or icon assigned to the <see cref="P:System.Windows.Forms.StatusBarPanel.Icon" /> property within the borders of the panel. Text and icons can be aligned to the left, right, or center of the <see cref="T:System.Windows.Forms.StatusBarPanel" />. There is no way to independently position an icon within the <see cref="T:System.Windows.Forms.StatusBarPanel" />. For example, you cannot position an icon to the left side of the <see cref="T:System.Windows.Forms.StatusBarPanel" /> while aligning the text on the right side. The icon is always positioned to the left side of the text regardless of how the text is aligned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of text and icons within the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +202,17 @@
         <ReturnType>System.Windows.Forms.StatusBarPanelAutoSize</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Windows.Forms.StatusBarPanel" /> objects set to <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Contents" /> have precedence over those panels set to the <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Spring" /> value. For example, a <see cref="T:System.Windows.Forms.StatusBarPanel" /> that has its <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property set to <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Spring" /> is shortened if a <see cref="T:System.Windows.Forms.StatusBarPanel" /> with the <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property set to <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Contents" /> requires that space. </para>
+          <para>You can use <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> to ensure that the contents of a <see cref="T:System.Windows.Forms.StatusBarPanel" /> are properly displayed in a <see cref="T:System.Windows.Forms.StatusBar" /> control that contains more than one panel. For example, you might want a panel that contains text to adjust automatically to the amount of text it is displaying (<see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Contents" />), while another panel on the <see cref="T:System.Windows.Forms.StatusBar" /> that displays an owner-drawn progress bar would need to be a fixed size (<see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.None" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the status bar panel is automatically resized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,8 +227,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to start the initialization of a component that is used on a form or used by another component. The <see cref="M:System.Windows.Forms.StatusBarPanel.EndInit" /> method ends the initialization. Using the <see cref="M:System.Windows.Forms.StatusBarPanel.BeginInit" /> and <see cref="M:System.Windows.Forms.StatusBarPanel.EndInit" /> methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the initialization of a <see cref="T:System.Windows.Forms.StatusBarPanel" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +256,15 @@
         <ReturnType>System.Windows.Forms.StatusBarPanelBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to differentiate a panel from other panels in a <see cref="T:System.Windows.Forms.StatusBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +281,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.StatusBarPanel" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.StatusBarPanel" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,8 +306,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to end the initialization of a component that is used by another component. The <see cref="M:System.Windows.Forms.StatusBarPanel.BeginInit" /> method starts the initialization. Using the <see cref="M:System.Windows.Forms.StatusBarPanel.BeginInit" /> and <see cref="M:System.Windows.Forms.StatusBarPanel.EndInit" /> methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the initialization of a <see cref="T:System.Windows.Forms.StatusBarPanel" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +335,18 @@
         <ReturnType>System.Drawing.Icon</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to display an icon that represents the state of your application or a process within your application. For example, you can display an icon in a <see cref="T:System.Windows.Forms.StatusBarPanel" /> to indicate whether a file save operation is in progress or complete.</para>
+          <block subset="none" type="note">
+            <para>There is no way to independently position an icon within the <see cref="T:System.Windows.Forms.StatusBarPanel" />. For example, you cannot position an icon to the left side of the <see cref="T:System.Windows.Forms.StatusBarPanel" /> while aligning the text on the right side using the <see cref="P:System.Windows.Forms.StatusBarPanel.Alignment" /> property. The icon is always positioned to the left side of the panel's text regardless of how the text is aligned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the icon to display within the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -207,9 +371,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.StatusBarPanel.MinWidth" /> property is used when the <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property is set to <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Contents" /> or <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.Spring" /> to prevent the <see cref="T:System.Windows.Forms.StatusBarPanel" /> from automatically resizing to a width that is too small. When the <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property is set to <see cref="F:System.Windows.Forms.StatusBarPanelAutoSize.None" />, the <see cref="P:System.Windows.Forms.StatusBarPanel.MinWidth" /> property is automatically set to the same value as the <see cref="P:System.Windows.Forms.StatusBarPanel.Width" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum allowed width of the status bar panel within the <see cref="T:System.Windows.Forms.StatusBar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,9 +401,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.StatusBarPanel.Name" /> property corresponds to the key for a <see cref="T:System.Windows.Forms.StatusBarPanel" /> in the <see cref="T:System.Windows.Forms.StatusBar.StatusBarPanelCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name to apply to the <see cref="T:System.Windows.Forms.StatusBarPanel" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
@@ -248,9 +424,15 @@
         <ReturnType>System.Windows.Forms.StatusBar</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine the <see cref="T:System.Windows.Forms.StatusBar" /> control that a <see cref="T:System.Windows.Forms.StatusBarPanel" /> is contained within. <see cref="T:System.Windows.Forms.StatusBarPanel" /> objects are added to a <see cref="T:System.Windows.Forms.StatusBar" /> control by calling the <see cref="M:System.Windows.Forms.StatusBar.StatusBarPanelCollection.Add(System.String)" /> method of the <see cref="T:System.Windows.Forms.StatusBar.StatusBarPanelCollection" /> class. The <see cref="T:System.Windows.Forms.StatusBar.StatusBarPanelCollection" /> of a <see cref="T:System.Windows.Forms.StatusBar" /> control is accessible through the <see cref="P:System.Windows.Forms.StatusBar.Panels" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.StatusBar" /> control that hosts the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,9 +451,15 @@
         <ReturnType>System.Windows.Forms.StatusBarPanelStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to indicate whether a <see cref="T:System.Windows.Forms.StatusBarPanel" /> displays text or whether the panel is managed as an owner-drawn <see cref="T:System.Windows.Forms.StatusBarPanel" />. To determine when a <see cref="T:System.Windows.Forms.StatusBarPanel" /> needs to be drawn, create an event handler for the <see cref="E:System.Windows.Forms.StatusBar.DrawItem" /> event of the <see cref="T:System.Windows.Forms.StatusBar" /> control. The <see cref="T:System.Windows.Forms.StatusBarDrawItemEventArgs" /> passed as a parameter to an event handler of the <see cref="E:System.Windows.Forms.StatusBar.DrawItem" /> event enables you to determine which panel needs to be drawn. The <see cref="T:System.Windows.Forms.StatusBarDrawItemEventArgs" /> also provides a <see cref="T:System.Drawing.Graphics" /> object you can use to perform drawing tasks on the <see cref="T:System.Windows.Forms.StatusBarPanel" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -302,9 +490,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that contains data about the <see cref="T:System.Windows.Forms.StatusBarPanel" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -322,9 +513,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents the text that is displayed when the <see cref="P:System.Windows.Forms.StatusBarPanel.Style" /> property is set to <see cref="F:System.Windows.Forms.StatusBarPanelStyle.Text" />. You can use this property to display information about your application in a <see cref="T:System.Windows.Forms.StatusBar" /> control. For example, you can use the <see cref="P:System.Windows.Forms.StatusBarPanel.Text" /> property to display Help information when the user moves the mouse over a menu or to display the name and location of a file that is opened in an application. To align the text within a <see cref="T:System.Windows.Forms.StatusBarPanel" />, use the <see cref="P:System.Windows.Forms.StatusBarPanel.Alignment" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -346,9 +543,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to display additional information in a ToolTip when the mouse pointer rests on a <see cref="T:System.Windows.Forms.StatusBarPanel" />. For example, you can display a ToolTip that provides data transfer speed for a <see cref="T:System.Windows.Forms.StatusBarPanel" /> that displays the status of a file transfer.</para>
+          <para>To display ToolTips for other controls in your application, use the <see cref="T:System.Windows.Forms.ToolTip" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets ToolTip text associated with the status bar panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -363,9 +567,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a string that contains information about the panel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that contains the class name for the control and the text it contains.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -387,9 +597,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.StatusBarPanel.Width" /> property always reflects the actual width of a <see cref="T:System.Windows.Forms.StatusBarPanel" /> and cannot be smaller than the <see cref="P:System.Windows.Forms.StatusBarPanel.MinWidth" /> property. To automatically resize the width of the <see cref="T:System.Windows.Forms.StatusBarPanel" /> to the contents of the <see cref="T:System.Windows.Forms.StatusBarPanel" />, you can use the <see cref="P:System.Windows.Forms.StatusBarPanel.AutoSize" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the status bar panel within the <see cref="T:System.Windows.Forms.StatusBar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

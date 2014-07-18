@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SkinBuilder" FullName="System.Web.UI.SkinBuilder">
   <TypeSignature Language="C#" Value="public sealed class SkinBuilder : System.Web.UI.ControlBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page developers and control authors do not use the <see cref="T:System.Web.UI.SkinBuilder" /> class directly.</para>
+      <para>ASP.NET designer builders use the <see cref="T:System.Web.UI.SkinBuilder" /> class in conjunction with the <see cref="T:System.Web.UI.ThemeProvider" /> class and the <see cref="T:System.Web.UI.IThemeResolutionService" /> interface to apply themes and their respective control skins to controls at design time. To apply themes at design time, the base <see cref="T:System.Web.UI.ControlBuilder" /> class calls the <see cref="M:System.Web.UI.SkinBuilder.ApplyTheme" /> method whenever a control's child control tree is built.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a <see cref="T:System.Web.UI.ControlBuilder" /> object used at design time to apply control skins to controls. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +32,23 @@
         <Parameter Name="themePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="control">To be added.</param>
-        <param name="skinBuilder">To be added.</param>
-        <param name="themePath">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by the <see cref="M:System.Web.UI.ThemeProvider.GetSkinBuilder(System.Web.UI.Control)" /> method of the <see cref="T:System.Web.UI.ThemeProvider" /> class to return a <see cref="T:System.Web.UI.SkinBuilder" /> object for the control specified in the <paramref name="control" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.SkinBuilder" /> class, setting the control with which the builder is associated, the general <see cref="T:System.Web.UI.ControlBuilder" /> object provided by the <see cref="T:System.Web.UI.ThemeProvider" /> object for the control, and a path to the theme file.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.ThemeProvider" /> that encapsulates theme information for controls in a designer environment.</param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> with which the <see cref="T:System.Web.UI.SkinBuilder" /> is associated. The <see cref="M:System.Web.UI.SkinBuilder.ApplyTheme" /> method applies a control skin to this control and returns it.</param>
+        <param name="skinBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.ControlBuilder" /> provided by the <see cref="T:System.Web.UI.ThemeProvider" /> for the control's type. </param>
+        <param name="themePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The absolute path to the theme file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,10 +62,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Web.UI.SkinBuilder" /> objects are associated with controls at design time by specifying an <see cref="T:System.Web.UI.IThemeResolutionService" /> instance for the <see cref="T:System.Web.UI.ControlBuilder" /> object of a control that supplies a <see cref="T:System.Web.UI.ThemeProvider" /> object. The <see cref="T:System.Web.UI.ThemeProvider" /> object can return a <see cref="T:System.Web.UI.SkinBuilder" /> object for a given control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a theme and a control skin to the current control at design time, if a <see cref="T:System.Web.UI.SkinBuilder" /> object is associated with the control. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control instance to which the theme or style sheet theme and any control skin was applied. This is the same instance passed to the builder's <see cref="M:System.Web.UI.SkinBuilder.#ctor(System.Web.UI.ThemeProvider,System.Web.UI.Control,System.Web.UI.ControlBuilder,System.String)" /> constructor. This method will return null if no control was passed to the constructor.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

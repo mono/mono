@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscardableAttribute" FullName="System.Runtime.CompilerServices.DiscardableAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class DiscardableAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DiscardableAttribute extends System.Attribute" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A type definition might be marked discardable if it is not referenced by any other code in its assembly. This might be useful for languages that support separate compilation, where it is only at link phase that it becomes known whether any type is actually referenced by other code.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers' use only.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a type definition as discardable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DiscardableAttribute" /> class with default values.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

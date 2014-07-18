@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolMethod" FullName="System.Diagnostics.SymbolStore.ISymbolMethod">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolMethod" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolMethod" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolMethod" /> interface provides access only to the symbol-related attributes of a method, such as sequence points, lexical scopes, and parameter information. Use it with the <see cref="N:System.Reflection" /> classes to read the type-related attributes of a method.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the ISymUnmanagedMethod interface, one of the unmanaged symbol store interfaces that provide an alternative way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method within a symbol store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetNamespace">
@@ -34,9 +44,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolNamespace'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace that the current method is defined within.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace that the current method is defined within.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOffset">
@@ -57,12 +73,24 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'ISymbolDocument'</param>
-        <param name="line">To be added: an object of type 'int'</param>
-        <param name="column">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters are returned in the order that they are defined within the signature of the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Microsoft intermediate language (MSIL) offset within the method that corresponds to the specified position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The offset within the specified document.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document for which the offset is requested. </param>
+        <param name="line">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document line corresponding to the offset. </param>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document column corresponding to the offset. </param>
       </Docs>
     </Member>
     <Member MemberName="GetParameters">
@@ -79,9 +107,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters are returned in the order that they are defined within the signature of the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters for the current method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array of parameters for the current method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRanges">
@@ -102,12 +139,24 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'ISymbolDocument'</param>
-        <param name="line">To be added: an object of type 'int'</param>
-        <param name="column">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array is an array of integers in the format {{start1, end1}, {start2, end2}...}. The number of range pairs is the length of the array divided by 2.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of start and end offset pairs that correspond to the ranges of Microsoft intermediate language (MSIL) that a given position covers within this method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of start and end offset pairs.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document for which the offset is requested. </param>
+        <param name="line">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document line corresponding to the ranges. </param>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document column corresponding to the ranges. </param>
       </Docs>
     </Member>
     <Member MemberName="GetScope">
@@ -126,10 +175,20 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolScope'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Diagnostics.SymbolStore.ISymbolMethod.GetScope(System.Int32)" /> method to start local variable searches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the most enclosing lexical scope when given an offset within a method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The most enclosing lexical scope for the given byte offset within the method.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset within the method of the lexical scope. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSequencePoints">
@@ -153,14 +212,28 @@
         <Parameter Name="endColumns" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="offsets">To be added: an object of type 'int []'</param>
-        <param name="documents">To be added: an object of type 'ISymbolDocument []'</param>
-        <param name="lines">To be added: an object of type 'int []'</param>
-        <param name="columns">To be added: an object of type 'int []'</param>
-        <param name="endLines">To be added: an object of type 'int []'</param>
-        <param name="endColumns">To be added: an object of type 'int []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sequence points are sorted by offset and are for all documents in the method. Use <see cref="P:System.Diagnostics.SymbolStore.ISymbolMethod.SequencePointCount" /> to retrieve the count of all sequence points and create arrays of the proper size.</para>
+          <para>
+            <see cref="M:System.Diagnostics.SymbolStore.ISymbolMethod.GetSequencePoints(System.Int32[],System.Diagnostics.SymbolStore.ISymbolDocument[],System.Int32[],System.Int32[],System.Int32[],System.Int32[])" /> verifies the size of each array and places the sequence point information into each. If any array is null, the data for that array is not returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sequence points for the current method.</para>
+        </summary>
+        <param name="offsets">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of byte offsets from the beginning of the method for the sequence points. </param>
+        <param name="documents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of documents in which the sequence points are located. </param>
+        <param name="lines">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of lines in the documents at which the sequence points are located. </param>
+        <param name="columns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of columns in the documents at which the sequence points are located. </param>
+        <param name="endLines">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of lines in the documents at which the sequence points end. </param>
+        <param name="endColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of columns in the documents at which the sequence points end. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSourceStartEnd">
@@ -181,12 +254,24 @@
         <Parameter Name="columns" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="docs">To be added: an object of type 'ISymbolDocument []'</param>
-        <param name="lines">To be added: an object of type 'int []'</param>
-        <param name="columns">To be added: an object of type 'int []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first array position is the start, and the second is the end.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the start and end positions for the source of the current method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the positions were defined; otherwise, false.</para>
+        </returns>
+        <param name="docs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting and ending source documents. </param>
+        <param name="lines">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting and ending lines in the corresponding source documents. </param>
+        <param name="columns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting and ending columns in the corresponding source documents. </param>
       </Docs>
     </Member>
     <Member MemberName="RootScope">
@@ -202,9 +287,12 @@
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ISymbolScope'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root lexical scope for the current method. This scope encloses the entire method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SequencePointCount">
@@ -220,9 +308,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a count of the sequence points in the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Token">
@@ -238,9 +329,12 @@
         <ReturnType>System.Diagnostics.SymbolStore.SymbolToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SymbolToken'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Diagnostics.SymbolStore.SymbolToken" /> containing the metadata for the current method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EditorPart" FullName="System.Web.UI.WebControls.WebParts.EditorPart">
   <TypeSignature Language="C#" Value="public abstract class EditorPart : System.Web.UI.WebControls.WebParts.Part" />
   <AssemblyInfo>
@@ -17,9 +18,72 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> class provides a base set of properties and methods that are used by the derived <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls provided with the Web Parts control set, and by custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls. An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control allows a user to edit an associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control by modifying its layout, appearance, properties, behavior, or other characteristics. </para>
+      <para>The editing user interface (UI), which consists of <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zones that contain <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls, is displayed after a Web page enters edit mode. </para>
+      <block subset="none" type="note">
+        <para>An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control can be used only within a zone that derives from the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> class, such as the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZone" /> control.</para>
+      </block>
+      <para>After a page has entered edit mode, a user can select a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control to edit by clicking an edit verb on the verbs menu of the selected control. Only one <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control can be edited at a time. </para>
+      <para>Several derived <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls are provided with the Web Parts control set, as listed in the following table. These controls provide all the editing capabilities that are necessary for most applications. The typical approach for using these controls in a Web Parts page is to declare them in page persistence format within a &lt;zonetemplate&gt; element, where &lt;zonetemplate&gt; is the child element of an &lt;asp:editorzone&gt; element. For a code example, see the Example section of this topic.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Type of control</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.AppearanceEditorPart" /> </para>
+          </term>
+          <description>
+            <para>Edits the appearance of the associated control, including properties such as its title text, height, width, and border attributes.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.BehaviorEditorPart" /> </para>
+          </term>
+          <description>
+            <para>Edits certain behaviors of the associated control, such as whether it can be edited, whether it can be closed, or whether it can be moved to another zone. This control is only visible on a page when a control is being edited in shared personalization scope.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.LayoutEditorPart" /> </para>
+          </term>
+          <description>
+            <para>Edits layout attributes for the associated control, such as whether it is in a normal or minimized (collapsed) state, and what zone it is placed in. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.PropertyGridEditorPart" /> </para>
+          </term>
+          <description>
+            <para>Edits properties of the associated control, if those properties were declared in the source code with a WebBrowsable attribute. </para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>To improve accessibility, all the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls provided in the Web Parts control set are rendered within a &lt;fieldset&gt; element. The &lt;fieldset&gt; element groups the related set of controls used for editing in a given <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control, and it facilitates tabbed navigation among those controls for both visual user agents (such as ordinary Web browsers) and speech-oriented user agents (such as screen-reading software). </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class for controls that reside in <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zones and are used to edit <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +91,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the class for use by an inherited class instance. This constructor can be called only by an inherited class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +110,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.ApplyChanges" /> method is a critical method on an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control. It is defined as an abstract method in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> class, and must be implemented by inherited controls. The method's purpose is to save the values a user has entered into an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control to the corresponding properties in the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control that is referenced in the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.WebPartToEdit" /> property.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.ApplyChanges" /> method is called when the user clicks a button representing an OK or an apply verb in the editing user interface (UI). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the values in an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control to the corresponding properties in the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the action of saving values from the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control to the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control is successful; otherwise (if an error occurs), false. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,10 +144,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At certain points in the editing process, the zone that contains an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control checks the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.Display" /> property to determine whether to display the control. </para>
+          <para>There are two scenarios where the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.Display" /> property returns false and the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control is not displayed. The first scenario occurs when the control being edited is a <see cref="T:System.Web.UI.WebControls.WebParts.ProxyWebPart" /> control. The second scenario occurs when the control being edited has its <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.AllowEdit" /> and <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.IsShared" /> properties set to true, while the page's personalization scope is set at user level. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a control should be displayed when its associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control is in edit mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +175,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.DisplayTitle" /> property returns either the current value of the base <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property or, if the control has no title, a calculated value. The calculated value consists of a localizable resource string for untitled controls. In the cases where no value is assigned to the <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property, the value of the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.DisplayTitle" /> property differs from the <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property.</para>
+          <para>Because the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.DisplayTitle" /> property is designed to be a read-only, calculated property to get the actual current value of the displayed title at run time, do not attempt to use this property to set a title for an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control. To set a title, use the base <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the title text displayed in the title bar of an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,10 +199,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.GetDesignModeState" /> method returns information about the state of the zone that contains an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control. The state information is returned in the form of a dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the current state of an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control's parent zone.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> that has the current state of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone that contains an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,9 +230,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In addition to calling the base <see cref="M:System.Web.UI.Control.OnPreRender(System.EventArgs)" /> method, the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.OnPreRender(System.EventArgs)" /> method also checks the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.Display" /> property. If the value is false, meaning that the control should not be displayed, then the <see cref="P:System.Web.UI.Control.Visible" /> property is also set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="SyncChanges">
@@ -143,9 +250,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" /> method is a critical method on an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control. It is defined as an abstract method in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> class, and must be implemented by inherited controls. The purpose of the method is to retrieve the current values from the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control referenced in the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.WebPartToEdit" /> property, and update the fields in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control with those values so a user can edit them.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" /> method is called whenever the values in the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control might have changed. For every <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control, the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone that contains the control calls the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" /> method immediately after calling the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.ApplyChanges" /> method, so that the values in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control are always synchronized with the values in the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control. Another case where the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" /> method is called is when a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control is entering edit mode.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" /> method is not called after the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.ApplyChanges" /> method if that method returns false, because in that case, an error has occurred. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the property values from a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control for its associated <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,10 +275,18 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPart</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control (or other server or user control) that is currently being edited corresponds to the value of the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartManager.SelectedWebPart" /> property. Only one <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control can be edited at a time, and when a control is in edit mode, the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.WebPartToEdit" /> property provides a reference to that control. </para>
+          <para>After the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone has added the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control to its collection of controls, it then assigns the value of its own <see cref="P:System.Web.UI.WebControls.WebParts.EditorZoneBase.WebPartToEdit" /> property to the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.WebPartToEdit" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control.</para>
+          <para>An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control uses the <see cref="P:System.Web.UI.WebControls.WebParts.EditorPart.WebPartToEdit" /> property especially in its two critical methods--<see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.ApplyChanges" /> and <see cref="M:System.Web.UI.WebControls.WebParts.EditorPart.SyncChanges" />--to get and set the property values on the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control that is currently being edited. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SHA512Managed" FullName="System.Security.Cryptography.SHA512Managed">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SHA512Managed : System.Security.Cryptography.SHA512" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SHA512Managed extends System.Security.Cryptography.SHA512" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Managed implementation of the SHA512 cryptographic hash function.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The hash is used as a unique value of fixed size representing a large amount of data. Hashes of two sets of data should match if and only if the corresponding data also matches. Small changes to the data result in large unpredictable changes in the hash.</para>
+      <para>The hash size for the <see cref="T:System.Security.Cryptography.SHA512Managed" /> algorithm is 512 bits.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Computes the <see cref="T:System.Security.Cryptography.SHA512" /> hash algorithm for the input data using the managed library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,16 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates a new SHA512Managed class.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash is used as a unique value of fixed size representing a large amount of data. Hashes of two sets of data should match if and only if the corresponding data also matches. Small changes to the data result in large unpredictable changes in the hash.</para>
+          <para>The hash size for the <see cref="T:System.Security.Cryptography.SHA512Managed" /> algorithm is 512 bits.</para>
+          <para>Important   If you enable the FIPS security setting either in the Local Security Policy or as part of Group Policy you will get an <see cref="T:System.InvalidOperationException" /> when you attempt to use this constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.SHA512Managed" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HashCore">
@@ -58,11 +74,21 @@
         <Parameter Name="cbSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rgb">Byte array containing the data to hash.</param>
-        <param name="ibStart">Where in the input buffer to start.</param>
-        <param name="cbSize">Size in bytes of the data in the buffer to hash.</param>
-        <summary>Drives the hashing function.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not called by application code.</para>
+          <para>This abstract method performs the hash computation. Every write to the cryptographic stream object passes the data through this method. For each block of data, this method updates the state of the hash object so a correct hash value is returned at the end of the data stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, routes data written to the object into the <see cref="T:System.Security.Cryptography.SHA512Managed" /> hash algorithm for computing the hash.</para>
+        </summary>
+        <param name="rgb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data. </param>
+        <param name="ibStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="cbSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the array to use as data. </param>
       </Docs>
     </Member>
     <Member MemberName="HashFinal">
@@ -79,9 +105,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This finalizes the hash.  Takes the data from the chaining variables and returns it.</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not called by application code. This method finalizes any partial computation and returns the correct hash value of the data stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic stream object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -98,8 +133,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Resets the class after use.  Called automatically after hashing is done.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash is used as a unique value of fixed size representing a large amount of data. Hashes of two sets of data should match if and only if the corresponding data also matches. Small changes to the data result in large unpredictable changes in the hash.</para>
+          <para>The hash size for the <see cref="T:System.Security.Cryptography.SHA512Managed" /> algorithm is 512 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Security.Cryptography.SHA512Managed" /> class using the managed library.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

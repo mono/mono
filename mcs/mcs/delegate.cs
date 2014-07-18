@@ -446,7 +446,8 @@ namespace Mono.CSharp {
 
 		public override bool ContainsEmitWithAwait ()
 		{
-			return false;
+			var instance = method_group.InstanceExpression;
+			return instance != null && instance.ContainsEmitWithAwait ();
 		}
 
 		public static Arguments CreateDelegateMethodArguments (ResolveContext rc, AParametersCollection pd, TypeSpec[] types, Location loc)

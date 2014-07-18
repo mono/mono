@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuItemBindingCollection" FullName="System.Web.UI.WebControls.MenuItemBindingCollection">
   <TypeSignature Language="C#" Value="public sealed class MenuItemBindingCollection : System.Web.UI.StateManagedCollection" />
   <AssemblyInfo>
@@ -9,9 +10,32 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class is used to store and manage a collection of <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects in the <see cref="T:System.Web.UI.WebControls.Menu" /> control. The <see cref="T:System.Web.UI.WebControls.Menu" /> control uses the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class as the data type for its <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> property. The <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> property is used to store any menu item bindings defined for the <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+      <block subset="none" type="note">
+        <para>The order in which <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects appear in the collection has no effect on how those objects are applied to the menu items in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+      </block>
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class supports several ways to access the items in the collection:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItemBindingCollection.Item(System.Int32)" /> indexer to directly retrieve the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object at a specific zero-based index.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.StateManagedCollection.GetEnumerator" /> method to create an enumerator that can be used to iterate through the collection.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemCollection.CopyTo(System.Web.UI.WebControls.MenuItem[],System.Int32)" /> method to copy the contents of the collection into an array.</para>
+        </item>
+      </list>
+      <para>You can programmatically manage a <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> object by adding and removing <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects. To add menu items to the collection, use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Add(System.Web.UI.WebControls.MenuItemBinding)" /> or the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Insert(System.Int32,System.Web.UI.WebControls.MenuItemBinding)" /> method. To remove nodes from the collection, use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Remove(System.Web.UI.WebControls.MenuItemBinding)" />, the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.RemoveAt(System.Int32)" />, or the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class contains properties and methods that allow you to retrieve information about the collection itself. To find out how many items are in the collection, use the <see cref="P:System.Web.UI.StateManagedCollection.Count" /> property. If you want to determine whether the collection contains a certain <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object, use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Contains(System.Web.UI.WebControls.MenuItemBinding)" /> method. To get the index of a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection, use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.IndexOf(System.Web.UI.WebControls.MenuItemBinding)" /> method. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -24,11 +48,28 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Add(System.Web.UI.WebControls.MenuItemBinding)" /> method to append the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to the end of the collection.</para>
+          <block subset="none" type="note">
+            <para>You can add null values and duplicate <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects to the collection.</para>
+          </block>
+          <para>As an alternative, you can insert a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection at a specific index by using the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Insert(System.Int32,System.Web.UI.WebControls.MenuItemBinding)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The order in which <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects appear in the collection has no effect on how those objects are applied to the menu items in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to the end of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> was inserted in the collection.</para>
+        </returns>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to append to the end of the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +85,21 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Contains(System.Web.UI.WebControls.MenuItemBinding)" /> method to determine whether a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is contained in the collection. This method is commonly used to test for the existence of a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object before performing a task, such as adding or removing a menu item binding from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> is contained in the collection; otherwise, false.</para>
+        </returns>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to find.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,11 +116,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemCollection.CopyTo(System.Web.UI.WebControls.MenuItem[],System.Int32)" /> method to copy the contents of the collection into the specified zero-based array. Items are copied starting at the specified index of the target array. With the array, you can then use array syntax to access the items in the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> object.</para>
+          <para>As an alternative, you can also use the <see cref="M:System.Web.UI.StateManagedCollection.GetEnumerator" /> method to create an enumerator that can be used to access the items in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> object to a compatible one-dimensional array of <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects, starting at the specified index in the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based array of <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects that receives the copied items from the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the target array at which to start receiving the copied content.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,11 +145,25 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.CreateKnownType(System.Int32)" /> method is a helper function that is used to create an <see cref="T:System.Object" /> of the data type that corresponds to the specified index. The index is often determined by using the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.GetKnownTypes" /> method to create an array of supported data types and then searching the array for the desired data type.</para>
+          <para>The <paramref name="index" /> parameter is not used in this implementation of the method and is ignored. You should always pass in null for this parameter. This implementation of the method always returns an empty <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Object" /> of the data type that corresponds to the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an empty <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the data type to create. This parameter is not used in this implementation of the method; therefore, you should always pass in null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +177,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.GetKnownTypes" /> method is a helper function that is used to create an array of data types supported by the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class. The array is often searched to determine the index of a desired data type. The index is then passed to the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.CreateKnownType(System.Int32)" /> method to create an <see cref="T:System.Object" /> of the corresponding data type.</para>
+          <block subset="none" type="note">
+            <para>This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an array of <see cref="T:System.Type" /> objects that contains the supported data types of the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that contains the data types supported by the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,10 +209,26 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.IndexOf(System.Web.UI.WebControls.MenuItemBinding)" /> method to determine the index of the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection.</para>
+          <block subset="none" type="note">
+            <para>The order in which <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects appear in the collection has no effect on how those objects are applied to the menu items in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </block>
+          <para>If the menu item binding is not in the collection, the method returns -1.</para>
+          <block subset="none" type="note">
+            <para>If the specified menu item binding appears multiple times in the collection, the index of the first occurrence is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the collection, if found; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,11 +245,26 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Insert(System.Int32,System.Web.UI.WebControls.MenuItemBinding)" /> method to insert the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection at the specified index.</para>
+          <block subset="none" type="note">
+            <para>You can add null values and duplicate <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects to the collection.</para>
+          </block>
+          <para>As an alternative, you can simply append a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to the end of the collection by using the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Add(System.Web.UI.WebControls.MenuItemBinding)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The order in which <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects appear in the collection has no effect on the how those objects are applied to the menu items in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to the collection at the specified index location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index location at which to insert the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" />.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to insert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -183,10 +300,24 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Remove(System.Web.UI.WebControls.MenuItemBinding)" /> method to remove the specified menu item binding from the collection. All items that follow that menu item are then moved up to fill in the vacant position. The indexes of the moved items are also updated. </para>
+          <block subset="none" type="note">
+            <para>The collection can contain null values, as well as duplicate <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects.</para>
+          </block>
+          <para>As an alternative, you can remove a menu item from a specific index in the collection by using the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.RemoveAt(System.Int32)" /> method. You can also remove all menu items from the collection by using the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+          <block subset="none" type="note">
+            <para>The order in which <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects appear in the collection has no effect on how those objects are applied to the menu items in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object from the collection.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,10 +333,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.RemoveAt(System.Int32)" /> method to remove the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object at the specified index location from the collection. All items that follow that menu item are then moved up to fill in the vacant position. The indexes of the moved items are also updated.</para>
+          <block subset="none" type="note">
+            <para>The collection can contain null values, as well as duplicate <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects.</para>
+          </block>
+          <para>As an alternative, you can remove a specific <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object by using the <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.Remove(System.Web.UI.WebControls.MenuItemBinding)" /> method. You can also remove all menu items from the collection by using the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object at the specified index location from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index location of the menu item binding to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +363,20 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MenuItemBindingCollection.SetDirtyObject(System.Object)" /> method is a helper function that is used by the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class to mark a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object as having changed since the last load or save from view state.</para>
+          <block subset="none" type="note">
+            <para> This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object as having changed since the last load or save from view state.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to mark as having changed since the last load or save from view state.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

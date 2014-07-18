@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColorBlend" FullName="System.Drawing.Drawing2D.ColorBlend">
   <TypeSignature Language="C#" Value="public sealed class ColorBlend" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines arrays of colors and positions used for interpolating color blending in a multicolor gradient. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.ColorBlend" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +46,13 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.ColorBlend" /> class with the specified number of colors and positions.</para>
+        </summary>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of colors and positions in this <see cref="T:System.Drawing.Drawing2D.ColorBlend" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +68,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Color []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is an array of <see cref="T:System.Drawing.Color" /> structures that represents the colors to use at corresponding positions along a gradient. Along with the <see cref="P:System.Drawing.Drawing2D.ColorBlend.Positions" /> property, this property defines a multicolor gradient.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of colors that represents the colors to use at corresponding positions along a gradient.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +92,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of this array specify percentages of distance along the gradient line. For example, an element value of 0.2f specifies that this point is 20 percent of the total distance from the starting point. The elements in this array are represented by float values between 0.0f and 1.0f, and the first element of the array must be 0.0f and the last element must be 1.0f.</para>
+          <para>Along with the <see cref="P:System.Drawing.Drawing2D.ColorBlend.Colors" /> property, this property defines a multicolor gradient.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the positions along a gradient line.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

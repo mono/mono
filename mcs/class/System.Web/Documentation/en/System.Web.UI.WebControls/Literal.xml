@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Literal" FullName="System.Web.UI.WebControls.Literal">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Literal : System.Web.UI.Control, System.Web.UI.ITextControl" />
   <AssemblyInfo>
@@ -31,8 +32,63 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.Literal" /> control to reserve a location on the Web page to display text. The <see cref="T:System.Web.UI.WebControls.Literal" /> control is similar to the <see cref="T:System.Web.UI.WebControls.Label" /> control, except the <see cref="T:System.Web.UI.WebControls.Literal" /> control does not allow you to apply a style to the displayed text. You can programmatically control the text displayed in the control by setting the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. </para>
+      </block>
+      <para>For more information about security, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Literal
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ID="string"
+    Mode="<codeFeaturedElement>Transform</codeFeaturedElement>|PassThrough|Encode"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Text="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Reserves a location on the Web page to display static text.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +97,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Literal" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,8 +119,11 @@
       </Parameters>
       <Docs>
         <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Web.UI.WebControls.Literal" /> control that an XML or HTML element was parsed and adds that element to the <see cref="T:System.Web.UI.ControlCollection" /> of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +138,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Web.UI.EmptyControlCollection" /> object for the current instance of the <see cref="T:System.Web.UI.WebControls.Literal" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,8 +166,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.Literal" /> control overrides the <see cref="M:System.Web.UI.Control.Focus" /> method of the base class. The <see cref="M:System.Web.UI.WebControls.Literal.Focus" /> method of a <see cref="T:System.Web.UI.WebControls.Literal" /> control always throws an exception to indicate that the <see cref="M:System.Web.UI.WebControls.Literal.Focus" /> method is not supported on a <see cref="T:System.Web.UI.WebControls.Literal" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set input focus to a control; the <see cref="M:System.Web.UI.WebControls.Literal.Focus" /> base control method is not supported on a <see cref="T:System.Web.UI.WebControls.Literal" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -120,9 +191,55 @@
         <ReturnType>System.Web.UI.WebControls.LiteralMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Literal.Mode" /> property to specify how the contents of a <see cref="T:System.Web.UI.WebControls.Literal" /> control should be rendered. This property is set using one of the <see cref="T:System.Web.UI.WebControls.LiteralMode" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>PassThrough </para>
+              </term>
+              <description>
+                <para>The contents of the control are not modified. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Encode </para>
+              </term>
+              <description>
+                <para>The contents of the control are converted to an HTML-encoded string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Transform </para>
+              </term>
+              <description>
+                <para>Unsupported markup-language elements are removed from the contents of the control. If the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered on a browser that supports HTML or XHTML, the control's contents are not modified. </para>
+              </description>
+            </item>
+          </list>
+          <para>If you specify PassThrough, the entire contents of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are passed to the device or browser without making any modifications. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, it is sent to all devices and browsers whether it is supported or not.</para>
+          <para>If you specify Encode, the contents for the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are converted into an HTML-encoded string before rendering. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, it is converted to &amp;lt;Hr&amp;gt; and sent to the device or browser.</para>
+          <para>If you specify Transform, the rendering behavior of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property depends on the type of markup being rendered. When the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered for a device or browser that supports HTML or XHTML, specifying <see cref="F:System.Web.UI.WebControls.LiteralMode.Transform" /> produces the same behavior as specifying <see cref="F:System.Web.UI.WebControls.LiteralMode.PassThrough" />. All markup tags and elements for the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are rendered for the requesting browser.</para>
+          <para>When the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered for a markup language other than HTML or XHTML, such as WML or cHTML, you can use the <see cref="F:System.Web.UI.WebControls.LiteralMode.Transform" /> value to remove unsupported markup elements. In this case, any markup language elements of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property that are not supported in the targeted markup language are not rendered for the control. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, the tag is removed before the content is sent to a WML device. If an unsupported tag contains content, only the tag is removed and the content is sent to the device or browser. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property contains the content &lt;XYZ&gt;Test&lt;/XYZ&gt;, the &lt;XYZ&gt; and &lt;/XYZ&gt; tags are removed, and the text "Test" is sent to the device or browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an enumeration value that specifies how the content in the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -136,8 +253,11 @@
       </Parameters>
       <Docs>
         <param name="output">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object, which writes the content to be rendered on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,9 +272,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property to specify or determine the caption displayed in the <see cref="T:System.Web.UI.WebControls.Literal" /> control. This allows you to programmatically change the caption at run time.</para>
+          <para>The caption is HTML-decoded depending on how you assign a value to this property. If you assign a value through an attribute of the <see cref="T:System.Web.UI.WebControls.Literal" /> control, the value is HTML decoded before it is displayed. For example, &lt;asp:Literal id="DisplayLiteral" Text="A&amp;nbsp;B"/&gt; is rendered as "A B" on the browser. However, if you set this property programmatically or by placing the text between the opening and closing tags of the control, the caption is not HTML decoded. For example, &lt;asp:Literal id="DisplayLiteral"&gt; A&amp;nbsp;B &lt;/asp:Literal&gt; is rendered as "A&amp;nbsp;B".</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">Validation Server Controls</a></format>.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption displayed in the <see cref="T:System.Web.UI.WebControls.Literal" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

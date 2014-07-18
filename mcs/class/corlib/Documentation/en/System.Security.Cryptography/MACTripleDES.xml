@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MACTripleDES" FullName="System.Security.Cryptography.MACTripleDES">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class MACTripleDES : System.Security.Cryptography.KeyedHashAlgorithm" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MACTripleDES extends System.Security.Cryptography.KeyedHashAlgorithm" />
@@ -20,8 +21,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Managed implementation of the MAC mechanism using the TripleDES symmetric algorithm.</summary>
-    <remarks>The MAC mechanism is detailled in the NIST document "FIPS PUB 81: DES modes of operation" available at http://www.itl.nist.gov/fipspubs/fip81.htm</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A MAC can be used to determine whether a message sent over an insecure channel has been tampered with, provided that the sender and receiver share a secret key. The sender computes the MAC for the original data, and sends both as a single message. The receiver recomputes the MAC on the received message, and checks that the computed MAC matches the transmitted MAC.</para>
+      <para>Any change to the data or the MAC results in a mismatch, because knowledge of the secret key is required to change the message and reproduce the correct MAC. Therefore, if the codes match, the message is authenticated.</para>
+      <para>
+        <see cref="T:System.Security.Cryptography.MACTripleDES" /> uses a key that is 16 or 24 bytes long, and produces a hash sequence that is 8 bytes long.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Computes a Message Authentication Code (MAC) using <see cref="T:System.Security.Cryptography.TripleDES" /> for the input data <see cref="T:System.Security.Cryptography.CryptoStream" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +46,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the default implementation of <see cref="T:System.Security.Cryptography.TripleDES" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.MACTripleDES" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +70,16 @@
         <Parameter Name="rgbKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the default implementation of <see cref="T:System.Security.Cryptography.TripleDES" />. The <paramref name="rgbKey" /> parameter must be 16 or 24 bytes in length.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.MACTripleDES" /> class with the specified key data.</para>
+        </summary>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key for <see cref="T:System.Security.Cryptography.MACTripleDES" /> encryption. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,10 +97,19 @@
         <Parameter Name="rgbKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="strTripleDES">To be added: an object of type 'string'</param>
-        <param name="rgbKey">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="strTripleDES" /> parameter is the friendly name of the <see cref="T:System.Security.Cryptography.TripleDES" /> implementation type. The default implementation is System.Security.Cryptography.TripleDES.</para>
+          <para>The <paramref name="rgbKey" /> parameter must be 16 or 24 bytes in length.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.MACTripleDES" /> class with the specified key data and using the specified implementation of <see cref="T:System.Security.Cryptography.TripleDES" />.</para>
+        </summary>
+        <param name="strTripleDES">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.Cryptography.TripleDES" /> implementation to use. </param>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key for <see cref="T:System.Security.Cryptography.MACTripleDES" /> encryption. </param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -96,9 +128,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the disposing parameter set to true. Finalize invokes Dispose with disposing set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.MACTripleDES" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.MACTripleDES" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -135,11 +175,17 @@
         <Parameter Name="cbSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rgbData">To be added.</param>
-        <param name="ibStart">To be added.</param>
-        <param name="cbSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Routes data written to the object into the <see cref="T:System.Security.Cryptography.TripleDES" /> encryptor for computing the Message Authentication Code (MAC).</para>
+        </summary>
+        <param name="rgbData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data. </param>
+        <param name="ibStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="cbSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the array to use as data. </param>
       </Docs>
     </Member>
     <Member MemberName="HashFinal">
@@ -156,9 +202,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can read this value only after all data is written, and you cannot write more data afterward. Create a new instance of <see cref="T:System.Security.Cryptography.MACTripleDES" /> for each separate segment of data to compute the MAC for that data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the computed Message Authentication Code (MAC) after all data is written to the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed MAC.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -175,8 +230,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the default constructor for the class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of <see cref="T:System.Security.Cryptography.MACTripleDES" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -196,10 +257,17 @@
         <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Most plain text messages do not consist of a number of bytes that completely fill blocks. Often, there are not enough bytes to fill the last block. When this happens, a padding string is added to the text. For example, if the block length is 64 bits and the last block contains only 40 bits, 24 bits of padding are added. See <see cref="T:System.Security.Cryptography.PaddingMode" /> for a description of specific modes.</para>
+          <para>This field is accessed through the <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Padding" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding mode used in the hashing algorithm.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EncryptedKey" FullName="System.Security.Cryptography.Xml.EncryptedKey">
   <TypeSignature Language="C#" Value="public sealed class EncryptedKey : System.Security.Cryptography.Xml.EncryptedType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EncryptedKey extends System.Security.Cryptography.Xml.EncryptedType" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents the &lt;EncryptedKey&gt; element in XML encryption. The &lt;EncryptedKey&gt; element is used to send encryption keys. It can be created in a stand-alone XML document, be placed within an application document, or be inside an &lt;EncryptedData&gt; element as a child of a &lt;KeyInfo&gt; element. The key value is always encrypted to the recipient. When &lt;EncryptedKey&gt; is decrypted, the resulting key is made available to the &lt;EncryptionMethod&gt; algorithm without any additional processing.</para>
+      <para>The &lt;EncryptedKey&gt; element is similar to the &lt;EncryptedData&gt; element of the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> class except that the data encrypted is always a key value. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;EncryptedKey&gt; element in XML encryption. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +34,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class. For more information on XML encryption standards, see the XML Encryption Syntax and Processing document at http://www.w3.org/TR/xmlenc-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddReference">
@@ -46,10 +60,17 @@
         <Parameter Name="dataReference" Type="System.Security.Cryptography.Xml.DataReference" />
       </Parameters>
       <Docs>
-        <param name="dataReference">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds a <see cref="T:System.Security.Cryptography.Xml.DataReference" /> object to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object. The &lt;DataReference&gt; element points to encrypted data that was encrypted using the key specified in the &lt;EncryptedKey&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a &lt;DataReference&gt; element to the &lt;ReferenceList&gt; element.</para>
+        </summary>
+        <param name="dataReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Cryptography.Xml.DataReference" /> object to add to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property.</param>
       </Docs>
     </Member>
     <Member MemberName="AddReference">
@@ -67,10 +88,17 @@
         <Parameter Name="keyReference" Type="System.Security.Cryptography.Xml.KeyReference" />
       </Parameters>
       <Docs>
-        <param name="keyReference">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds A <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object. The &lt;KeyReference&gt; element points to an encrypted key that was encrypted using the key specified in the &lt;EncryptedKey&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a &lt;KeyReference&gt; element to the &lt;ReferenceList&gt; element.</para>
+        </summary>
+        <param name="keyReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to add to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property.</param>
       </Docs>
     </Member>
     <Member MemberName="CarriedKeyName">
@@ -85,10 +113,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The &lt;CarriedKeyName&gt; element is an optional element that associates a user-readable name with a key value. This name can then be used to reference the key using the &lt;KeyName&gt; element within the &lt;KeyInfo&gt; element. The same &lt;CarriedKeyName&gt; element value, unlike an ID value, can occur multiple times within a single document. The value of the key must be the same in all &lt;EncryptedKey&gt; elements identified with the same &lt;CarriedKeyName&gt; name within an XML document. Note that because white space is significant in the value of the &lt;KeyName&gt; element, white space is also significant in the value of the &lt;CarriedKeyName&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the optional &lt;CarriedKeyName&gt; element in XML encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -104,10 +138,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to output the &lt;EncryptedKey&gt; element in XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents the &lt;EncryptedKey&gt; element in XML encryption.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -125,10 +168,17 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to load an existing XML element into the &lt;EncryptedKey&gt; element represented by the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified XML information into the &lt;EncryptedKey&gt; element in XML encryption.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlElement" /> representing an XML element to use for the &lt;EncryptedKey&gt; element.</param>
       </Docs>
     </Member>
     <Member MemberName="Recipient">
@@ -143,10 +193,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The &lt;Recipient&gt; attribute is an optional attribute that contains information about which recipient this encrypted key value is intended for. Its contents are application dependent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the optional Recipient attribute in XML encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReferenceList">
@@ -161,10 +217,16 @@
         <ReturnType>System.Security.Cryptography.Xml.ReferenceList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The &lt;ReferenceList&gt; element is an optional element that contains pointers to data and keys encrypted using this key. The reference list can contain multiple references to the &lt;EncryptedKey&gt;and &lt;EncryptedData&gt; elements using the &lt;KeyReference&gt; and &lt;DataReference&gt; elements respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the &lt;ReferenceList&gt; element in XML encryption.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

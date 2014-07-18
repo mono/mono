@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyCatalog" FullName="System.ComponentModel.Composition.Hosting.AssemblyCatalog">
   <TypeSignature Language="C#" Value="public class AssemblyCatalog : System.ComponentModel.Composition.Primitives.ComposablePartCatalog, System.ComponentModel.Composition.Primitives.ICompositionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AssemblyCatalog extends System.ComponentModel.Composition.Primitives.ComposablePartCatalog implements class System.ComponentModel.Composition.Primitives.ICompositionElement" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> is used to parse all the parts present in a specified assembly. The target assembly can be indicated either by object reference or by path.</para>
+      <para>This type is thread safe.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Discovers attributed parts in a managed code assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +42,13 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified assembly.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +62,16 @@
         <Parameter Name="codeBase" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="codeBase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly referenced by <paramref name="codeBase" /> is loaded into the load context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified code base.</para>
+        </summary>
+        <param name="codeBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the code base of the assembly (that is, the path to the assembly file) that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,10 +86,15 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified assembly.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the sources of parts.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -85,10 +109,15 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified assembly and reflection context.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used by the catalog to interpret types.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -103,10 +132,15 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="codeBase">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified code base.</para>
+        </summary>
+        <param name="codeBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the code base of the assembly (that is, the path to the assembly file) that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the sources of parts.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -121,10 +155,15 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <param name="codeBase">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified code base and reflection context.</para>
+        </summary>
+        <param name="codeBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the code base of the assembly (that is, the path to the assembly file) that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used by the catalog to interpret types.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -140,11 +179,17 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified assembly and reflection context.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used by the catalog to interpret types.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the sources of parts.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -160,11 +205,17 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="codeBase">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> class with the specified code base and reflection context.</para>
+        </summary>
+        <param name="codeBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the code base of the assembly (that is, the path to the assembly file) that contains the attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used by the catalog to interpret types.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the sources of parts.</param>
       </Docs>
     </Member>
     <Member MemberName="Assembly">
@@ -178,9 +229,12 @@
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the assembly whose attributed types are contained in the assembly catalog.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -197,9 +251,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -214,9 +272,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the catalog.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the catalog.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -233,10 +297,17 @@
         <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of exports that match the conditions specified by the import definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of exports that match the conditions specified by <paramref name="definition" />.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />Conditions that specify which exports to match.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.DisplayName">
@@ -250,9 +321,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display name of the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.Origin">
@@ -266,9 +343,15 @@
         <ReturnType>System.ComponentModel.Composition.Primitives.ICompositionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.AssemblyCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the composition element that this element originated from.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -283,9 +366,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the assembly catalog.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the assembly catalog.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

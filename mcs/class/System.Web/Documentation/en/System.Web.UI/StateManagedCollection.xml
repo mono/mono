@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StateManagedCollection" FullName="System.Web.UI.StateManagedCollection">
   <TypeSignature Language="C#" Value="public abstract class StateManagedCollection : System.Collections.IList, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -16,9 +17,20 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.StateManagedCollection" /> class is the base class for all strongly typed collections that store <see cref="T:System.Web.UI.IStateManager" /> elements, including <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" />, <see cref="T:System.Web.UI.WebControls.ParameterCollection" />, <see cref="T:System.Web.UI.WebControls.StyleCollection" />, <see cref="T:System.Web.UI.WebControls.TreeNodeBindingCollection" />, and others. The <see cref="T:System.Web.UI.StateManagedCollection" /> collection manages its own state as well as the state of the elements it contains. Therefore, a call to <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.SaveViewState" /> saves the state of the collection and the state of all the elements currently contained by the collection.</para>
+      <para>The most important methods to consider when deriving from the <see cref="T:System.Web.UI.StateManagedCollection" /> class are <see cref="M:System.Web.UI.StateManagedCollection.CreateKnownType(System.Int32)" />, <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" />, <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" />, <see cref="M:System.Web.UI.StateManagedCollection.SetDirty" />, and <see cref="M:System.Web.UI.StateManagedCollection.SetDirtyObject(System.Object)" />. The <see cref="M:System.Web.UI.StateManagedCollection.CreateKnownType(System.Int32)" /> and <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" /> methods are used to store an index in view state for the type of a contained element. Storing an index rather than a fully qualified type name improves performance. The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called whenever elements of the collection are manipulated, and validates the elements according to business rules. Currently, the implementation of the <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method prohibits null objects from being stored in the collection; however, you can override this method to define your own validation behavior in a derived type. The <see cref="M:System.Web.UI.StateManagedCollection.SetDirty" /> method forces the entire collection to be serialized to view state, rather than just serializing changes made to state since the last time it was loaded. The <see cref="M:System.Web.UI.StateManagedCollection.SetDirtyObject(System.Object)" /> method is an abstract method you can implement to perform this same behavior at the element level.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Web.UI.StateManagedCollection" /> stores assembly-qualified type names of the collection items in view state. A site visitor could decode the view state and retrieve the type name. If this scenario creates a security concern in your Web site, you can manually encrypt the type name before placing it in the view state. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for all strongly typed collections that manage <see cref="T:System.Web.UI.IStateManager" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +38,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes can override the constructor to provide customized implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.StateManagedCollection" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,9 +60,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnClear" /> method is called before the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method is called, and the <see cref="M:System.Web.UI.StateManagedCollection.OnClearComplete" /> method is called after <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> has finished removing elements from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,11 +85,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified array must be of a compatible type.</para>
+          <para>The elements are copied to the <see cref="T:System.Array" /> in the same order in which the enumerator iterates through the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the <see cref="T:System.Web.UI.StateManagedCollection" /> collection to an array, starting at a particular array index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the <see cref="T:System.Web.UI.StateManagedCollection" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,10 +111,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,11 +133,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.CreateKnownType(System.Int32)" /> method is called internally by the <see cref="T:System.Web.UI.StateManagedCollection" /> collection in its implementation of the <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.LoadViewState(System.Object)" /> method. Derived collections override the <see cref="M:System.Web.UI.StateManagedCollection.CreateKnownType(System.Int32)" /> method to return a default instance of the <see cref="T:System.Web.UI.IStateManager" /> type identified by the provided <paramref name="index" />, which maps to one of the types returned by the <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates an instance of a class that implements <see cref="T:System.Web.UI.IStateManager" />. The type of object created is based on the specified member of the collection returned by the <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a class derived from <see cref="T:System.Web.UI.IStateManager" />, according to the <paramref name="index" /> provided.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index, from the ordered list of types returned by <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" />, of the type of <see cref="T:System.Web.UI.IStateManager" /> to create.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,10 +161,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an iterator that iterates through the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the <see cref="T:System.Web.UI.StateManagedCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,10 +184,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" /> method is called internally by the <see cref="T:System.Web.UI.StateManagedCollection" /> collection in its implementation of the <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.SaveViewState" /> method. Derived collections override the <see cref="M:System.Web.UI.StateManagedCollection.GetKnownTypes" /> method to return an array of <see cref="T:System.Type" /> objects that represent the types the collection can contain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets an array of <see cref="T:System.Web.UI.IStateManager" /> types that the <see cref="T:System.Web.UI.StateManagedCollection" /> collection can contain.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered array of <see cref="T:System.Type" /> objects that identify the types of <see cref="T:System.Web.UI.IStateManager" /> objects the collection can contain. The default implementation returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -149,9 +210,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnClear" /> method to perform any additional work before all items are removed from the collection using the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work before the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method removes all items from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,9 +232,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnClearComplete" /> method to perform any additional work after all items are removed from the collection using the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work after the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method finishes removing all items from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,11 +257,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnInsert(System.Int32,System.Object)" /> method to perform any additional work before an item is added to the collection using the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Add(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work before the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Add(System.Object)" /> method adds an item to the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted by the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> method.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to insert into the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -205,11 +286,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnInsertComplete(System.Int32,System.Object)" /> method to perform any additional work after an item is added to the collection using the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Add(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work after the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Add(System.Object)" /> method adds an item to the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> is inserted by the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> method.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object inserted into the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -226,11 +315,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnRemove(System.Int32,System.Object)" /> method to perform any additional work before an item is removed from the collection using the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work before the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> method removes the specified item from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove, which is used when <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> is called.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove from the <see cref="T:System.Web.UI.StateManagedCollection" />, which is used when <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> is called.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -247,11 +344,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> can override the <see cref="M:System.Web.UI.StateManagedCollection.OnRemoveComplete(System.Int32,System.Object)" /> method to perform any additional work after an item is removed from the collection using the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs additional work after the <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> or <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> method removes the specified item from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove, which is used when <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.RemoveAt(System.Int32)" /> is called.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object removed from the <see cref="T:System.Web.UI.StateManagedCollection" />, which is used when <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Remove(System.Object)" /> is called.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -267,10 +372,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate the object manipulated through the <see cref="T:System.Web.UI.StateManagedCollection" /> implementation of the <see cref="T:System.Collections.IList" /> interface methods. The default implementation is to verify that the object manipulated by the collection is not null; however, collections derived from <see cref="T:System.Web.UI.StateManagedCollection" /> override the <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method to perform any additional validation, such as type-checking.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, validates an element of the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.IStateManager" /> to validate.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -284,9 +396,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.SetDirty" /> method forces the <see cref="T:System.Web.UI.StateManagedCollection" /> collection to be serialized completely (whereas the <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.SaveViewState" /> method saves only the change information). This is useful when a collection has changed in a significant way and change information is insufficient to recreate the object in memory from view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the entire <see cref="T:System.Web.UI.StateManagedCollection" /> collection to be serialized into view state. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -302,10 +420,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.SetDirtyObject(System.Object)" /> method is called internally by the <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.SaveViewState" />, <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Add(System.Object)" />, and <see cref="M:System.Web.UI.StateManagedCollection.System.Collections.IList.Insert(System.Int32,System.Object)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, instructs an object contained by the collection to record its entire state to view state, rather than recording only change information.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.IStateManager" /> that should serialize itself completely.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,9 +446,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -336,9 +464,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.StateManagedCollection" /> collection is synchronized (thread safe). This method returns false in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -351,9 +482,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the <see cref="T:System.Web.UI.StateManagedCollection" /> collection. This method returns null in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -367,9 +501,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an iterator that iterates through the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the <see cref="T:System.Web.UI.StateManagedCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -385,10 +525,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> and <see cref="M:System.Web.UI.StateManagedCollection.OnInsert(System.Int32,System.Object)" /> methods are called before the element is added to the collection, and the <see cref="M:System.Web.UI.StateManagedCollection.OnInsertComplete(System.Int32,System.Object)" /> method is called after the element is added.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position at which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -402,8 +552,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnClear" /> method is called before the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method is called, and the <see cref="M:System.Web.UI.StateManagedCollection.OnClearComplete" /> method is called after <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> has finished removing elements from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -419,10 +575,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate <paramref name="value" /> before the collection is checked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Web.UI.StateManagedCollection" /> collection contains a specific value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is found in the <see cref="T:System.Web.UI.StateManagedCollection" />; otherwise, false. If null is passed for the value parameter, false is returned.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -438,10 +604,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate <paramref name="value" /> before the index is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specified item in the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" />, if it is found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -458,10 +634,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="index" /> is -1, <paramref name="value" /> is appended to the beginning of the <see cref="T:System.Web.UI.StateManagedCollection" /> collection. If <paramref name="index" /> equals the number of items in the collection, <paramref name="value" /> is appended to the end of the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item into the <see cref="T:System.Web.UI.StateManagedCollection" /> collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to insert into the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -474,9 +658,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.StateManagedCollection" /> collection has a fixed size. This method returns false in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -489,9 +676,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.StateManagedCollection" /> collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -526,9 +716,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate <paramref name="value" /> before the value is removed from the collection. The <see cref="M:System.Web.UI.StateManagedCollection.OnRemove(System.Int32,System.Object)" /> method is called before the object is removed, and the <see cref="M:System.Web.UI.StateManagedCollection.OnRemoveComplete(System.Int32,System.Object)" /> method is called after the object is removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of the specified object from the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove from the <see cref="T:System.Web.UI.StateManagedCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -544,9 +741,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate <paramref name="value" /> before the value is removed from the collection. The <see cref="M:System.Web.UI.StateManagedCollection.OnRemove(System.Int32,System.Object)" /> method is called before the object is removed, and the <see cref="M:System.Web.UI.StateManagedCollection.OnRemoveComplete(System.Int32,System.Object)" /> method is called after the object is removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.IStateManager" /> element at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -559,9 +763,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.StateManagedCollection" /> collection is saving changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -577,9 +784,18 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method restores view-state information that was saved by the <see cref="M:System.Web.UI.StateManagedCollection.System.Web.UI.IStateManager.SaveViewState" /> method.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="e18eb2f2-cf00-47ae-b1a1-dfc188a6dea1">ASP.NET Web Server Controls</a></format>.</para>
+          <para>This method is used primarily by control developers. You can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the previously saved view state of the <see cref="T:System.Web.UI.StateManagedCollection" /> collection and the <see cref="T:System.Web.UI.IStateManager" /> items it contains.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the collection and collection elements' state to restore.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -593,9 +809,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="e18eb2f2-cf00-47ae-b1a1-dfc188a6dea1">ASP.NET Web Server Controls</a></format>.</para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in an HTML hidden element (&lt;input type="hidden"&gt;). When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's <see cref="P:System.Web.UI.Control.ViewState" /> property. For more information, see <format type="text/html"><a href="e18eb2f2-cf00-47ae-b1a1-dfc188a6dea1">ASP.NET Web Server Controls</a></format> and<format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce"> ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the <see cref="T:System.Web.UI.StateManagedCollection" /> collection and each <see cref="T:System.Web.UI.IStateManager" /> object it contains since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the view state of the <see cref="T:System.Web.UI.StateManagedCollection" /> and the items it contains. If no view state is associated with the collection and its elements, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -609,8 +836,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" />  property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="e18eb2f2-cf00-47ae-b1a1-dfc188a6dea1">ASP.NET Web Server Controls</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.StateManagedCollection" /> collection and each of the <see cref="T:System.Web.UI.IStateManager" /> objects it contains to track changes to their view state so they can be persisted across requests for the same page.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

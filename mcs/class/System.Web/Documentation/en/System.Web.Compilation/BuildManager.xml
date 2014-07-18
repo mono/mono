@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildManager" FullName="System.Web.Compilation.BuildManager">
   <TypeSignature Language="C#" Value="public sealed class BuildManager" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.BuildManager" /> class manages the process of compiling assemblies and pages for an application. It is a sealed class and cannot be inherited. </para>
+      <para>
+        <see cref="T:System.Web.Compilation.BuildManager" /> contains static members that provide information about the compiled assemblies.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods to help manage the compilation of an ASP.NET application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +42,13 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of assemblies built from the App_Code directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,12 +65,23 @@
         <Parameter Name="requiredBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="requiredBaseType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Compilation.BuildManager.CreateInstanceFromVirtualPath(System.String,System.Type)" /> method works for compiled and non-compile pages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a file, given its virtual path, and creates an instance of the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that represents the instance of the processed file.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the file to create an instance of.</param>
+        <param name="requiredBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type that defines the object to be created.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +98,20 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a build dependency set for a virtual path if the path is located in the ASP.NET cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Compilation.BuildDependencySet" /> object that is stored in the cache, or null if the <see cref="T:System.Web.Compilation.BuildDependencySet" /> object cannot be retrieved from the cache.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context of the request.</param>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path from which to determine the build dependency set.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,11 +127,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles a file into an assembly using the specified virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Assembly" /> object that is compiled from the specified virtual path, which is cached to either memory or to disk.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to build into an assembly.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,11 +154,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles a file, given its virtual path, and returns a custom string that the build provider persists in cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string, as returned by the <see cref="M:System.Web.Compilation.BuildProvider.GetCustomString(System.CodeDom.Compiler.CompilerResults)" /> method, that is cached to disk or memory.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the file to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,11 +181,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles a file, given its virtual path, and returns the compiled type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type generated from compiling the virtual path.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to build into a type.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,9 +209,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of assemblies that is returned from the <see cref="M:System.Web.Compilation.BuildManager.GetReferencedAssemblies" /> method includes assemblies specified in the <format type="text/html"><a href="3811c448-af1c-498d-be2b-6ed2634c51e9">assemblies</a></format> element of the Web.config file, assemblies built from custom code in the App_Code directory, and assemblies in other top-level folders.</para>
+          <para>
+            <see cref="M:System.Web.Compilation.BuildManager.GetReferencedAssemblies" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of assembly references that all page compilations must reference.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> collection of assembly references.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -173,12 +236,23 @@
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A top-level assembly refers to the Global.asax file, or to a file that is in the App_GlobalResources, App_WebReferences, App_Code, or App_Browsers directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a type in the top-level assemblies or in assemblies that are defined in configuration, and optionally throws an exception on failure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the requested <paramref name="typeName" /> parameter.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type.</param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if a <see cref="T:System.Type" /> object cannot be generated for the type name; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -196,13 +270,25 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A top-level assembly refers to the Global.asax file, or to a file that is in the App_GlobalResources, App_WebReferences, App_Code, or App_Browsers directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a type in the top-level assemblies, or in assemblies that are defined in configuration, by using a case-insensitive search and optionally throwing an exception on failure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the requested <paramref name="typeName" /> parameter.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type.</param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if a <see cref="T:System.Type" /> cannot be generated for the type name; otherwise, false.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if <paramref name="typeName" /> is case-sensitive; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -218,11 +304,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a collection of virtual-path dependencies for a specified virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> collection of files represented by virtual paths that are caching dependencies for the virtual path.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path used to determine the dependencies.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

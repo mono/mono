@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SwitchExpression" FullName="System.Linq.Expressions.SwitchExpression">
   <TypeSignature Language="C#" Value="public sealed class SwitchExpression : System.Linq.Expressions.Expression" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchExpression extends System.Linq.Expressions.Expression" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control expression that handles multiple selections by passing control to <see cref="T:System.Linq.Expressions.SwitchCase" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
@@ -50,9 +54,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.SwitchCase&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Linq.Expressions.SwitchCase" /> objects for the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Comparison">
@@ -66,9 +73,12 @@
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the equality comparison method, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultBody">
@@ -82,9 +92,12 @@
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the test for the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -98,9 +111,12 @@
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the node type of this Expression. Extension nodes should return <see cref="F:System.Linq.Expressions.ExpressionType.Extension" /> when overriding this method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchValue">
@@ -114,9 +130,12 @@
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the test for the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -130,9 +149,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the static type of the expression that this <see cref="T:System.Linq.Expressions.Expression" /> represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -151,12 +173,21 @@
         <Parameter Name="defaultBody" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="switchValue">To be added.</param>
-        <param name="cases">To be added.</param>
-        <param name="defaultBody">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="switchValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.SwitchValue" /> property of the result.</param>
+        <param name="cases">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.Cases" /> property of the result.</param>
+        <param name="defaultBody">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.DefaultBody" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

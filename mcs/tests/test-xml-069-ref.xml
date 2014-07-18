@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-069</name>
+    </assembly>
+    <members>
+        <member name="T:XmlComments.Program">
+            <summary />
+        </member>
+        <member name="T:XmlComments.Program.MyEnum">
+            <summary />
+        </member>
+        <member name="F:XmlComments.Program.MyEnum.One">
+            <summary>The first entry</summary>
+        </member>
+        <member name="M:XmlComments.Program.Main(System.String[])">
+            <summary>
+                <see cref="F:XmlComments.Program.MyEnum.One" />
+                <see cref="F:XmlComments.Program.MyEnum.One" />
+                <see cref="F:XmlComments.Program.MyEnum.One" />
+                <see cref="F:XmlComments.Program.MyEnum.One" />
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FieldOffsetAttribute" FullName="System.Runtime.InteropServices.FieldOffsetAttribute" FullNameSP="System_Runtime_InteropServices_FieldOffsetAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed FieldOffsetAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class FieldOffsetAttribute : Attribute" />
@@ -24,45 +25,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Indicates the physical position of a field within the unmanaged representation of a class or structure.</para>
-    </summary>
     <remarks>
-      <para> The target objects for this attribute are non-static
-      fields of classes and structures qualified with the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" qualify="true" /> set to <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" qualify="true" /> .
-      All non-static fields within an object with an explicit layout are required to
-      have this attribute. No static or constant fields within an object with explicit
-      layout are allowed
-      to have this attribute. </para>
-      <para> The physical layout of the data members of a class
-      or structure is automatically arranged in managed memory. When a managed
-      object is passed as an argument to unmanaged code, the system
-      creates its unmanaged representation. <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />
-      provides explicit control over this unmanaged representation. <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />
-      indicates the offset of a target data member within the
-      unmanaged representation of
-      a class
-      or structure.</para>
-      <para> If <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
-instances on target fields of an exported
-object are set to overlap each other, one field is overwritten by another
-field. For example, if an integer field has the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
-set to 4, and another integer
-field has the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
-set to 6, the last two bytes of the unmanaged representation of
-the first integer overlap the first two bytes of the second integer. In such a situation writing
-to one of the fields might corrupt the data in the other.</para>
-      <para>
-        <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class overview for
-an example that uses <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />.</block>
-      </para>
-      <para>Compilers are required to not preserve this type
-   in metadata as a custom attribute. Instead, compilers are required to emit it
-   directly in the file format, as described in Partition II of the CLI
-   Specification. Metadata consumers, such as the Reflection API, are required to
-   retrieve this data from the file format and return it as if it were a custom
-   attribute. </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to fields.</para>
+      <para>This attribute is used when <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />, with <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" /> passed to its constructor, is applied to a class or structure to specify the offset of each non- static or constant member within the unmanaged representation of that class or structure. </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the physical position of fields within the unmanaged representation of a class or structure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -80,11 +51,6 @@ an example that uses <see cref="T:System.Runtime.InteropServices.FieldOffsetAttr
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">A <see cref="T:System.Int32" /> that specifies the offset in bytes from the beginning of the structure to the beginning of the field.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> 
-class with the specified field offset in the class or structure.</para>
-        </summary>
         <remarks>
           <para> If <paramref name="offset" /> is
    negative, its value is interpreted as an unsigned <see cref="T:System.Int64" /> value, and
@@ -94,6 +60,12 @@ class with the specified field offset in the class or structure.</para>
    the new instance is initialized to <paramref name="offset" />
    .</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> class with the offset in the structure to the beginning of the field.</para>
+        </summary>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset in bytes from the beginning of the structure to the beginning of the field. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -112,10 +84,6 @@ class with the specified field offset in the class or structure.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the offset from the beginning of the exported data object to the beginning of the
-      target field.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Int32" /> containing the offset from the beginning of the exported data
    object to the beginning of the target field.</para>
@@ -123,6 +91,10 @@ class with the specified field offset in the class or structure.</para>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the offset from the beginning of the structure to the beginning of the field.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

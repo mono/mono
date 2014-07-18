@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebEventCustomEvaluator" FullName="System.Web.Management.IWebEventCustomEvaluator">
   <TypeSignature Language="C#" Value="public interface IWebEventCustomEvaluator" />
   <AssemblyInfo>
@@ -6,9 +7,19 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET health monitoring allows production and operations staff to manage deployed Web applications. The <see cref="N:System.Web.Management" /> namespace contains the health-event types responsible for packaging application health-status data and the provider types responsible for processing this data. It also contains supporting types that help during the management of health events.</para>
+      <para>This interface allows enabling or disabling the firing of a specific event. This is especially useful when you implement your own custom event and want to control the rate at which it is sent to the related provider for processing.</para>
+      <block subset="none" type="note">
+        <para>This interface does not control how often the event is raised. It only controls how often the event information is sent to the provider for processing.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Evaluates whether an event should be sent to the related provider for processing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CanFire">
@@ -23,11 +34,21 @@
       </Parameters>
       <Docs>
         <param name="raised_event">To be added.</param>
-        <param name="record">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the custom event evaluator returns true, the event is raised and then processed by the associated provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates whether an event should be raised.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event should be raised; otherwise, false.</para>
+        </returns>
+        <param name="record">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Management.RuleFiringRecord" /> containing information about the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

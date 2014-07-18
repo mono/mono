@@ -1,6 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.ComponentModel.Design.Serialization">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.ComponentModel.Design.Serialization" /> namespace provides types that support customization and control of serialization at design time.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace can be divided into the following categories: </para>
+      <list type="bullet">
+        <item>
+          <para>Serialization attributes that can be used to indicate the serializer to use for a specific type: <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializerAttribute" />, to indicate the serializer to use for a particular type; and <see cref="T:System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute" />, to indicate the base serializer to use for the root designer.</para>
+        </item>
+        <item>
+          <para>Classes that a designer can implement to customize serialization: <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderHost" />, for loading a designer document from a serialized state; and <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" />, for loading a designer document when external components and asynchronous loading are involved.</para>
+        </item>
+        <item>
+          <para>Interfaces that a designer can use to manage the serialization process: <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />, to register or retrieve custom serializers; <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" />, to make a serializer available to an <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />; and <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationService" />, which provides methods to invoke serialization and deserialization.</para>
+        </item>
+        <item>
+          <para>An interface that can be implemented to customize the loading process of a designer: <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</para>
+        </item>
+        <item>
+          <para>An interface that can be used to optimize the reloading of a designer: <see cref="T:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload" />.</para>
+        </item>
+        <item>
+          <para>Other helper classes: <see cref="T:System.ComponentModel.Design.Serialization.INameCreationService" />, an interface for generating unique names for objects; <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" />, a data structure useful for sharing serialization context information with serializers; and <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" />, an object that can describe a serializable object.</para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

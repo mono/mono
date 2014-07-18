@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IUnrestrictedPermission" FullName="System.Security.Permissions.IUnrestrictedPermission">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IUnrestrictedPermission" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IUnrestrictedPermission" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>All code access permissions should implement <see cref="T:System.Security.Permissions.IUnrestrictedPermission" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows a permission to expose an unrestricted state.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IsUnrestricted">
@@ -34,9 +41,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether unrestricted access to the resource protected by the permission is allowed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if unrestricted use of the resource protected by the permission is allowed; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

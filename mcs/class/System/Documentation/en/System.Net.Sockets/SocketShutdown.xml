@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketShutdown" FullName="System.Net.Sockets.SocketShutdown" FullNameSP="System_Net_Sockets_SocketShutdown" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketShutdown extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum SocketShutdown" />
@@ -15,11 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.SocketShutdown" /> enumeration defines the values that can be passed to the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method.</para>
+    </remarks>
     <summary>
-      <para>Specifies whether the ability to send or receive data is terminated when the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" />
-method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants that are used by the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method.</para>
     </summary>
-    <remarks>To be added.</remarks>
   </Docs>
   <Members>
     <Member MemberName="Both">
@@ -39,8 +43,8 @@ method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> insta
       <MemberValue>Both</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies to terminate the ability to send and receive data 
- on a <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables a <see cref="T:System.Net.Sockets.Socket" /> for both sending and receiving. This field is constant.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -62,9 +66,8 @@ method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> insta
       <MemberValue>Receive</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies to terminate the ability to receive data on a 
- <see cref="T:System.Net.Sockets.Socket" /> 
- instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables a <see cref="T:System.Net.Sockets.Socket" /> for receiving. This field is constant.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -86,9 +89,8 @@ method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> insta
       <MemberValue>Send</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies to terminate the ability to send data from a 
- <see cref="T:System.Net.Sockets.Socket" /> 
- instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables a <see cref="T:System.Net.Sockets.Socket" /> for sending. This field is constant.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

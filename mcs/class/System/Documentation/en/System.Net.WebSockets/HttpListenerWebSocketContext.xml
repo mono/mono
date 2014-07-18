@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpListenerWebSocketContext" FullName="System.Net.WebSockets.HttpListenerWebSocketContext">
   <TypeSignature Language="C#" Value="public class HttpListenerWebSocketContext : System.Net.WebSockets.WebSocketContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpListenerWebSocketContext extends System.Net.WebSockets.WebSocketContext" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to information received by the <see cref="T:System.Net.HttpListener" /> class when accepting WebSocket connections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,9 +47,12 @@
         <ReturnType>System.Net.CookieCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cookies received by the <see cref="T:System.Net.HttpListener" /> object in the WebSocket opening handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -64,9 +71,12 @@
         <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP headers received by the <see cref="T:System.Net.HttpListener" /> object in the WebSocket opening handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsAuthenticated">
@@ -85,9 +95,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates if the WebSocket client is authenticated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLocal">
@@ -106,9 +119,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates if the WebSocket client connected from the local machine.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSecureConnection">
@@ -127,9 +143,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates if the WebSocket connection is secured using Secure Sockets Layer (SSL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Origin">
@@ -148,9 +167,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Origin HTTP header included in the WebSocket opening handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestUri">
@@ -169,9 +191,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI requested by the WebSocket client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecWebSocketKey">
@@ -190,9 +215,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the SecWebSocketKey HTTP header included in the WebSocket opening handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecWebSocketProtocols">
@@ -211,9 +239,12 @@
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of the Secure WebSocket protocols included in the WebSocket opening handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecWebSocketVersion">
@@ -232,9 +263,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of sub-protocols requested by the WebSocket client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="User">
@@ -253,9 +287,12 @@
         <ReturnType>System.Security.Principal.IPrincipal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object used to obtain identity, authentication information, and security roles for the WebSocket client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebSocket">
@@ -274,9 +311,12 @@
         <ReturnType>System.Net.WebSockets.WebSocket</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the WebSocket instance used to send and receive data over the WebSocket connection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

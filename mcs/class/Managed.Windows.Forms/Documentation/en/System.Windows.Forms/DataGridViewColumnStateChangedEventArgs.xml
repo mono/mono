@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewColumnStateChangedEventArgs" FullName="System.Windows.Forms.DataGridViewColumnStateChangedEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewColumnStateChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,48 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This event is raised when the value of one of the following column properties changes for a <see cref="T:System.Windows.Forms.DataGridViewColumn" /> in a <see cref="T:System.Windows.Forms.DataGridView" /> control </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewBand.Displayed" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewColumn.Frozen" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewColumn.ReadOnly" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewColumn.Visible" />
+          </para>
+        </item>
+      </list>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.ColumnStateChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +62,16 @@
         <Parameter Name="stateChanged" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewColumn">To be added.</param>
-        <param name="stateChanged">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewColumnStateChangedEventArgs" /> class. </para>
+        </summary>
+        <param name="dataGridViewColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewColumn" /> whose state has changed.</param>
+        <param name="stateChanged">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +84,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumn</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column whose state changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +103,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewElementStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the new column state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

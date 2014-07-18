@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsClientElement" FullName="System.ServiceModel.Configuration.WindowsClientElement">
   <TypeSignature Language="C#" Value="public sealed class WindowsClientElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WindowsClientElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies the settings for a Windows credential to be used to represent the client. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.WindowsClientElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowedImpersonationLevel">
@@ -43,9 +50,15 @@
         <ReturnType>System.Security.Principal.TokenImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See <see cref="T:System.Security.Principal.TokenImpersonationLevel" /> for a description of the enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the permissible impersonation level.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowNtlm">
@@ -64,9 +77,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, Windows security is enabled at the workgroup level. Otherwise, Windows security is only supported at the domain level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether NTLM authentication is allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

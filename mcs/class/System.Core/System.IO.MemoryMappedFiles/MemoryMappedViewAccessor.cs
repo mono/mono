@@ -36,14 +36,12 @@ using Microsoft.Win32.SafeHandles;
 namespace System.IO.MemoryMappedFiles
 {
 	public sealed class MemoryMappedViewAccessor : UnmanagedMemoryAccessor, IDisposable {
-		int file_handle;
-		IntPtr mmap_addr;
-		SafeMemoryMappedViewHandle handle;
+		IntPtr mmap_handle;
+		SafeMemoryMappedViewHandle safe_handle;
 
-		internal MemoryMappedViewAccessor (int file_handle, long offset, long size, MemoryMappedFileAccess access)
+		internal MemoryMappedViewAccessor (IntPtr handle, long offset, long size, MemoryMappedFileAccess access)
 		{
-			this.file_handle = file_handle;
-			Create (offset, size, access);
+			Create (handle, offset, size, access);
 		}
 
 		static FileAccess ToFileAccess (MemoryMappedFileAccess access)
@@ -64,19 +62,19 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 		
-		unsafe void Create (long offset, long size, MemoryMappedFileAccess access)
+		unsafe void Create (IntPtr handle, long offset, long size, MemoryMappedFileAccess access)
 		{
-			int offset_diff;
+			IntPtr base_address;
 
-			MemoryMapImpl.Map (file_handle, offset, ref size, access, out mmap_addr, out offset_diff);
+			MemoryMapImpl.Map (handle, offset, ref size, access, out mmap_handle, out base_address);
+			safe_handle = new SafeMemoryMappedViewHandle (mmap_handle, base_address, size);
 
-			handle = new SafeMemoryMappedViewHandle ((IntPtr)((long)mmap_addr + offset_diff), size);
-			Initialize (handle, 0, size, ToFileAccess (access));
+			Initialize (safe_handle, 0, size, ToFileAccess (access));
 		}
 
 		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle {
 			get {
-				return handle;
+				return safe_handle;
 			}
 		}
 
@@ -91,7 +89,7 @@ namespace System.IO.MemoryMappedFiles
 
 		public void Flush ()
 		{
-			MemoryMapImpl.Flush (file_handle);
+			MemoryMapImpl.Flush (mmap_handle);
 		}
 	}
 }

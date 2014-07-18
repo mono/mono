@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildMessageEventArgs" FullName="Microsoft.Build.Framework.BuildMessageEventArgs">
   <TypeSignature Language="C#" Value="public class BuildMessageEventArgs : Microsoft.Build.Framework.BuildEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Build.Framework.IEventSource.MessageRaised" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildMessageEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,13 +44,20 @@
         <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="helpKeyword">To be added.</param>
-        <param name="senderName">To be added.</param>
-        <param name="importance">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildMessageEventArgs" /> class with the specified <see cref="P:Microsoft.Build.Framework.BuildEventArgs.Message" />, <see cref="P:Microsoft.Build.Framework.BuildEventArgs.HelpKeyword" />, <see cref="P:Microsoft.Build.Framework.BuildEventArgs.SenderName" />, and <see cref="P:Microsoft.Build.Framework.BuildMessageEventArgs.Importance" /> values.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the event.</param>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Help keyword associated with the event.</param>
+        <param name="senderName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="importance">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:Microsoft.Build.Framework.MessageImportance" /> value indicating the importance of the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +70,13 @@
         <ReturnType>Microsoft.Build.Framework.MessageImportance</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the importance of the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

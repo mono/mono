@@ -223,7 +223,9 @@ namespace Mono.CSharp
 			if (MemberType.IsStatic)
 				Error_VariableOfStaticClass (Location, GetSignatureForError (), MemberType, Report);
 
-			CheckBase ();
+			if (!IsCompilerGenerated)
+				CheckBase ();
+
 			IsTypePermitted ();
 		}
 

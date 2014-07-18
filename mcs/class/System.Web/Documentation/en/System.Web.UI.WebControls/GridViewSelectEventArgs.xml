@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewSelectEventArgs" FullName="System.Web.UI.WebControls.GridViewSelectEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewSelectEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control raises the <see cref="E:System.Web.UI.WebControls.GridView.SelectedIndexChanging" /> event when a Select button (a button with its CommandName property set to "Select") is clicked, but before the <see cref="T:System.Web.UI.WebControls.GridView" /> control handles the select operation. This allows you to provide an event-handling method that performs a custom routine, such as canceling the selection operation, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" /> object is passed to the event-handling method, which allows you to determine the index of the row selected by the user and to indicate that the selection operation should be canceled. To cancel the selection operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" /> object to true.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.GridViewSelectEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.SelectedIndexChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,40 @@
       </Parameters>
       <Docs>
         <param name="selectedIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewSelectEventArgs.NewSelectedIndex" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="newSelectedIndex" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewSelectEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +78,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="E:System.Web.UI.WebControls.GridView.SelectedIndexChanging" /> event occurs before the <see cref="T:System.Web.UI.WebControls.GridView" /> control performs the select operation, the <see cref="P:System.Web.UI.WebControls.GridView.SelectedIndex" /> property of the control cannot be used to determine the index of the new row selected by the user. The <see cref="P:System.Web.UI.WebControls.GridView.SelectedIndex" /> property still contains the index of the previously selected row. To determine the index of the new row selected by the user, use the <see cref="P:System.Web.UI.WebControls.GridViewSelectEventArgs.NewSelectedIndex" /> property. You can also use this property to programmatically override the row index selected by the user by setting it to another value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the new row to select in the <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RefreshResponseInfo" FullName="System.ServiceModel.PeerResolvers.RefreshResponseInfo">
   <TypeSignature Language="C#" Value="public class RefreshResponseInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RefreshResponseInfo extends System.Object" />
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When <see cref="M:System.ServiceModel.PeerResolvers.CustomPeerResolverService.Refresh(System.ServiceModel.PeerResolvers.RefreshInfo)" /> or an implementation of  <see cref="M:System.ServiceModel.PeerResolvers.CustomPeerResolverService.Refresh(System.ServiceModel.PeerResolvers.RefreshInfo)" /> is called, this object is returned to the client. It contains the refreshed registration entry with the new expiry timestamp, and is returned when a previous <see cref="T:System.ServiceModel.PeerResolvers.RefreshInfo" /> instance is sent to the peer resolver as part of a request to update the expiry of a registration entry.</para>
+      <para>Instances of this class are primarily used to pass information from the resolver service to a network client of that service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains response information returned as a result of a registration lookup table refresh operation on the peer resolver.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new default instance of the <see cref="T:System.ServiceModel.PeerResolvers.RefreshResponseInfo" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,10 +55,17 @@
         <Parameter Name="result" Type="System.ServiceModel.PeerResolvers.RefreshResult" />
       </Parameters>
       <Docs>
-        <param name="registrationLifetime">To be added.</param>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.PeerResolvers.RefreshResponseInfo" /> class with the provided registration lifetime and refresh results.</para>
+        </summary>
+        <param name="registrationLifetime">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.TimeSpan" /> that specifies the new lifetime of the peer's registration.</param>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.RefreshResult" /> that specifies the result of the refresh.</param>
       </Docs>
     </Member>
     <Member MemberName="HasBody">
@@ -62,9 +80,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the body of the message containing a serialized instance of this type is correctly formed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the refresh response information body is correctly-formed by the sender; false if it is not.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RegistrationLifetime">
@@ -78,9 +102,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets amount of time before a registration expires and is removed by the resolver service. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Result">
@@ -94,9 +121,12 @@
         <ReturnType>System.ServiceModel.PeerResolvers.RefreshResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the result of a refresh operation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

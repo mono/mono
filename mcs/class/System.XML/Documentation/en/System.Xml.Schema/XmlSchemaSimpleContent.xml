@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaSimpleContent" FullName="System.Xml.Schema.XmlSchemaSimpleContent">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaSimpleContent : System.Xml.Schema.XmlSchemaContentModel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaSimpleContent extends System.Xml.Schema.XmlSchemaContentModel" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Xml.Schema.XmlSchemaSimpleContent" /> is used to indicate that the content model of the new type contains only character data and no elements. It does this through <see cref="T:System.Xml.Schema.XmlSchemaSimpleContentExtension" /> or <see cref="T:System.Xml.Schema.XmlSchemaSimpleContentRestriction" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the simpleContent element from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class is for simple and complex types with simple content model.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaSimpleContent" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -55,9 +66,15 @@
         <ReturnType>System.Xml.Schema.XmlSchemaContent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The simpleContent element enables you to specify an element as containing a simple type with no elements and restrict the value of the element's content or extend the content with attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets one of the <see cref="T:System.Xml.Schema.XmlSchemaSimpleContentRestriction" /> or <see cref="T:System.Xml.Schema.XmlSchemaSimpleContentExtension" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Thread" FullName="System.Threading.Thread" FullNameSP="System_Threading_Thread" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Thread extends System.Object" />
   <TypeSignature Language="C#" Value="public sealed class Thread : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, System.Runtime.InteropServices._Thread" />
@@ -31,34 +32,24 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Represents a sequential
-      thread of execution. </para>
-    </summary>
     <remarks>
-      <para> A process can create
-      and execute one or more threads to execute a portion of the program
-      code associated with the process. A <see cref="T:System.Threading.ThreadStart" /> delegate is used to specify
-      the program code
-      executed by a thread.</para>
-      <para>Some operating systems might
-      not utilize the concepts of threads or preemptive scheduling. Also, the concept
-      of "thread priority" might not exist at all or its meaning might vary, depending on
-      the underlying operating system. Implementers of the <see cref="T:System.Threading.Thread" />
-      
-      type are required to describe their threading policies,
-      including what thread priority means, how many threading priority
-      levels exist, and
-      whether scheduling is preemptive.</para>
-      <para> For the duration of its existence, a thread is always in one
-      or more of the states defined by <see cref="T:System.Threading.ThreadState" />. A scheduling priority level, as defined
-      by <see cref="T:System.Threading.ThreadPriority" /> , can be requested for a thread, but it might
-      not be honored
-      by the operating system.</para>
-      <para>If an unhandled exception is thrown in the code executed by a thread created
-      by an application, a <see cref="F:System.AppDomain.UnhandledException" /> event is raised (<see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" /> is set to <see langword="false" />), and the thread
-      is terminated; the current process is not terminated.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A process can create one or more threads to execute a portion of the program code associated with the process. Use a <see cref="T:System.Threading.ThreadStart" /> delegate or the <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate to specify the program code executed by a thread. The <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate allows you to pass data to the thread procedure.</para>
+      <para>For the duration of its existence, a thread is always in one or more of the states defined by <see cref="T:System.Threading.ThreadState" />. A scheduling priority level, as defined by <see cref="T:System.Threading.ThreadPriority" />, can be requested for a thread, but is not guaranteed to be honored by the operating system.</para>
+      <para>
+        <see cref="M:System.Object.GetHashCode" /> provides identification for managed threads. For the lifetime of your thread, it will not collide with the value from any other thread, regardless of the application domain from which you obtain the value.</para>
+      <block subset="none" type="note">
+        <para>An operating-system ThreadId has no fixed relationship to a managed thread, because an unmanaged host can control the relationship between managed and unmanaged threads. Specifically, a sophisticated host can use the CLR Hosting API to schedule many managed threads against the same operating system thread, or to move a managed thread between different operating system threads.</para>
+      </block>
+      <para>It is not necessary to retain a reference to a <see cref="T:System.Threading.Thread" /> object once you have started the thread. The thread continues to execute until the thread procedure is complete.</para>
+      <block subset="none" type="note">
+        <para>Beginning with the net_v40_long, the behavior of some thread constructors is changed: Only fully trusted code can set the maximum stack size to a value that is greater than the default stack size (1 megabyte). If a larger value is specified when code is running with partial trust, the larger value is ignored and the default stack size is used. No exception is thrown. Code at any trust level can set the maximum stack size to a value that is less than the default stack size.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates and controls a thread, sets its priority, and gets its status. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -73,10 +64,20 @@
         <Parameter Name="start" Type="System.Threading.ParameterizedThreadStart" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread does not begin executing when it is created. To schedule the thread for execution, call the <see cref="M:System.Threading.Thread.Start" /> method. To pass a data object to the thread, use the <see cref="M:System.Threading.Thread.Start(System.Object)" /> method overload.</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.ThreadStart" /> constructor when creating a thread. Use the AddressOf operator when passing your method, for example Dim t As New Thread(AddressOf ThreadProc). Visual Basic automatically calls the <see cref="T:System.Threading.ThreadStart" /> constructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Thread" /> class, specifying a delegate that allows an object to be passed to the thread when the thread is started.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate that represents the methods to be invoked when this thread begins executing.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -94,23 +95,21 @@
         <Parameter Name="start" Type="System.Threading.ThreadStart" />
       </Parameters>
       <Docs>
-        <param name="start">A <see cref="T:System.Threading.ThreadStart" /> delegate that references the methods to be invoked when the new thread begins executing. </param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Threading.Thread" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>
-            <SPAN>
-              <block subset="none" type="note">To schedule the thread for execution, call <see cref="M:System.Threading.Thread.Start" />.</block>
-            </SPAN>
-          </para>
-          <para>
-            <SPAN>Until <see cref="M:System.Threading.Thread.Start" /> is called, the thread's state includes <see cref="F:System.Threading.ThreadState.Unstarted" />.</SPAN>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="start " />is <see langword="null" /> . </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread does not begin executing when it is created. To schedule the thread for execution, call the <see cref="M:System.Threading.Thread.Start" /> method.</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.ThreadStart" /> constructor when creating a thread. Use the AddressOf operator when passing your method for example Dim t As New Thread(AddressOf ThreadProc). Visual Basic automatically calls the <see cref="T:System.Threading.ThreadStart" /> constructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Thread" /> class.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ThreadStart" /> delegate that represents the methods to be invoked when this thread begins executing. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -127,11 +126,35 @@ class.</para>
         <Parameter Name="maxStackSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="maxStackSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Avoid using this constructor overload. The default stack size used by the <see cref="M:System.Threading.Thread.#ctor(System.Threading.ParameterizedThreadStart)" /> constructor overload is the recommended stack size for threads. If a thread has memory problems, the most likely cause is programming error, such as infinite recursion. </para>
+          <block subset="none" type="note">
+            <para>Beginning with the net_v40_long, only fully trusted code can set <paramref name="maxStackSize" /> to a value that is greater than the default stack size (1 megabyte). If a larger value is specified for <paramref name="maxStackSize" /> when code is running with partial trust, <paramref name="maxStackSize" /> is ignored and the default stack size is used. No exception is thrown. Code at any trust level can set <paramref name="maxStackSize" /> to a value that is less than the default stack size.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If you are developing a fully trusted library that will be used by partially trusted code, and you need to start a thread that requires a large stack, you must assert full trust before creating the thread, or the default stack size will be used. Do not do this unless you fully control the code that runs on the thread.</para>
+          </block>
+          <para>If <paramref name="maxStackSize" /> is less than the minimum stack size, the minimum stack size is used. If <paramref name="maxStackSize" /> is not a multiple of the page size, it is rounded to the next larger multiple of the page size. For example, if you are using the .NET Framework version 2.0 on Microsoft Windows Vista, 256KB (262144 bytes) is the minimum stack size, and the page size is 64KB (65536 bytes).</para>
+          <block subset="none" type="note">
+            <para>On versions of Microsoft Windows prior to Windows XP and Windows Server 2003, <paramref name="maxStackSize" /> is ignored, and the stack size specified in the executable header is used.</para>
+          </block>
+          <para>If you specify a very small stack size, you might need to disable stack-overflow probing. When the stack is severely constrained, the probing can itself cause a stack overflow. To disable stack overflow probing, add the following to your application configuration file.</para>
+          <code>&lt;configuration&gt;
+  &lt;runtime&gt;
+    &lt;disableStackOverflowProbing enabled="true"/&gt;
+  &lt;/runtime&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Thread" /> class, specifying a delegate that allows an object to be passed to the thread when the thread is started and specifying the maximum stack size for the thread.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate that represents the methods to be invoked when this thread begins executing.</param>
+        <param name="maxStackSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum stack size, in bytes, to be used by the thread, or 0 to use the default maximum stack size specified in the header for the executable.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -147,11 +170,35 @@ class.</para>
         <Parameter Name="maxStackSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="maxStackSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Avoid using this constructor overload. The default stack size used by the <see cref="M:System.Threading.Thread.#ctor(System.Threading.ThreadStart)" /> constructor overload is the recommended stack size for threads. If a thread has memory problems, the most likely cause is programming error, such as infinite recursion. </para>
+          <block subset="none" type="note">
+            <para>Beginning with the net_v40_long, only fully trusted code can set <paramref name="maxStackSize" /> to a value that is greater than the default stack size (1 megabyte). If a larger value is specified for <paramref name="maxStackSize" /> when code is running with partial trust, <paramref name="maxStackSize" /> is ignored and the default stack size is used. No exception is thrown. Code at any trust level can set <paramref name="maxStackSize" /> to a value that is less than the default stack size.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If you are developing a fully trusted library that will be used by partially trusted code, and you need to start a thread that requires a large stack, you must assert full trust before creating the thread, or the default stack size will be used. Do not do this unless you fully control the code that runs on the thread.</para>
+          </block>
+          <para>If <paramref name="maxStackSize" /> is less than the minimum stack size, the minimum stack size is used. If <paramref name="maxStackSize" /> is not a multiple of the page size, it is rounded to the next larger multiple of the page size. For example, if you are using the .NET Framework version 2.0 on Microsoft Windows Vista, 256KB (262144 bytes) is the minimum stack size, and the page size is 64KB (65536 bytes).</para>
+          <block subset="none" type="note">
+            <para>On versions of Microsoft Windows prior to Windows XP and Windows Server 2003, <paramref name="maxStackSize" /> is ignored, and the stack size specified in the executable header is used.</para>
+          </block>
+          <para>If you specify a very small stack size, you might need to disable stack-overflow probing. When the stack is severely constrained, the probing can itself cause a stack overflow. To disable stack overflow probing, add the following to your application configuration file.</para>
+          <code>&lt;configuration&gt;
+  &lt;runtime&gt;
+    &lt;disableStackOverflowProbing enabled="true"/&gt;
+  &lt;/runtime&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Thread" /> class, specifying the maximum stack size for the thread.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ThreadStart" /> delegate that represents the methods to be invoked when this thread begins executing.</param>
+        <param name="maxStackSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum stack size, in bytes, to be used by the thread, or 0 to use the default maximum stack size specified in the header for the executable.</param>
       </Docs>
     </Member>
     <Member MemberName="Abort">
@@ -169,108 +216,32 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Raises a <see cref="T:System.Threading.ThreadAbortException" /> in the thread on
-   which it is invoked to begin the process of terminating the thread. In all but
-   the most extraordinary situations, calling this method will terminate
-   the thread.
-   </para>
-        </summary>
-        <remarks>
-          <para> When this method is invoked on a thread, the system
-      throws a <see cref="T:System.Threading.ThreadAbortException" /> in the
-      thread to abort it. Invoking <see cref="M:System.Threading.Thread.Abort(System.Object)" /> on a thread is similar
-      to arranging for the target thread to throw a <see cref="T:System.Threading.ThreadAbortException" />. Because, unlike other
-      exceptions, a <see cref="T:System.Threading.ThreadAbortException" /> is sent to another thread, the exception might
-      be delayed. A <see cref="T:System.Threading.ThreadAbortException" /> is required to be delayed if and while the
-      target thread is executing any of the following:
-      </para>
-          <list type="bullet">
-            <item>
-              <term>
-         
-         unmanaged code</term>
-            </item>
-            <item>
-              <term>
-         
-         a catch handler</term>
-            </item>
-            <item>
-              <term>
-         
-         a finally clause</term>
-            </item>
-            <item>
-              <term>
-         
-         a filter clause</term>
-            </item>
-            <item>
-              <term>
-         
-         a type initializer</term>
-            </item>
-          </list>
-          <para>A thread abort proceeds as follows:</para>
-          <list type="number">
-            <item>
-              <term>
-                <para> An abort begins at the earliest of the following
-         times:</para>
-                <para> a. when the thread transitions from unmanaged to managed code execution; </para>
-                <para> b. when the thread finishes the outermost currently executing catch handler; </para>
-                <para> c. immediately if the thread is running managed code outside of any catch handler, finally clause, filter clause or type initializer </para>
-              </term>
-            </item>
-            <item>
-              <term>
-                <para> Whenever an outermost catch handler finishes
-            execution, the <see cref="T:System.Threading.ThreadAbortException" />
-            is rethrown unless the thread being
-            aborted has called <see cref="M:System.Threading.Thread.ResetAbort" /> since the call to <see cref="M:System.Threading.Thread.Abort(System.Object)" />.
-            </para>
-              </term>
-            </item>
-            <item>
-              <term>
-                <para> When all finally blocks have been called and the
-               thread is about to transition to any unmanaged code which executed before the
-               first entry to managed code, <see cref="M:System.Threading.Thread.ResetAbort" />
-               is called so that a return to managed code will consider the abort to have been successfully processed.
-               </para>
-              </term>
-            </item>
-          </list>
-          <para> Unexecuted <see langword="finally" /> blocks
-      are executed before the thread is aborted; this includes any finally block that
-      is executing when the exception is thrown. The thread is not guaranteed to abort
-      immediately, or at all. This situation can occur if a thread does an unbounded
-      amount of computation in the finally blocks that are called as part
-      of the abort procedure, thereby indefinitely delaying the abort. To ensure a thread has aborted, invoke <see cref="M:System.Threading.Thread.Join" />
-      on the thread after calling <see cref="M:System.Threading.Thread.Abort(System.Object)" /> . </para>
-          <para> If <see cref="M:System.Threading.Thread.Abort(System.Object)" /> is called on a thread that has not been
-   started, the thread aborts when <see cref="M:System.Threading.Thread.Start" /> is called. If the target thread is blocked or sleeping in managed code and is not inside any of the code blocks that are required to delay an abort, the thread is resumed and immediately aborted.</para>
-          <para> After <see cref="M:System.Threading.Thread.Abort(System.Object)" />
-is invoked on a thread, the state
-of the thread includes <see cref="F:System.Threading.ThreadState.AbortRequested" />. After the thread has
-terminated as a result of a successful call to <see cref="M:System.Threading.Thread.Abort(System.Object)" />, the state of the thread includes
-<see cref="F:System.Threading.ThreadState.Stopped" /> and <see cref="F:System.Threading.ThreadState.Aborted" />
-. </para>
-          <para>
-            <block subset="none" type="note">With sufficient permissions, a
-   thread that is the target of a <see cref="M:System.Threading.Thread.Abort(System.Object)" /> can cancel the abort using
-   the <see cref="M:System.Threading.Thread.ResetAbort" />
-   method. For an example that demonstrates calling the <see cref="M:System.Threading.Thread.ResetAbort" /> method, see <see cref="T:System.Threading.ThreadAbortException" />
-   .</block>
-          </para>
-        </remarks>
         <exception cref="T:System.Security.SecurityException">
           <SPAN>
             <SPAN>Caller does not have <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" /> security permission for the thread to be aborted.</SPAN>
           </SPAN>
         </exception>
         <permission cref="!:System.Security.SecurityPermission">Requires permission to control the thread to be aborted. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this method is invoked on a thread, the system throws a <see cref="T:System.Threading.ThreadAbortException" /> in the thread to abort it. ThreadAbortException is a special exception that can be caught by application code, but is re-thrown at the end of the catch block unless <see cref="M:System.Threading.Thread.ResetAbort" /> is called. ResetAbort cancels the request to abort, and prevents the ThreadAbortException from terminating the thread. Unexecuted finally blocks are executed before the thread is aborted.</para>
+          <block subset="none" type="note">
+            <para>When a thread calls Abort on itself, the effect is similar to throwing an exception; the <see cref="T:System.Threading.ThreadAbortException" /> happens immediately, and the result is predictable. However, if one thread calls Abort on another thread, the abort interrupts whatever code is running. There is also a chance that a static constructor could be aborted. In rare cases, this might prevent instances of that class from being created in that application domain. In the .NET Framework versions 1.0 and 1.1, there is a chance the thread could abort while a finally block is running, in which case the finally block is aborted.</para>
+          </block>
+          <para>The thread is not guaranteed to abort immediately, or at all. This situation can occur if a thread does an unbounded amount of computation in the finally blocks that are called as part of the abort procedure, thereby indefinitely delaying the abort. To wait until a thread has aborted, you can call the <see cref="M:System.Threading.Thread.Join" /> method on the thread after calling the <see cref="M:System.Threading.Thread.Abort" /> method, but there is no guarantee the wait will end.</para>
+          <block subset="none" type="note">
+            <para>The thread that calls <see cref="M:System.Threading.Thread.Abort" /> might block if the thread that is being aborted is in a protected region of code, such as a catch block, finally block, or constrained execution region. If the thread that calls <see cref="M:System.Threading.Thread.Abort" /> holds a lock that the aborted thread requires, a deadlock can occur.</para>
+          </block>
+          <para>If Abort is called on a thread that has not been started, the thread will abort when <see cref="M:System.Threading.Thread.Start" /> is called. If Abort is called on a thread that is blocked or is sleeping, the thread is interrupted and then aborted. </para>
+          <para>If Abort is called on a thread that has been suspended, a <see cref="T:System.Threading.ThreadStateException" /> is thrown in the thread that called <see cref="Overload:System.Threading.Thread.Abort" />, and <see cref="F:System.Threading.ThreadState.AbortRequested" /> is added to the <see cref="P:System.Threading.Thread.ThreadState" /> property of the thread being aborted. A <see cref="T:System.Threading.ThreadAbortException" /> is not thrown in the suspended thread until <see cref="M:System.Threading.Thread.Resume" /> is called.</para>
+          <para>If Abort is called on a managed thread while it is executing unmanaged code, a ThreadAbortException is not thrown until the thread returns to managed code.</para>
+          <para>If two calls to Abort come at the same time, it is possible for one call to set the state information and the other call to execute the Abort. However, an application cannot detect this situation.</para>
+          <para>After Abort is invoked on a thread, the state of the thread includes <see cref="F:System.Threading.ThreadState.AbortRequested" />. After the thread has terminated as a result of a successful call to Abort, the state of the thread is changed to <see cref="F:System.Threading.ThreadState.Stopped" />. With sufficient permissions, a thread that is the target of an Abort can cancel the abort using the ResetAbort method. For an example that demonstrates calling the ResetAbort method, see the ThreadAbortException class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a <see cref="T:System.Threading.ThreadAbortException" /> in the thread on which it is invoked, to begin the process of terminating the thread. Calling this method usually terminates the thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -291,30 +262,34 @@ terminated as a result of a successful call to <see cref="M:System.Threading.Thr
         <Parameter Name="stateInfo" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="stateInfo">A <see cref="T:System.Object" /> that contains application-specific information<SPAN>, such as state, </SPAN><SPAN>which can be used by the thread being aborted.</SPAN></param>
-        <summary>
-          <para> Raises a <see cref="T:System.Threading.ThreadAbortException" /> in the thread on which it is
-   invoked to begin the process of terminating the thread. In all but the most extraordinary situations, calling this method will terminate
-   the thread.
-   </para>
-        </summary>
-        <remarks>
-          <para>The object passed as the <paramref name="stateInfo" />
-parameter can be obtained by accessing the
-<see cref="P:System.Threading.ThreadAbortException.ExceptionState" /> 
-property.</para>
-          <para>
-            <block subset="none" type="note">For details on
-   aborting threads, see <see cref="M:System.Threading.Thread.Abort(System.Object)" />
-   ().</block>
-          </para>
-        </remarks>
         <exception cref="T:System.Security.SecurityException">
           <SPAN>
             <SPAN>Caller does not have <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" /> security permission for this thread.</SPAN>
           </SPAN>
         </exception>
         <permission cref="!:System.Security.SecurityPermission">Requires permission to control the thread to be aborted. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this method is invoked on a thread, the system throws a <see cref="T:System.Threading.ThreadAbortException" /> in the thread to abort it. ThreadAbortException is a special exception that can be caught by application code, but is re-thrown at the end of the catch block unless <see cref="M:System.Threading.Thread.ResetAbort" /> is called. ResetAbort cancels the request to abort, and prevents the ThreadAbortException from terminating the thread. Unexecuted finally blocks are executed before the thread is aborted.</para>
+          <block subset="none" type="note">
+            <para>When a thread calls Abort on itself, the effect is similar to throwing an exception; the <see cref="T:System.Threading.ThreadAbortException" /> happens immediately, and the result is predictable. However, if one thread calls Abort on another thread, the abort interrupts whatever code is running. There is a chance that a static constructor could be aborted. In rare cases, this might prevent instances of that class from being created in that application domain. In the .NET Framework versions 1.0 and 1.1, there is a chance the thread could abort while a finally block is running, in which case the finally block is aborted.</para>
+          </block>
+          <para>The thread is not guaranteed to abort immediately, or at all. This situation can occur if a thread does an unbounded amount of computation in the finally blocks that are called as part of the abort procedure, thereby indefinitely delaying the abort. To wait until a thread has aborted, you can call the <see cref="M:System.Threading.Thread.Join" /> method on the thread after calling the <see cref="M:System.Threading.Thread.Abort(System.Object)" /> method, but there is no guarantee that the wait will end.</para>
+          <block subset="none" type="note">
+            <para>The thread that calls <see cref="M:System.Threading.Thread.Abort" /> might block if the thread that is being aborted is in a protected region of code, such as a catch block, finally block, or constrained execution region. If the thread that calls <see cref="M:System.Threading.Thread.Abort" /> holds a lock that the aborted thread requires, a deadlock can occur.</para>
+          </block>
+          <para>If Abort is called on a thread that has not been started, the thread will abort when <see cref="M:System.Threading.Thread.Start" /> is called. If Abort is called on a thread that is blocked or is sleeping, the thread is interrupted and then aborted. </para>
+          <para>If Abort is called on a thread that has been suspended, a <see cref="T:System.Threading.ThreadStateException" /> is thrown in the thread that called <see cref="Overload:System.Threading.Thread.Abort" />, and <see cref="F:System.Threading.ThreadState.AbortRequested" /> is added to the <see cref="P:System.Threading.Thread.ThreadState" /> property of the thread being aborted. A <see cref="T:System.Threading.ThreadAbortException" /> is not thrown in the suspended thread until <see cref="M:System.Threading.Thread.Resume" /> is called.</para>
+          <para>If Abort is called on a managed thread while it is executing unmanaged code, a ThreadAbortException is not thrown until the thread returns to managed code.</para>
+          <para>If two calls to Abort come at the same time, it is possible for one call to set the state information and the other call to execute the Abort. However, an application cannot detect this situation.</para>
+          <para>After Abort is invoked on a thread, the state of the thread includes <see cref="F:System.Threading.ThreadState.AbortRequested" />. After the thread has terminated as a result of a successful call to Abort, the state of the thread is changed to <see cref="F:System.Threading.ThreadState.Stopped" />. With sufficient permissions, a thread that is the target of an Abort can cancel the abort using the ResetAbort method. For an example that demonstrates calling the ResetAbort method, see the ThreadAbortException class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a <see cref="T:System.Threading.ThreadAbortException" /> in the thread on which it is invoked, to begin the process of terminating the thread while also providing exception information about the thread termination. Calling this method usually terminates the thread.</para>
+        </summary>
+        <param name="stateInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains application-specific information, such as state, which can be used by the thread being aborted. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -332,9 +307,22 @@ property.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>The slot is allocated on all threads.</para>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread expires. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates an unnamed data slot on all the threads. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allocated named data slot on all threads.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllocateNamedDataSlot">
@@ -353,10 +341,28 @@ property.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread expires. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+          <para>It is not necessary to use the <see cref="M:System.Threading.Thread.AllocateNamedDataSlot(System.String)" /> method to allocate a named data slot, because the <see cref="M:System.Threading.Thread.GetNamedDataSlot(System.String)" /> method allocates the slot if it has not already been allocated.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="M:System.Threading.Thread.AllocateNamedDataSlot(System.String)" /> method is used, it should be called in the main thread at program startup, because it throws an exception if a slot with the specified name has already been allocated. There is no way to test whether a slot has already been allocated.</para>
+          </block>
+          <para>Slots allocated with this method must be freed with <see cref="M:System.Threading.Thread.FreeNamedDataSlot(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates a named data slot on all threads. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allocated named data slot on all threads.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data slot to be allocated. </param>
       </Docs>
     </Member>
     <Member MemberName="ApartmentState">
@@ -377,9 +383,19 @@ property.</para>
         <ReturnType>System.Threading.ApartmentState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the .NET Framework versions 1.0 and 1.1, the ApartmentState property marks a thread to indicate that it will execute in a single-threaded or multithreaded apartment. This property can be set when the thread is in the Unstarted or Running thread state; however, it can be set only once for a thread. If the property has not been set, it returns Unknown.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework version 2.0, new threads are initialized as <see cref="F:System.Threading.ApartmentState.MTA" /> if their apartment state has not been set before they are started. The main application thread is initialized to <see cref="F:System.Threading.ApartmentState.MTA" /> by default. You can no longer set the main application thread to <see cref="F:System.Threading.ApartmentState.STA" /> by setting the <see cref="T:System.Threading.ApartmentState" /> property on the first line of code. Use the <see cref="T:System.STAThreadAttribute" /> instead.</para>
+          </block>
+          <para>In the .NET Framework version 2.0, you can specify the COM threading model for a C++ application using the <format type="text/html"><a href="4907e9ef-5031-446c-aecf-0a0b32fae1e8">/CLRTHREADATTRIBUTE (Set CLR Thread Attribute)</a></format> linker option.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the apartment state of this thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginCriticalRegion">
@@ -400,9 +416,18 @@ property.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Hosts of the common language runtime (CLR), such as Microsoft SQL Server 2005, can establish different policies for failures in critical and non-critical regions of code. A critical region is one in which the effects of a thread abort or an unhandled exception might not be limited to the current task. By contrast, an abort or failure in a non-critical region of code affects only the task in which the error occurs.</para>
+          <para>For example, consider a task that attempts to allocate memory while holding a lock. If the memory allocation fails, aborting the current task is not sufficient to ensure stability of the <see cref="T:System.AppDomain" />, because there can be other tasks in the domain waiting for the same lock. If the current task is terminated, other tasks could be deadlocked.</para>
+          <para>When a failure occurs in a critical region, the host might decide to unload the entire <see cref="T:System.AppDomain" /> rather than take the risk of continuing execution in a potentially unstable state. To inform the host that your code is entering a critical region, call <see cref="M:System.Threading.Thread.BeginCriticalRegion" />. Call <see cref="M:System.Threading.Thread.EndCriticalRegion" /> when execution returns to a non-critical region of code.</para>
+          <para>Using this method in code that runs under SQL Server 2005 requires the code to be run at the highest host protection level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies a host that execution is about to enter a region of code in which the effects of a thread abort or unhandled exception might jeopardize other tasks in the application domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginThreadAffinity">
@@ -423,9 +448,17 @@ property.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some hosts of the common language runtime, such as Microsoft SQL Server 2005, provide their own thread management. A host that provides its own thread management can move an executing task from one physical operating system thread to another at any time. Most tasks are not affected by this switching. However, some tasks have thread affinity - that is, they depend on the identity of a physical operating system thread. These tasks must inform the host when they execute code that should not be switched.</para>
+          <para>For example, if your application calls a system API to acquire an operating system lock that has thread affinity, such as a Win32 CRITICAL_SECTION, you must call <see cref="M:System.Threading.Thread.BeginThreadAffinity" /> before acquiring the lock, and <see cref="M:System.Threading.Thread.EndThreadAffinity" /> after releasing the lock. </para>
+          <para>Using this method in code that runs under SQL Server 2005 requires the code to be run at the highest host protection level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies a host that managed code is about to execute instructions that depend on the identity of the current physical operating system thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentContext">
@@ -441,9 +474,12 @@ property.</para>
         <ReturnType>System.Runtime.Remoting.Contexts.Context</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current context in which the thread is executing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentCulture">
@@ -459,9 +495,16 @@ property.</para>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.CultureInfo" /> object that is returned by this property, together with its associated objects, determine the default format for dates, times, numbers, currency values, the sorting order of text, casing conventions, and string comparisons. See the <see cref="T:System.Globalization.CultureInfo" /> class to learn about culture names and identifiers, the differences between invariant, neutral, and specific cultures, and the way culture information affects threads and application domains. See the <see cref="P:System.Globalization.CultureInfo.CurrentCulture" /> property to learn how a thread's default culture is determined, and how users set culture information for their computers. </para>
+          <para>Beginning with the net_v40_long, you can set the <see cref="P:System.Threading.Thread.CurrentCulture" /> property to a neutral culture. This is because the behavior of the <see cref="T:System.Globalization.CultureInfo" /> class has changed: When it represents a neutral culture, its property values (in particular, the <see cref="P:System.Globalization.CultureInfo.Calendar" />, <see cref="P:System.Globalization.CultureInfo.CompareInfo" />, <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />, <see cref="P:System.Globalization.CultureInfo.NumberFormat" />, and <see cref="P:System.Globalization.CultureInfo.TextInfo" /> properties) now reflect the specific culture that is associated with the neutral culture. In earlier versions of the .NET Framework, the <see cref="P:System.Threading.Thread.CurrentCulture" /> property threw a <see cref="T:System.NotSupportedException" /> exception when a neutral culture was assigned. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the culture for the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentPrincipal">
@@ -477,9 +520,12 @@ property.</para>
         <ReturnType>System.Security.Principal.IPrincipal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The thread's current principal.</summary>
         <value>An object implementing <see cref="T:System.Security.Principal.IPrincipal" /> which encapsulates information about the principal which the thread is executing on behalf of.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the thread's current principal (for role-based security).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentThread">
@@ -502,18 +548,16 @@ property.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>
-            <SPAN>Gets a <see cref="T:System.Threading.Thread" />
-instance that represents the currently executing thread.</SPAN>
-          </para>
-        </summary>
         <value>
           <para> An instance of <see cref="T:System.Threading.Thread" /> representing the current thread.</para>
         </value>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently running thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -530,9 +574,19 @@ instance that represents the currently executing thread.</SPAN>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The UI culture specifies the resources an application needs to support user input and output, and by default is the same as the operating system culture. See the <see cref="T:System.Globalization.CultureInfo" /> class to learn about culture names and identifiers, the differences between invariant, neutral, and specific cultures, and the way culture information affects threads and application domains. See the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property to learn how a thread's default UI culture is determined. </para>
+          <para>The <see cref="T:System.Globalization.CultureInfo" /> returned by this property can be a neutral culture. Neutral cultures should not be used with formatting methods such as <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" />, <see cref="M:System.DateTime.ToString(System.String,System.IFormatProvider)" />, and <see cref="M:System.Convert.ToString(System.Char,System.IFormatProvider)" />. Use the <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> method to get a specific culture, or use the <see cref="P:System.Threading.Thread.CurrentCulture" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> method throws <see cref="T:System.ArgumentException" /> for the neutral cultures "zh-Hant" ("zh-CHT") and "zh-Hans" ("zh-CHS").</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current culture used by the Resource Manager to look up culture-specific resources at run time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndCriticalRegion">
@@ -553,9 +607,18 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Hosts of the common language runtime (CLR), such as Microsoft SQL Server 2005, can establish different policies for failures in critical and non-critical regions of code. A critical region is one in which the effects of a thread abort or an unhandled exception might not be limited to the current task. By contrast, an abort or failure in a non-critical region of code affects only the task in which the error occurs.</para>
+          <para>For example, consider a task that attempts to allocate memory while holding a lock. If the memory allocation fails, aborting the current task is not sufficient to ensure stability of the <see cref="T:System.AppDomain" />, because there can be other tasks in the domain waiting for the same lock. If the current task is terminated, other tasks could be deadlocked.</para>
+          <para>When a failure occurs in a critical region, the host might decide to unload the entire <see cref="T:System.AppDomain" /> rather than take the risk of continuing execution in a potentially unstable state. To inform the host that your code is entering a critical region, call <see cref="M:System.Threading.Thread.BeginCriticalRegion" />. Call <see cref="M:System.Threading.Thread.EndCriticalRegion" /> when execution returns to a non-critical region of code.</para>
+          <para>Using this method in code that runs under SQL Server 2005 requires the code to be run at the highest host protection level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies a host that execution is about to enter a region of code in which the effects of a thread abort or unhandled exception are limited to the current task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndThreadAffinity">
@@ -576,9 +639,17 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some hosts of the common language runtime, such as Microsoft SQL Server 2005, provide their own thread management. A host that provides its own thread management can move an executing task from one physical operating system thread to another at any time. Most tasks are not affected by this switching. However, some tasks have thread affinity - that is, they depend on the identity of a physical operating system thread. These tasks must inform the host when they execute code that should not be switched.</para>
+          <para>For example, if your application calls a system API to acquire an operating system lock that has thread affinity, such as a Win32 CRITICAL_SECTION, you must call <see cref="M:System.Threading.Thread.BeginThreadAffinity" /> before acquiring the lock, and <see cref="M:System.Threading.Thread.EndThreadAffinity" /> after releasing the lock.</para>
+          <para>Using this method in code that runs under SQL Server 2005 requires the code to be run at the highest host protection level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies a host that managed code has finished executing instructions that depend on the identity of the current physical operating system thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExecutionContext">
@@ -598,10 +669,16 @@ instance that represents the currently executing thread.</SPAN>
         <ReturnType>System.Threading.ExecutionContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.ExecutionContext" /> class provides a single container for all information relevant to a logical thread of execution. This includes security context, call context, synchronization context, localization context, and transaction context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Threading.ExecutionContext" /> object that contains information about the various contexts of the current thread. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -653,9 +730,21 @@ instance that represents the currently executing thread.</SPAN>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>After any thread calls FreeNamedDataSlot, any other thread that calls <see cref="M:System.Threading.Thread.GetNamedDataSlot(System.String)" /> with the same name will allocate a new slot associated with the name. Subsequent calls to GetNamedDataSlot by any thread will return the new slot. However, any thread that still has a <see cref="T:System.LocalDataStoreSlot" /> returned by an earlier call to GetNamedDataSlot can continue to use the old slot.</para>
+          <para>A slot that has been associated with a name is released only when every LocalDataStoreSlot that was obtained prior to the call to FreeNamedDataSlot has been released and garbage-collected.</para>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread expires. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Eliminates the association between a name and a slot, for all threads in the process. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data slot to be freed. </param>
       </Docs>
     </Member>
     <Member MemberName="GetApartmentState">
@@ -671,10 +760,19 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method, along with the <see cref="M:System.Threading.Thread.SetApartmentState(System.Threading.ApartmentState)" /> method and the <see cref="M:System.Threading.Thread.TrySetApartmentState(System.Threading.ApartmentState)" /> method, replaces the <see cref="P:System.Threading.Thread.ApartmentState" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Threading.ApartmentState" /> value indicating the apartment state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Threading.ApartmentState" /> values indicating the apartment state of the managed thread. The default is <see cref="F:System.Threading.ApartmentState.Unknown" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCompressedStack">
@@ -696,9 +794,18 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is no longer supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Threading.CompressedStack" /> object that can be used to capture the stack for the current thread. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -717,10 +824,27 @@ instance that represents the currently executing thread.</SPAN>
         <Parameter Name="slot" Type="System.LocalDataStoreSlot" />
       </Parameters>
       <Docs>
-        <param name="slot">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread expires. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.Threading.Thread.GetData(System.LocalDataStoreSlot)" /> is a Shared method that always applies to the currently executing thread, even if you call it using a variable that refers to another thread. To avoid confusion, use the class name when calling Shared methods: Dim test As Object = Thread.GetData(testSlot).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value from the specified slot on the current thread, within the current thread's current domain. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The retrieved value.</para>
+        </returns>
+        <param name="slot">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.LocalDataStoreSlot" /> from which to get the value. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDomain">
@@ -738,14 +862,15 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
-          <para>Returns an object representing the application domain in
-      which the current thread is executing.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current domain in which the current thread is running.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.AppDomain" /> object that represents the current application domain.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.AppDomain" /> representing the current application domain of the running thread.</para>
         </returns>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
@@ -764,9 +889,15 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a unique application domain identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer uniquely identifying the application domain.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -787,10 +918,19 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code is not guaranteed to be unique. Use the <see cref="P:System.Threading.Thread.ManagedThreadId" /> property if you need a unique identifier for a managed thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash code value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNamedDataSlot">
@@ -809,10 +949,24 @@ instance that represents the currently executing thread.</SPAN>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread expires. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+          <para>If the named slot does not exist, a new slot is allocated. Named data slots are public and can be manipulated by anyone.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up a named data slot. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.LocalDataStoreSlot" /> allocated for this thread.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the local data slot. </param>
       </Docs>
     </Member>
     <Member MemberName="Interrupt">
@@ -829,8 +983,16 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this thread is not currently blocked in a wait, sleep, or join state, it will be interrupted when it next begins to block.</para>
+          <para>
+            <see cref="T:System.Threading.ThreadInterruptedException" /> is thrown in the interrupted thread, but not until the thread blocks. If the thread never blocks, the exception is never thrown, and thus the thread might complete without ever being interrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Interrupts a thread that is in the WaitSleepJoin thread state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsAlive">
@@ -848,11 +1010,6 @@ instance that represents the currently executing thread.</SPAN>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets a <see cref="T:System.Boolean" /> value
-   indicating the execution status of the current thread.
-   </para>
-        </summary>
         <value>
           <para>
             <see langword="true " />
@@ -862,6 +1019,10 @@ if this thread has been started, and has not terminated; otherwise,
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the execution status of the current thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -880,32 +1041,21 @@ if this thread has been started, and has not terminated; otherwise,
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets a <see cref="T:System.Boolean" />
-value indicating whether a thread is a background thread.</para>
-        </summary>
         <value>
           <para>
             <see langword="true " />if the thread is or is to become
    a background thread; otherwise, <see langword="false" />.
    </para>
         </value>
-        <remarks>
-          <para>The default value of this property is <see langword="false" />. The property value can be changed before
-   the thread is started and before it terminates.</para>
-          <para>
-            <block subset="none" type="note">A thread is either
-   a background thread or a foreground thread. Background threads are identical to
-   foreground threads except for the fact that background threads do not
-   prevent a process from terminating. Once all foreground threads belonging to a
-   process have terminated, the execution engine ends the process by invoking
-<see cref="M:System.Threading.Thread.Abort(System.Object)" /> on any background threads that
-   
-   are
-   still alive. </block>
-          </para>
-        </remarks>
         <exception cref="T:System.Threading.ThreadStateException"> The thread has reached the <see cref="F:System.Threading.ThreadState.Stopped" /> state. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread is either a background thread or a foreground thread. Background threads are identical to foreground threads, except that background threads do not prevent a process from terminating. Once all foreground threads belonging to a process have terminated, the common language runtime ends the process. Any remaining background threads are stopped and do not complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether or not a thread is a background thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -922,9 +1072,15 @@ value indicating whether a thread is a background thread.</para>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information see <format type="text/html"><a href="2be05b06-a42e-4c9d-a739-96c21d673927">The Managed Thread Pool</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether or not a thread belongs to the managed thread pool.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Join">
@@ -942,23 +1098,16 @@ value indicating whether a thread is a background thread.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Blocks the calling thread until the thread on which this method
-      is invoked terminates.
-      </para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">Use this method to
-      ensure a thread has terminated. The caller will block indefinitely if the thread
-      does not
-      terminate.</block>
-          </para>
-          <para>
-            <see cref="M:System.Threading.Thread.Join" /> cannot be invoked on a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
-          <para>This method changes the state of the calling thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />. </para>
-        </remarks>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to ensure a thread has terminated. The caller will block indefinitely if the thread does not terminate. If the thread has already terminated when <see cref="Overload:System.Threading.Thread.Join" /> is called, the method returns immediately.</para>
+          <para>This method changes the state of the calling thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />. You cannot invoke Join on a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Blocks the calling thread until a thread terminates, while continuing to perform standard COM and SendMessage pumping.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -979,30 +1128,24 @@ value indicating whether a thread is a background thread.</para>
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">A <see cref="T:System.Int32" /> containing the number of milliseconds to wait for the thread to terminate. </param>
-        <summary>
-          <para> Blocks the calling thread until the thread on which this method is invoked terminates or the specified time elapses.
-      </para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " />if the thread has terminated; <see langword="false " /> if the
-   thread has not terminated after <paramref name="millisecondsTimeout" />
-   has elapsed.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">If <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> is specified for <paramref name="millisecondsTimeout" />, this method
-   behaves identically to <see langword="Join" />
-   (), except for the return value.</block>
-          </para>
-          <para>
-            <see langword="Join" /> cannot be invoked on a thread
-that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
-          <para>This method changes the state of the calling thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="millisecondsTimeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="F:System.Threading.Timeout.Infinite" /> is specified for the <paramref name="millisecondsTimeout" /> parameter, this method behaves identically to the <see cref="M:System.Threading.Thread.Join" /> method overload, except for the return value.</para>
+          <para>If the thread has already terminated when <see cref="Overload:System.Threading.Thread.Join" /> is called, the method returns immediately.</para>
+          <para>This method changes the state of the calling thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />. You cannot invoke Join on a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Blocks the calling thread until a thread terminates or the specified time elapses, while continuing to perform standard COM and SendMessage pumping.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread has terminated; false if the thread has not terminated after the amount of time specified by the <paramref name="millisecondsTimeout" /> parameter has elapsed.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait for the thread to terminate. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1023,34 +1166,24 @@ that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</p
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">A <see cref="T:System.TimeSpan" /> set to the amount of time to wait for the thread to terminate. Specify <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> milliseconds to wait indefinitely. </param>
-        <summary>
-          <para> Blocks the calling thread until the thread on which this method is invoked terminates or the specified time
-      elapses.
-      </para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " />if the thread has terminated;
-<see langword="false " /> if the thread has not terminated after the amount 
-   of time specified by <paramref name="timeout" />
-   has elapsed.</para>
-        </returns>
-        <remarks>
-          <para>This method converts <paramref name="timeout " />to milliseconds,
-   tests the validity of the converted value, and calls <see cref="M:System.Threading.Thread.Join" />(<see cref="T:System.Int32" />).</para>
-          <para>
-            <block subset="none" type="note">If <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> milliseconds is specified for
-<paramref name="timeout" />, this method 
-behaves identically to <see langword="Join" /> (),
-except for the return value.</block>
-          </para>
-          <para>
-            <see langword="Join" /> cannot be invoked on a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
-          <para>This method changes the state of the current thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, or is greater than <see cref="F:System.Int32.MaxValue" qualify="true" /> milliseconds.</exception>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="F:System.Threading.Timeout.Infinite" /> is specified for <paramref name="timeout" />, this method behaves identically to the <see cref="M:System.Threading.Thread.Join" /> method overload, except for the return value.</para>
+          <para>If the thread has already terminated when <see cref="Overload:System.Threading.Thread.Join" /> is called, the method returns immediately.</para>
+          <para>This method changes the state of the current thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />. You cannot invoke Join on a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Blocks the calling thread until a thread terminates or the specified time elapses, while continuing to perform standard COM and SendMessage pumping.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread terminated; false if the thread has not terminated after the amount of time specified by the <paramref name="timeout" /> parameter has elapsed.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> set to the amount of time to wait for the thread to terminate. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1071,10 +1204,16 @@ except for the return value.</block>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Threading.Thread.ManagedThreadId" /> property does not vary over time, even if unmanaged code that hosts the common language runtime implements the thread as a fiber.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for the current managed thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemoryBarrier">
@@ -1091,10 +1230,16 @@ except for the return value.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.Thread.MemoryBarrier" /> is required only on multiprocessor systems with weak memory ordering (for example, a system employing multiple Intel Itanium processors).</para>
+          <para>For most purposes, the C# lock statement, the Visual Basic SyncLock statement, or the <see cref="T:System.Threading.Monitor" /> class provide easier ways to synchronize data.</para>
+        </remarks>
         <summary>
-          <para>Guarantees that all subsequent loads or stores from the current thread will not access memory until after all previous loads and stores from the current thread have completed, as observed from this or other threads.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronizes memory access as follows: The processor executing the current thread cannot reorder instructions in such a way that memory accesses prior to the call to <see cref="M:System.Threading.Thread.MemoryBarrier" /> execute after memory accesses that follow the call to <see cref="M:System.Threading.Thread.MemoryBarrier" />.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -1112,22 +1257,20 @@ except for the return value.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or
-      sets the name of
-      the thread.
-      </para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    name of the thread, or <see langword="null" /> if no name
    was set.</para>
         </value>
-        <remarks>
-          <para>This property is write-once. Once this property has been 
-      set to a non-null value, attempts to set this property to a new value cause an exception.</para>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">A set operation was requested, and the <see langword="Name" /> property has already been set.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is write-once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1146,52 +1289,38 @@ except for the return value.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>
-            <SPAN>
-      Gets or sets a value indicating the scheduling priority of a thread.</SPAN>
-          </para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Threading.ThreadPriority" /> value.
    </para>
         </value>
-        <remarks>
-          <para>A thread can be assigned any one of the following
-      priority values:</para>
-          <list type="bullet">
-            <item>
-              <term>
-                <see cref="F:System.Threading.ThreadPriority.Highest" />
-              </term>
-            </item>
-            <item>
-              <term>
-                <see cref="F:System.Threading.ThreadPriority.AboveNormal" />
-              </term>
-            </item>
-            <item>
-              <term>
-                <see cref="F:System.Threading.ThreadPriority.Normal" />
-              </term>
-            </item>
-            <item>
-              <term>
-                <see cref="F:System.Threading.ThreadPriority.BelowNormal" />
-              </term>
-            </item>
-            <item>
-              <term>
-                <see cref="F:System.Threading.ThreadPriority.Lowest" />
-              </term>
-            </item>
-          </list>
-          <para> The default value is <see cref="F:System.Threading.ThreadPriority.Normal" />.</para>
-          <para>Operating systems are not required to honor the priority
-   of a thread.</para>
-        </remarks>
         <exception cref="T:System.Threading.ThreadStateException"> The thread is in the <see cref="F:System.Threading.ThreadState.Stopped" /> state.</exception>
         <exception cref="T:System.ArgumentException">The value specified for a set operation is not a valid <see cref="T:System.Threading.ThreadPriority" /> value. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread can be assigned any one of the following priority values: </para>
+          <list type="bullet">
+            <item>
+              <para>Highest </para>
+            </item>
+            <item>
+              <para>AboveNormal </para>
+            </item>
+            <item>
+              <para>Normal </para>
+            </item>
+            <item>
+              <para>BelowNormal </para>
+            </item>
+            <item>
+              <para>Lowest </para>
+            </item>
+          </list>
+          <para>Operating systems are not required to honor the priority of a thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the scheduling priority of a thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1210,20 +1339,6 @@ except for the return value.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Cancels a <see cref="M:System.Threading.Thread.Abort(System.Object)" /> requested for the current thread.</para>
-        </summary>
-        <remarks>
-          <para> This method cannot be called by untrusted code.
-      </para>
-          <para> When a call is made to <see cref="M:System.Threading.Thread.Abort(System.Object)" />
-to destroy a thread, the system throws a <see cref="T:System.Threading.ThreadAbortException" />. <see cref="T:System.Threading.ThreadAbortException" /> is a special
-exception that can be caught by application code, but is rethrown at the end of
-the catch block unless <see langword="ResetAbort " />is called.
-<see langword="ResetAbort " />cancels the request to 
-abort, and prevents the <see langword=" ThreadAbortException" />
-from terminating the thread.</para>
-        </remarks>
         <exception cref="T:System.Threading.ThreadStateException">
           <see cref="M:System.Threading.Thread.Abort(System.Object)" /> was not invoked on the current thread.</exception>
         <exception cref="T:System.Security.SecurityException">
@@ -1234,6 +1349,16 @@ from terminating the thread.</para>
           <para>For an example that demonstrates calling 
       this method, see <see cref="T:System.Threading.ThreadAbortException" /> .</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can only be called by code with the proper permissions. For more information see <format type="text/html"><a href="324C14F8-54FF-494D-9FD1-BFD20962C8BA">[&lt;topic://cpconMakingSecurityDemands&gt;]</a></format>.</para>
+          <para>When a call is made to Abort to terminate a thread, the system throws a <see cref="T:System.Threading.ThreadAbortException" />. ThreadAbortException is a special exception that can be caught by application code, but is rethrown at the end of the catch block unless ResetAbort is called. ResetAbort cancels the request to abort, and prevents the ThreadAbortException from terminating the thread.</para>
+          <para>See <see cref="T:System.Threading.ThreadAbortException" /> for an example that demonstrates calling the ResetAbort method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels an <see cref="M:System.Threading.Thread.Abort(System.Object)" /> requested for the current thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1256,8 +1381,16 @@ from terminating the thread.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Do not use the <see cref="M:System.Threading.Thread.Suspend" /> and <see cref="M:System.Threading.Thread.Resume" /> methods to synchronize the activities of threads. You have no way of knowing what code a thread is executing when you suspend it. If you suspend a thread while it holds locks during a security permission evaluation, other threads in the <see cref="T:System.AppDomain" /> might be blocked. If you suspend a thread while it is executing a class constructor, other threads in the <see cref="T:System.AppDomain" /> that attempt to use that class are blocked. Deadlocks can occur very easily.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumes a thread that has been suspended.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetApartmentState">
@@ -1275,10 +1408,21 @@ from terminating the thread.</para>
         <Parameter Name="state" Type="System.Threading.ApartmentState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>New threads are initialized as <see cref="F:System.Threading.ApartmentState.MTA" /> if their apartment state has not been set before they are started. Apartment state must be set before a thread is started.</para>
+          <block subset="none" type="note">
+            <para>The main application thread is initialized to <see cref="F:System.Threading.ApartmentState.MTA" /> by default. The only way to set the apartment state of the main application thread to <see cref="F:System.Threading.ApartmentState.STA" /> is to apply the <see cref="T:System.STAThreadAttribute" /> attribute to the entry point method.</para>
+          </block>
+          <para>The <see cref="M:System.Threading.Thread.SetApartmentState(System.Threading.ApartmentState)" /> method, along with the <see cref="M:System.Threading.Thread.GetApartmentState" /> method and the <see cref="M:System.Threading.Thread.TrySetApartmentState(System.Threading.ApartmentState)" /> method, replaces the <see cref="P:System.Threading.Thread.ApartmentState" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the apartment state of a thread before it is started.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new apartment state.</param>
       </Docs>
     </Member>
     <Member MemberName="SetCompressedStack">
@@ -1302,9 +1446,16 @@ from terminating the thread.</para>
         <Parameter Name="stack" Type="System.Threading.CompressedStack" />
       </Parameters>
       <Docs>
-        <param name="stack">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is no longer supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a captured <see cref="T:System.Threading.CompressedStack" /> to the current thread. </para>
+        </summary>
+        <param name="stack">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CompressedStack" /> object to be applied to the current thread.</param>
       </Docs>
     </Member>
     <Member MemberName="SetData">
@@ -1324,10 +1475,25 @@ from terminating the thread.</para>
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="slot">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields (that is, fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute) and data slots. Thread-relative static fields provide much better performance than data slots, and enable compile-time type checking. For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>.</para>
+          </block>
+          <para>Threads use a local store memory mechanism to store thread-specific data. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread can allocate a data slot in the data store, store and retrieve a data value in the slot, and free the slot for reuse after the thread procedure ends and the <see cref="T:System.Threading.Thread" /> object has been reclaimed by garbage collection. Data slots are unique per thread. No other thread (not even a child thread) can get that data.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.Threading.Thread.SetData(System.LocalDataStoreSlot,System.Object)" /> is a Shared method that always applies to the currently executing thread, even if you call it using a variable that refers to another thread. To avoid confusion, use the class name when calling Shared methods: Thread.SetData(testSlot, "test data").</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the data in the specified slot on the currently running thread, for that thread's current domain. For better performance, use fields marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
+        </summary>
+        <param name="slot">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.LocalDataStoreSlot" /> in which to set the value. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be set. </param>
       </Docs>
     </Member>
     <Member MemberName="Sleep">
@@ -1347,17 +1513,22 @@ from terminating the thread.</para>
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">A <see cref="T:System.Int32" /> containing the number of milliseconds for which the thread is blocked. Specify zero to indicate that this thread should be suspended temporarily to allow other waiting threads to execute. Specify <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> to block the thread indefinitely. </param>
-        <summary>
-          <para> Blocks the current thread for the specified number of milliseconds.
-      </para>
-        </summary>
-        <remarks>
-          <para>The thread will not be scheduled for execution by
-      the operating system for the amount of time specified. This method changes the
-      state of the thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="millisecondsTimeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread will not be scheduled for execution by the operating system for the amount of time specified. This method changes the state of the thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
+          <para>You can specify <see cref="F:System.Threading.Timeout.Infinite" /> for the <paramref name="millisecondsTimeout" /> parameter to suspend the thread indefinitely. However, we recommend that you use other <see cref="N:System.Threading" /> classes such as <see cref="T:System.Threading.Mutex" />, <see cref="T:System.Threading.Monitor" />, <see cref="T:System.Threading.EventWaitHandle" />, or <see cref="T:System.Threading.Semaphore" /> instead to sychronize threads or manage resources.</para>
+          <para>This method does not perform standard COM and SendMessage pumping.</para>
+          <block subset="none" type="note">
+            <para>If you need to sleep on a thread that has <see cref="T:System.STAThreadAttribute" />, but you want to perform standard COM and SendMessage pumping, consider using one of the overloads of the <see cref="Overload:System.Threading.Thread.Join" /> method that specifies a timeout interval.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends the current thread for the specified number of milliseconds.</para>
+        </summary>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds for which the thread is suspended. A value of zero (0) has no effect. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1378,19 +1549,23 @@ from terminating the thread.</para>
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">A <see cref="T:System.TimeSpan" /> set to the amount of time for which the current thread will be blocked. Specify zero to indicate that this thread should be suspended temporarily to allow other waiting threads to execute. Specify <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> milliseconds to suspend the thread indefinitely. </param>
-        <summary>
-          <para> Blocks the current thread for a specified time.
-      </para>
-        </summary>
-        <remarks>
-          <para>This method converts <paramref name="timeout " />to milliseconds,
-   tests the validity of the converted value, and calls <see cref="M:System.Threading.Thread.Sleep(System.Int32)" />(<see cref="T:System.Int32" />).</para>
-          <para>The thread will not be scheduled for execution by the operating system
-   for the amount of time specified. This method changes the state of the thread to
-   include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, or is greater than <see cref="F:System.Int32.MaxValue" qualify="true" /> milliseconds.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread will not be scheduled for execution by the operating system for the amount of time specified. This method changes the state of the thread to include <see cref="F:System.Threading.ThreadState.WaitSleepJoin" />.</para>
+          <para>You can specify <see cref="F:System.Threading.Timeout.InfiniteTimeSpan" /> for the <paramref name="timeout" /> parameter to suspend the thread indefinitely. However, we recommend that you use other <see cref="N:System.Threading" /> classes such as <see cref="T:System.Threading.Mutex" />, <see cref="T:System.Threading.Monitor" />, <see cref="T:System.Threading.EventWaitHandle" />, or <see cref="T:System.Threading.Semaphore" /> instead to sychronize threads or manage resources.</para>
+          <para>This overload of <see cref="Overload:System.Threading.Thread.Sleep" /> uses the total number of whole milliseconds in <paramref name="timeout" />. Fractional milliseconds are discarded.</para>
+          <para>This method does not perform standard COM and SendMessage pumping.</para>
+          <block subset="none" type="note">
+            <para>If you need to sleep on a thread that has <see cref="T:System.STAThreadAttribute" />, but you want to perform standard COM and SendMessage pumping, consider using one of the overloads of the <see cref="Overload:System.Threading.Thread.Join" /> method that specifies a timeout interval.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends the current thread for the specified amount of time.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time for which the thread is suspended.</param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1415,9 +1590,22 @@ from terminating the thread.</para>
         <Parameter Name="iterations" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="iterations">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> method is useful for implementing locks. Classes in the .NET Framework, such as <see cref="T:System.Threading.Monitor" /> and <see cref="T:System.Threading.ReaderWriterLock" />, use this method internally. <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> essentially puts the processor into a very tight loop, with the loop count specified by the <paramref name="iterations" /> parameter. The duration of the wait therefore depends on the speed of the processor.</para>
+          <para>Contrast this with the <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> method. A thread that calls <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> yields the rest of its current slice of processor time, even if the specified interval is zero. Specifying a non-zero interval for <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> removes the thread from consideration by the thread scheduler until the time interval has elapsed. </para>
+          <para>
+            <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> is not generally useful for ordinary applications. In most cases, you should use the synchronization classes provided by the .NET Framework; for example, call <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> or a statement that wraps <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> (lock in C# or SyncLock in Visual Basic).</para>
+          <block subset="none" type="note">
+            <para>In the rare case where it is advantageous to avoid a context switch, such as when you know that a state change is imminent, make a call to the <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> method in your loop. The code <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> executes is designed to prevent problems that can occur on computers with multiple processors. For example, on computers with multiple Intel processors employing Hyper-Threading technology, <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> prevents processor starvation in certain situations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a thread to wait the number of times defined by the <paramref name="iterations" /> parameter.</para>
+        </summary>
+        <param name="iterations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit signed integer that defines how long a thread is to wait. </param>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -1435,19 +1623,6 @@ from terminating the thread.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Causes the operating system to consider the thread ready 
-      to be scheduled for execution.</para>
-        </summary>
-        <remarks>
-          <para>Calling <see cref="M:System.Threading.Thread.Start" /> removes the <see cref="F:System.Threading.ThreadState.Unstarted" /> state from the
-<see cref="P:System.Threading.Thread.ThreadState" /> of the thread.</para>
-          <para> Once a thread is started,
-   the operating system can schedule it for execution. When the thread begins executing, the <see cref="T:System.Threading.ThreadStart" />
-   delegate supplied to the constructor for the thread invokes its
-   methods.</para>
-          <para> Once the thread terminates, it cannot be restarted with another call to <see cref="M:System.Threading.Thread.Start" />.</para>
-        </remarks>
         <exception cref="T:System.OutOfMemoryException">There is not enough memory available to start the thread.</exception>
         <exception cref="T:System.NullReferenceException">This method was invoked on a <see langword="null" /> thread reference.</exception>
         <exception cref="T:System.Threading.ThreadStateException">The thread has already been started. </exception>
@@ -1486,6 +1661,18 @@ class ThreadTest{
           </c>
           <para> Note that the sequence of the output statements is not guaranteed to be identical across systems. </para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once a thread is in the <see cref="F:System.Threading.ThreadState.Running" /> state, the operating system can schedule it for execution. The thread begins executing at the first line of the method represented by the <see cref="T:System.Threading.ThreadStart" /> or <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate supplied to the thread constructor.</para>
+          <block subset="none" type="note">
+            <para>If this overload is used with a thread created using a <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate, null is passed to the method executed by the thread.</para>
+          </block>
+          <para>Once the thread terminates, it cannot be restarted with another call to Start.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the operating system to change the state of the current instance to <see cref="F:System.Threading.ThreadState.Running" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1504,10 +1691,19 @@ class ThreadTest{
         <Parameter Name="parameter" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once a thread is in the <see cref="F:System.Threading.ThreadState.Running" /> state, the operating system can schedule it for execution. The thread begins executing at the first line of the method represented by the <see cref="T:System.Threading.ThreadStart" /> or <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate supplied to the thread constructor.</para>
+          <para>Once the thread terminates, it cannot be restarted with another call to Start.</para>
+          <para>This overload and the <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate make it easy to pass data to a thread procedure, but the technique is not type safe because any object can be passed to this overload. A more robust way to pass data to a thread procedure is to put both the thread procedure and the data fields into a worker object. For more information, see <format type="text/html"><a href="52b32222-e185-4f42-91a7-eaca65c0ab6d">Creating Threads</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the operating system to change the state of the current instance to <see cref="F:System.Threading.ThreadState.Running" />, and optionally supplies an object containing data to be used by the method the thread executes.</para>
+        </summary>
+        <param name="parameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains data to be used by the method the thread executes.</param>
       </Docs>
     </Member>
     <Member MemberName="Suspend">
@@ -1529,8 +1725,17 @@ class ThreadTest{
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the thread is already suspended, this method has no effect.</para>
+          <block subset="none" type="note">
+            <para>Do not use the <see cref="M:System.Threading.Thread.Suspend" /> and <see cref="M:System.Threading.Thread.Resume" /> methods to synchronize the activities of threads. You have no way of knowing what code a thread is executing when you suspend it. If you suspend a thread while it holds locks during a security permission evaluation, other threads in the <see cref="T:System.AppDomain" /> might be blocked. If you suspend a thread while it is executing a class constructor, other threads in the <see cref="T:System.AppDomain" /> that attempt to use that class are blocked. Deadlocks can occur very easily.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Either suspends the thread, or if the thread is already suspended, has no effect.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Thread.GetIDsOfNames">
@@ -1580,11 +1785,20 @@ class ThreadTest{
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Thread.GetTypeInfoCount">
@@ -1658,20 +1872,21 @@ class ThreadTest{
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>
-            <SPAN>Gets a value containing the
-      states of the current thread.</SPAN>
-          </para>
-        </summary>
         <value>
           <para> A combination of one or more <see cref="T:System.Threading.ThreadState" /> values, which indicate
    the state of the current thread.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>A thread is running if the value returned by this property does not include <see cref="F:System.Threading.ThreadState.Unstarted" /> and does not include <see cref="F:System.Threading.ThreadState.Stopped" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Threading.Thread.ThreadState" /> property provides more specific information than the <see cref="P:System.Threading.Thread.IsAlive" /> property.</para>
+          <block subset="none" type="note">
+            <para>Thread state is only of interest in debugging scenarios. Your code should never use thread state to synchronize the activities of threads.</para>
+          </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value containing the states of the current thread.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1690,11 +1905,25 @@ class ThreadTest{
         <Parameter Name="state" Type="System.Threading.ApartmentState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>New threads are initialized as <see cref="F:System.Threading.ApartmentState.MTA" /> if their apartment state has not been set before they are started. Apartment state must be set before a thread is started.</para>
+          <block subset="none" type="note">
+            <para>The main application thread is initialized to <see cref="F:System.Threading.ApartmentState.MTA" /> by default. The only way to set the apartment state of the main application thread to <see cref="F:System.Threading.ApartmentState.STA" /> is to apply the <see cref="T:System.STAThreadAttribute" /> attribute to the entry point method.</para>
+          </block>
+          <para>The <see cref="M:System.Threading.Thread.TrySetApartmentState(System.Threading.ApartmentState)" /> method, along with the <see cref="M:System.Threading.Thread.GetApartmentState" /> method and the <see cref="M:System.Threading.Thread.SetApartmentState(System.Threading.ApartmentState)" /> method, replaces the <see cref="P:System.Threading.Thread.ApartmentState" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the apartment state of a thread before it is started.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the apartment state is set; otherwise, false.</para>
+        </returns>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new apartment state.</param>
       </Docs>
     </Member>
     <Member MemberName="VolatileRead">
@@ -2530,9 +2759,20 @@ class ThreadTest{
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method succeeds, the rest of the thread's current time slice is yielded. The operating system schedules the calling thread for another time slice, according to its priority and the status of other threads that are available to run. </para>
+          <para>Yielding is limited to the processor that is executing the calling thread. The operating system will not switch execution to another processor, even if that processor is idle or is running a thread of lower priority. If there are no other threads that are ready to execute on the current processor, the operating system does not yield execution, and this method returns false. </para>
+          <para>This method is equivalent to using platform invoke to call the native Win32 <unmanagedCodeEntityReference>SwitchToThread</unmanagedCodeEntityReference> function. You should call the <see cref="M:System.Threading.Thread.Yield" /> method instead of using platform invoke, because platform invoke bypasses any custom threading behavior the host has requested.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the calling thread to yield execution to another thread that is ready to run on the current processor. The operating system selects the thread to yield to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operating system switched execution to another thread; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

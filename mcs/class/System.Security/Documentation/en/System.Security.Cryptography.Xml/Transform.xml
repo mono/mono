@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Transform" FullName="System.Security.Cryptography.Xml.Transform">
   <TypeSignature Language="C#" Value="public abstract class Transform" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Transform extends System.Object" />
@@ -14,9 +15,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Abstract base class for all transformation classes. Transformation classes includes:
-<list type="bullet"><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigBase64Transform" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigEnvelopedSignatureTransform" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigXPathTransform" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.XmlDsigXsltTransform" /></term></item></list></summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When performing XML signing and verification, the &lt;Transform&gt; element describes how the signer transformed the data object that was signed.  The verifier of a document then uses the &lt;Transform&gt; element to transform the signed data in the same manner.  If the verifier cannot transform the signed data in the same manner, the document cannot be verified.  </para>
+      <para>Use a class that derives from the <see cref="T:System.Security.Cryptography.Xml.Transform" /> class whenever you need to add one or more transform objects to an encrypted XML document or to a signed XML document.</para>
+      <para>For more information about the &lt;Transform&gt; element, see the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/, or the XML encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all &lt;Transform&gt; elements that can be used in an XML digital signature derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Transform" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Algorithm">
@@ -49,9 +60,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the <see cref="P:System.Security.Cryptography.Xml.Transform.Algorithm" /> attribute of a &lt;Transform&gt; element in an XMLDSIG signature. For example, the algorithm URI for the Base64 decoding transform is defined as http://www.w3.org/2000/09/xmldsig#base64 in the XMLDSIG specification (Section 6.6.2).</para>
+          <para>You can conveniently set this value using one of the static fields associated with the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Uniform Resource Identifier (URI) that identifies the algorithm performed by the current transform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Context">
@@ -71,9 +89,16 @@
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When signing a document, the <see cref="P:System.Security.Cryptography.Xml.Transform.Context" /> property represents the value passed to the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> constructor.  When verifying a document, the <see cref="P:System.Security.Cryptography.Xml.Transform.Context" /> property represents <see cref="T:System.Security.Cryptography.Xml.Signature" /> object.</para>
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Transform.Context" /> property is set automatically during signature computation and checking, but before transforms are invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Xml.XmlElement" /> object that represents the document context under which the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object is running. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDigestedOutput">
@@ -96,10 +121,17 @@
         <Parameter Name="hash" Type="System.Security.Cryptography.HashAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="hash">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the digest associated with a <see cref="T:System.Security.Cryptography.Xml.Transform" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digest associated with a <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </returns>
+        <param name="hash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.HashAlgorithm" /> object used to create a digest.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInnerXml">
@@ -116,9 +148,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlNodeList" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an XML representation of the parameters of the <see cref="T:System.Security.Cryptography.Xml.Transform" /> object that are suitable to be included as subelements of an XMLDSIG &lt;Transform&gt; element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list of the XML nodes that represent the transform-specific content needed to describe the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object in an XMLDSIG &lt;Transform&gt; element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOutput">
@@ -135,9 +173,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the output of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOutput">
@@ -156,10 +200,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">a <see cref="T:System.Type" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.Transform.GetOutput(System.Type)" /> method returns the output of the current transform after it is run on the value previously set by a call to the <see cref="M:System.Security.Cryptography.Xml.Transform.LoadInput(System.Object)" /> method.</para>
+          <para>The type of the returned object must be one of the type objects in the <see cref="P:System.Security.Cryptography.Xml.Transform.OutputTypes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the output of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object as an object of the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the output to return. This must be one of the types in the <see cref="P:System.Security.Cryptography.Xml.Transform.OutputTypes" /> property. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -176,9 +231,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> object returned by this method conforms to the XML Scheme for the &lt;Transform&gt; element defined in Section 4.3.3.4 of the XMLDSIG specification.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InputTypes">
@@ -195,9 +259,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Type[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array returned by the <see cref="P:System.Security.Cryptography.Xml.Transform.InputTypes" /> property must contain at least one element because every <see cref="T:System.Security.Cryptography.Xml.Transform" /> object must accept at least one type as valid input.</para>
+          <para>A <see cref="T:System.Security.Cryptography.Xml.Transform" /> object typically accepts one or more of the following types as input: <see cref="T:System.IO.Stream" />, <see cref="T:System.Xml.XmlDocument" />, or <see cref="T:System.Xml.XmlNodeList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets an array of types that are valid inputs to the <see cref="M:System.Security.Cryptography.Xml.Transform.LoadInput(System.Object)" /> method of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadInnerXml">
@@ -216,9 +287,16 @@
         <Parameter Name="nodeList" Type="System.Xml.XmlNodeList" />
       </Parameters>
       <Docs>
-        <param name="nodeList">a <see cref="T:System.Xml.XmlNodeList" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to process subelements of a &lt;Transform&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, parses the specified <see cref="T:System.Xml.XmlNodeList" /> object as transform-specific content of a &lt;Transform&gt; element and configures the internal state of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object to match the &lt;Transform&gt; element.</para>
+        </summary>
+        <param name="nodeList">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNodeList" /> object that specifies transform-specific content for the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="LoadInput">
@@ -237,9 +315,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the input object must be one of the types in the <see cref="P:System.Security.Cryptography.Xml.Transform.InputTypes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, loads the specified input into the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to load into the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputTypes">
@@ -256,9 +341,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Type[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array returned by the <see cref="P:System.Security.Cryptography.Xml.Transform.OutputTypes" /> property must contain at least one element because every transform must generate at least one type as output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets an array of types that are possible outputs from the <see cref="M:System.Security.Cryptography.Xml.Transform.GetOutput" /> methods of the current <see cref="T:System.Security.Cryptography.Xml.Transform" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropagatedNamespaces">
@@ -278,9 +369,17 @@
         <ReturnType>System.Collections.Hashtable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XML namespaces are used to distinguish different elements in a document that have the same name.</para>
+          <para>The <see cref="T:System.Collections.Hashtable" /> keys of the <see cref="P:System.Security.Cryptography.Xml.Transform.PropagatedNamespaces" /> property are the namespace prefixes and the <see cref="T:System.Collections.Hashtable" /> values are the namespace Uniform Resource Identifiers (URIs).</para>
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Transform.PropagatedNamespaces" /> property is set automatically during signature computation and checking, but before transforms are invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Collections.Hashtable" /> object that contains the namespaces that are propagated into the signature. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Resolver">
@@ -301,9 +400,15 @@
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.XmlResolver" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlResolver" /> class resolves external XML resources named by a Uniform Resource Identifier (URI). If you do not trust the source of the XML file, you might not want to allow the XML file to access computer resources named by the URI. The <see cref="P:System.Security.Cryptography.Xml.Transform.Resolver" /> property allows you to control the level of access that XML files have to computer resources by specifying different <see cref="T:System.Xml.XmlResolver" /> objects. If you do not want to allow any access, you can set this property to null (Nothing in Visual Basic). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current <see cref="T:System.Xml.XmlResolver" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

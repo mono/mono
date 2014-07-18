@@ -303,7 +303,7 @@ namespace Mono.CSharp
 
 			TypeExpr texpr = left as TypeExpr;
 			if (texpr != null) {
-				var found = MemberCache.FindNestedType (texpr.Type, ParsedName.Name, ParsedName.Arity);
+				var found = MemberCache.FindNestedType (texpr.Type, mn.Name, mn.Arity);
 				if (found != null)
 					return new TypeExpression (found, Location.Null);
 

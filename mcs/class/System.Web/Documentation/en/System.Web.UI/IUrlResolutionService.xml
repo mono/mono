@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IUrlResolutionService" FullName="System.Web.UI.IUrlResolutionService">
   <TypeSignature Language="C#" Value="public interface IUrlResolutionService" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface defines the service that is used to resolve URL paths. The <see cref="T:System.Web.UI.IUrlResolutionService" /> interface is used for resolving relative paths and paths that contain the ~ operator. Server controls that reference resources can define the paths to the resources through the ~ operator, which represents the root of the current application. A path containing the ~ operator will not work if passed to the browser. The server control must convert the path to an absolute or relative path before passing it to the browser. </para>
+      <para>
+        <see cref="T:System.Web.UI.Control" /> implements this interface. A control that derives from <see cref="T:System.Web.UI.Control" /> could override this implementation to provide customized resolution of URLs. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a service implemented by objects to resolve relative URLs based on contextual information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ResolveClientUrl">
@@ -22,10 +31,19 @@
       </Parameters>
       <Docs>
         <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified URL is absolute, the absolute URL is returned without changes. Otherwise, the URL is converted to a relative URL that the client can resolve.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a resolved URL that is suitable for use by the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the resolved URL.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

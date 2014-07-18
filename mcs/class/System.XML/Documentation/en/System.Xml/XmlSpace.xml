@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSpace" FullName="System.Xml.XmlSpace" FullNameSP="System_Xml_XmlSpace" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable XmlSpace extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum XmlSpace" />
@@ -14,16 +15,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para>Specifies the white
-      space attribute, <c>xml:space</c>, which indicates whether white space should be preserved in an element.</para>
-    </summary>
     <remarks>
       <block subset="none" type="note">
         <para>This enumeration is used by instances of the <see cref="T:System.Xml.XmlParserContext" />,
    <see cref="T:System.Xml.XmlTextReader" />, and <see cref="T:System.Xml.XmlTextWriter" /> classes.</para>
       </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the current xml:space scope.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
@@ -42,11 +43,11 @@
       <Parameters />
       <MemberValue>Default</MemberValue>
       <Docs>
-        <summary>
-          <para>
-            <c>xml:space = "default"</c> is in scope.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The xml:space scope equals default.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -66,10 +67,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>No <c>xml:space</c> attribute is in scope.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No xml:space scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -89,11 +91,11 @@
       <Parameters />
       <MemberValue>Preserve</MemberValue>
       <Docs>
-        <summary>
-          <para>
-            <c>xml:space = "preserve"</c> is in scope.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The xml:space scope equals preserve.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -429,6 +429,10 @@ GC_API size_t GC_get_total_bytes GC_PROTO((void));
 /* Return -1 otherwise. */
 int GC_get_suspend_signal GC_PROTO((void));
 
+/* Return the signal used by the gc to resume threads on posix platforms. */
+/* Return -1 otherwise. */
+int GC_get_restart_signal GC_PROTO((void));
+
 /* Disable garbage collection.  Even GC_gcollect calls will be 		*/
 /* ineffective.								*/
 GC_API void GC_disable GC_PROTO((void));
@@ -773,6 +777,10 @@ GC_API int GC_unregister_long_link GC_PROTO((GC_PTR * /* link */));
 /* toggleref support */
 GC_API void GC_toggleref_register_callback GC_PROTO((int (*proccess_toggleref) (GC_PTR obj)));
 GC_API void GC_toggleref_add (GC_PTR object, int strong_ref);
+
+/* finalizer callback support */
+GC_API void GC_set_finalizer_notify_proc GC_PROTO((void (*object_finalized) (GC_PTR obj)));
+
 
 /* Returns !=0  if GC_invoke_finalizers has something to do. 		*/
 GC_API int GC_should_invoke_finalizers GC_PROTO((void));

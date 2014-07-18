@@ -366,6 +366,15 @@ GC_process_togglerefs (void)
 	GC_toggleref_array_size = w;
 }
 
+/* Finalizer proc support */
+static void (*GC_object_finalized_proc) (GC_PTR obj);
+
+void
+GC_set_finalizer_notify_proc (void (*proc) (GC_PTR obj))
+{
+	GC_object_finalized_proc = proc;
+}
+
 
 static void push_and_mark_object (GC_PTR p)
 {
@@ -877,6 +886,10 @@ void GC_finalize()
                 fo_set_next(prev_fo, next_fo);
               }
               GC_fo_entries--;
+
+			  if (GC_object_finalized_proc)
+				  GC_object_finalized_proc (real_ptr);
+
             /* Add to list of objects awaiting finalization.	*/
               fo_set_next(curr_fo, GC_finalize_now);
               GC_finalize_now = curr_fo;

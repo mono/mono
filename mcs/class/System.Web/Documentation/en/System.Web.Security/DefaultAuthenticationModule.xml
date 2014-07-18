@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultAuthenticationModule" FullName="System.Web.Security.DefaultAuthenticationModule">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DefaultAuthenticationModule : System.Web.IHttpModule" />
   <AssemblyInfo>
@@ -17,8 +18,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> ensures that the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> instance is set to an <see cref="T:System.Security.Principal.IPrincipal" /> object for each request. The <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> examines the <see cref="P:System.Web.HttpContext.User" /> property after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event and before the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event. If the <see cref="P:System.Web.HttpContext.User" /> property is null, the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> sets the <see cref="P:System.Web.HttpContext.User" /> property to a <see cref="T:System.Security.Principal.GenericPrincipal" /> object that contains no user information. </para>
+      <para>If the authentication module sets the <see cref="P:System.Web.HttpResponse.StatusCode" /> property to 401, the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> will render an access-denied error page. If the value of the <see cref="P:System.Web.HttpResponse.StatusCode" /> property is set to a value greater than 200, the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> object will end the request. In that case, only HTTP modules that subscribe to the <see cref="E:System.Web.HttpApplication.EndRequest" /> event are called prior to the completion of the current request.</para>
+      <para>The <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> exposes an <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event. You can use this event to provide a custom <see cref="T:System.Security.Principal.IPrincipal" /> object for the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> instance. The <see cref="E:System.Web.Security.WindowsAuthenticationModule.Authenticate" /> event is accessed by specifying an event named <system>DefaultAuthentication_OnAuthenticate</system> in the application's Global.asax file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Ensures that an authentication object is present in the context. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +36,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called from application code.</para>
+          <para>ASP.NET calls this constructor to create an instance of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> class. After calling the constructor, it calls the <see cref="M:System.Web.Security.DefaultAuthenticationModule.Init(System.Web.HttpApplication)" /> method to initialize the new <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,8 +59,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event is raised after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event. It is used to ensure that the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> instance is populated with an <see cref="T:System.Security.Principal.IPrincipal" /> object.</para>
+          <para>You can access the <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> class by specifying a subroutine named <system>DefaultAuthentication_OnAuthenticate</system> in the application's Global.asax file. </para>
+          <para>You can use the <see cref="P:System.Web.Security.DefaultAuthenticationEventArgs.Context" /> property of the <see cref="T:System.Web.Security.DefaultAuthenticationEventArgs" /> object in the <system>DefaultAuthentication_OnAuthenticate</system> event to set the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> instance to a custom <see cref="T:System.Security.Principal.IPrincipal" /> object. If you do not specify a value for the <see cref="P:System.Web.HttpContext.User" /> property, the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> sets the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="T:System.Web.HttpContext" /> instance to a <see cref="T:System.Security.Principal.GenericPrincipal" /> object that contains no user information.</para>
+          <para>The <system>DefaultAuthentication_OnAuthenticate</system> event is raised after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event and before the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event. If you have an <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section that depends on the user name to deny or allow access to your application, modifying the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> instance can affect the behavior of your application. Be sure that the user name you set during the <system>DefaultAuthentication_OnAuthenticate</system> event is considered when you specify the <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section in your configuration.</para>
+          <block subset="none" type="note">
+            <para>If the Web application is running in IIS 7.0 in Integrated mode, the <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> is not raised. If the mode attribute of the <format type="text/html"><a href="27bc0ba9-f23a-45f3-ae42-dbe7916e3ee2">authentication</a></format> configuration element is set to "None" and the application subscribes to the <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event, a <see cref="T:System.PlatformNotSupportedException" /> error is raised. In this scenario, to receive authentication notification, subscribe to the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event of the <see cref="T:System.Web.HttpApplication" /> instance. For more information about compatibility issues in Integrated mode, see <format type="text/html"><a href="76f9cc78-f978-4837-b1c8-51d642ec4847">Moving an ASP.NET Application from IIS 6.0 to IIS 7.0</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the request has been authenticated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +87,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources, other than memory, used by the <see cref="T:System.Web.Security.DefaultAuthenticationModule" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +111,17 @@
         <Parameter Name="app" Type="System.Web.HttpApplication" />
       </Parameters>
       <Docs>
-        <param name="app">a <see cref="T:System.Web.HttpApplication" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="M:System.Web.Security.DefaultAuthenticationModule.Init(System.Web.HttpApplication)" /> method ensures that the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> is included in the processing of events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> object.</para>
+        </summary>
+        <param name="app">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpApplication" /> instance. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

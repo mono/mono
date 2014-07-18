@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildFinishedEventArgs" FullName="Microsoft.Build.Framework.BuildFinishedEventArgs">
   <TypeSignature Language="C#" Value="public class BuildFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Build.Framework.IEventSource.BuildFinished" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildFinishedEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,12 +43,18 @@
         <Parameter Name="succeeded" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="helpKeyword">To be added.</param>
-        <param name="succeeded">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildFinishedEventArgs" /> class with the specified <see cref="P:Microsoft.Build.Framework.BuildEventArgs.Message" />, <see cref="P:Microsoft.Build.Framework.BuildEventArgs.HelpKeyword" />, and <see cref="P:Microsoft.Build.Framework.BuildFinishedEventArgs.Succeeded" /> values.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the event.</param>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Help keyword associated with the event.</param>
+        <param name="succeeded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the build succeeded; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +67,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the build succeeded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

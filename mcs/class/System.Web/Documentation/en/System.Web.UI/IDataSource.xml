@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataSource" FullName="System.Web.UI.IDataSource">
   <TypeSignature Language="C#" Value="public interface IDataSource" />
   <AssemblyInfo>
@@ -6,9 +7,19 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET supports a control data-binding architecture that enables Web server controls to bind to data in a consistent fashion. Web server controls that bind to data are referred to as data-bound controls, and the classes that facilitate that binding are called data source controls. Data source controls can represent any data source: a relational database, a file, a stream, a business object, and so on. Data source controls present data in a consistent way to data-bound controls, regardless of the source or format of the underlying data.</para>
+      <para>You implement the <see cref="T:System.Web.UI.IDataSource" /> interface when you want to implement your own custom ASP.NET data source control.</para>
+      <para>Any class that implements the <see cref="T:System.Web.UI.IDataSource" /> interface is a data source control. The <see cref="T:System.Web.UI.IDataSource" /> interface serves as the foundation for all ASP.NET data source controls and defines one of the fundamental data-binding architecture concepts with its two methods: the <see cref="M:System.Web.UI.IDataSource.GetView(System.String)" /> method and the <see cref="M:System.Web.UI.IDataSource.GetViewNames" /> method. This concept is that all data source controls support one or more named views on their data. The data source view object is similar to the <see cref="T:System.Data.DataView" /> abstraction in the <see cref="N:System.Data" /> namespace: a data-bindable, customized view of data for sorting, filtering, and other data operations that the view defines. At its core, a data source control does nothing more than retrieve views on data.</para>
+      <para>A data source control can have one or more associated data source view objects. Some data source controls, including those that represent relational databases such as <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.AccessDataSource" />, support only one view. Other data source controls, including hierarchical data source controls such as <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" />, support many views. The data source view defines the capabilities of a data source and the operations that it supports.</para>
+      <para>In summary, data source controls implement the <see cref="T:System.Web.UI.IDataSource" /> interface, support one or more named views on the data they represent, and always support data retrieval from the data source they represent. Data source controls always retrieve data on demand, such as when DataBind is called on a data bound control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an abstract data source that data-bound controls bind to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DataSourceChanged">
@@ -18,9 +29,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event is raised when the properties of a data-bound control or the underlying data has changed in some way that affects the data bindings between a data-bound control and its data. For example, the event is raised if a file name property, such as the <see cref="P:System.Web.UI.WebControls.AccessDataSource.DataFile" /> property, is changed on a file-based data source control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a data source control has changed in some way that affects data-bound controls. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,11 +54,22 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source control classes can support one or more views on their underlying data. These views are represented by instances of the <see cref="T:System.Web.UI.DataSourceView" /> class. The data source view defines the capabilities of a data source control, and performs all the work necessary to retrieve data from the underlying data store and perform operations such as sorting, inserting, deleting, and updating.</para>
+          <para>Data source control classes that implement the <see cref="T:System.Web.UI.IDataSource" /> interface implement the <see cref="M:System.Web.UI.IDataSource.GetView(System.String)" /> method to return strongly typed view objects associated with the class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named data source view associated with the data source control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the named <see cref="T:System.Web.UI.DataSourceView" /> associated with the <see cref="T:System.Web.UI.IDataSource" />.</para>
+        </returns>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the view to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +83,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source control classes can support one or more named views on their underlying data. The <see cref="M:System.Web.UI.IDataSource.GetViewNames" /> method returns a collection of view names currently associated with the data source control instance. Callers can iterate through the collection of view names and retrieve individual <see cref="T:System.Web.UI.DataSourceView" /> objects with the <see cref="M:System.Web.UI.IDataSource.GetView(System.String)" /> method.</para>
+          <para>Data source control classes that implement the <see cref="T:System.Web.UI.IDataSource" /> interface implement the <see cref="M:System.Web.UI.IDataSource.GetViewNames" /> method to return a collection of names that represents all the data source view objects currently associated with the data source control class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of names representing the list of view objects associated with the <see cref="T:System.Web.UI.IDataSource" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> that contains the names of the views associated with the <see cref="T:System.Web.UI.IDataSource" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

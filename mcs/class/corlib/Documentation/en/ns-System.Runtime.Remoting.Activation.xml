@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Activation" FullName="System.Runtime.Remoting.Activation" FullNameSP="System.Runtime.Remoting.Activation" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Activation" /> namespace provides classes and objects that support server and client activation of remote objects.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TcpServerChannel" FullName="System.Runtime.Remoting.Channels.Tcp.TcpServerChannel">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TcpServerChannel : System.Runtime.Remoting.Channels.IChannelReceiver" />
   <AssemblyInfo>
@@ -17,8 +18,21 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Channels transport messages across remoting boundaries (for example, computers or application domains). The <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class transports messages using the TCP protocol.</para>
+      <para>Channels are used by the .NET Framework remoting infrastructure to transport remote calls. When a client makes a call to a remote object, the call is serialized into a message that is sent by a client channel and received by a server channel. It is then deserialized and processed. Any returned values are transmitted by the server channel and received by the client channel.</para>
+      <para>To perform additional processing of messages on the server side, you can specify an implementation of the <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> interface through which all messages processed by the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> instance are passed.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> instance accepts messages serialized in either binary or SOAP format.</para>
+      <para>A <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> object has associated configuration properties that can be set at run time either in a configuration file (by invoking the static <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String)" /> method) or programmatically (by passing a <see cref="T:System.Collections.IDictionary" /> collection to the <see cref="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" /> constructor). For a list of these configuration properties, see <format type="text/html"><a href="226ecf74-ebbd-4ea0-a701-dcf4441deefe">Channel and Formatter Configuration Properties</a></format>.</para>
+      <block subset="none" type="note">
+        <para>If the server computer is running Windows 95/98/Me, the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> cannot be specified as secure.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a server channel for remote calls that uses the TCP protocol to transmit messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +43,16 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="port">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To request that an available port be dynamically assigned, set the <paramref name="port" /> parameter to 0 (zero).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class that listens on the specified port.</para>
+        </summary>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port on which the channel listens. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,10 +68,21 @@
         <Parameter Name="serverSinkProvider" Type="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added: an object of type 'Collections.IDictionary'</param>
         <param name="serverSinkProvider">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about channel configuration properties, see <format type="text/html"><a href="226ecf74-ebbd-4ea0-a701-dcf4441deefe">Channel and Formatter Configuration Properties</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If the server computer is running Windows 95/98/Me, the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> cannot be specified as secure.</para>
+          </block>
+          <para>If you do not require sink functionality, set the <paramref name="sinkProvider" /> parameter to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the specified channel properties and sink.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> collection specifying values for configuration properties to be used by the channel. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,10 +98,19 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="port">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.ChannelName" /> property by using the <paramref name="name" /> parameter. If you want to register more than one channel, each channel must have a unique name.</para>
+          <para>To request that an available port be dynamically assigned, set the <paramref name="port" /> parameter to 0 (zero).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the given name and that listens on the specified port.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the channel. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port on which the channel listens. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,11 +127,21 @@
         <Parameter Name="serverSinkProvider" Type="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="port">To be added: an object of type 'int'</param>
         <param name="serverSinkProvider">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.ChannelName" /> property by using the <paramref name="name" /> parameter. If you want to register more than one channel, each channel must have a unique name.</para>
+          <para>To request that an available port be dynamically assigned, set the <paramref name="port" /> parameter to 0 (zero).</para>
+          <para>If you do not require sink functionality, set the <paramref name="sinkProvider" /> parameter to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the given name, which listens on the specified port, and uses the specified sink.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the channel. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port on which the channel listens. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,9 +155,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although returned as an instance of <see cref="T:System.Object" />, the value of this property can be cast to an instance of <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> describing the channel to which the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> object listens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets channel-specific data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -120,9 +177,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every registered channel has a unique name. The name is used to retrieve a specific channel when calling <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetChannel(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current channel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,9 +199,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The priority controls the order in which channel data appears in a <see cref="T:System.Runtime.Remoting.ObjRef" /> instance; higher priority channels appear before lower priority channels. Clients try to connect to the server channels in the order that they are listed in the <see cref="T:System.Runtime.Remoting.ObjRef" /> instance. The default priority is 1; negative priorities are allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the priority of the current channel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,9 +222,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the URI of the current channel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI of the current channel.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +248,18 @@
       </Parameters>
       <Docs>
         <param name="uri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetUrlsForObject(System.MarshalByRefObject)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -214,9 +298,19 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not necessary to call this method to begin listening on a newly initialized channel.</para>
+          <para>Use this method to restart listening on a channel after the <see cref="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.StopListening(System.Object)" /> method has been called to stop listening on the channel.</para>
+          <para>If your channel uses a dynamically assigned port number, your port number might change when you restart listening.</para>
+          <para>The data object can be used to pass a specific initialization state to the channel. If you do not want to pass a specific state to the channel, set <paramref name="data" /> to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to start listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional initialization information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,9 +327,18 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to stop listening on a channel. To restart listening, use the <see cref="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.StartListening(System.Object)" /> method.</para>
+          <para>If your channel uses a dynamically assigned port number, your port number might change when you restart listening.</para>
+          <para>The data object can be used to pass a specific initialization state to the channel. If you do not want to pass a specific state to the channel, set <paramref name="data" /> to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to stop listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional state information for the channel. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

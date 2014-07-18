@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SHA1CryptoServiceProvider" FullName="System.Security.Cryptography.SHA1CryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SHA1CryptoServiceProvider : System.Security.Cryptography.SHA1" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SHA1CryptoServiceProvider extends System.Security.Cryptography.SHA1" />
@@ -20,12 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Implementation of the SHA1 cryptographic hash function.</summary>
     <remarks>
-      <para>
-In Mono this class is completely implemented in managed code.</para>
-      <para>Recent attacks on the SHA-1 algorithm suggest that it can be broken with a complexity of about 2^63, while a normal brute-force attack would be 2^80. You are encourage to migrate your applications to larger version of SHA.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The hash size for the <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> class is 160 bits.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Computes the <see cref="T:System.Security.Cryptography.SHA1" /> hash value for the input data using the implementation provided by the cryptographic service provider (CSP). This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,8 +43,11 @@ In Mono this class is completely implemented in managed code.</para>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -60,9 +66,17 @@ In Mono this class is completely implemented in managed code.</para>
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with the <paramref name="disposing" /> parameter set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -101,11 +115,20 @@ In Mono this class is completely implemented in managed code.</para>
         <Parameter Name="cbSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rgb">Byte array containing the data to hash.</param>
-        <param name="ibStart">Where in the input buffer to start.</param>
-        <param name="cbSize">Size in bytes of the data in the buffer to hash.</param>
-        <summary>Drives the hashing function.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not called by application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Routes data written to the object into the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm for computing the hash value.</para>
+        </summary>
+        <param name="rgb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data. </param>
+        <param name="ibStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="cbSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the array to use as data. </param>
       </Docs>
     </Member>
     <Member MemberName="HashFinal">
@@ -122,9 +145,15 @@ In Mono this class is completely implemented in managed code.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This finalizes the hash.  Takes the data from the chaining variables and returns it.</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the computed <see cref="T:System.Security.Cryptography.SHA1" /> hash value after all data has been written to the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -141,8 +170,11 @@ In Mono this class is completely implemented in managed code.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Resets the class after use.  Called automatically after hashing is done.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRuntimeVariables" FullName="System.Runtime.CompilerServices.IRuntimeVariables">
   <TypeSignature Language="C#" Value="public interface IRuntimeVariables" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRuntimeVariables" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the values of run-time variables.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Count">
@@ -22,9 +26,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a count of the run-time variables.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">

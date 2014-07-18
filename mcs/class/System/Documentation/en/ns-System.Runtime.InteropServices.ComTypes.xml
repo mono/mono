@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.InteropServices.ComTypes">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.Runtime.InteropServices.ComTypes namespace contains methods that are defintions of COM functions for managed code. These functions replace the now-obsolete UCOM* methods in the <see cref="N:System.Runtime.InteropServices" /> namespace.</para>
+    </summary>
   </Docs>
 </Namespace>

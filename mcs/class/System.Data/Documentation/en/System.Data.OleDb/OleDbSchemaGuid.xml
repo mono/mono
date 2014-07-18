@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbSchemaGuid" FullName="System.Data.OleDb.OleDbSchemaGuid">
   <TypeSignature Language="C#" Value="public sealed class OleDbSchemaGuid" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each field in the <see cref="T:System.Data.OleDb.OleDbSchemaGuid" /> class maps to an OLE DB schema rowset.</para>
+      <block subset="none" type="note">
+        <para>Some members of the <see cref="T:System.Data.OleDb.OleDbSchemaGuid" /> class, (such as <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Procedure_Columns" /> schema) may not be supported by your OLE DB provider. Refer to your database documentation to determine whether you can retrieve this schema information by querying the system tables of your database.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Returns the type of schema table specified by the <see cref="M:System.Data.OleDb.OleDbConnection.GetOleDbSchemaTable(System.Guid,System.Object[])" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbSchemaGuid" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,8 +52,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Assertions" /> maps to the OLE DB ASSERTIONS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string</para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the assertions defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,8 +124,41 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Catalogs" /> maps to the OLE DB CATALOGS rowset and returns the following restriction column.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CATALOG_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. Cannot be a null value. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the physical attributes associated with catalogs accessible from the data source. Returns the assertions defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,8 +174,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Character_Sets" /> maps to the OLE DB CHARACTER_SETS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CHARACTER_SET_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CHARACTER_SET_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CHARACTER_SET_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Character set name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the character sets defined in the catalog that is accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,8 +246,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Check_Constraints" /> maps to the OLE DB CHECK_CONSTRAINTS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the check constraints defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,8 +318,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Check_Constraints" /> maps to the OLE DB CHECK_CONSTRAINTS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the check constraints defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,8 +390,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Collations" /> maps to the OLE DB COLLATIONS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>COLLATION_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLLATION_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLLATION_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Collation name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the character collations defined in the catalog that is accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,8 +462,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Column_Domain_Usage" /> maps to the OLE DB COLUMN_DOMAIN_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DOMAIN_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOMAIN_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOMAIN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>View name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Column name. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. (DBID is a formal structure serialized into the COLUMN_NAME column of the COLUMN_DOMAIN_USAGE rowset.)</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the columns defined in the catalog that are dependent on a domain defined in the catalog and owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,8 +545,96 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Column_Privileges" /> maps to the OLE DB COLUMN_PRIVILEGES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Column name. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTOR </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User that granted the privileges on the table in TABLE_NAME. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTEE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User name (or "PUBLIC") that the privilege has been granted to. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the privileges on columns of tables defined in the catalog that are available to or granted by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,8 +650,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Columns" /> maps to the OLE DB COLUMNS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. The column returned cannot contain a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>The name of the column; this might not be unique. If this cannot be determined, a null value is returned. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. (DBID is a formal structure serialized into the COLUMN_NAME column of the COLUMN_DOMAIN_USAGE rowset.) If possible, the resulting column ID should be persistent. However, some providers do not support persistent identifiers for columns. The column ID of a base table should be invariant under views. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the columns of tables (including views) defined in the catalog that is accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -192,8 +733,107 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Constraint_Column_Usage" /> maps to the OLE DB CONSTRAINT_COLUMN_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Column name. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the columns used by referential constraints, unique constraints, check constraints, and assertions, defined in the catalog and owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,8 +849,96 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Constraint_Table_Usage" /> maps to the OLE DB CONSTRAINT_TABLE_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tables that are used by referential constraints, unique constraints, check constraints, and assertions defined in the catalog and owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,8 +954,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using <see cref="F:System.Data.OleDb.OleDbSchemaGuid.DbInfoLiterals" /> is equivalent to calling the OLE DB IDBInfo::GetLiteralInfo interface, or the ADO Connection.OpenSchema method with the adSchemaDBInfoLiterals constant.</para>
+          <para>When using the <see cref="M:System.Data.OleDb.OleDbConnection.GetOleDbSchemaTable(System.Guid,System.Object[])" /> method, if the <paramref name="schema" /> parameter contains a value of <see cref="F:System.Data.OleDb.OleDbSchemaGuid.DbInfoLiterals" /> and the <paramref name="restrictions" /> parameter contains one or more restrictions, an <see cref="T:System.ArgumentException" /> is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of provider-specific literals used in text commands.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -243,8 +978,96 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Foreign_Keys" /> maps to the OLE DB FOREIGN_KEYS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>PK_TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the primary key table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PK_TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the primary key table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PK_TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Primary key table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>FK_TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the foreign key table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>FK_TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the foreign key table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>FK_TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Foreign key table name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the foreign key columns defined in the catalog by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -260,8 +1083,89 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Indexes" /> maps to the OLE DB INDEXES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>INDEX_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Index name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TYPE </para>
+              </term>
+              <description>
+                <para>UInt16 (Int32) </para>
+              </description>
+              <description>
+                <para>The type of the index. One of the following: </para>
+                <para>DBPROPVAL_IT_BTREE-The index is a B+-tree.</para>
+                <para>DBPROPVAL_IT_HASH-The index is a hash file using, for example, linear or extensible hashing.</para>
+                <para>DBPROPVAL_IT_CONTENT-The index is a content index.</para>
+                <para>DBPROPVAL_IT_OTHER-The index is some other type of index. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the indexes defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,8 +1181,107 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Key_Column_Usage" /> maps to the OLE DB KEY_COLUMN_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table containing the key column is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table containing the key column is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name containing the key column. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Name of the column participating in the unique, primary, or foreign key. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. (DBID is a formal structure serialized into the COLUMN_NAME column of the COLUMN_DOMAIN_USAGE rowset.)</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the columns defined in the catalog that is constrained as keys by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,8 +1297,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Primary_Keys" /> maps to the OLE DB PRIMARY_KEYS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the primary key columns defined in the catalog by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -311,8 +1369,77 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Procedure_Columns" /> maps to the OLE DB PROCEDURE_COLUMNS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>PROCEDURE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Procedure name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>COLUMN_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>The name of the column; this might not be unique. If this cannot be determined, a null value is returned. This column, together with the COLUMN_GUID and COLUMN_PROPID columns, forms the column ID. One or more of these columns will be a null value, depending on which elements of the DBID structure the provider uses. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Procedure_Columns" /> schema is not supported by any OLE DB providers that ship in MDAC version 2.7. Refer to your database documentation to determine whether you can retrieve this schema information by querying the system tables of your database.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns information about the columns of rowsets returned by procedures.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -328,8 +1455,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Procedure_Parameters" /> maps to the OLE DB PROCEDURE_PARAMETERS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>PROCEDURE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Schema name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Procedure name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PARAMETER_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Parameter name. A null value if the parameter is not named. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns information about the parameters and return codes of procedures.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -345,8 +1538,76 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Procedures" /> maps to the OLE DB PROCEDURES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>PROCEDURE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Procedure name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PROCEDURE_TYPE </para>
+              </term>
+              <description>
+                <para>UInt16 </para>
+              </description>
+              <description>
+                <para>DB_PT_UNKNOWN-It is not known whether there is a returned value.</para>
+                <para>DB_PT_PROCEDURE-Procedure; there is no returned value.</para>
+                <para>DB_PT_FUNCTION-Function; there is a returned value. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the procedures defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -362,8 +1623,53 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Provider_Types" /> maps to the OLE DB PROVIDER_TYPES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DATA_TYPE </para>
+              </term>
+              <description>
+                <para>UInt16 (Int32) </para>
+              </description>
+              <description>
+                <para>The indicator of the data type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BEST_MATCH </para>
+              </term>
+              <description>
+                <para>Int16 </para>
+              </description>
+              <description>
+                <para>VARIANT_TRUE-The data type is the best match between all data types in the data store and the OLE DB data type indicated by the value in the DATA_TYPE column.</para>
+                <para>VARIANT_FALSE-The data type is not the best match. For each set of rows in which the value of the DATA_TYPE column is the same, the BEST_MATCH column is set to VARIANT_TRUE in only one row. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the base data types supported by the .NET Framework Data Provider for OLE DB.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -379,8 +1685,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Referential_Constraints" /> maps to the OLE DB REFERENTIAL_CONSTRAINTS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the referential constraints defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -396,8 +1757,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Schemata" /> maps to the OLE DB SCHEMATAS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CATALOG_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SCHEMA_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SCHEMA_OWNER </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User that owns the schemas. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the schema objects that are owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -413,8 +1829,108 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Sql_Languages" /> maps to the OLE DB SQL_LANGUAGES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_SOURCE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>"ISO 9075" for standard SQL. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_YEAR </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>"1992" for ANSI SQL-92–compliant SQL. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_CONFORMANCE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>One of the following: "ENTRY", "INTERMEDIATE", or "FULL". </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_INTEGRITY </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>"YES"= Optional integrity feature is supported.</para>
+                <para>"NO"=Optional integrity feature is not supported. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_IMPLEMENTATION </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>NULL for "ISO 9075" implementation. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_BINDING_STYLE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>"DIRECT" for C/C++ callable direct execution of SQL. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SQL_LANGUAGE_PROGRAMMING_LANGUAGE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>NULL. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the conformance levels, options, and dialects supported by the SQL-implementation processing data defined in the catalog.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -430,8 +1946,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Statistics" /> maps to the OLE DB STATISTICS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the statistics defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -447,8 +2018,107 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Table_Constraints" /> maps to the OLE DB TABLE_CONSTRAINTS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CONSTRAINT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CONSTRAINT_TYPE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Constraint type. One of the following: UNIQUE, PRIMARY KEY, FOREIGN KEY, or CHECK. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the table constraints defined in the catalog that is owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -464,8 +2134,85 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Table_Privileges" /> maps to the OLE DB TABLE_PRIVILEGES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the table is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the table is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTOR </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User that granted the privileges on the table in TABLE_NAME. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTEE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User name (or "PUBLIC") that the privilege has been granted to. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the privileges on tables defined in the catalog that are available to, or granted by, a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -481,8 +2228,111 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Table_Statistics" /> maps to the OLE DB TABLE_STATISTICS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name of the table of this statistic. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Schema name of the table. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>STATISTICS_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name of the statistic. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>STATISTICS_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Schema name of the statistic. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>STATISTICS_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Name of the statistic. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>STATISTICS_TYPE </para>
+              </term>
+              <description>
+                <para>UInt16 (Int32) </para>
+              </description>
+              <description>
+                <para>Bitmask specifying the kinds of statistics supported by this statistic: </para>
+                <para>DBSTAT_HISTOGRAM—Indicates histogram support.</para>
+                <para>DBSTAT_COLUMN_CARDINALITY— Indicates column cardinality support.</para>
+                <para>DBSTAT_TUPLE_CARDINALITY—Indicates tuple cardinality support.</para>
+                <para>Note: Histograms correspond to only the first column for a multi-column statistic. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes the available set of statistics on tables in the provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,8 +2348,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Tables" /> maps to the OLE DB TABLES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. The column returned cannot contain a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_TYPE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table type. One of the following or a provider-specific value: "ALIAS", "TABLE" "SYNONYM", "SYSTEM TABLE", "VIEW", "GLOBAL TEMPORARY", "LOCAL TEMPORARY", or "SYSTEM VIEW". The column returned cannot contain a null value. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tables (including views) defined in the catalog that are accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -515,8 +2431,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Tables_Info" /> maps to the OLE DB TABLES_INFO rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_TYPE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table type. One of the following or a provider-specific value: ALIAS, TABLE, SYNONYM, SYSTEM TABLE, VIEW, GLOBAL TEMPORARY, LOCAL TEMPORARY, EXTERNAL TABLE, or SYSTEM VIEW. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Table name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tables (including views) that are accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -532,8 +2514,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Translations" /> maps to the OLE DB TRANSLATIONS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TRANSLATION_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TRANSLATION_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TRANSLATION_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Translation name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the character translations defined in the catalog that is accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,8 +2586,77 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Trustee" /> maps to the OLE DB TRUSTEE schema. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TRUSTEE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Trustee name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TRUSTEE_GUID </para>
+              </term>
+              <description>
+                <para>guid </para>
+              </description>
+              <description>
+                <para>GUID that uniquely identifies the trustee. Providers that do no use GUIDs to identify trustees should return a null value in this column. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TRUSTEE_PROPID </para>
+              </term>
+              <description>
+                <para>UInt32 (Int64) </para>
+              </description>
+              <description>
+                <para>PropID that uniquely identifies the trustee. Providers that do not use PropIDs to identify trustees should return a null value in this column. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TRUSTEE_TYPE </para>
+              </term>
+              <description>
+                <para>UInt32 (Int64) </para>
+              </description>
+              <description>
+                <para>Trustee type. One of the following: </para>
+                <para>TRUSTEE_IS_UNKNOWN - The trustee is an unknown type, but not necessarily an invalid type.</para>
+                <para>TRUSTEE_IS_USER - The trustee account is a user account.</para>
+                <para>TRUSTEE_IS_GROUP - The trustee is a group account. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the trustees defined in the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -566,8 +2672,96 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Usage_Privileges" /> maps to the OLE DB USAGE_PRIVILEGES rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>OBJECT_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name in which the object is defined. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OBJECT_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name in which the object is defined. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OBJECT_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Object name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OBJECT_TYPE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Object type. One of the following: DOMAIN, CHARACTER SET, COLLATION, or TRANSLATION. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTOR </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User that granted the privileges on the object in OBJECT_NAME. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GRANTEE </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>User name (or "PUBLIC") that the privilege has been granted to. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the USAGE privileges on objects defined in the catalog that are available to or granted by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -583,8 +2777,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.View_Column_Usage" /> maps to the OLE DB VIEW_COLUMN_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>VIEW_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VIEW_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VIEW_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>View name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the columns on which viewed tables depend, as defined in the catalog and owned by a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -600,8 +2849,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.View_Table_Usage" /> maps to the OLE DB VIEW_TABLE_USAGE rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>VIEW_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VIEW_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VIEW_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>View name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tables on which viewed tables, defined in the catalog and owned by a given user, are dependent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -617,8 +2921,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Data.OleDb.OleDbSchemaGuid.Views" /> maps to the OLE DB VIEWS rowset. Unless otherwise specified, restriction columns are returned in the following order.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Restriction column </para>
+                </term>
+                <description>
+                  <para>CLR data type </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TABLE_CATALOG </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Catalog name. A null value if the provider does not support catalogs. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_SCHEMA </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>Unqualified schema name. A null value if the provider does not support schemas. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TABLE_NAME </para>
+              </term>
+              <description>
+                <para>string </para>
+              </description>
+              <description>
+                <para>View name. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the views defined in the catalog that is accessible to a given user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorageContainment" FullName="System.Security.Permissions.IsolatedStorageContainment">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum IsolatedStorageContainment" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed IsolatedStorageContainment extends System.Enum" />
@@ -18,8 +19,35 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Isolated storage uses evidence to determine a unique storage area for use by an application or component. The identity of an assembly uniquely determines the root of a virtual file system for use by that assembly. Thus, rather than many applications and components sharing a common resource such as the file system or registry, each has its own file area inherently assigned to it.</para>
+      <para>Four basic isolation scopes are used when assigning isolated storage: </para>
+      <list type="bullet">
+        <item>
+          <para>User - Code is always scoped according to the current user. The same assembly will receive different stores when being run by different users.</para>
+        </item>
+        <item>
+          <para>Machine - Code is always scoped according to the machine. The same assembly will receive the same stores when being run by different users on the same machine.</para>
+        </item>
+        <item>
+          <para>Assembly - Code is identified cryptographically by strong name (for example, Microsoft.Office.* or Microsoft.Office.Word), by publisher (based on public key), by URL (for example, http://www.fourthcoffee.com/process/grind.htm), by site, or by zone.</para>
+        </item>
+        <item>
+          <para>Domain - Code is identified based on evidence associated with the application domain. Web application identity is derived from the site's URL, or by the Web page's URL, site, or zone. Local code identity is based on the application directory path.</para>
+        </item>
+      </list>
+      <para>For definitions of URL, site, and zone, see <see cref="T:System.Security.Permissions.UrlIdentityPermission" />, <see cref="T:System.Security.Permissions.SiteIdentityPermission" />, and <see cref="T:System.Security.Permissions.ZoneIdentityPermission" />.</para>
+      <para>These identities are grouped together, in which case the identities are applied one after another until the desired isolated storage is created. The valid groupings are User+Assembly and User+Assembly+Domain. This grouping of identities is useful in many different applications.</para>
+      <para>If data is stored by domain, user, and assembly, the data is private in that only code in that assembly can access the data. The data store is also isolated by the application in which it runs, so that the assembly does not represent a potential leak by exposing data to other applications.</para>
+      <para>Isolation by assembly and user could be used for user data that applies across multiple applications; for example, license information, or a user's personal information (name, authentication credentials, and so on) that is independent of an application.</para>
+      <para>
+        <see cref="T:System.Security.Permissions.IsolatedStorageContainment" /> exposes flags that determine whether an application is allowed to use isolated storage and, if so, which identity combinations are allowed to use it. It also determines whether an application is allowed to store information in a location that can roam with a user (Windows Roaming User Profiles or Folder Redirection must be configured).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the permitted use of isolated storage.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AdministerIsolatedStorageByUser">
@@ -36,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlimited administration ability for the user store. Allows browsing and deletion of the entire user store, but not read access other than the user's own domain/assembly identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIsolationByMachine">
@@ -52,8 +83,11 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by application. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIsolationByRoamingUser">
@@ -68,8 +102,11 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by application evidence. Storage will roam if Windows user data roaming is enabled. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIsolationByUser">
@@ -84,8 +121,11 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by application. Storage is also isolated by computer. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyIsolationByMachine">
@@ -100,8 +140,11 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by code assembly. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyIsolationByRoamingUser">
@@ -118,8 +161,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by assembly evidence. Storage will roam if Windows user data roaming is enabled. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyIsolationByUser">
@@ -136,8 +182,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by code assembly. Storage is also isolated by computer. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomainIsolationByMachine">
@@ -152,8 +201,11 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by domain and assembly. Data can only be accessed within the context of the same application and only when run on the same computer. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomainIsolationByRoamingUser">
@@ -170,8 +222,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by domain and assembly. Storage will roam if Windows user data roaming is enabled. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomainIsolationByUser">
@@ -188,8 +243,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by domain and assembly. Storage is also isolated by computer. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -206,8 +264,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of isolated storage is not allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnrestrictedIsolatedStorage">
@@ -224,8 +285,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of isolated storage is allowed without restriction. Code has full access to any part of the user store, regardless of the identity of the domain or assembly. This use of isolated storage includes the ability to enumerate the contents of the isolated storage data store.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

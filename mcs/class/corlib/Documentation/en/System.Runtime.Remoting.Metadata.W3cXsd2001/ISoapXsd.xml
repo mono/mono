@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISoapXsd" FullName="System.Runtime.Remoting.Metadata.W3cXsd2001.ISoapXsd">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISoapXsd" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISoapXsd" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the XML Schema definition language (XSD) of a SOAP type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetXsdType">
@@ -34,9 +38,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML Schema definition language (XSD) of the current SOAP type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that indicates the XSD of the current SOAP type.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

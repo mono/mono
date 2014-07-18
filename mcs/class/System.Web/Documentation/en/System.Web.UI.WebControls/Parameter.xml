@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Parameter" FullName="System.Web.UI.WebControls.Parameter">
   <TypeSignature Language="C#" Value="public class Parameter : ICloneable, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -21,9 +22,92 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.Parameter" /> class represents a parameter in a parameterized SQL query, a filtering expression, or a business object method call that an ASP.NET data source control uses to select, filter, or modify data. <see cref="T:System.Web.UI.WebControls.Parameter" /> objects are contained in a <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> object. <see cref="T:System.Web.UI.WebControls.Parameter" /> objects are evaluated at run time, to bind the values of the variables they represent to whatever method is used by a data source control to interact with data. </para>
+      <para>Use classes that derive from <see cref="T:System.Web.UI.WebControls.Parameter" /> with data source and data-bound controls to build Web-based data applications. These parameter classes are used by data source controls to bind specific kinds of values found in Web applications to placeholders in SQL query strings, business object method parameters, and more. The following table lists parameter types that are included in ASP.NET.</para>
+      <list type="table">
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ControlParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds any public property of a Web server control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.FormParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a form field.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SessionParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a session-state field.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.RouteParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a route URL parameter.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.CookieParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a cookie field.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.QueryStringParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a query-string parameter.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ProfileParameter" />
+            </para>
+          </term>
+          <description>
+            <para>Binds a profile field.</para>
+          </description>
+        </item>
+      </list>
+      <para>Extend the base <see cref="T:System.Web.UI.WebControls.Parameter" /> class when you want to implement your own custom parameter types.</para>
+      <para>
+        <see cref="T:System.Web.UI.WebControls.Parameter" /> objects are very simple: they have a <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> and a <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property, can be represented declaratively, and can track state across multiple HTTP requests. All parameters support a <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property, for cases when a parameter is bound to a value, but the value evaluates to null at run time.</para>
+      <para>When using a collection of <see cref="T:System.Web.UI.WebControls.Parameter" /> objects with a data source control, their order in the collection might matter. For more information on how parameters are used, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using the SqlDataSource and AccessDataSource Controls with Parameters</a></format> and <format type="text/html"><a href="45fb67ee-9be7-49b7-9421-e242203dafa4">Using Parameters with the ObjectDataSource Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism that data source controls use to bind to application variables, user identities and choices, and other data. Serves as the base class for all ASP.NET parameter types. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +115,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> object created with the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor" /> constructor is initialized with default values for all its properties. The <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> property is initialized to <see cref="F:System.String.Empty" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property is initialized to <see cref="F:System.TypeCode.Object" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new default instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +136,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> object created with the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.String)" /> constructor is initialized with the specified <paramref name="name" /> and default values for its other properties. The <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property is initialized to <see cref="F:System.TypeCode.Object" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class, using the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,10 +159,17 @@
         <Parameter Name="original" Type="System.Web.UI.WebControls.Parameter" />
       </Parameters>
       <Docs>
-        <param name="original">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.Web.UI.WebControls.Parameter)" /> constructor is a protected copy constructor used to clone a <see cref="T:System.Web.UI.WebControls.Parameter" /> instance. The values of the <see cref="P:System.Web.UI.WebControls.Parameter.Name" />, <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" />, <see cref="P:System.Web.UI.WebControls.Parameter.Direction" />, and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> properties are all transferred to the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class with the values of the original, specified instance.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Parameter" /> instance from which the current instance is initialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,11 +183,19 @@
         <Parameter Name="type" Type="System.TypeCode" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> object created with the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.String,System.TypeCode)" /> constructor is initialized with the specified <paramref name="name" /> and <paramref name="type" /> parameters, and default values for other properties. The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class, using the specified name and type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypeCode" /> that describes the type of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,12 +210,21 @@
         <Parameter Name="defaultValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="defaultValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> object created with the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.String,System.TypeCode,System.String)" /> constructor is initialized with the specified <paramref name="name" /> parameter and <paramref name="type" /> parameter, and assigned a <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property value. The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class, using the specified name, the specified type, and the specified string for its <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypeCode" /> that describes the type of the parameter. </param>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that serves as a default value for the parameter, if the <see cref="T:System.Web.UI.WebControls.Parameter" /> is bound to a value that is not yet initialized when <see cref="M:System.Web.UI.WebControls.Parameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> is called. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,10 +238,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.Web.UI.WebControls.Parameter)" /> copy constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class with the values of the current instance.</para>
+          <para>If you extend the <see cref="T:System.Web.UI.WebControls.Parameter" /> class, you can override the <see cref="M:System.Web.UI.WebControls.Parameter.Clone" /> method to include any state that should be copied to a new instance of your derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.Parameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,10 +269,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> property of the parameter is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the value that the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is bound to should be converted to null if it is <see cref="F:System.String.Empty" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -159,10 +296,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is used in scenarios where the parameter is bound to a value, but the value is null or cannot be resolved when the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is evaluated.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property of the parameter is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a default value for the parameter, should the value that the parameter is bound to be uninitialized when the <see cref="M:System.Web.UI.WebControls.Parameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -180,10 +324,18 @@
         <ReturnType>System.Data.ParameterDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is currently not used by the <see cref="T:System.Web.UI.WebControls.Parameter" /> class and is reserved for future use.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property describes the direction of the flow of data between the value that a <see cref="T:System.Web.UI.WebControls.Parameter" /> instance is bound to and the <see cref="T:System.Web.UI.WebControls.Parameter" /> object itself. The default value for the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property, <see cref="F:System.Data.ParameterDirection.Input" />, describes the most common scenario where the flow of data is always in one direction: from the value to which the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is bound to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object. Any changes made to the underlying value are reflected by the <see cref="T:System.Web.UI.WebControls.Parameter" /> object, but any changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object are not reflected by the underlying data. You can set the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property to <see cref="F:System.Data.ParameterDirection.InputOutput" /> or <see cref="F:System.Data.ParameterDirection.Output" /> when working with output parameters, or <see cref="F:System.Data.ParameterDirection.ReturnValue" /> when working with a return value from a stored procedure.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property of the parameter is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is used to bind a value to a control, or the control can be used to change the value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -200,12 +352,23 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of the <see cref="M:System.Web.UI.WebControls.Parameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is to return null in all cases. Classes that derive from the <see cref="T:System.Web.UI.WebControls.Parameter" /> class override the <see cref="M:System.Web.UI.WebControls.Parameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to return an updated parameter value. For example, the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object returns the value of the control that it is bound to, while the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object retrieves the current name/value pair from the <see cref="T:System.Web.HttpRequest" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.Parameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the updated and current value of the parameter.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> of the request.</param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> the parameter is bound to. If the parameter is not bound to a control, the <paramref name="control" /> parameter is ignored. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -218,10 +381,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -237,10 +403,18 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code. However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>This method restores view-state information for the <see cref="T:System.Web.UI.WebControls.Parameter" /> object from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.Parameter.SaveViewState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the data source view's previously saved view state.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the <see cref="T:System.Web.UI.WebControls.Parameter" /> state to restore. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,10 +432,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Web.UI.WebControls.Parameter" /> objects are not required to have a name; however, data source controls might use the parameter name to match a <see cref="T:System.Web.UI.WebControls.Parameter" /> object in a collection with a parameter in a SQL query or business method signature. For example, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can use the name of the <see cref="T:System.Web.UI.WebControls.Parameter" /> object to match a placeholder in a parameterized SQL query. Similarly, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can use the name of a <see cref="T:System.Web.UI.WebControls.Parameter" /> object in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection to match a placeholder in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property. In some cases, the name is not used and the order in which the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is added to a <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection is more important. For more information, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using the SqlDataSource and AccessDataSource Controls with Parameters</a></format> and <format type="text/html"><a href="45fb67ee-9be7-49b7-9421-e242203dafa4">Using Parameters with the ObjectDataSource Control</a></format>.</para>
+          <para>If the name of the parameter is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -275,9 +457,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is not contained by a <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection, calling the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method has no effect. If the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is contained by a <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection, <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> raises the <see cref="E:System.Web.UI.WebControls.ParameterCollection.ParametersChanged" /> event of the collection.</para>
+          <para>If the <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection is contained by a data source control, the <see cref="E:System.Web.UI.WebControls.ParameterCollection.ParametersChanged" /> event raises the data source control's <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event, causing any data-bound controls to rebind.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls the <see cref="M:System.Web.UI.WebControls.ParameterCollection.OnParametersChanged(System.EventArgs)" /> method of the <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection that contains the <see cref="T:System.Web.UI.WebControls.Parameter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -291,10 +482,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in an HTML hidden element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's <see cref="P:System.Web.UI.WebControls.Parameter.ViewState" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> view state. If there is no view state associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -311,8 +513,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.SetDirty" /> method is called directly by the <see cref="M:System.Web.UI.WebControls.ParameterCollection.SetDirtyObject(System.Object)" /> method, to mark the <see cref="T:System.Web.UI.WebControls.Parameter" /> object so that its state is recorded in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the <see cref="T:System.Web.UI.WebControls.Parameter" /> object so its state will be recorded in view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -327,10 +535,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the value for <see cref="P:System.Web.UI.WebControls.Parameter.Size" /> is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -347,9 +561,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.Web.UI.WebControls.Parameter)" /> constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class with the values of the current instance.</para>
+          <para>If you extend the <see cref="T:System.Web.UI.WebControls.Parameter" /> class, you can override the <see cref="M:System.Web.UI.WebControls.Parameter.Clone" /> method to include any state that should be copied to a new instance of your derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.Parameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> that is a copy of the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -362,9 +586,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.Parameter" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -380,9 +607,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method restores view-state information for the <see cref="T:System.Web.UI.WebControls.Parameter" /> object from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.Parameter.SaveViewState" /> method.</para>
+          <para>This method is used primarily by control developers. You can override this method to control how a custom server control restores its view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the data source view's previously saved view state.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the <see cref="T:System.Web.UI.WebControls.Parameter" /> state to restore. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -396,9 +631,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in an HTML hidden element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's <see cref="P:System.Web.UI.WebControls.Parameter.ViewState" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state. If there is no view state associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -412,8 +658,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.Parameter" /> object to track changes to its view state so they can be stored in the control's <see cref="P:System.Web.UI.Control.ViewState" /> object and persisted across requests for the same page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -424,10 +673,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Parameter.ToString" /> method returns the <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> property of the <see cref="T:System.Web.UI.WebControls.Parameter" /> object. If the <see cref="T:System.Web.UI.WebControls.Parameter" /> object has no name, <see cref="M:System.Web.UI.WebControls.Parameter.ToString" /> returns <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to its equivalent string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -441,9 +699,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.Parameter" /> object to track changes to its view state so they can be stored in the control's <see cref="P:System.Web.UI.Control.ViewState" /> object and persisted across requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -461,10 +722,17 @@
         <ReturnType>System.TypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type can be used to create strongly typed parameters, so that values are converted correctly between your Web application and underlying code.</para>
+          <para>If the type of the parameter is changed, the <see cref="M:System.Web.UI.WebControls.Parameter.OnParameterChanged" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -485,10 +753,17 @@
         <ReturnType>System.Web.UI.StateBag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A parameter's view state is the accumulation of all its property values. To preserve these values across HTTP requests, ASP.NET server controls use this property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class, to store the property values. The values are then passed as a variable to an HTML hidden input element when subsequent requests are processed. View state is enabled for all server controls by default.</para>
+          <para>For more information about dictionaries and how to use them, see <format type="text/html"><a href="60CC581F-1DB5-445B-BA04-A173396BF872">Collections and Data Structures</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of state information that allows you to save and restore the view state of a <see cref="T:System.Web.UI.WebControls.Parameter" /> object across multiple requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

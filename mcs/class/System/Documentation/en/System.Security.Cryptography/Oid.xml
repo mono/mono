@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Oid" FullName="System.Security.Cryptography.Oid">
   <TypeSignature Language="C#" Value="public sealed class Oid" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Oid extends System.Object" />
@@ -11,9 +12,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Cryptographic object identifiers consist of a value/name pair. If one property in a pair is set to a known value, the other property is updated automatically to a corresponding value. For example, if the <see cref="P:System.Security.Cryptography.Oid.Value" /> property is set to "1.3.6.1.5.5.7.3.4", the <see cref="P:System.Security.Cryptography.Oid.FriendlyName" /> property, which is localized, is set automatically to "Secure Email". </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a cryptographic object identifier. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +33,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Oid" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,10 +56,17 @@
         <Parameter Name="oid" Type="System.Security.Cryptography.Oid" />
       </Parameters>
       <Docs>
-        <param name="oid">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor copies the values of an existing <see cref="T:System.Security.Cryptography.Oid" /> object to a new object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Oid" /> class using the specified <see cref="T:System.Security.Cryptography.Oid" /> object.</para>
+        </summary>
+        <param name="oid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object identifier information to use to create the new object identifier.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,10 +81,17 @@
         <Parameter Name="oid" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="oid">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor copies the values of an existing <see cref="T:System.Security.Cryptography.Oid" /> object to a new object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Oid" /> class using a string value of an <see cref="T:System.Security.Cryptography.Oid" /> object.</para>
+        </summary>
+        <param name="oid">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object identifier.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,11 +107,19 @@
         <Parameter Name="friendlyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="friendlyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be used to copy the values of an existing <see cref="T:System.Security.Cryptography.Oid" /> object. Note that if the Oid value is not recognized, the <paramref name="value" /> and <paramref name="friendlyName" /> parameters are not verified to determine if they correspond to each other. This is because there are object identifiers that the .NET Framework does not recognize, although an application may be able to interpret them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Oid" /> class using the specified value and friendly name.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dotted number of the identifier.</param>
+        <param name="friendlyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the identifier.</param>
       </Docs>
     </Member>
     <Member MemberName="FriendlyName">
@@ -99,10 +134,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If one value of an <see cref="T:System.Security.Cryptography.Oid" /> property is set to a known value, the other value of an <see cref="T:System.Security.Cryptography.Oid" /> property is updated automatically to a corresponding value. For example, if the <see cref="P:System.Security.Cryptography.Oid.FriendlyName" /> property is set to "Secure Email", the <see cref="P:System.Security.Cryptography.Oid.Value" /> property is set automatically to "1.3.6.1.5.5.7.3.4". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the friendly name of the identifier.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -117,10 +158,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If one value of an <see cref="T:System.Security.Cryptography.Oid" /> property is set to a known value, the other value of an <see cref="T:System.Security.Cryptography.Oid" /> property is updated automatically to a corresponding value. For example, if the <see cref="P:System.Security.Cryptography.Oid.Value" /> property is set to "1.3.6.1.5.5.7.3.4", the <see cref="P:System.Security.Cryptography.Oid.FriendlyName" /> property is set automatically to "Secure Email".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the dotted number of the identifier.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

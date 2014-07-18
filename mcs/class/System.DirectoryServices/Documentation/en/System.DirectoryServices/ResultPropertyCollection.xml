@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResultPropertyCollection" FullName="System.DirectoryServices.ResultPropertyCollection">
   <TypeSignature Language="C#" Value="public class ResultPropertyCollection : System.Collections.DictionaryBase, System.Collections.IDictionary, System.Collections.ICollection, System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -83,10 +84,16 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="key">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the property that has the specified name belongs to this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -100,10 +107,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="copy_to">To be added.</param>
-        <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the properties from this collection to an array, starting at a particular index of the array.          </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based array index at which to begin copying the properties.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyNames">
@@ -113,9 +124,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of the properties in this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Values">
@@ -125,9 +139,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the values of the properties in this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -148,7 +165,13 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>         <see cref="T:System.DirectoryServices.SearchResult" /> instances are similar to <see cref="T:System.DirectoryServices.DirectoryEntry" /> instances. The notable difference is that the <see cref="T:System.DirectoryServices.DirectoryEntry" /> retrieves its information from the Active Directory Domain Services hierarchy each time a new object is accessed, whereas the data for the <see cref="T:System.DirectoryServices.SearchResult" /> is already available in the <see cref="T:System.DirectoryServices.SearchResultCollection" /> that a <see cref="T:System.DirectoryServices.DirectorySearcher" /> query returns. If you try to get a <see cref="T:System.DirectoryServices.SearchResult" /> property that your query did not specify for retrieval, the property will not be available.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the properties of a <see cref="T:System.DirectoryServices.SearchResult" /> instance.          </para>
+    </summary>
   </Docs>
 </Type>

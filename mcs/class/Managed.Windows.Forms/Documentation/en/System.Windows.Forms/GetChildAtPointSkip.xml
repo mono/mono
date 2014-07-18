@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GetChildAtPointSkip" FullName="System.Windows.Forms.GetChildAtPointSkip">
   <TypeSignature Language="C#" Value="public enum GetChildAtPointSkip" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The system maintains an internal list that contains the child controls associated with a parent window. The order of the controls in the list depends on the z-order of the child controls. If more than one child window contains the specified point, the system returns the first control in the list that contains the point and meets the criteria specified by <see cref="T:System.Windows.Forms.GetChildAtPointSkip" />.</para>
+      <para>For more information, see ChildWindowFromPointEx in the Platform SDK documentation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies which child controls to skip.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Disabled">
@@ -25,8 +33,11 @@
         <ReturnType>System.Windows.Forms.GetChildAtPointSkip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skips disabled child windows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +50,11 @@
         <ReturnType>System.Windows.Forms.GetChildAtPointSkip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skips invisible child windows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +67,11 @@
         <ReturnType>System.Windows.Forms.GetChildAtPointSkip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Does not skip any child windows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +84,11 @@
         <ReturnType>System.Windows.Forms.GetChildAtPointSkip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skips transparent child windows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

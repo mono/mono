@@ -198,8 +198,8 @@ namespace MonoTests.Microsoft.Build.Execution
   <UsingTask AssemblyFile='{0}' TaskName='NonExistent' />
   <Target Name='X' />
 </Project>", thisAssembly);
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks.proj";
 			var proj = new ProjectInstance (root);
 			Assert.IsTrue (proj.Build (), "#1");
@@ -218,6 +218,128 @@ namespace MonoTests.Microsoft.Build.Execution
 			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks2.proj";
 			var proj = new ProjectInstance (root);
 			Assert.IsTrue (proj.Build (), "#1");
+		}
+
+		[Test]
+		public void ExpandStringWithMetadata ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='xxx'><M>x</M></Foo>
+    <Foo Include='yyy'><M>y</M></Foo>
+  </ItemGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ExpandStringWithMetadata.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual ("xxx;yyy", proj.ExpandString ("@(FOO)"), "#1"); // so, metadata is gone...
+		}
+
+		[Test]
+		public void EvaluatePropertyWithQuotation ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='abc/xxx.txt' />
+  </ItemGroup>
+  <PropertyGroup>
+    <B>foobar</B>
+  </PropertyGroup>
+  <Target Name='default'>
+    <CreateProperty Value=""@(Foo->'%(Filename)%(Extension)')"">
+      <Output TaskParameter='Value' PropertyName='P' />
+    </CreateProperty>
+    <CreateProperty Value='$(B)|$(P)'>
+      <Output TaskParameter='Value' PropertyName='Q' />
+    </CreateProperty>
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.EvaluatePropertyWithQuotation.proj";
+			var proj = new ProjectInstance (root);
+			proj.Build ();
+			var p = proj.GetProperty ("P");
+			Assert.AreEqual ("xxx.txt", p.EvaluatedValue, "#1");
+			var q = proj.GetProperty ("Q");
+			Assert.AreEqual ("foobar|xxx.txt", q.EvaluatedValue, "#2");
+		}
+
+		[Test]
+		public void Choose ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Choose>
+    <When Condition="" '$(DebugSymbols)' != '' "">
+      <PropertyGroup>
+        <DebugXXX>True</DebugXXX>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DebugXXX>False</DebugXXX>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.Choose.proj";
+			var proj = new ProjectInstance (root);
+			var p = proj.GetProperty ("DebugXXX");
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual ("False", p.EvaluatedValue, "#2");
+		}
+
+		[Test]
+		public void ConditionalExpression ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<PropertyGroup>
+		<NoCompilerStandardLib>true</NoCompilerStandardLib>
+                <ResolveAssemblyReferencesDependsOn>$(ResolveAssemblyReferencesDependsOn);_AddCorlibReference</ResolveAssemblyReferencesDependsOn>
+        </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ConditionalExpression.proj";
+			var proj = new ProjectInstance (root);
+			var p = proj.GetProperty ("ResolveAssemblyReferencesDependsOn");
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual (";_AddCorlibReference", p.EvaluatedValue, "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // until we figure out why it fails on wrench.
+		public void ItemsInTargets ()
+		{
+			string project_xml = @"<Project DefaultTargets='Default' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<Target Name='Default'>
+		<PropertyGroup>
+			<_ExplicitMSCorlibPath>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToStandardLibraries ('$(TargetFrameworkIdentifier)', '$(TargetFrameworkVersion)', '$(TargetFrameworkProfile)'))\mscorlib.dll</_ExplicitMSCorlibPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<_ExplicitReference
+				Include='$(_ExplicitMSCorlibPath)'
+				Condition='Exists($(_ExplicitMSCorlibPath))'>
+				<Private>false</Private>
+			</_ExplicitReference>
+		</ItemGroup>
+	</Target>
+	<Import Project='$(MSBuildBinPath)\\Microsoft.CSharp.targets' />
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ConditionalExpression.proj";
+			var proj = new ProjectInstance (root, null, "4.0", ProjectCollection.GlobalProjectCollection);
+			proj.Build ();
+			// make sure the property value expansion is done successfully.
+			Assert.IsTrue (!string.IsNullOrEmpty (proj.GetPropertyValue ("_ExplicitMSCorlibPath")), "premise: propertyValue by ToolLocationHelper func call");
+			var items = proj.GetItems ("_ExplicitReference");
+			// make sure items are stored after build.
+			Assert.IsTrue (items.Any (), "items.Any");
+			Assert.IsTrue (!string.IsNullOrEmpty (items.First ().EvaluatedInclude), "item.EvaluatedInclude");
 		}
 	}
 	

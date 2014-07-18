@@ -9,7 +9,7 @@
 //
 // (C) 2002 Duco Fijma
 // Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
-// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
+// Copyright 2012, 2014 Xamarin, Inc (http://www.xamarin.com)
 //
 // References
 // 1.	UUIDs and GUIDs (DRAFT), Section 3.4
@@ -84,7 +84,7 @@ namespace System {
 
 			public GuidParser (string src)
 			{
-				_src = src;
+				_src = src.Trim ();
 				_cur = 0;
 				_length = _src.Length;
 			}
@@ -175,14 +175,14 @@ namespace System {
 				if (!(ParseChar ('{')
 					&& ParseHexPrefix ()
 					&& ParseHex (8, false, out a)
-					&& ParseChar (',')
+					&& ParseCharWithWhiteSpaces (',')
 					&& ParseHexPrefix ()
 					&& ParseHex (4, false, out b)
-					&& ParseChar (',')
+					&& ParseCharWithWhiteSpaces (',')
 					&& ParseHexPrefix ()
 					&& ParseHex (4, false, out c)
-					&& ParseChar (',')
-					&& ParseChar ('{'))) {
+					&& ParseCharWithWhiteSpaces (',')
+					&& ParseCharWithWhiteSpaces ('{'))) {
 
 					return false;
 				}
@@ -196,11 +196,11 @@ namespace System {
 
 					d [i] = (byte) dd;
 
-					if (i != 7 && !ParseChar (','))
+					if (i != 7 && !ParseCharWithWhiteSpaces (','))
 						return false;
 				}
 
-				if (!(ParseChar ('}') && ParseChar ('}')))
+				if (!(ParseCharWithWhiteSpaces ('}') && ParseCharWithWhiteSpaces ('}')))
 					return false;
 
 				if (!Eof)
@@ -212,10 +212,33 @@ namespace System {
 
 			bool ParseHexPrefix ()
 			{
-				if (!ParseChar ('0'))
-					return false;
+				// It can be prefixed with whitespaces
+				for (; _cur < _length - 1; ++_cur) {
+					var ch = _src [_cur];
+					if (ch == '0') {
+						++_cur;
+						return _src [_cur++] == 'x';
+					}
 
-				return ParseChar ('x');
+					if (!char.IsWhiteSpace (ch))
+						break;
+				}
+
+				return false;
+			}
+
+			bool ParseCharWithWhiteSpaces (char c)
+			{
+				while (!Eof) {
+					var ch = _src [_cur++];
+					if (ch == c)
+						return true;
+
+					if (!char.IsWhiteSpace (ch))
+						break;
+				}
+
+				return false;
 			}
 
 			bool ParseChar (char c)
@@ -341,10 +364,8 @@ namespace System {
 		public Guid (string g)
 		{
 			CheckNull (g);
-			g = g.Trim();
-			var parser = new GuidParser (g);
 			Guid guid;
-			if (!parser.Parse (out guid))
+			if (!new GuidParser (g).Parse (out guid))
 				throw CreateFormatException (g);
 
 			this = guid;

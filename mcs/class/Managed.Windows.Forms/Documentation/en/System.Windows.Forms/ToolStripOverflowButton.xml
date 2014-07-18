@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripOverflowButton" FullName="System.Windows.Forms.ToolStripOverflowButton">
   <TypeSignature Language="C#" Value="public class ToolStripOverflowButton : System.Windows.Forms.ToolStripDropDownButton" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If there are more overflow items than can be displayed on the form, use the <format type="text/html"><a href="e681f3ab-94ba-4b2b-ac64-1dfad46caa25">ToolStrip Items Collection Editor</a></format> to manage this situation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Hosts a <see cref="T:System.Windows.Forms.ToolStripDropDown" /> that displays items that overflow the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateAccessibilityInstance">
@@ -29,9 +36,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.ToolStripOverflowButton.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the dnprdnshort.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessibility object for the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultDropDown">
@@ -45,9 +64,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty <see cref="T:System.Windows.Forms.ToolStripDropDown" /> that can be dropped down and to which events can be attached.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ToolStripDropDown" /> control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultMargin">
@@ -60,9 +85,12 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the space, in pixels, that is specified by default between controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredSize">
@@ -78,10 +106,17 @@
         <Parameter Name="constrainingSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="constrainingSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the size of a rectangular area into which a control can fit.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered pair of type <see cref="T:System.Drawing.Size" /> representing the width and height of a rectangle.</para>
+        </returns>
+        <param name="constrainingSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control. </param>
       </Docs>
     </Member>
     <Member MemberName="HasDropDownItems">
@@ -94,9 +129,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.ToolStripOverflowButton" /> has items that overflow the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnPaint">
@@ -112,9 +150,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripOverflowButton.OnPaint(System.Windows.Forms.PaintEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftAutoMirrorImage">
@@ -138,9 +184,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetBounds">
@@ -156,9 +208,13 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the size and location of the <see cref="T:System.Windows.Forms.ToolStripOverflowButton" />.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> representing the size and location of the <see cref="T:System.Windows.Forms.ToolStripOverflowButton" />.</param>
       </Docs>
     </Member>
   </Members>

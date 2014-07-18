@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Glyph" FullName="System.Windows.Forms.Design.Behavior.Glyph">
   <TypeSignature Language="C#" Value="public abstract class Glyph" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The sole purpose of a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is to paint and hit test. A <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> does not have a window handle (HWND), as it is rendered on the adorner window control of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />. Each <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> can have a <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> associated with it. A successfully hit-tested <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> has the opportunity to push a new or different <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> onto the behavior stack of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />. </para>
+      <para>For more information, see <format type="text/html"><a href="7c60cc41-4324-46b5-b444-b39eda7cb33f">Behavior Service Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a single user interface (UI) entity managed by an <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +31,13 @@
         <Parameter Name="behavior" Type="System.Windows.Forms.Design.Behavior.Behavior" />
       </Parameters>
       <Docs>
-        <param name="behavior">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> class. </para>
+        </summary>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> associated with the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />. Can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="Behavior">
@@ -38,9 +50,12 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.Behavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> associated with the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bounds">
@@ -53,9 +68,12 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounds of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHitTest">
@@ -71,10 +89,20 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="p">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Design.Behavior.Glyph.GetHitTest(System.Drawing.Point)" /> method is an abstract method that forces <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> implementations to provide hit test logic. Given any point, if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> has decided to be involved with that location, it will need to return a valid <see cref="T:System.Windows.Forms.Cursor" />. Otherwise, returning null will cause the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to ignore the location.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides hit test logic.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Cursor" /> if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated with <paramref name="p" />; otherwise, null.</para>
+        </returns>
+        <param name="p">
+          <attribution license="cc4" from="Microsoft" modified="false" />A point to hit-test.</param>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -90,9 +118,16 @@
         <Parameter Name="pe" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="pe">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Design.Behavior.Glyph.Paint(System.Windows.Forms.PaintEventArgs)" /> method is an abstract method that forces <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> implementations to provide paint logic. The <paramref name="pe" /> parameter contains the <see cref="T:System.Drawing.Graphics" /> related to the adorner window of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides paint logic.</para>
+        </summary>
+        <param name="pe">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="SetBehavior">
@@ -108,9 +143,13 @@
         <Parameter Name="behavior" Type="System.Windows.Forms.Design.Behavior.Behavior" />
       </Parameters>
       <Docs>
-        <param name="behavior">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> associated with the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
+        </summary>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> to associate with the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</param>
       </Docs>
     </Member>
   </Members>

@@ -21,11 +21,16 @@ LIB_MCS_FLAGS = \
 	/r:$(XBUILD_TASKS)
 
 TEST_MCS_FLAGS = \
+	/r:System.Xml.dll			\
 	/r:$(XBUILD_ENGINE)	\
 	/r:$(XBUILD_FRAMEWORK)	\
 	/r:$(XBUILD_TASKS)	\
 	/r:$(XBUILD_UTILITIES)			\
 	/r:System.Core.dll
+
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+	TEST_MCS_FLAGS += /r:Microsoft.Build.dll
+endif
 
 EXTRA_DISTFILES = \
 	Test/resources/test.cs \

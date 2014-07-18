@@ -112,3 +112,4 @@ System.Xml.Xsl/XsltCompileExceptionTests.cs
 System.Xml.Xsl/XsltExceptionCas.cs
 System.Xml.Xsl/XsltExceptionTests.cs
 System.Xml.XPath/XPathExceptionCas.cs
+System.Xml.Xsl/XslCompiledTransformTests.cs

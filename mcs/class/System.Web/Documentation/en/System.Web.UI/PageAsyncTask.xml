@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageAsyncTask" FullName="System.Web.UI.PageAsyncTask">
   <TypeSignature Language="C#" Value="public sealed class PageAsyncTask" />
   <AssemblyInfo>
@@ -9,8 +10,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET version 2.0 allows you to register multiple tasks to a page and run them asynchronously prior to rendering the page. You might specify that a task be run asynchronously if it is a slow process and you do not want other processes to be tied up while it is executing. The asynchronous tasks can be executed in parallel or sequentially. </para>
+      <para>A <see cref="T:System.Web.UI.PageAsyncTask" /> object must be registered to the page through the <see cref="M:System.Web.UI.Page.RegisterAsyncTask(System.Web.UI.PageAsyncTask)" /> method. The page itself does not have to be processed asynchronously to execute asynchronous tasks. You can set the Async attribute to either true (as shown in the following code example) or false on the page directive and the asynchronous tasks will still be processed asynchronously:</para>
+      <para>&lt;%@ Page Async="true" %&gt;</para>
+      <para>When the Async attribute is set to false, the thread that executes the page will be blocked until all asynchronous tasks are complete.</para>
+      <para>Any asynchronous tasks registered before the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event will be executed automatically by the page if they have not already been executed. Those asynchronous tasks registered after the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event must be executed explicitly through the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method. The <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method can also be used to start tasks before the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event. The <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method executes all the registered asynchronous tasks on the page that have not been executed.</para>
+      <para>By default, an asynchronous task will time out if it has not completed within 45 seconds. You can specify a different time-out value in either the Web.config file or the page directive. The &lt;pages&gt; section of the Web.config file contains an asyncTimeout attribute, as shown below. </para>
+      <para>&lt;system.web&gt;</para>
+      <para>    &lt;pages asyncTimeout="30"&gt;</para>
+      <para>    &lt;/pages&gt;</para>
+      <para>&lt;/system.web&gt; </para>
+      <para>The page directive contains an AsyncTimeout attribute.</para>
+      <para>&lt;%@ Page AsyncTimeout="30" %&gt;</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about an asynchronous task registered to a page. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,12 +44,22 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="timeoutHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the constructor sets the <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> property to false so the asynchronous task is not processed in parallel with other tasks on the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PageAsyncTask" /> class using the default value for executing in parallel. </para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when beginning an asynchronous task.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when the task is completed successfully within the time-out period.</param>
+        <param name="timeoutHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when the task is not completed successfully within the time-out period.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the state of the task.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,13 +76,24 @@
         <Parameter Name="executeInParallel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="timeoutHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="executeInParallel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the constructor allows you to set whether the asynchronous task will be processed in parallel with other tasks on the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PageAsyncTask" /> class using the specified value for executing in parallel. </para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when beginning an asynchronous task.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when the task is completed successfully within the time-out period.</param>
+        <param name="timeoutHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to call when the task is not completed successfully within the time-out period.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the state of the task.</param>
+        <param name="executeInParallel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value that indicates whether the task can be processed in parallel with other tasks.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginHandler">
@@ -67,9 +106,15 @@
         <ReturnType>System.Web.BeginEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageAsyncTask.BeginHandler" /> delegate is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method to call when beginning an asynchronous task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndHandler">
@@ -82,9 +127,15 @@
         <ReturnType>System.Web.EndEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageAsyncTask.EndHandler" /> delegate is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method to call when the task completes successfully within the time-out period.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExecuteInParallel">
@@ -97,9 +148,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> property is set in the constructor. When multiple tasks are registered in a page and the <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> property is set to true, then those tasks are processed concurrently. However, if the <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> property is set to false, then those tasks are processed sequentially. For example, if a page contained two asynchronous tasks that each took 5 seconds to complete and <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> is set to true, both tasks will complete in 5 seconds. If <see cref="P:System.Web.UI.PageAsyncTask.ExecuteInParallel" /> is set to false for these same two tasks, then the first task will complete in 5 seconds and the second task will complete 5 seconds after the completion of the first task.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the task can be processed in parallel with other tasks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="State">
@@ -112,9 +169,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageAsyncTask.State" /> property is set in the constructor and cannot be modified during execution of the asynchronous task. You can differentiate asynchronous tasks in a page by assigning unique string values to their respective <see cref="P:System.Web.UI.PageAsyncTask.State" /> properties.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that represents the state of the task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeoutHandler">
@@ -127,9 +190,15 @@
         <ReturnType>System.Web.EndEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageAsyncTask.TimeoutHandler" /> delegate is set in the constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method to call when the task does not complete successfully within the time-out period.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

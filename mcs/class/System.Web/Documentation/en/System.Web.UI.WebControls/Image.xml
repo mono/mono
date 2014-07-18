@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Image" FullName="System.Web.UI.WebControls.Image">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Image : System.Web.UI.WebControls.WebControl" />
   <AssemblyInfo>
@@ -22,8 +23,94 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Image" /> control lets you work with images from server code. Use the <see cref="T:System.Web.UI.WebControls.Image" /> control to display any valid image supported by the requesting browser on the Web page. The path to the displayed image is specified by setting the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property. You can specify the text to display in place of image when the image is not available by setting the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property. The alignment of the image in relation to other elements on the Web page is specified by setting <see cref="P:System.Web.UI.WebControls.Image.ImageAlign" /> property.</para>
+      <block subset="none" type="note">
+        <para>This control only displays an image. If you need to capture mouse clicks on the image, use the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+      </block>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Image
+    AccessKey="string"
+    AlternateText="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    DescriptionUrl="uri"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ForeColor="color name|#dddddd"
+    GenerateEmptyAlternateText="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Height="size"
+    ID="string"
+    ImageAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Right|Baseline|Top|Middle|Bottom|
+        AbsBottom|AbsMiddle|TextTop"
+    ImageUrl="uri"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays an image on a Web page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +119,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Image" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Image" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +143,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the attributes of an <see cref="T:System.Web.UI.WebControls.Image" /> to the output stream for rendering on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that contains the output stream to render on the client browser. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +164,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the text to display if the image specified in the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property is not available. In browsers that support the ToolTips feature, this text also displays as a ToolTip.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alternate text displayed in the <see cref="T:System.Web.UI.WebControls.Image" /> control when the image is unavailable. Browsers that support the ToolTips feature display this text as a ToolTip.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +213,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property specifies an HTML file that provides additional details for the image. The <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property renders as the longdesc attribute for the image control. If the <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property is not set, or is set to an empty string (""), the <see cref="T:System.Web.UI.WebControls.Image" /> control renders without the longdesc attribute. </para>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property to supplement the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property. For example, if you use an <see cref="T:System.Web.UI.WebControls.Image" /> control to display an image of the solar system, you can set the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property to The Solar System, and then set the <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property to an HTML page that further describes the image of planets orbiting the sun in the solar system.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.Image.DescriptionUrl" /> property is optional, but it can enhance the accessibility of your Web page for text-only browsers and screen readers. Browsers can use the detailed text description to convey important concepts in place of, or in addition to, the visual image. Refer to your browser documentation for details on how it uses the descriptive content specified by the longdesc attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location to a detailed description for the image.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enabled">
@@ -122,9 +234,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Boolean" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.Image" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,9 +267,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.FontInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.Image" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font properties for the text associated with the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -182,9 +310,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, when the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property is not set, the <see cref="T:System.Web.UI.WebControls.Image" /> control does not include the alt attribute to specify the alternate text in the control rendering. Set the <see cref="P:System.Web.UI.WebControls.Image.GenerateEmptyAlternateText" /> property to true to always include the alternate text attribute in rendered output for the <see cref="T:System.Web.UI.WebControls.Image" /> control.</para>
+          <para>The XHTML document type definition requires the alt attribute on image controls. However, accessibility best practices recommend that image controls that do not convey information relevant to the context of the Web page should not specify an alt attribute. You can meet both XHTML and accessibility requirements by setting the <see cref="P:System.Web.UI.WebControls.Image.GenerateEmptyAlternateText" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control generates an alternate text attribute for an empty string value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImageAlign">
@@ -195,9 +330,107 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ImageAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Image.ImageAlign" /> property to specify or determine the alignment of the image in relation to other elements on the Web page. The following table lists the possible alignments.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Alignment </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet</para>
+              </term>
+              <description>
+                <para>The alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Left </para>
+              </term>
+              <description>
+                <para>The image is aligned on the left edge of the Web page with text wrapping on the right. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Right </para>
+              </term>
+              <description>
+                <para>The image is aligned on the right edge of the Web page with text wrapping on the left. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Baseline </para>
+              </term>
+              <description>
+                <para>The lower edge of the image is aligned with the lower edge of the first line of text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Top </para>
+              </term>
+              <description>
+                <para>The upper edge of the image is aligned with the upper edge of the highest element on the same line. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Middle </para>
+              </term>
+              <description>
+                <para>The middle of the image is aligned with the lower edge of the first line of text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Bottom </para>
+              </term>
+              <description>
+                <para>The lower edge of the image is aligned with the lower edge of the first line of text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AbsBottom </para>
+              </term>
+              <description>
+                <para>The lower edge of the image is aligned with the lower edge of the largest element on the same line. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AbsMiddle </para>
+              </term>
+              <description>
+                <para>The middle of the image is aligned with the middle of the largest element on the same line. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TextTop </para>
+              </term>
+              <description>
+                <para>The upper edge of the image is aligned with the upper edge of the highest text on the same line. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of the <see cref="T:System.Web.UI.WebControls.Image" /> control in relation to other elements on the Web page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,9 +450,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property to specify the URL of an image to display in the <see cref="T:System.Web.UI.WebControls.Image" /> control. You can use a relative or an absolute URL. A relative URL relates the location of the image to the location of the Web page without specifying a complete path on the server. The path is relative to the location of the Web page. This makes it easier to move the entire site to another directory on the server without updating the code. An absolute URL provides the complete path, so moving the site to another directory requires that you update the code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL that provides the path to an image to display in the <see cref="T:System.Web.UI.WebControls.Image" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,9 +489,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Image.RenderContents(System.Web.UI.HtmlTextWriter)" /> method is primarily used by control developers. The <see cref="T:System.Web.UI.WebControls.Image" /> control implements the <see cref="M:System.Web.UI.WebControls.Image.RenderContents(System.Web.UI.HtmlTextWriter)" /> method to skip rendering of any child controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the image control contents to the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDependency" FullName="System.Data.SqlClient.SqlDependency">
   <TypeSignature Language="C#" Value="public sealed class SqlDependency" />
   <AssemblyInfo>
@@ -9,8 +10,73 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Data.SqlClient.SqlDependency" /> is ideal for caching scenarios, where your ASP.NET application or middle-tier service needs to keep certain information cached in memory. <see cref="T:System.Data.SqlClient.SqlDependency" /> allows you to receive notifications when the original data in the database changes so that the cache can be refreshed.</para>
+      <para>To set up a dependency, you need to associate a <see cref="T:System.Data.SqlClient.SqlDependency" /> object to one or more <see cref="T:System.Data.SqlClient.SqlCommand" /> objects. To receive notifications, you need to subscribe to the <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" /> event. For more information about the requirements for creating queries for notifications, see "Creating a Query for Notification" in SQL Server Books Online.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Data.SqlClient.SqlDependency" /> was designed to be used in ASP.NET or middle-tier services where there is a relatively small number of servers having dependencies active against the database. It was not designed for use in client applications, where hundreds or thousands of client computers would have <see cref="T:System.Data.SqlClient.SqlDependency" /> objects set up for a single database server. If you are developing an application where you need reliable sub-second notifications when data changes, review the sections Planning an Efficient Query Notifications Strategy and Alternatives to Query Notifications in the <see cref="http://go.microsoft.com/fwlink/?LinkId=211984">Planning for Notifications</see> topic in SQL Server Books Online.</para>
+      </block>
+      <para>For more information, see <format type="text/html"><a href="0f0ba1a1-3180-4af8-87f7-c795dc8f8f55">Using Query Notifications</a></format> and "Building Notification Solutions" in SQL Server Books Online.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" /> event may be generated on a different thread from the thread that initiated command execution. </para>
+      </block>
+      <para>Query notifications are supported only for SELECT statements that meet a list of specific requirements. The following table provides links to the Service Broker and Query Notifications documentation in SQL Server Books Online. </para>
+      <para>SQL Server Books Online</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms181122.aspx">Creating a Query for Notification</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms166059.aspx">Security Considerations for Service Broker</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/bb522911.aspx">Security and Protection (Service Broker)</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms172604.aspx">Security Considerations for Notifications Services</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms188311.aspx">Query Notification Permissions</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms166028.aspx">International Considerations for Service Broker</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/bb522899.aspx">Solution Design Considerations (Service Broker)</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/ms166100.aspx">Service Broker Developer InfoCenter</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://msdn.microsoft.com/library/bb522908.aspx">Developer's Guide (Service Broker)</see>
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.SqlClient.SqlDependency" /> object represents a query notification dependency between an application and an instance of SQL Server. An application can create a <see cref="T:System.Data.SqlClient.SqlDependency" /> object and register to receive notifications via the <see cref="T:System.Data.SqlClient.OnChangeEventHandler" /> event handler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +87,63 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor initializes the <see cref="T:System.Data.SqlClient.SqlDependency" /> object using the default Service Broker service name and time-out. At some point after construction, you must use the <see cref="M:System.Data.SqlClient.SqlDependency.AddCommandDependency(System.Data.SqlClient.SqlCommand)" /> method to associate one or more commands to this <see cref="T:System.Data.SqlClient.SqlDependency" /> object.</para>
+          <para>Query notifications are supported only for SELECT statements that meet a list of specific requirements. The following table provides links to the Service Broker and Query Notifications documentation in SQL Server Books Online. </para>
+          <para>SQL Server Books Online</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms181122.aspx">Creating a Query for Notification</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166059.aspx">Security Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522911.aspx">Security and Protection (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms172604.aspx">Security Considerations for Notifications Services</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms188311.aspx">Query Notification Permissions</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166028.aspx">International Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522899.aspx">Solution Design Considerations (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166100.aspx">Service Broker Developer InfoCenter</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522908.aspx">Developer's Guide (Service Broker)</see>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.SqlClient.SqlDependency" /> class with the default settings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -35,9 +156,65 @@
         <Parameter Name="command" Type="System.Data.SqlClient.SqlCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internally, this constructor creates an instance of the <see cref="T:System.Data.Sql.SqlNotificationRequest" /> class, and binds it to a <see cref="T:System.Data.SqlClient.SqlCommand" /> object.</para>
+          <para>Query notifications are supported only for SELECT statements that meet a list of specific requirements. The following table provides links to the Service Broker and Query Notifications documentation in SQL Server Books Online. </para>
+          <para>SQL Server Books Online</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms181122.aspx">Creating a Query for Notification</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166059.aspx">Security Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522911.aspx">Security and Protection (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms172604.aspx">Security Considerations for Notifications Services</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms188311.aspx">Query Notification Permissions</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166028.aspx">International Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522899.aspx">Solution Design Considerations (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166100.aspx">Service Broker Developer InfoCenter</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522908.aspx">Developer's Guide (Service Broker)</see>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.SqlClient.SqlDependency" /> class and associates it with the <see cref="T:System.Data.SqlClient.SqlCommand" /> parameter.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlCommand" /> object to associate with this <see cref="T:System.Data.SqlClient.SqlDependency" /> object. The constructor will set up a <see cref="T:System.Data.Sql.SqlNotificationRequest" /> object and bind it to the command. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -52,11 +229,68 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Query notifications are supported only for SELECT statements that meet a list of specific requirements. The following table provides links to the Service Broker and Query Notifications documentation in SQL Server Books Online. </para>
+          <para>SQL Server Books Online</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms181122.aspx">Creating a Query for Notification</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166059.aspx">Security Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522911.aspx">Security and Protection (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms172604.aspx">Security Considerations for Notifications Services</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms188311.aspx">Query Notification Permissions</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166028.aspx">International Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522899.aspx">Solution Design Considerations (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166100.aspx">Service Broker Developer InfoCenter</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522908.aspx">Developer's Guide (Service Broker)</see>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.SqlClient.SqlDependency" /> class, associates it with the <see cref="T:System.Data.SqlClient.SqlCommand" /> parameter, and specifies notification options and a time-out value.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlCommand" /> object to associate with this <see cref="T:System.Data.SqlClient.SqlDependency" /> object. The constructor sets up a <see cref="T:System.Data.Sql.SqlNotificationRequest" /> object and bind it to the command.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The notification request options to be used by this dependency.  <paramref name="null" /> to use the default service. </param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time-out for this notification in seconds. The default is 0, indicating that the server's time-out should be used.</param>
       </Docs>
     </Member>
     <Member MemberName="AddCommandDependency">
@@ -72,9 +306,64 @@
         <Parameter Name="command" Type="System.Data.SqlClient.SqlCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Query notifications are supported only for SELECT statements that meet a list of specific requirements. The following table provides links to the Service Broker and Query Notifications documentation in SQL Server Books Online. </para>
+          <para>SQL Server Books Online</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms181122.aspx">Creating a Query for Notification</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166059.aspx">Security Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522911.aspx">Security and Protection (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms172604.aspx">Security Considerations for Notifications Services</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms188311.aspx">Query Notification Permissions</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166028.aspx">International Considerations for Service Broker</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522899.aspx">Solution Design Considerations (Service Broker)</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/ms166100.aspx">Service Broker Developer InfoCenter</see>
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/bb522908.aspx">Developer's Guide (Service Broker)</see>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates a <see cref="T:System.Data.SqlClient.SqlCommand" /> object with this <see cref="T:System.Data.SqlClient.SqlDependency" /> instance.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlCommand" /> object containing a statement that is valid for notifications. </param>
       </Docs>
     </Member>
     <Member MemberName="HasChanges">
@@ -87,9 +376,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are not using the <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" /> event, you can check the <see cref="P:System.Data.SqlClient.SqlDependency.HasChanges" /> property to determine if the query results have changed.</para>
+          <para>The <see cref="P:System.Data.SqlClient.SqlDependency.HasChanges" /> property does not necessarily imply a change in the data. Other circumstances, such as time-out expired and failure to set the notification request, also generate a change event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether one of the result sets associated with the dependency has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -102,9 +398,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlDependency.Id" /> property is used to uniquely identify a given <see cref="T:System.Data.SqlClient.SqlDependency" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that uniquely identifies this instance of the <see cref="T:System.Data.SqlClient.SqlDependency" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnChange">
@@ -117,8 +419,16 @@
         <ReturnType>System.Data.SqlClient.OnChangeEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" /> occurs when the results for the associated command change. If you are not using <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" />, you can check the <see cref="P:System.Data.SqlClient.SqlDependency.HasChanges" /> property to determine whether the query results have changed.</para>
+          <para>The <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" /> event does not necessarily imply a change in the data. Other circumstances, such as time-out expired and failure to set the notification request, also generate <see cref="E:System.Data.SqlClient.SqlDependency.OnChange" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a notification is received for any of the commands associated with this <see cref="T:System.Data.SqlClient.SqlDependency" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -134,10 +444,21 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method starts the listener for the <see cref="T:System.AppDomain" /> for receiving dependency notifications from the instance of ssNoVersion specified by the <paramref name="connectionString" /> parameter. This method may be called more than once with different connection strings for multiple servers.</para>
+          <para>For additional remarks, see <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the listener for receiving dependency change notifications from the instance of SQL Server specified by the connection string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener initialized successfully; false if a compatible listener already exists.</para>
+        </returns>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string for the instance of ssNoVersion from which to obtain change notifications.</param>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -154,11 +475,24 @@
         <Parameter Name="queue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <param name="queue">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method starts the listener for the <see cref="T:System.AppDomain" /> for receiving dependency notifications from the instance of SQL Server specified by the <paramref name="connectionString" /> parameter. This method may be called more than once with different connection strings for multiple servers.</para>
+          <para>If no queue name is specified, <see cref="T:System.Data.SqlClient.SqlDependency" /> creates a temporary queue and service in the server that is used for the entire process, even if the process involves more than one <see cref="T:System.AppDomain" />. The queue and service are automatically removed upon application shutdown.</para>
+          <para>For additional remarks, see <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the listener for receiving dependency change notifications from the instance of SQL Server specified by the connection string using the specified SQL Server Service Broker queue.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener initialized successfully; false if a compatible listener already exists.</para>
+        </returns>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string for the instance of SQL Server from which to obtain change notifications.</param>
+        <param name="queue">
+          <attribution license="cc4" from="Microsoft" modified="false" />An existing SQL Server Service Broker queue to be used. If null, the default queue is used.</param>
       </Docs>
     </Member>
     <Member MemberName="Stop">
@@ -174,10 +508,20 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> method must be called for each <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call. A given listener only shuts down fully when it receives the same number of <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> requests as <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops a listener for a connection specified in a previous <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener was completely stopped; false if the <see cref="T:System.AppDomain" /> was unbound from the listener, but there are is at least one other <see cref="T:System.AppDomain" /> using the same listener.</para>
+        </returns>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />Connection string for the instance of SQL Server that was used in a previous <see cref="M:System.Data.SqlClient.SqlDependency.Start(System.String)" /> call.</param>
       </Docs>
     </Member>
     <Member MemberName="Stop">
@@ -194,11 +538,22 @@
         <Parameter Name="queue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <param name="queue">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> method must be called for each <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call. A given listener only shuts down fully when it receives the same number of <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> requests as <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops a listener for a connection specified in a previous <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener was completely stopped; false if the <see cref="T:System.AppDomain" /> was unbound from the listener, but there is at least one other <see cref="T:System.AppDomain" /> using the same listener.</para>
+        </returns>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />Connection string for the instance of SQL Server that was used in a previous <see cref="M:System.Data.SqlClient.SqlDependency.Start(System.String,System.String)" /> call.</param>
+        <param name="queue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SQL Server Service Broker queue that was used in a previous <see cref="M:System.Data.SqlClient.SqlDependency.Start(System.String,System.String)" /> call.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WizardStepType" FullName="System.Web.UI.WebControls.WizardStepType">
   <TypeSignature Language="C#" Value="public enum WizardStepType" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the types of navigation UI that can be displayed for a step in a <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Auto">
@@ -20,8 +24,11 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The navigation UI that is rendered for the step is determined automatically by the order in which the step is declared.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The step is the last one to appear. No navigation buttons are rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +58,11 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The step is the final data collection step. <ui>Finish</ui> and <ui>Previous</ui> buttons are rendered for navigation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +75,11 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The step is the first one to appear. A <ui>Next</ui> button is rendered but a <ui>Previous</ui> button is not rendered for this step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +92,11 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The step is any step between the Start and the Finish steps. <ui>Previous</ui> and <ui>Next</ui> buttons are rendered for navigation. This step type is useful for overriding the <see cref="F:System.Web.UI.WebControls.WizardStepType.Auto" /> step type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

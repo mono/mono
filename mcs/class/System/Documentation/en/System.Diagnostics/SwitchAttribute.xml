@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SwitchAttribute" FullName="System.Diagnostics.SwitchAttribute">
   <TypeSignature Language="C#" Value="public sealed class SwitchAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchAttribute extends System.Attribute" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Diagnostics.SwitchAttribute" /> attribute can be used on an assembly, class, constructor, method, property, or event.</para>
+      <para>The <see cref="T:System.Diagnostics.SwitchAttribute" /> attribute can be used by tools that inspect an assembly for configuration settings. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a switch used in an assembly, class, or member.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,10 +44,18 @@
         <Parameter Name="switchType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="switchName">To be added.</param>
-        <param name="switchType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="switchName" /> parameter should match the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property of the switch.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SwitchAttribute" /> class, specifying the name and the type of the switch. </para>
+        </summary>
+        <param name="switchName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The display name of the switch.</param>
+        <param name="switchType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the switch.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAll">
@@ -57,10 +73,17 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all switch attributes for the specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the switch attributes for the assembly.</para>
+        </returns>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to check for switch attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="SwitchDescription">
@@ -75,9 +98,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.SwitchAttribute.SwitchDescription" /> property typically indicates the function of the switch. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the description of the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchName">
@@ -92,9 +121,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.SwitchAttribute.SwitchName" /> property should match the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property of the switch.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display name of the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchType">
@@ -109,9 +144,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the switch.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

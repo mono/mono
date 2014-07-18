@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XPathBinder" FullName="System.Web.UI.XPathBinder">
   <TypeSignature Language="C#" Value="public sealed class XPathBinder" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the overloaded <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String)" /> method of this class to bind to the result of an XPath expression executed against an object that implements the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface, such as an <see cref="T:System.Xml.XmlNode" />. You can use the <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String)" /> method to retrieve the results of an XPath expression executed against an <see cref="T:System.Xml.XPath.IXPathNavigable" /> object as an <see cref="T:System.Collections.IEnumerable" /> list of nodes. This list of nodes can be enumerated directly or assigned to the DataSource property of a list control, such as a <see cref="T:System.Web.UI.WebControls.Repeater" /> or <see cref="T:System.Web.UI.WebControls.DataList" />.</para>
+      <para>You can use a simplified version of data-binding syntax when using the <see cref="T:System.Web.UI.XPathBinder" /> methods declaratively. Instead of calling XPathBinder.Eval(Container.DataItem, <paramref name="xpath" />) you can use XPath(<paramref name="xpath" />). Similarly, instead of calling XPathBinder.Select(Container.DataItem, <paramref name="xpath" />), you can use XPathSelect(<paramref name="xpath" />) to retrieve an <see cref="T:System.Collections.IEnumerable" /> set of nodes. When using this simplified syntax, the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String)" /> and <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String)" /> methods assume a default Container.DataItem context object.</para>
+      <para>For more information about data binding to ASP.NET server controls, see <format type="text/html"><a href="676BEB1D-DDFA-4153-BBA8-3C86DCB7CECA">Data-Binding Expression Syntax</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for rapid application development (RAD) designers to parse data-binding expressions that use XPath expressions. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Eval">
@@ -25,12 +34,23 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String)" /> method declaratively if you want to simplify the casting of an XML node to a text string to be displayed on a browser. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the data-binding expression.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem. If you are binding against the page, the <paramref name="container" /> parameter should be Page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates XPath data-binding expressions at run time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that results from the evaluation of the data-binding expression.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,13 +68,26 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To learn more about format strings in the .NET Framework, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Overview</a></format>.</para>
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String)" /> method declaratively if you want to simplify the casting of an XML node to a text string to be displayed in a browser. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the data-binding expression.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem. If you are binding against the page, the <paramref name="container" /> parameter should be Page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates XPath data-binding expressions at run time and formats the result as text to be displayed in the requesting browser.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string, similar to those used by <see cref="M:System.String.Format(System.String,System.Object)" />, that converts the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object (which results from the evaluation of the data-binding expression) to a <see cref="T:System.String" /> that can be displayed by the requesting browser. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +108,24 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String,System.Xml.IXmlNamespaceResolver)" /> method declaratively if you want to simplify the casting of an XML node to a text string to be displayed in a browser. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the data-binding expression. The data-binding expression includes the XPath expression and an <see cref="T:System.Xml.IXmlNamespaceResolver" /> object to resolve the namespace reference.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem. If you are binding against the page, the <paramref name="container" /> parameter should be Page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates XPath data-binding expressions at run time and formats the result as text to be displayed in the requesting browser, using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes in the XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> that results from the evaluation of the data-binding expression.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IXmlNamespaceResolver" /> object used to resolve namespace prefixes in the XPath expression.</param>
       </Docs>
     </Member>
     <Member MemberName="Eval">
@@ -99,13 +144,26 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method declaratively if you want to simplify the casting of an XML node to a text string to be displayed in a browser. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the data-binding expression. The data-binding expression includes the XPath expression and an <see cref="T:System.Xml.IXmlNamespaceResolver" /> object to resolve the namespace reference.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem. If you are binding against the page, the <paramref name="container" /> parameter should be Page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates XPath data-binding expressions at run time and formats the result as text to be displayed in the requesting browser, using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes in the XPath expression..</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string, similar to those used by <see cref="M:System.String.Format(System.String,System.Object)" />, that converts the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object (which results from the evaluation of the data-binding expression) to a <see cref="T:System.String" /> that can be displayed by the requesting browser.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IXmlNamespaceResolver" /> object used to resolve namespace prefixes in the XPath expression.</param>
       </Docs>
     </Member>
     <Member MemberName="Select">
@@ -119,12 +177,23 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String)" /> method declaratively if you want to simplify the retrieval of a set of nodes using an XPath query. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the XPath query.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses an XPath data-binding expression at run time to return a list of nodes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -145,12 +214,24 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
         <param name="xpath">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String,System.Xml.IXmlNamespaceResolver)" /> method declaratively if you want to simplify the retrieval of a set of nodes using an XPath query. To do so, you must place the &lt;%# and %&gt; tags, which are also used in standard ASP.NET data binding, around the XPath query and an <see cref="T:System.Xml.IXmlNamespaceResolver" /> object to resolve the namespace reference.</para>
+          <para>For any of the list ASP.NET server controls, such as <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, the <paramref name="container" /> parameter should be Container.DataItem.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses an XPath data-binding expression at run time to return a list of nodes, using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes in the XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. This must be a valid object identifier in the page's specified language.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IXmlNamespaceResolver" /> object used to resolve namespace prefixes in the XPath expression.</param>
       </Docs>
     </Member>
   </Members>

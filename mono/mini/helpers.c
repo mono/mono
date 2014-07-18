@@ -66,7 +66,11 @@ opnames[] = {
 #endif /* DISABLE_LOGGING */
 
 #if defined(__i386__) || defined(__x86_64__)
+#ifndef TARGET_ARM64
 #define emit_debug_info  TRUE
+#else
+#define emit_debug_info  FALSE
+#endif
 #else
 #define emit_debug_info  FALSE
 #endif
@@ -210,8 +214,14 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #else
 #if defined(sparc) && !defined(__GNUC__)
 #define DIS_CMD "dis"
-#elif defined(__i386__) || defined(__x86_64__)
+#elif defined(TARGET_X86)
 #define DIS_CMD "objdump -l -d"
+#elif defined(TARGET_AMD64)
+  #if defined(HOST_WIN32)
+  #define DIS_CMD "x86_64-w64-mingw32-objdump.exe -M x86-64 -d"
+  #else
+  #define DIS_CMD "objdump -l -d"
+  #endif
 #else
 #define DIS_CMD "objdump -d"
 #endif
@@ -234,6 +244,12 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #elif defined (TARGET_ARM)
 #  if defined (__APPLE__)
 #    define AS_CMD "as -arch arm"
+#  else
+#    define AS_CMD "as -gstabs"
+#  endif
+#elif defined (TARGET_ARM64)
+#  if defined (__APPLE__)
+#    define AS_CMD "clang -c -arch arm64 -g -x assembler"
 #  else
 #    define AS_CMD "as -gstabs"
 #  endif
@@ -271,11 +287,11 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	unused = system (cmd);
 	g_free (cmd);
 #endif
-	
+
 	cmd = g_strdup_printf (ARCH_PREFIX DIS_CMD " %s %s", objdump_args, o_file);
 	unused = system (cmd);
 	g_free (cmd);
-	
+
 #ifndef HOST_WIN32
 	unlink (o_file);
 	unlink (as_file);

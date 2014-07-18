@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GlobalProxySelection" FullName="System.Net.GlobalProxySelection" FullNameSP="System_Net_GlobalProxySelection" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public GlobalProxySelection extends System.Object" />
   <TypeSignature Language="C#" Value="public class GlobalProxySelection" />
@@ -22,20 +23,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Contains a global
-      default proxy instance for all HTTP requests.</para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.Net.GlobalProxySelection" />
-stores the proxy settings for the default proxy that <see cref="T:System.Net.WebRequest" /> instances use to contact Internet sites beyond the
-local network. The default proxy settings are initialized from a global or
-application configuration file, and can be overridden for individual requests,
-or disabled by setting the <see cref="P:System.Net.HttpWebRequest.Proxy" qualify="true" /> property to the object returned by the <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" />
-method.</para>
-      <para>The proxy settings stored in <see cref="T:System.Net.GlobalProxySelection" /> are used by a <see cref="T:System.Net.HttpWebRequest" /> instance
-if its <see cref="P:System.Net.HttpWebRequest.Proxy" /> property is not set.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.GlobalProxySelection" /> stores the proxy settings for the default proxy that <see cref="T:System.Net.WebRequest" /> instances use to contact Internet sites beyond the local network. The default proxy setting is initialized from the global or application configuration file, and can be overridden for individual requests or disabled by setting the <see cref="P:System.Net.HttpWebRequest.Proxy" /> property to the result of the <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" /> method.</para>
+      <para>The proxy settings stored in <see cref="T:System.Net.GlobalProxySelection" /> are used by any <see cref="T:System.Net.WebRequest" /> derived objects that support proxies and have their <see cref="P:System.Net.WebRequest.Proxy" /> property value set to null (the default). Proxies are currently supported by <see cref="T:System.Net.FtpWebRequest" />, <see cref="T:System.Net.HttpWebRequest" />, and <see cref="T:System.Net.WebClient" />.</para>
+      <para>Note   Changes to the <see cref="T:System.Net.GlobalProxySelection" /> after a request is made are not reflected in a <see cref="T:System.Net.WebRequest" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a global default proxy instance for all HTTP requests.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -51,8 +48,11 @@ if its <see cref="P:System.Net.HttpWebRequest.Proxy" /> property is not set.</pa
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Constructs a new instance of the <see cref="T:System.Net.GlobalProxySelection" /> class.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.GlobalProxySelection" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -71,16 +71,18 @@ if its <see cref="P:System.Net.HttpWebRequest.Proxy" /> property is not set.</pa
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" /> method returns a blank <see cref="T:System.Net.IWebProxy" /> instance to indicate that no proxy is used to access an Internet resource.</para>
+        </remarks>
         <summary>
-          <para> Returns an empty proxy object.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty proxy instance.</para>
         </summary>
         <returns>
-          <para> A <see cref="T:System.Net.IWebProxy" /> that contains no information.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IWebProxy" /> that contains no information.</para>
         </returns>
-        <remarks>
-          <para>The <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" /> method returns an empty <see cref="T:System.Net.IWebProxy" />
-instance indicating that no proxy is used to access an Internet resource. </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -99,17 +101,21 @@ instance indicating that no proxy is used to access an Internet resource. </para
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the global proxy information.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Net.IWebProxy" />
 that identifies the proxy server used by the <see cref="M:System.Net.HttpWebRequest.GetResponse" qualify="true" /> method if no proxy information is
 specified. </para>
         </value>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.Security.SecurityException">The caller does not have permission for the requested operation.</exception>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires full <see cref="T:System.Net.WebPermission" /> access. See <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.GlobalProxySelection.Select" /> property sets the proxy that all <see cref="T:System.Net.WebRequest" /> instances use if the request supports proxies and no proxy is set explicitly using the <see cref="P:System.Net.HttpWebRequest.Proxy" /> property. Proxies are currently supported by <see cref="T:System.Net.FtpWebRequest" /> and <see cref="T:System.Net.HttpWebRequest" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the global HTTP proxy.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

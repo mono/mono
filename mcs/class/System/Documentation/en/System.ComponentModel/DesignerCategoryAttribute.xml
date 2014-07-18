@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerCategoryAttribute" FullName="System.ComponentModel.DesignerCategoryAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DesignerCategoryAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DesignerCategoryAttribute extends System.Attribute" />
@@ -20,8 +21,61 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A visual designer can use a designer category to inform a development environment of the type of designer that will be implemented. If no designer category is provided on a class, a development environment may or may not allow the class to be designed. A category can be created for any name.</para>
+      <para>When you mark a class with this attribute, it is set to a constant member. When you want to check the value of this attribute in your code, you must specify the constant member. The Description column in the table below lists the constant member that each value is set to.</para>
+      <para>The <see cref="T:System.ComponentModel.DesignerCategoryAttribute" /> class defines the following common categories: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Category </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Component </para>
+          </term>
+          <description>
+            <para>Designers that are used with components. The attribute is set to the constant member <see cref="F:System.ComponentModel.DesignerCategoryAttribute.Component" />. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Form </para>
+          </term>
+          <description>
+            <para>Designers that are used with forms. The attribute is set to the constant member <see cref="F:System.ComponentModel.DesignerCategoryAttribute.Form" />. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Designer </para>
+          </term>
+          <description>
+            <para>Designers that are used with designers. The attribute is set to the constant member <see cref="F:System.ComponentModel.DesignerCategoryAttribute.Generic" />. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Empty String ("") </para>
+          </term>
+          <description>
+            <para>This is the default category. </para>
+          </description>
+        </item>
+      </list>
+      <para>For more information, see <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the designer for a class belongs to a certain category.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +90,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerCategoryAttribute" /> class with an empty string ("").</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +111,13 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DesignerCategoryAttribute" /> class with the given category name.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the category. </param>
       </Docs>
     </Member>
     <Member MemberName="Category">
@@ -72,9 +133,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -91,8 +155,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a component marked with this category use a component designer. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -109,8 +176,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a component marked with this category cannot use a visual designer. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -129,10 +202,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the value of the given object is equal to the current <see cref="T:System.ComponentModel.DesignOnlyAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the given object is equal to that of the current; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test the value equality of. </param>
       </Docs>
     </Member>
     <Member MemberName="Form">
@@ -149,8 +229,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a component marked with this category use a form designer. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Generic">
@@ -167,8 +250,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a component marked with this category use a generic designer. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -185,9 +271,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -204,9 +296,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if this attribute is the default.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is the default value for this attribute class; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeId">
@@ -222,9 +320,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for this attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

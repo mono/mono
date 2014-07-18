@@ -5,7 +5,7 @@
 //	Geoff Norton (gnorton@customerdna.com)
 //
 // (c) 2004 Geoff Norton
-
+// Copyright 2014 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,11 +37,98 @@ using System.Threading;
 
 namespace System.IO {
 
+        [Flags]
+        enum EventFlags : ushort {
+                Add         = 0x0001,
+                Delete      = 0x0002,
+                Enable      = 0x0004,
+                Disable     = 0x0008,
+                OneShot     = 0x0010,
+                Clear       = 0x0020,
+                Receipt     = 0x0040,
+                Dispatch    = 0x0080,
+
+                Flag0       = 0x1000,
+                Flag1       = 0x2000,
+                SystemFlags = unchecked (0xf000),
+                        
+                // Return values.
+                EOF         = 0x8000,
+                Error       = 0x4000,
+        }
+        
+        enum EventFilter : short {
+                Read = -1,
+                Write = -2,
+                Aio = -3,
+                Vnode = -4,
+                Proc = -5,
+                Signal = -6,
+                Timer = -7,
+                MachPort = -8,
+                FS = -9,
+                User = -10,
+                VM = -11
+        }
+
+	enum FilterFlags : uint {
+                ReadPoll          = EventFlags.Flag0,
+                ReadOutOfBand     = EventFlags.Flag1,
+                ReadLowWaterMark  = 0x00000001,
+
+                WriteLowWaterMark = ReadLowWaterMark,
+
+                NoteTrigger       = 0x01000000,
+                NoteFFNop         = 0x00000000,
+                NoteFFAnd         = 0x40000000,
+                NoteFFOr          = 0x80000000,
+                NoteFFCopy        = 0xc0000000,
+                NoteFFCtrlMask    = 0xc0000000,
+                NoteFFlagsMask    = 0x00ffffff,
+                                  
+                VNodeDelete       = 0x00000001,
+                VNodeWrite        = 0x00000002,
+                VNodeExtend       = 0x00000004,
+                VNodeAttrib       = 0x00000008,
+                VNodeLink         = 0x00000010,
+                VNodeRename       = 0x00000020,
+                VNodeRevoke       = 0x00000040,
+                VNodeNone         = 0x00000080,
+                                  
+                ProcExit          = 0x80000000,
+                ProcFork          = 0x40000000,
+                ProcExec          = 0x20000000,
+                ProcReap          = 0x10000000,
+                ProcSignal        = 0x08000000,
+                ProcExitStatus    = 0x04000000,
+                ProcResourceEnd   = 0x02000000,
+
+                // iOS only
+                ProcAppactive     = 0x00800000,
+                ProcAppBackground = 0x00400000,
+                ProcAppNonUI      = 0x00200000,
+                ProcAppInactive   = 0x00100000,
+                ProcAppAllStates  = 0x00f00000,
+
+                // Masks
+                ProcPDataMask     = 0x000fffff,
+                ProcControlMask   = 0xfff00000,
+
+                VMPressure        = 0x80000000,
+                VMPressureTerminate = 0x40000000,
+                VMPressureSuddenTerminate = 0x20000000,
+                VMError           = 0x10000000,
+                TimerSeconds      =    0x00000001,
+                TimerMicroSeconds =   0x00000002,
+                TimerNanoSeconds  =   0x00000004,
+                TimerAbsolute     =   0x00000008,
+        }
+			
 	struct kevent : IDisposable {
 		public int ident;
-		public short filter;
-		public ushort flags;
-		public uint fflags;
+		public EventFilter filter;
+		public EventFlags flags;
+		public FilterFlags fflags;
 		public int data;
 		public IntPtr udata;
 
@@ -166,9 +253,16 @@ namespace System.IO {
 			nullts.tv_usec = 0;
 			if (fd > 0) {
 				ev.ident = fd;
-				ev.filter = -4;
-				ev.flags = 1 | 4 | 20;
-				ev.fflags = 20 | 2 | 1 | 8;
+				ev.filter = EventFilter.Vnode;
+				ev.flags = EventFlags.Add | EventFlags.Enable | EventFlags.OneShot;
+				ev.fflags = // 20 | 2 | 1 | 8;
+					FilterFlags.VNodeDelete |
+					FilterFlags.VNodeWrite |
+					FilterFlags.VNodeAttrib |
+					// The following two values are the equivalent of the original value "20", but we suspect the original author meant
+					// 0x20, we will review later with some test cases
+					FilterFlags.VNodeLink |
+					FilterFlags.VNodeExtend;
 				ev.data = 0;
 				ev.udata = Marshal.StringToHGlobalAuto (data.Directory);
 				kevent outev = new kevent();

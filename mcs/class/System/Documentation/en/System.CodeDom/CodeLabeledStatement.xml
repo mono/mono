@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeLabeledStatement" FullName="System.CodeDom.CodeLabeledStatement">
   <TypeSignature Language="C#" Value="public class CodeLabeledStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeLabeledStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeLabeledStatement" /> represents a label and optionally, an associated statement. A label can be used to indicate the target of a <see cref="T:System.CodeDom.CodeGotoStatement" />.</para>
+      <para>The <see cref="P:System.CodeDom.CodeLabeledStatement.Statement" /> property is optional. To create only a label, leave the <see cref="P:System.CodeDom.CodeLabeledStatement.Statement" /> property uninitialized.</para>
+      <block subset="none" type="note">
+        <para>Not all languages support goto statements and labels, so you should test wheter a code generator supports goto statements and labels by calling the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method with the <see cref="F:System.CodeDom.Compiler.GeneratorSupport.GotoStatements" /> flag.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a labeled statement or a stand-alone label.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +51,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeLabeledStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +72,13 @@
         <Parameter Name="label" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="label">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeLabeledStatement" /> class using the specified label name.</para>
+        </summary>
+        <param name="label">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the label. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,10 +96,15 @@
         <Parameter Name="statement" Type="System.CodeDom.CodeStatement" />
       </Parameters>
       <Docs>
-        <param name="label">To be added: an object of type 'string'</param>
-        <param name="statement">To be added: an object of type 'CodeStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeLabeledStatement" /> class using the specified label name and statement.</para>
+        </summary>
+        <param name="label">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the label. </param>
+        <param name="statement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatement" /> to associate with the label. </param>
       </Docs>
     </Member>
     <Member MemberName="Label">
@@ -98,9 +122,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the label.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Statement">
@@ -118,9 +145,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatement'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is not set, the <see cref="T:System.CodeDom.CodeLabeledStatement" /> represents only a label, rather than a labeled statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the optional associated statement.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

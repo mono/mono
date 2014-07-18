@@ -37,14 +37,17 @@ using Microsoft.Win32.SafeHandles;
 namespace Microsoft.Win32.SafeHandles
 {
 	public sealed class SafeMemoryMappedViewHandle : SafeBuffer {
-		internal SafeMemoryMappedViewHandle (IntPtr handle, long size) : base (true) {
-			this.handle = handle;
+		IntPtr mmap_handle;
+
+		internal SafeMemoryMappedViewHandle (IntPtr mmap_handle, IntPtr base_address, long size) : base (true) {
+			this.mmap_handle = mmap_handle;
+			this.handle = base_address;
 			Initialize ((ulong)size);
 		}
 
 		protected override bool ReleaseHandle () {
 			if (this.handle != (IntPtr) (-1))
-				return MemoryMapImpl.Unmap (this.handle, ByteLength);
+				return MemoryMapImpl.Unmap (this.mmap_handle);
 			throw new NotImplementedException ();
 		}
 	}

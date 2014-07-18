@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Application" FullName="System.Windows.Forms.Application">
   <TypeSignature Language="C#" Value="public sealed class Application" />
   <AssemblyInfo>
@@ -10,8 +11,38 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Application" /> class has methods to start and stop applications and threads, and to process Windows messages, as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.Run" /> starts an application message loop on the current thread and, optionally, makes a form visible. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.Exit" /> or <see cref="M:System.Windows.Forms.Application.ExitThread" /> stops a message loop. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.DoEvents" /> processes messages while your program is in a loop. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.AddMessageFilter(System.Windows.Forms.IMessageFilter)" /> adds a message filter to the application message pump to monitor Windows messages. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.IMessageFilter" /> lets you stop an event from being raised or perform special operations before invoking an event handler.</para>
+        </item>
+      </list>
+      <para>This class has <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> and <see cref="P:System.Windows.Forms.Application.CurrentInputLanguage" /> properties to get or set culture information for the current thread.</para>
+      <para>You cannot create an instance of this class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides static methods and properties to manage an application, such as methods to start and stop an application, to process Windows messages, and properties to get information about an application. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddMessageFilter">
@@ -24,9 +55,20 @@
         <Parameter Name="value" Type="System.Windows.Forms.IMessageFilter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a message filter to prevent specific events from being raised or to perform special operations for an event before it is passed to an event handler. Message filters are unique to a specific thread.</para>
+          <para>To prevent a message from being dispatched, the <paramref name="value" /> parameter instance that you pass to this method must override the <see cref="M:System.Windows.Forms.IMessageFilter.PreFilterMessage(System.Windows.Forms.Message@)" /> method with the code to handle the message. The method must return false.</para>
+          <block subset="none" type="note">
+            <para>Adding message filters to the message pump for an application can degrade performance.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a message filter to monitor Windows messages as they are routed to their destinations.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The implementation of the <see cref="T:System.Windows.Forms.IMessageFilter" /> interface you want to install. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +82,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns false if it is called from a <see cref="T:System.Windows.Forms.Control" /> being hosted within a Web browser. Thus, the <see cref="T:System.Windows.Forms.Control" /> cannot quit the <see cref="T:System.Windows.Forms.Application" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the caller can quit this application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,8 +104,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must attach the event handlers to the <see cref="M:System.Windows.Forms.Application.Exit" /> event to perform unhandled, required tasks before the application stops running. You can close files opened by this application, or dispose of objects that garbage collection did not reclaim.</para>
+          <para>Because this is a static event, you must detach any event handlers attached to this event in the <see cref="E:System.Windows.Forms.Application.ApplicationExit" /> event handler itself. If you do not detach these handlers, they will remain attached to the event and continue to consume memory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application is about to shut down.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -71,9 +126,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a path does not exist, one is created in the following format: </para>
+          <para>Base Path\<see cref="P:System.Windows.Forms.Application.CompanyName" />\<see cref="P:System.Windows.Forms.Application.ProductName" />\<see cref="P:System.Windows.Forms.Application.ProductVersion" /> </para>
+          <para>
+            <see cref="P:System.Windows.Forms.Application.ProductVersion" /> first looks to see if the assembly containing the main executable has the AssemblyInformationalVersion attribute on it. If this attribute exists, it is used for both <see cref="P:System.Windows.Forms.Application.ProductVersion" /> and <see cref="P:System.Windows.Forms.Application.CommonAppDataPath" />. If this attribute does not exist, both properties use the version of the executable file instead.</para>
+          <para>The path will be different depending on whether the Windows Forms application is deployed using ndptecclick. ndptecclick applications are stored in a per-user application cache in the C:\Documents and Settings\username directory. For more information, see <format type="text/html"><a href="be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">Accessing Local and Remote Data in ClickOnce Applications</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the application data that is shared among all users.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +152,16 @@
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the key does not exist, it is created in the following format: </para>
+          <para>LocalMachine\Software\<see cref="P:System.Windows.Forms.Application.CompanyName" />\<see cref="P:System.Windows.Forms.Application.ProductName" />\<see cref="P:System.Windows.Forms.Application.ProductVersion" /> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the registry key for the application data that is shared among all users.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,9 +175,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the company name associated with the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +194,12 @@
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the culture information for the current thread.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +213,12 @@
         <ReturnType>System.Windows.Forms.InputLanguage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current input language for the current thread.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,8 +233,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you run a Windows Form, it creates the new form, which then waits for events to handle. Each time the form handles an event, it processes all the code associated with that event. All other events wait in the queue. While your code handles the event, your application does not respond. For example, the window does not repaint if another window is dragged on top.</para>
+          <para>If you call <see cref="M:System.Windows.Forms.Application.DoEvents" /> in your code, your application can handle the other events. For example, if you have a form that adds data to a <see cref="T:System.Windows.Forms.ListBox" /> and add <see cref="M:System.Windows.Forms.Application.DoEvents" /> to your code, your form repaints when another window is dragged over it. If you remove <see cref="M:System.Windows.Forms.Application.DoEvents" /> from your code, your form will not repaint until the click event handler of the button is finished executing. For more information on messaging, see <format type="text/html"><a href="1486075f-1e06-4c9e-82c6-f948331db6d6">User Input in Windows Forms</a></format>.</para>
+          <para>Unlike Visual Basic 6.0, the <see cref="M:System.Windows.Forms.Application.DoEvents" /> method does not call the <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> method.</para>
+          <para>Typically, you use this method in a loop to process messages.</para>
+          <block subset="none" type="note">
+            <para>Calling this method causes the current thread to be suspended while all waiting window messages are processed. If a message causes an event to be triggered, then other areas of your application code may execute. This can cause your application to exhibit unexpected behaviors that are difficult to debug. If you perform operations or computations that take a long time, it is often preferable to perform those operations on a new thread. For more information about asynchronous programming, see <format type="text/html"><a href="c9b3501e-6bc6-40f9-8efd-4b6d9e39ccf0">Asynchronous Programming Overview</a></format>. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes all Windows messages currently in the message queue.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,8 +261,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables visual styles for the application. Visual styles are the colors, fonts, and other visual elements that form an operating system theme. Controls will draw with visual styles if the control and the operating system support it. To have an effect, <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> must be called before creating any controls in the application; typically, <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> is the first line in the Main function. A separate manifest is not required to enable visual styles when calling <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" />.</para>
+          <block subset="none" type="note">
+            <para>Prior to the .NET Framework 2.0, the FlatStyle property of some controls, such as controls that derive from <see cref="T:System.Windows.Forms.ButtonBase" />, had to be set to <see cref="F:System.Windows.Forms.FlatStyle.System" /> in order for the controls to be drawn with visual styles. In applications written with the .NET Framework 2.0, this is no longer necessary.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This method will have no effect for controls hosted in Internet Explorer.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables visual styles for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -191,8 +296,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application is about to enter a modal state. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExecutablePath">
@@ -202,9 +315,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the executable file that started the application, including the executable name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -219,8 +335,27 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Application.Exit" /> method stops all running message loops on all threads and closes all windows of the application. This method does not necessarily force the application to exit. The <see cref="M:System.Windows.Forms.Application.Exit" /> method is typically called from within a message loop, and forces <see cref="M:System.Windows.Forms.Application.Run" /> to return. To exit a message loop for the current thread only, call <see cref="M:System.Windows.Forms.Application.ExitThread" />.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.Exit" /> raises the following events and performs the associated conditional actions: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="E:System.Windows.Forms.Form.FormClosing" /> event is raised for every form represented by the <see cref="P:System.Windows.Forms.Application.OpenForms" /> property. This event can be canceled by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of their <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> parameter to true.</para>
+            </item>
+            <item>
+              <para>If one of more of the handlers cancels the event, then <see cref="M:System.Windows.Forms.Application.Exit" /> returns without further action. Otherwise, a <see cref="E:System.Windows.Forms.Form.FormClosed" /> event is raised for every open form, then all running message loops and forms are closed.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Application.Exit" /> method does not raise the <see cref="E:System.Windows.Forms.Form.Closed" /> and <see cref="E:System.Windows.Forms.Form.Closing" /> events, which are obsolete as of dnprdnlong. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs all message pumps that they must terminate, and then closes all application windows after the messages have been processed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,9 +380,13 @@
         <Parameter Name="e" Type="System.ComponentModel.CancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs all message pumps that they must terminate, and then closes all application windows after the messages have been processed.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Returns whether any <see cref="T:System.Windows.Forms.Form" /> within the application cancelled the exit.</param>
       </Docs>
     </Member>
     <Member MemberName="ExitThread">
@@ -258,8 +397,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to exit the message loop of the current thread. This method causes the call to <see cref="M:System.Windows.Forms.Application.Run" /> for the current thread to return. To exit the entire application, call <see cref="M:System.Windows.Forms.Application.Exit" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exits the message loop on the current thread and closes all windows on the thread.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,8 +442,18 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you have tasks that you must perform before the thread becomes idle, attach them to this event.</para>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+            <para />
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application finishes processing and is about to enter the idle state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -320,8 +475,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application is about to leave a modal state. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalUserAppDataPath">
@@ -331,9 +494,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local user is one whose user profile is stored on the system on which the user logged on. If a path does not exist, one is created in the following format: </para>
+          <para>Base Path\<see cref="P:System.Windows.Forms.Application.CompanyName" />\<see cref="P:System.Windows.Forms.Application.ProductName" />\<see cref="P:System.Windows.Forms.Application.ProductVersion" /> </para>
+          <para>A typical base path is C:\Documents and Settings\username\Local Settings\Application Data. This path will be different, however, if the Windows Forms application is deployed by using ndptecclick. ndptecclick creates its own application data directory that is isolated from all other applications. For more information, see <format type="text/html"><a href="be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">Accessing Local and Remote Data in ClickOnce Applications</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the application data of a local, non-roaming user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -347,9 +518,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When hosting Windows Forms in other environments, such as unmanaged applications, this property will always return false. Use <see cref="M:System.Windows.Forms.Application.RegisterMessageLoop(System.Windows.Forms.Application.MessageLoopCallback)" /> to instruct Windows Forms if the hosting environment still has an active message loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a message loop exists on this thread.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,9 +541,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method before calling any Microsoft.Win32 method that requires OLE. <see cref="M:System.Windows.Forms.Application.OleRequired" /> first checks to see if OLE has been initialized on the current thread. If not, it initializes the thread for OLE.</para>
+          <block subset="none" type="note">
+            <para>Unless a thread calls OLE methods directly, you do not need to call this method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes OLE on the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Threading.ApartmentState" /> values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -383,9 +572,19 @@
         <Parameter Name="t" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="t">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.Application.OnThreadException(System.Exception)" /> to raise an exception that will halt processing of the application.</para>
+          <para>The <see cref="T:System.Windows.Forms.Application" /> class has a <see cref="E:System.Windows.Forms.Application.ThreadException" /> event. You can attach an event handler to this event to do whatever custom processing you need for unhandled exceptions. If you do not attach an event handler, <see cref="M:System.Windows.Forms.Application.OnThreadException(System.Exception)" /> will execute the default behavior, which involves displaying a dialog box to inform the user that there has been an error. </para>
+          <para>
+            <see cref="M:System.Windows.Forms.Application.OnThreadException(System.Exception)" /> only implements default exception behavior for unhandled exceptions that occur on threads owned by Windows Forms. Unhandled exceptions on other threads are handled by the <see cref="E:System.AppDomain.UnhandledException" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Application.ThreadException" /> event. </para>
+        </summary>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Exception" /> that represents the exception that was thrown. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -399,10 +598,16 @@
         <ReturnType>System.Windows.Forms.FormCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Application.OpenForms" /> property represents a read-only collection of forms owned by the application. This collection can be searched by index position or by the <see cref="P:System.Windows.Forms.Control.Name" /> of the <see cref="T:System.Windows.Forms.Form" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of open forms owned by the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -415,9 +620,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ProductName is taken from the metadata of the assembly containing the main form of the current application. You can set it by setting <see cref="T:System.Reflection.AssemblyProductAttribute" /> inside of your assembly manifest. For more information, see <format type="text/html"><a href="8e40fab9-549d-4731-aec2-ffa47a382de0">Assembly Manifest</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the product name associated with this application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -431,9 +642,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number displays as major number.minor number.build number.private part number. You can set it explicitly by setting the assembly version within your assembly manifest. For more information, see <format type="text/html"><a href="8e40fab9-549d-4731-aec2-ffa47a382de0">Assembly Manifest</a></format>.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.Application.ProductVersion" /> first looks to see if the assembly containing the main executable has the AssemblyInformationalVersion attribute on it. If this attribute exists, it is used for both <see cref="P:System.Windows.Forms.Application.ProductVersion" /> and <see cref="P:System.Windows.Forms.Application.CommonAppDataPath" />. If this attribute does not exist, both properties use the version of the executable file instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the product version associated with this application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -458,9 +677,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used when hosting Windows Forms in another environment, such as an unmanaged application. You should call <see cref="M:System.Windows.Forms.Application.RaiseIdle(System.EventArgs)" /> when the hosting application enters an idle state. This enables some Windows Forms controls and components to do important background work while the user is not interacting with the application. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Application.Idle" /> event in hosted scenarios.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> objects to pass to the <see cref="E:System.Windows.Forms.Application.Idle" /> event.</param>
       </Docs>
     </Member>
     <Member MemberName="RegisterMessageLoop">
@@ -496,9 +722,16 @@
         <Parameter Name="value" Type="System.Windows.Forms.IMessageFilter" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can remove a message filter when you no longer want to capture Windows messages before they are dispatched.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a message filter from the message pump of the application.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The implementation of the <see cref="T:System.Windows.Forms.IMessageFilter" /> to remove from the application. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -512,10 +745,61 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are drawing a custom control, use this property to decide whether to draw the control with or without visual styles, so that its appearance is consistent with other controls in the application.</para>
+          <para>The following table shows the four conditions that must exist for <see cref="P:System.Windows.Forms.Application.RenderWithVisualStyles" /> to return true.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Condition</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>The operating system supports visual styles</para>
+              </term>
+              <description>
+                <para>To verify this condition separately, use the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleInformation.IsSupportedByOS" /> property of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleInformation" /> class.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The user has enabled visual styles in the operating system</para>
+              </term>
+              <description>
+                <para>To verify this condition separately, use the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleInformation.IsEnabledByUser" /> property of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleInformation" /> class.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Visual styles are enabled in the application</para>
+              </term>
+              <description>
+                <para>Visual styles can be enabled in an application by calling the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method or by using an application manifest that specifies that ComCtl32.dll version 6 or later will be used to draw controls.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Visual styles are being used to draw the client area of application windows</para>
+              </term>
+              <description>
+                <para>To verify this condition separately, use the <see cref="P:System.Windows.Forms.Application.VisualStyleState" /> property of the <see cref="T:System.Windows.Forms.Application" /> class and verify that it has the value <see cref="F:System.Windows.Forms.VisualStyles.VisualStyleState.ClientAreaEnabled" /> or <see cref="F:System.Windows.Forms.VisualStyles.VisualStyleState.ClientAndNonClientAreasEnabled" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value specifying whether the current application is drawing controls with visual styles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -532,8 +816,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The most common reason for calling Restart is to start a new version of the application that you have downloaded through ndptecclick using the Update or UpdateAsync method.</para>
+          <para>Applications are restarted in the context in which they were initially run. If your application was started using a URL pointing directly to the application's main executable file, it will be restarted using the same URL. If your application is a ndptecclick application, it will be restarted using ndptecclick. </para>
+          <para>If your application was originally supplied command-line options when it first executed, <see cref="M:System.Windows.Forms.Application.Restart" /> will launch the application again with the same options.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shuts down the application and starts a new instance immediately.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -544,8 +836,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a Win32-based or Windows Forms application, a message loop is a routine in code that processes user events, such as mouse clicks and keyboard strokes. Every running Windows-based application requires an active message loop, called the main message loop. When the main message loop is closed, the application exits. In Windows Forms, this loop is closed when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called, or when the <see cref="M:System.Windows.Forms.Application.ExitThread" /> method is called on the thread that is running the main message loop. </para>
+          <para>Most Windows Forms developers will not need to use this version of the method. You should use the <see cref="M:System.Windows.Forms.Application.Run(System.Windows.Forms.Form)" /> overload to start an application with a main form, so that the application terminates when the main form is closed. For all other situations, use the <see cref="M:System.Windows.Forms.Application.Run(System.Windows.Forms.ApplicationContext)" /> overload, which supports supplying an <see cref="T:System.Windows.Forms.ApplicationContext" /> object for better control over the lifetime of the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins running a standard application message loop on the current thread, without a form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -562,9 +861,16 @@
         <Parameter Name="context" Type="System.Windows.Forms.ApplicationContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message loop runs until <see cref="M:System.Windows.Forms.Application.Exit" /> or <see cref="M:System.Windows.Forms.Application.ExitThread" /> is called or the <see cref="E:System.Windows.Forms.Application.ThreadExit" /> event is raised on the context object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins running a standard application message loop on the current thread, with an <see cref="T:System.Windows.Forms.ApplicationContext" />.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.ApplicationContext" /> in which the application is run. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -581,9 +887,20 @@
         <Parameter Name="mainForm" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <param name="mainForm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, the main function of an application calls this method and passes to it the main window of the application.</para>
+          <para>This method adds an event handler to the <paramref name="mainForm" /> parameter for the <see cref="E:System.Windows.Forms.Form.Closed" /> event. The event handler calls <see cref="M:System.Windows.Forms.Application.ExitThread" /> to clean up the application.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Control.Dispose(System.Boolean)" /> method of the <see cref="T:System.Windows.Forms.Form" /> class will be called prior to the return of this method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins running a standard application message loop on the current thread, and makes the specified form visible.</para>
+        </summary>
+        <param name="mainForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Form" /> that represents the form to make visible. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -597,9 +914,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format string to apply to top-level window captions when they are displayed with a warning banner.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -616,10 +936,20 @@
         <Parameter Name="defaultValue" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="defaultValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Certain Windows Forms controls can render their text using either the <see cref="T:System.Windows.Forms.TextRenderer" /> class, which is based on the ndptecgdi graphics library, or the <see cref="T:System.Drawing.Graphics" /> class, which is based on the ndptecgdiplus graphics library. This change was made in the dnprdnlong because of performance and localization issues with ndptecgdiplus. Use <see cref="M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)" /> to set the default value of the UseCompatibleTextRendering property for controls that support it. </para>
+          <para>The UseCompatibleTextRendering property is intended to provide visual compatibility between Windows Forms controls that render text using the <see cref="T:System.Windows.Forms.TextRenderer" /> class and net_v10_short and net_v11_short applications that perform custom text rendering using the <see cref="T:System.Drawing.Graphics" /> class. In most cases, if your application is not being upgraded from net_v10_short or net_v11_short, it is recommended that you leave UseCompatibleTextRendering set to the default value of false.</para>
+          <para>The ndptecgdi based <see cref="T:System.Windows.Forms.TextRenderer" /> class was introduced in the dnprdnlong to improve performance, make text look better, and improve support for international fonts. In earlier versions of the dnprdnshort, the ndptecgdiplus based <see cref="T:System.Drawing.Graphics" /> class was used to perform all text rendering. ndptecgdi calculates character spacing and word wrapping differently from ndptecgdiplus. In a Windows Forms application that uses the <see cref="T:System.Drawing.Graphics" /> class to render text, this could cause the text for controls that use <see cref="T:System.Windows.Forms.TextRenderer" /> to appear different from the other text in the application. To resolve this incompatibility, you can set the UseCompatibleTextRendering property to true. To set UseCompatibleTextRendering to true for all supported controls in the application, call the <see cref="M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)" /> method with a parameter of true.</para>
+          <para>You should never call this method if your Windows Forms code is hosted in another application, such as Internet Explorer. Only call this method in stand-alone Windows Forms applications. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the application-wide default for the UseCompatibleTextRendering property defined on certain controls.</para>
+        </summary>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value to use for new controls. If true, new controls that support UseCompatibleTextRendering use the ndptecgdiplus based <see cref="T:System.Drawing.Graphics" /> class for text rendering; if false, new controls use the ndptecgdi based <see cref="T:System.Windows.Forms.TextRenderer" /> class.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -640,12 +970,24 @@
         <Parameter Name="disableWakeEvent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <param name="force">To be added.</param>
-        <param name="disableWakeEvent">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an application does not respond to a suspend request within 20 seconds, Windows determines that it is in a non-responsive state, and that the application can either be put to sleep or terminated. Once an application responds to a suspend request, however, it can take whatever time it needs to clean up resources and shut down active processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends or hibernates the system, or requests that the system be suspended or hibernated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the system is being suspended, otherwise, false.</para>
+        </returns>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PowerState" /> indicating the power activity mode to which to transition. </param>
+        <param name="force">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to force the suspended mode immediately; false to cause Windows to send a suspend request to every application. </param>
+        <param name="disableWakeEvent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to disable restoring the system's power status to active on a wake event, false to enable restoring the system's power status to active on a wake event. </param>
       </Docs>
     </Member>
     <Member MemberName="SetUnhandledExceptionMode">
@@ -661,9 +1003,18 @@
         <Parameter Name="mode" Type="System.Windows.Forms.UnhandledExceptionMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often not feasible to catch all of the exceptions thrown by Windows Forms. Using this method, you can instruct your application whether it should catch all unhandled exceptions thrown by Windows Forms components and continue operating, or whether it should expose them to the user and halt execution.</para>
+          <para>Call <see cref="M:System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode)" /> before you instantiate the main form of your application using the <see cref="Overload:System.Windows.Forms.Application.Run" /> method.</para>
+          <para>To catch exceptions that occur in threads not created and owned by Windows Forms, use the <see cref="E:System.AppDomain.UnhandledException" /> event handler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the application how to respond to unhandled exceptions.</para>
+        </summary>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.UnhandledExceptionMode" /> value describing how the application should behave if an exception is thrown without being caught.</param>
       </Docs>
     </Member>
     <Member MemberName="SetUnhandledExceptionMode">
@@ -680,10 +1031,22 @@
         <Parameter Name="threadScope" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="threadScope">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often not feasible to catch all of the exceptions thrown by Windows Forms. Using this method, you can instruct your application whether it should catch all unhandled exceptions thrown by Windows Forms components and continue operating, or whether it should expose them to the user and halt execution.</para>
+          <para>Call <see cref="M:System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode)" /> before you instantiate the main form of your application using the <see cref="Overload:System.Windows.Forms.Application.Run" /> method.</para>
+          <para>When <paramref name="threadScope" /> is true, the thread exception mode is set. The thread exception mode overrides the application exception mode if <paramref name="mode" /> is not set to <see cref="F:System.Windows.Forms.UnhandledExceptionMode.Automatic" />. </para>
+          <para>When <paramref name="threadScope" /> is false, the application exception mode is set. The application exception mode is used for all threads that have the <see cref="F:System.Windows.Forms.UnhandledExceptionMode.Automatic" /> mode. Setting the application exception mode does not affect the setting of the current thread.</para>
+          <para>To catch exceptions that occur in threads not created and owned by Windows Forms, use the <see cref="E:System.AppDomain.UnhandledException" /> event handler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the application how to respond to unhandled exceptions, optionally applying thread-specific behavior.</para>
+        </summary>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.UnhandledExceptionMode" /> value describing how the application should behave if an exception is thrown without being caught.</param>
+        <param name="threadScope">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the thread exception mode; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="StartupPath">
@@ -693,9 +1056,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the executable file that started the application, not including the executable name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -709,8 +1075,21 @@
         <ReturnType>System.Threading.ThreadExceptionEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event allows your Windows Forms application to handle otherwise unhandled exceptions that occur in Windows Forms threads. Attach your event handlers to the <see cref="E:System.Windows.Forms.Application.ThreadException" /> event to deal with these exceptions, which will leave your application in an unknown state. Where possible, exceptions should be handled by a structured exception handling block.</para>
+          <para>You can change whether this callback is used for unhandled Windows Forms thread exceptions by setting <see cref="Overload:System.Windows.Forms.Application.SetUnhandledExceptionMode" />. To catch exceptions that occur in threads not created and owned by Windows Forms, use the <see cref="E:System.AppDomain.UnhandledException" /> event handler. </para>
+          <block subset="none" type="note">
+            <para>To guarantee that no activations of this event are missed, you must attach a handler before you call <see cref="Overload:System.Windows.Application.Run" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an untrapped thread exception is thrown.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -724,8 +1103,17 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must attach the event handlers to the <see cref="E:System.Windows.Forms.Application.ThreadExit" /> event to perform any unhandled, required tasks before the thread stops running. Close files opened by this thread, or dispose of objects that the garbage collector did not reclaim.</para>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a thread is about to shut down. When the main thread for an application is about to be shut down, this event is raised first, followed by an <see cref="E:System.Windows.Forms.Application.ApplicationExit" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -748,8 +1136,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters the message loop callback made with <see cref="M:System.Windows.Forms.Application.RegisterMessageLoop(System.Windows.Forms.Application.MessageLoopCallback)" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserAppDataPath">
@@ -759,9 +1150,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a path does not exist, one is created in the following format: </para>
+          <para>Base Path\<see cref="P:System.Windows.Forms.Application.CompanyName" />\<see cref="P:System.Windows.Forms.Application.ProductName" />\<see cref="P:System.Windows.Forms.Application.ProductVersion" /> </para>
+          <para>Data stored in this path is part of user profile that is enabled for roaming. A roaming user works on more than one computer in a network. The user profile for a roaming user is kept on a server on the network and is loaded onto a system when the user logs on. For a user profile to be considered for roaming, the operating system must support roaming profiles and it must be enabled.</para>
+          <para>A typical base path is C:\Documents and Settings\username\Application Data. This path will be different, however, if the Windows Forms application is deployed by using ndptecclick. ndptecclick creates its own application data directory that is isolated from all other applications. For more information, see <format type="text/html"><a href="be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">Accessing Local and Remote Data in ClickOnce Applications</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the application data of a user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -775,9 +1175,17 @@
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the key does not exist, it is created in the following format: </para>
+          <para>CurrentUser\Software\<see cref="P:System.Windows.Forms.Application.CompanyName" />\<see cref="P:System.Windows.Forms.Application.ProductName" />\<see cref="P:System.Windows.Forms.Application.ProductVersion" /> </para>
+          <para>Data stored in this key is part of user profile that is enabled for roaming. A roaming user works on more than one computer in a network. The user profile for a roaming user is kept on a server on the network and is loaded onto a system when the user logs on. For a user profile to be considered for roaming, the operating system must support roaming profiles and it must be enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the registry key for the application data of a user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -794,9 +1202,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the <see cref="P:System.Windows.Forms.Control.UseWaitCursor" /> property of all open forms in the application will be set to true. This call will not return until this property has been set on all forms. Use this property when you have a long-running operation, and want to indicate in all application forms that the operation is still processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the wait cursor is used for all open forms of the application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VisualStyleState">
@@ -806,10 +1220,16 @@
         <ReturnType>System.Windows.Forms.VisualStyles.VisualStyleState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="P:System.Windows.Forms.Application.VisualStyleState" /> property determines whether visual styles are enabled in client areas or nonclient areas of application windows. Generally, this property should be set within the main form's constructor or <see cref="E:System.Windows.Forms.Form.Load" /> event handler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies how visual styles are applied to application windows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

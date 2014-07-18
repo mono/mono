@@ -6,7 +6,7 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
-LIBRARY_USE_INTERMEDIATE_FILE = yes
+#LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq (basic, $(PROFILE))
 
@@ -134,7 +134,7 @@ $(vtsdir)/$(PROFILE)_TestLib/%/Address.dll: $(vtsdir)/VersionTolerantSerializati
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(corlib) -warn:0 -out:$@ $^
 
-$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll
+$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(test_nunit_dep)
 	$(CSCOMPILE) $(test_nunit_ref) -warn:0 -r:$(corlib) \
 		-r:$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
 		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@

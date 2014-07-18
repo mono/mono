@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IContributeObjectSink" FullName="System.Runtime.Remoting.Contexts.IContributeObjectSink">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IContributeObjectSink" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IContributeObjectSink" />
@@ -16,8 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Contexts.IContributeObjectSink" /> interface is implemented by context properties in a <see cref="T:System.Runtime.Remoting.Contexts.Context" /> class that want to contribute an object-specific interception sink on the server end of a remoting call.</para>
+      <para>The server object chain is composed from those context properties in the server object's context that implement <see cref="T:System.Runtime.Remoting.Contexts.IContributeObjectSink" />. <format type="text/html"><a href="6F7A7912-93CD-4C94-824F-42554C17C8D4">[&lt;topic://cpconjust-in-timeactivation&gt;]</a></format> is an example of such a property; that is, the message sink would activate the object after the call arrives, and then pass the message on to the object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contributes an object-specific interception sink on the server end of a remoting call.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetObjectSink">
@@ -37,11 +45,19 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <param name="nextSink">To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Chains the message sink of the provided server object in front of the given sink chain.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composite sink chain.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server object which provides the message sink that is to be chained in front of the given chain. </param>
+        <param name="nextSink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The chain of sinks composed so far. </param>
       </Docs>
     </Member>
   </Members>

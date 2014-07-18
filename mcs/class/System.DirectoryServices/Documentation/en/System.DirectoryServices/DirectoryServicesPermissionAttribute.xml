@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryServicesPermissionAttribute" FullName="System.DirectoryServices.DirectoryServicesPermissionAttribute">
   <TypeSignature Language="C#" Value="public class DirectoryServicesPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
   <AssemblyInfo>
@@ -70,9 +71,13 @@
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="action">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="M:System.DirectoryServices.DirectoryServicesPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)" /> class.          </para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Path">
@@ -82,9 +87,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a path to an Active Directory Domain Services node to which the permissions apply.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PermissionAccess">
@@ -94,14 +102,20 @@
         <ReturnType>System.DirectoryServices.DirectoryServicesPermissionAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the access levels that are used in creating permissions.          </para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows declarative <see cref="N:System.DirectoryServices" /> permission checks.          </para>
+    </summary>
   </Docs>
 </Type>

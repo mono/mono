@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionPrefixAttribute" FullName="System.Web.Compilation.ExpressionPrefixAttribute">
   <TypeSignature Language="C#" Value="public sealed class ExpressionPrefixAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> class is used at design time with expressions that are not defined in the configuration file. Use the <see cref="P:System.Web.Compilation.ExpressionPrefixAttribute.ExpressionPrefix" /> property to get the name of the prefix that is associated with the <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> object. An expression builder looks for any statements with the following form: </para>
+      <para>&lt;%$ [expressionPrefix]:[expressionValue] %&gt; </para>
+      <para>Then the expression builder, based on the prefix of the expression, generates code for the property assignment. The <paramref name="expressionPrefix" /> parameter refers to a configured expression builder, which is defined in the configuration file or through an <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> object. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the prefix attribute to use for the expression builder. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +35,17 @@
         <Parameter Name="expressionPrefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="expressionPrefix">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Compilation.ExpressionPrefixAttribute.#ctor(System.String)" /> constructor to initialize an instance of the <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> class using a prefix identifier. The <see cref="M:System.Web.Compilation.ExpressionPrefixAttribute.#ctor(System.String)" /> is the default constructor for the <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> class.</para>
+        </summary>
+        <param name="expressionPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the current <see cref="T:System.Web.Compilation.ExpressionBuilder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +58,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.Compilation.ExpressionPrefixAttribute.ExpressionPrefix" /> property to retrieve the name of the prefix that is associated with a given attribute. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the prefix value for the current <see cref="T:System.Web.Compilation.ExpressionBuilder" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

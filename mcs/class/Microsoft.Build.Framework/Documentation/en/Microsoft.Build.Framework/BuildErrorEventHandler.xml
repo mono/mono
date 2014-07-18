@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildErrorEventHandler" FullName="Microsoft.Build.Framework.BuildErrorEventHandler">
   <TypeSignature Language="C#" Value="public delegate void BuildErrorEventHandler(object sender, BuildErrorEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,11 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:Microsoft.Build.Framework.IEventSource.ErrorRaised" /> event of a build.</para>
+    </summary>
   </Docs>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewRowCollection" FullName="System.Windows.Forms.DataGridViewRowCollection">
   <TypeSignature Language="C#" Value="public class DataGridViewRowCollection : System.Collections.IList" />
   <AssemblyInfo>
@@ -21,9 +22,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> contains the <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects in a <see cref="T:System.Windows.Forms.DataGridView" /> control. You can retrieve an instance of this class through the control <see cref="P:System.Windows.Forms.DataGridView.Rows" /> property. The collection maintains a reference to the control through the <see cref="P:System.Windows.Forms.DataGridViewRowCollection.DataGridView" /> property.</para>
+      <para>To improve performance, a <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> includes shared and unshared rows. Shared rows share memory to reduce the cost of a large record set. If your record set is very large, you should be careful to keep the rows shared as much as possible. </para>
+      <para>For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +42,14 @@
         <Parameter Name="dataGridView" Type="System.Windows.Forms.DataGridView" />
       </Parameters>
       <Docs>
-        <param name="dataGridView">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> class. </para>
+        </summary>
+        <param name="dataGridView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridView" /> that owns the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +63,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Add" /> overload adds rows that are based on the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> of the <see cref="T:System.Windows.Forms.DataGridView" />. The new row is shared, if possible. Be sure that the row specified in the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> property can be shared for best scalability. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new row to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new row.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,11 +97,22 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Add(System.Int32)" /> method adds shared rows to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />. The new rows are based on the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> of the <see cref="T:System.Windows.Forms.DataGridView" />. Be sure that the row specified in the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> property can be shared for best scalability. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified number of new rows to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last row that was added.</para>
+        </returns>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows to add to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,11 +139,22 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Add(System.Object[])" /> method adds an unshared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new row to the collection, and populates the cells with the specified objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new row.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A variable number of objects that populate the cells of the new <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,11 +175,22 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Add(System.Windows.Forms.DataGridViewRow)" /> method adds a shared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new row is unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </returns>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to add to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,12 +207,24 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="indexSource">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property of the new <see cref="T:System.Windows.Forms.DataGridViewRow" /> has the same values as the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> positioned at <paramref name="indexSource" />. The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.AddCopies(System.Int32,System.Int32)" /> method adds shared rows to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new rows are unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified number of rows to the collection based on the row at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last row that was added.</para>
+        </returns>
+        <param name="indexSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row on which to base the new rows.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows to add to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -172,11 +240,22 @@
         <Parameter Name="indexSource" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="indexSource">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property of the new row has the same values as the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> of the row positioned at <paramref name="indexSource" />. The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.AddCopy(System.Int32)" /> method adds a shared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new row is unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new row based on the row at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new row.</para>
+        </returns>
+        <param name="indexSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row on which to base the new row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -198,10 +277,21 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="dataGridViewRows">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.AddRange(System.Windows.Forms.DataGridViewRow[])" /> method adds shared rows to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new rows are unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+          <block subset="none" type="note">
+            <para>Due to a bug, the <see cref="M:System.Windows.Forms.DataGridViewRowCollection.AddRange(System.Windows.Forms.DataGridViewRow[])" /> method will make your application stop responding if the <see cref="P:System.Windows.Forms.DataGridView.AllowUserToAddRows" /> property is true and the row for new records is selected. To work around this bug, you must cancel the selection of the row before calling this method, and then reselect the row. For more information, see the code example in this topic. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects to the collection.</para>
+        </summary>
+        <param name="dataGridViewRows">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects to be added to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -220,9 +310,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the collection. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,8 +331,14 @@
         <ReturnType>System.ComponentModel.CollectionChangeEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the contents of the collection change.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -252,11 +351,18 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.DataGridViewRow" /> is in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to locate in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,11 +379,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the items from the collection into the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> array, starting at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewRow" /> array that is the destination of the items copied from the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -290,10 +401,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -306,10 +420,13 @@
         <ReturnType>System.Windows.Forms.DataGridView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.DataGridView" /> that owns the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -325,11 +442,18 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the first <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -346,12 +470,20 @@
         <Parameter Name="excludeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="includeFilter">To be added.</param>
-        <param name="excludeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the first <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified inclusion and exclusion criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />, and does not have the attributes specified by <paramref name="excludeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
+        <param name="excludeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -367,11 +499,18 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the last <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -388,12 +527,23 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="indexStart">To be added.</param>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.GetNextRow(System.Int32,System.Windows.Forms.DataGridViewElementStates)" /> method begins looking for the row that matches the criteria starting with the row positioned after <paramref name="indexStart" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the next <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first <see cref="T:System.Windows.Forms.DataGridViewRow" /> after <paramref name="indexStart" /> that has the attributes specified by <paramref name="includeFilter" />, or -1 if no row is found.</para>
+        </returns>
+        <param name="indexStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row where the method should begin to look for the next <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -411,13 +561,25 @@
         <Parameter Name="excludeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="indexStart">To be added.</param>
-        <param name="includeFilter">To be added.</param>
-        <param name="excludeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.GetNextRow(System.Int32,System.Windows.Forms.DataGridViewElementStates,System.Windows.Forms.DataGridViewElementStates)" /> method begins looking for the row that matches the criteria starting with the row positioned after <paramref name="indexStart" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the next <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified inclusion and exclusion criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the next <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />, and does not have the attributes specified by <paramref name="excludeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="indexStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row where the method should begin to look for the next <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
+        <param name="excludeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -434,12 +596,23 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="indexStart">To be added.</param>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.GetPreviousRow(System.Int32,System.Windows.Forms.DataGridViewElementStates)" /> method begins looking for the row that matches the criteria starting with the row positioned before <paramref name="indexStart" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the previous <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the previous <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="indexStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row where the method should begin to look for the previous <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -457,13 +630,25 @@
         <Parameter Name="excludeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="indexStart">To be added.</param>
-        <param name="includeFilter">To be added.</param>
-        <param name="excludeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.GetPreviousRow(System.Int32,System.Windows.Forms.DataGridViewElementStates,System.Windows.Forms.DataGridViewElementStates)" /> method begins looking for the row that matches the criteria starting with the row positioned before <paramref name="indexStart" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the previous <see cref="T:System.Windows.Forms.DataGridViewRow" /> that meets the specified inclusion and exclusion criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the previous <see cref="T:System.Windows.Forms.DataGridViewRow" /> that has the attributes specified by <paramref name="includeFilter" />, and does not have the attributes specified by <paramref name="excludeFilter" />; -1 if no row is found.</para>
+        </returns>
+        <param name="indexStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row where the method should begin to look for the previous <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
+        <param name="excludeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -479,11 +664,18 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects in the collection that meet the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> that have the attributes specified by <paramref name="includeFilter" />.</para>
+        </returns>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -499,11 +691,18 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <param name="includeFilter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the cumulative height of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects that meet the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cumulative height of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> that have the attributes specified by <paramref name="includeFilter" />.</para>
+        </returns>
+        <param name="includeFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -519,11 +718,18 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the row with the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values indicating the state of the specified row.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -539,11 +745,18 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of a specified item in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if it is a <see cref="T:System.Windows.Forms.DataGridViewRow" /> found in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />; otherwise, -1.</para>
+        </returns>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to locate in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -560,11 +773,20 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Insert(System.Int32,System.Int32)" /> method adds rows that are based on the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> of the <see cref="T:System.Windows.Forms.DataGridView" />. The new row is shared, if possible. Be sure that the row specified in the <see cref="P:System.Windows.Forms.DataGridView.RowTemplate" /> property can be shared for best scalability. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified number of rows into the collection at the specified location.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the rows.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows to insert into the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -587,11 +809,20 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Insert(System.Int32,System.Object[])" /> method adds an unshared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a row into the collection at the specified position, and populates the cells with the specified objects.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the row.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A variable number of objects that populate the cells of the new row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -608,11 +839,20 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Insert(System.Int32,System.Windows.Forms.DataGridViewRow)" /> method adds a shared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new row is unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> into the collection.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the row.</param>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to insert into the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -630,12 +870,22 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="indexSource">To be added.</param>
-        <param name="indexDestination">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property of the new <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects has the same values as the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> positioned at <paramref name="indexSource" />. The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.InsertCopies(System.Int32,System.Int32,System.Int32)" /> method adds shared rows to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new rows are unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts rows into the collection at the specified position.</para>
+        </summary>
+        <param name="indexSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> on which to base the new rows.</param>
+        <param name="indexDestination">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the rows.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects to add to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -652,11 +902,20 @@
         <Parameter Name="indexDestination" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="indexSource">To be added.</param>
-        <param name="indexDestination">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method assigns the new row the index specified in the <paramref name="indexDestination" /> parameter and increments the indexes for all subsequent rows. The <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property of the new <see cref="T:System.Windows.Forms.DataGridViewRow" /> has the same values as the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> positioned at <paramref name="indexSource" />. The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.InsertCopy(System.Int32,System.Int32)" /> method adds a shared row to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new row is unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a row into the collection at the specified position, based on the row at specified position.</para>
+        </summary>
+        <param name="indexSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row on which to base the new row.</param>
+        <param name="indexDestination">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -679,11 +938,23 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="dataGridViewRows">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.InsertRange(System.Int32,System.Windows.Forms.DataGridViewRow[])" /> method adds shared rows to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, if possible. Otherwise, the new rows are unshared. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+          <block subset="none" type="note">
+            <para>Due to a bug, the <see cref="M:System.Windows.Forms.DataGridViewRowCollection.InsertRange(System.Int32,System.Windows.Forms.DataGridViewRow[])" /> method will make your application stop responding if any rows with an index greater than <paramref name="rowIndex" /> are selected. To work around this bug, you must cancel the selection of these rows before calling this method, and reselect the rows afterward. For more information, see the code example in this topic. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects into the collection at the specified position.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to insert the rows.</param>
+        <param name="dataGridViewRows">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects to add to the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -716,10 +987,16 @@
         <ReturnType>System.Collections.ArrayList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRowCollection.List" /> unshares all the rows in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />, so you should avoid using this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of <see cref="T:System.Windows.Forms.DataGridViewRow" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -738,9 +1015,17 @@
         <Parameter Name="e" Type="System.ComponentModel.CollectionChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.OnCollectionChanged(System.ComponentModel.CollectionChangeEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGridViewRowCollection.CollectionChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.CollectionChangeEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -753,10 +1038,14 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the row from the collection.</para>
+        </summary>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row to remove from the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -772,10 +1061,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the row at the specified position from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the row to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -791,11 +1084,21 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewRowCollection.SharedRow(System.Int32)" /> method returns a <see cref="T:System.Windows.Forms.DataGridViewRow" /> without unsharing the row. If you modify a shared row, all the rows that share that row will be modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Windows.Forms.DataGridViewRow" /> at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridViewRow" /> positioned at the specified index.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> to get.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -815,10 +1118,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the collection to an <see cref="T:System.Array" />, starting at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />. The <see cref="T:System.Array" /> must have zero-based indexing. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
@@ -831,9 +1142,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -846,9 +1163,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -861,9 +1184,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -877,9 +1206,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -895,10 +1233,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+          <para>This method calls the <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Add(System.Windows.Forms.DataGridViewRow)" /> overload, passing in <paramref name="value" /> after casting it to a <see cref="T:System.Windows.Forms.DataGridViewRow" />. </para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Windows.Forms.DataGridViewRow" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to add to the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -914,10 +1264,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the collection contains the specified item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is a <see cref="T:System.Windows.Forms.DataGridViewRow" /> found in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to locate in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -933,10 +1293,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of a specified item in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if it is a <see cref="T:System.Windows.Forms.DataGridViewRow" /> found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -953,10 +1323,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+          <para>This method calls the <see cref="M:System.Windows.Forms.DataGridViewRowCollection.Insert(System.Int32,System.Windows.Forms.DataGridViewRow)" /> overload, passing in value after casting it to a <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+          <para>Rows in the control are not automatically sorted when new rows are added. To sort new rows into their correct position, call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.RowsAdded" /> event handler. You might also want to call the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method in a <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event handler to sort the rows when the user modifies a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Windows.Forms.DataGridViewRow" /> into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to insert into the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -969,9 +1349,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -984,9 +1370,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -1021,9 +1413,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Windows.Forms.DataGridViewRow" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to remove from the <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Metadata.W3cXsd2001" FullName="System.Runtime.Remoting.Metadata.W3cXsd2001" FullNameSP="System.Runtime.Remoting.Metadata.W3cXsd2001" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Metadata.W3cXsd2001" /> namespace contains the XML Schema Definition (XSD) that was defined by the World Wide Web Consortium (W3C) in 2001. The XML Schema Part 2: Datatypes specification from W3C identifies format and behavior of various data types. This namespace contains wrapper classes for the data types that conform to the W3C specification. All date and time types conform to the ISO standards specification.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information on the XML Schema Part 2: Datatypes specification, see http://www.w3.org/TR/xmlschema-2/.</para>
     </remarks>
   </Docs>
 </Namespace>

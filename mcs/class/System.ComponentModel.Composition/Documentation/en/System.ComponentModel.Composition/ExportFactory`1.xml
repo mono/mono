@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExportFactory&lt;T&gt;" FullName="System.ComponentModel.Composition.ExportFactory&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class ExportFactory&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExportFactory`1&lt;T&gt; extends System.Object" />
@@ -14,8 +15,27 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you refer indirectly to a part by using a <see cref="T:System.Lazy`1" /> object, the <see cref="P:System.Lazy`1.Value" /> property always returns a reference to the same object. In some circumstances, you might want each reference to result in the creation of a new object. <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> is designed for those scenarios.</para>
+      <para>
+        <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> can be used in a similar fashion to <see cref="T:System.Lazy`1" /> when creating attributed parts. That is, an import contract that is defined on <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> with a generic parameter of <paramref name="T" /> will match an export that is defined on <paramref name="T" />. For example, the follow export and import match:</para>
+      <code>[Export]
+public String myData = "Example Data.";
+
+[Import]
+public ExportFactory&lt;String&gt; theData { get; set; }</code>
+      <code>&lt;Export()&gt;
+Public myData As String = "Example Data."
+
+&lt;Import()&gt;
+Public Property theData As ExportFactory(Of String)</code>
+      <para>The <see cref="M:System.ComponentModel.Composition.ExportFactory`1.CreateExport" /> method returns an <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> object, which has two pieces. The <see cref="P:System.ComponentModel.Composition.ExportLifetimeContext`1.Value" /> property provides access to the created part. Calling the <see cref="M:System.ComponentModel.Composition.ExportLifetimeContext`1.Dispose" /> method of the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> object cleans up the created part and all of its dependencies, thereby allowing the part's lifetime to be managed without reference to the container that created it.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A factory that creates new instances of a part that provides the specified export.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -46,9 +66,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the factory's export type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid instance of the factory's exported type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnFilterScopedCatalog">
@@ -65,10 +91,17 @@
         <Parameter Name="composablePartDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
       </Parameters>
       <Docs>
-        <param name="composablePartDefinition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, filters part definitions in the scope of the <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the part definition should be included in the scope; otherwise, false.</para>
+        </returns>
+        <param name="composablePartDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part definition to filter.</param>
       </Docs>
     </Member>
   </Members>

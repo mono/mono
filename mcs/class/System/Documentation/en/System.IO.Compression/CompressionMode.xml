@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompressionMode" FullName="System.IO.Compression.CompressionMode">
   <TypeSignature Language="C#" Value="public enum CompressionMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CompressionMode extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="T:System.IO.Compression.GZipStream" /> and <see cref="T:System.IO.Compression.DeflateStream" /> classes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para> Specifies whether to compress or decompress the underlying stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Compress">
@@ -27,8 +34,11 @@
         <ReturnType>System.IO.Compression.CompressionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compresses the underlying stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Decompress">
@@ -43,8 +53,11 @@
         <ReturnType>System.IO.Compression.CompressionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decompresses the underlying stream.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

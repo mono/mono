@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageMap" FullName="System.Web.UI.WebControls.ImageMap">
   <TypeSignature Language="C#" Value="public class ImageMap : System.Web.UI.WebControls.Image, System.Web.UI.IPostBackEventHandler" />
   <AssemblyInfo>
@@ -24,9 +25,139 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to create an image that contains defined hot spot regions. When a user clicks a hot spot region, the control can either generate a postback to the server or navigate to a specified URL. For example, you can use this control to display a map of a geographical region. When a user clicks a specific region on the map, the control navigates to a URL that provides additional data about the selected region. You can also use this control to generate a postback to the server and run specific code based on the hot spot region that was clicked. For example, you can use an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to capture user responses such as votes. When a user clicks the hot spot region defined for yes votes, code is called to record a yes response in a database. When a user clicks on the hot spot region defined for no votes, a no response is recorded. You can also mix these two scenarios within a single <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. For example, you can specify one hot spot region to navigate to a URL and another hot spot region to post back to the server.</para>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property to specify the path to the image to display for the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. You can define any number of <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects within an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. You can use the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" />, <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" />, and <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> classes to define hot spot regions. Alternatively, you can derive from the abstract <see cref="T:System.Web.UI.WebControls.HotSpot" /> class to define your own custom hot spot object.</para>
+      <para>There are two ways to specify the behavior of a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. You can use either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on an individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. These properties are set using one of the <see cref="T:System.Web.UI.WebControls.HotSpotMode" /> enumeration values. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specified on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object takes precedence over the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+      <para>To navigate to a URL, set either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Navigate. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to.</para>
+      <para>To generate a postback to the server, set either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Postback. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the hot spot region. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when a postback event occurs. When a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event is raised. To programmatically control the actions performed when a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event.</para>
+      <para>To cause all <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to have the same behavior, use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property to specify the behavior. Then, either set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to HotSpotMode.NotSet or do not specify a value for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property.</para>
+      <para>To specify different behaviors for <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" />, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to either HotSpotMode.Navigate or HotSpotMode.PostBack.</para>
+      <block subset="none" type="note">
+        <para>If an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on any of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects it contains is set to HotSpotMode.NotSet or is not set to a value, by default the behavior is HotSpotMode.Navigate.</para>
+      </block>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>. </para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:ImageMap
+    AccessKey="string"
+    AlternateText="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    DescriptionUrl="uri"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    HotSpotMode="<codeFeaturedElement>NotSet</codeFeaturedElement>|Navigate|PostBack|Inactive"
+    ID="string"
+    ImageAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Right|Baseline|Top|Middle|Bottom|
+        AbsBottom|AbsMiddle|TextTop"
+    ImageUrl="uri"
+    OnClick="Click event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    Target="string"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+            &lt;asp:CircleHotSpot
+                AccessKey="string"
+                AlternateText="string"
+                HotSpotMode="<codeFeaturedElement>NotSet</codeFeaturedElement>|Navigate|PostBack|Inactive"
+                NavigateUrl="uri"
+                PostBackValue="string"
+                Radius="integer"
+                TabIndex="integer"
+                Target="string|_blank|_parent|_search|_self|<codeFeaturedElement>_top</codeFeaturedElement>"
+                X="integer"
+                Y="integer"
+            /&gt;
+            &lt;asp:PolygonHotSpot
+                AccessKey="string"
+                AlternateText="string"
+                Coordinates="string"
+                HotSpotMode="<codeFeaturedElement>NotSet</codeFeaturedElement>|Navigate|PostBack|Inactive"
+                NavigateUrl="uri"
+                PostBackValue="string"
+                TabIndex="integer"
+                Target="string|_blank|_parent|_search|_self|<codeFeaturedElement>_top</codeFeaturedElement>"
+            /&gt;
+            &lt;asp:RectangleHotSpot
+                AccessKey="string"
+                AlternateText="string"
+                Bottom="integer"
+                HotSpotMode="<codeFeaturedElement>NotSet</codeFeaturedElement>|Navigate|PostBack|Inactive"
+                Left="integer"
+                NavigateUrl="uri"
+                PostBackValue="string"
+                Right="integer"
+                TabIndex="integer"
+                Target="string|_blank|_parent|_search|_self|<codeFeaturedElement>_top</codeFeaturedElement>"
+                Top="integer"
+            /&gt;
+&lt;/asp:ImageMap&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates a control that displays an image on a page. When a hot spot region defined within the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked, the control either generates a postback to the server or navigates to a specified URL.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +165,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,10 +189,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers to insert the appropriate attributes and styles to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. This method overrides <see cref="M:System.Web.UI.WebControls.WebControl.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the HTML attributes and styles of an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,9 +217,17 @@
         <ReturnType>System.Web.UI.WebControls.ImageMapEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event is raised when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked. To allow a <see cref="T:System.Web.UI.WebControls.HotSpot" /> to raise the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event, you must first set either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to HotSpotMode.Postback.</para>
+          <para>To programmatically control the actions performed when a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event that contains the code to run when the event is raised.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +245,82 @@
         <ReturnType>System.Web.UI.WebControls.HotSpotMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property to specify the default click behavior of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects within an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. This property is set using one of the <see cref="T:System.Web.UI.WebControls.HotSpotMode" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Item </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Inactive </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> object does not have any behavior.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NotSet</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> object uses the behavior set by the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property. If the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control does not define the behavior, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects all navigate to a URL.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Navigate </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects navigate to a URL. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PostBack </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects generate a postback to the server. </para>
+              </description>
+            </item>
+          </list>
+          <para>You can specify a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object's behavior using either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object. If both properties are set, the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specified on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object takes precedence over the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+          <para>When you set the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control, note that the HotSpotMode.NotSet and HotSpotMode.Navigate values have the same behavior: both navigate to a URL. When you specify HotSpotMode.NotSet for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property of an individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object, that <see cref="T:System.Web.UI.WebControls.HotSpot" /> determines its behavior from the value of the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+          <para>If you specify HotSpotMode.Navigate for the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property, the page navigates to a URL when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to.</para>
+          <para>If you specify HotSpotMode.PostBack for the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property, the page generates a postback to the server when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked. Use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify the name of the hot spot region. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when a postback event occurs. When a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event is raised. To programmatically control the actions performed when a postback <see cref="T:System.Web.UI.WebControls.HotSpot" /> is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event.</para>
+          <para>If you specify HotSpotMode.Inactive for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property, the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object does not have any behavior when it is clicked. You can use this value to create an inactive hot spot within a larger active hot spot. This option is provided to allow you to create more complex hot spot zones within an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. </para>
+          <para>To create an inactive area within an active hot spot, you must specify the inactive hot spot before the active hot spot in the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. For example, the following <see cref="T:System.Web.UI.WebControls.ImageMap" /> defines an active ring by specifying an inactive circular hot spot within a larger active circular hot spot:</para>
+          <code>    &lt;asp:ImageMap ID="SaturnImage" 
+           ImageUrl="~/saturn.PNG" 
+           runat="server" OnClick="SaturnImage_Click"&gt;
+        &lt;asp:CircleHotSpot AlternateText="planet" HotSpotMode=PostBack
+              PostBackValue="planet" Radius=40 X=100 Y=100 /&gt;
+
+        &lt;asp:CircleHotSpot HotSpotMode=Inactive 
+              Radius=60 X=100 Y=100 /&gt;
+        &lt;asp:CircleHotSpot AlternateText="rings" HotSpotMode=PostBack
+              PostBackValue="rings" Radius=80 X=100 Y=100 /&gt;
+    &lt;/asp:ImageMap&gt;</code>
+          <para>To cause all <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to have the same behavior, use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to specify the behavior. Then, either set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to HotSpotMode.NotSet or do not specify a value for the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property.</para>
+          <para>To specify different behaviors for <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on each individual <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to either HotSpotMode.Navigate, HotSpotMode.PostBack, or HotSpotMode.Inactive.</para>
+          <block subset="none" type="note">
+            <para>If an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on any of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects it contains is either set to HotSpotMode.NotSet or not set to a value, by default the behavior is HotSpotMode.Navigate.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default behavior for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects of an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when the <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects are clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,10 +344,16 @@
         <ReturnType>System.Web.UI.WebControls.HotSpotCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpots" /> property to programmatically manage the hot spot regions in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. You can use the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpots" /> property to add, insert, remove, and retrieve <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects. For more information, see <see cref="T:System.Web.UI.WebControls.HotSpotCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.UI.WebControls.HotSpot" /> objects that represents the defined hot spot regions in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,10 +369,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code.  However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores view-state information for the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.ImageMap.SaveViewState" /> method.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control to restore. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,10 +395,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.ImageMapEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event is raised when a <see cref="T:System.Web.UI.WebControls.HotSpot" /> object in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked. To allow a <see cref="T:System.Web.UI.WebControls.HotSpot" /> to raise the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event, you must first set either the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control or the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property on the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to HotSpotMode.Postback.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageMap.OnClick(System.Web.UI.WebControls.ImageMapEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event for the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument of type <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -177,10 +423,17 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page passes the value of the <paramref name="eventArgument" /> parameter to the <see cref="M:System.Web.UI.WebControls.ImageMap.RaisePostBackEvent(System.String)" /> method of the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. The <see cref="T:System.Web.UI.WebControls.ImageMap" /> raises a <see cref="E:System.Web.UI.WebControls.ImageMap.Click" /> event for the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object that was clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control when a form is posted back to the server.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument for the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,9 +452,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers. When developing a custom server control derived from the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control, you can override this method to generate content for the <see cref="T:System.Web.UI.WebControls.ImageMap" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control content to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object, which writes the content to render on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control content. </param>
       </Docs>
     </Member>
     <Member MemberName="SaveViewState">
@@ -212,10 +472,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in an Hidden HTML element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's ViewState property. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any changes to an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's view-state that have occurred since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control's current view state. If there is no view state associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -233,10 +504,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property to specify the frame or window that displays the Web page r when the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked. The Web page is specified by setting the <see cref="P:System.Web.UI.WebControls.Image.ImageUrl" /> property. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property is used when the value of the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property is HotSpotMode.Navigate; it is ignored when the value of the <see cref="P:System.Web.UI.WebControls.ImageMap.HotSpotMode" /> property is HotSpotMode.PostBack.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property is not set, the browser or window with focus refreshes when the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.ImageMap" /> must be XHTML 1.1-compliant. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended that you avoid using the <see cref="P:System.Web.UI.WebControls.ImageMap.Target" /> property to target another window. For more information, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame that displays the Web page content linked to when the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -250,9 +533,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called automatically by ASP.NET when the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control is initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracks view-state changes to the <see cref="T:System.Web.UI.WebControls.ImageMap" /> control so they can be stored in the control's <see cref="T:System.Web.UI.StateBag" /> object. This object is accessible through the <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

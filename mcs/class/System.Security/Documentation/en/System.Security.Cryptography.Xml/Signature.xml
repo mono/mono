@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Signature" FullName="System.Security.Cryptography.Xml.Signature">
   <TypeSignature Language="C#" Value="public class Signature" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi Signature extends System.Object" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represent the XMLDSIG Signature element which contains the signature and keys related informations.</summary>
-    <remarks>The &lt;Signature&gt; element is detailled in section 4.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.Signature" /> class represents the &lt;Signature&gt; element of an XML signature defined by the XML digital signature specification. The &lt;Signature&gt; element is the root element of an XML digital signature. The <see cref="P:System.Security.Cryptography.Xml.Signature.SignedInfo" />, <see cref="P:System.Security.Cryptography.Xml.Signature.SignatureValue" />, <see cref="P:System.Security.Cryptography.Xml.Signature.KeyInfo" />, and <see cref="P:System.Security.Cryptography.Xml.Signature.ObjectList" /> properties encapsulate the subelements of the &lt;Signature&gt; element.  </para>
+      <para>For more information about the &lt;Signature&gt; element, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;Signature&gt; element of an XML signature.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddObject">
@@ -50,9 +61,16 @@
         <Parameter Name="dataObject" Type="System.Security.Cryptography.Xml.DataObject" />
       </Parameters>
       <Docs>
-        <param name="dataObject">a <see cref="T:System.Security.Cryptography.Xml.DataObject" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method adds a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object to a collection that is accessible using the <see cref="P:System.Security.Cryptography.Xml.Signature.ObjectList" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> to the list of objects to be signed.</para>
+        </summary>
+        <param name="dataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.DataObject" /> to be added to the list of objects to be signed. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -69,9 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -88,9 +112,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.Signature.Id" /> property to add a string ID to the XML representation of the current <see cref="T:System.Security.Cryptography.Xml.Signature" /> element. The ID is used to reference the <see cref="T:System.Security.Cryptography.Xml.Signature" /> from another location.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ID of the current <see cref="T:System.Security.Cryptography.Xml.Signature" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyInfo">
@@ -107,9 +137,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Signature.KeyInfo" /> property uses a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object to represent the &lt;KeyInfo&gt; element of an XML digital signature.  </para>
+          <para>For more information about XML digital signatures, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> of the current <see cref="T:System.Security.Cryptography.Xml.Signature" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -128,9 +165,13 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Cryptography.Xml.Signature" /> state from an XML element.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element from which to load the <see cref="T:System.Security.Cryptography.Xml.Signature" /> state. </param>
       </Docs>
     </Member>
     <Member MemberName="ObjectList">
@@ -147,9 +188,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.IList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Signature.ObjectList" /> property uses a collection of <see cref="T:System.Security.Cryptography.Xml.DataObject" /> objects to represent the &lt;Object&gt; tag of an XML digital signature. </para>
+          <para>You can also add a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> to this collection using the <see cref="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method. </para>
+          <para>For more information about XML digital signatures, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a list of objects to be signed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SignatureValue">
@@ -166,9 +215,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Byte[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Signature.SignatureValue" /> property uses a byte array to represent the &lt;SignatureValue&gt; element of an XML digital signature contained within.  </para>
+          <para>For more information about XML digital signatures, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the digital signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SignedInfo">
@@ -185,9 +241,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.Signature.SignedInfo" /> property uses the <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /> class to represent the &lt;SignedInfo&gt; element of an XML digital signature contained within.    </para>
+          <para>For more information about XML digital signatures, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /> of the current <see cref="T:System.Security.Cryptography.Xml.Signature" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

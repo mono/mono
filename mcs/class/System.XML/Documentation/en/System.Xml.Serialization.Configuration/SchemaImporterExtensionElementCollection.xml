@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SchemaImporterExtensionElementCollection" FullName="System.Xml.Serialization.Configuration.SchemaImporterExtensionElementCollection">
   <TypeSignature Language="C#" Value="public sealed class SchemaImporterExtensionElementCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The configuration section for the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> is found in the app.config file or the machine.config file (for globally setting how the importer works).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the XML elements used to configure the operation of the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +33,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElementCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -43,9 +53,13 @@
         <Parameter Name="element" Type="System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the end of the collection.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -59,8 +73,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateNewElement">
@@ -111,10 +128,17 @@
         <Parameter Name="element" Type="System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the zero-based index of the first element in the collection with the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the found element.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> to find.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -168,9 +192,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item with the specified name from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -186,9 +214,13 @@
         <Parameter Name="element" Type="System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of a specific item from the collection.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -205,8 +237,11 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index from the collection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

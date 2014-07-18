@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AttributeTargets" FullName="System.AttributeTargets" FullNameSP="System_AttributeTargets" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable AttributeTargets extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum AttributeTargets" />
@@ -22,15 +23,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Enumerates the application elements to which it is valid to attach
-      an attribute.</para>
-    </summary>
-    <remarks>
-      <para>
-        <see cref="T:System.AttributeTargets" /> is used as a parameter for <see cref="T:System.AttributeUsageAttribute" /> to enable an attribute to be
-   associated with one or more kinds of application elements.</para>
-    </remarks>
     <example>
       <para> The following example demonstrates how <see cref="T:System.AttributeTargets" /> can be
    used with <see cref="T:System.AttributeUsageAttribute" /> so that a user-defined attribute class, <paramref name="Author" />,
@@ -57,6 +49,16 @@ class JohnsClass {
 }
 </code>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.AttributeUsageAttribute" /> class uses this enumeration to specify the kind of element on which it is valid to apply an attribute.</para>
+      <para>
+        <see cref="T:System.AttributeTargets" /> enumeration values can be combined with a bitwise OR operation to get the preferred combination.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the application elements on which it is valid to apply an attribute.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -75,11 +77,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>All</MemberValue>
       <Docs>
-        <summary>
-          <para> Attribute can be applied to any element.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to any application element.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -99,11 +101,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Assembly</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to an assembly.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to an assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -123,11 +125,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Class</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a class.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -147,11 +149,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Constructor</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a constructor.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a constructor.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -171,11 +173,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Delegate</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a delegate.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a delegate.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -195,11 +197,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Enum</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to an enumeration.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to an enumeration.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -219,11 +221,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Event</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to an event.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to an event.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -243,11 +245,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Field</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a field.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a field.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -263,11 +265,18 @@ class JohnsClass {
         <ReturnType>System.AttributeTargets</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para>Attribute can be applied to a generic Parameter.
-      </para>
-        </summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Currently, this attribute can be applied only in C#, Microsoft intermediate language (MSIL), and emitted code.</para>
+            <para />
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a generic parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Interface">
@@ -286,11 +295,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Interface</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to an interface.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to an interface.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -310,11 +319,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Method</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a method.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a method.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -334,11 +343,17 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Module</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>
+              <paramref name="Module" /> refers to a portable executable file (.dll or.exe) and not a Visual Basic standard module.</para>
+          </block>
+        </remarks>
         <summary>
-          <para>       Attribute can be applied to a module.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a module.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
@@ -359,11 +374,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Parameter</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a parameter.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a parameter.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -383,11 +398,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Property</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a property.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a property.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -407,10 +422,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>ReturnValue</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attribute can be applied to a return value.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -430,11 +446,11 @@ class JohnsClass {
       <Parameters />
       <MemberValue>Struct</MemberValue>
       <Docs>
-        <summary>
-          <para>       Attribute can be applied to a value type.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute can be applied to a structure; that is, a value type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

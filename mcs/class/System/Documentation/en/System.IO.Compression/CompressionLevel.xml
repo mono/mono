@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompressionLevel" FullName="System.IO.Compression.CompressionLevel">
   <TypeSignature Language="C#" Value="public enum CompressionLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CompressionLevel extends System.Enum" />
@@ -9,8 +10,52 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Compression operations usually involve a tradeoff between the speed and the effectiveness of compression. You use the <see cref="T:System.IO.Compression.CompressionLevel" /> enumeration to indicate which factor is more important in your development scenario: the time to complete the compression operation or the size of the compressed file. These values do not correspond to specific compression levels; the object that implements compression determines how to handle them.</para>
+      <para>The following methods of the <see cref="T:System.IO.Compression.DeflateStream" />, <see cref="T:System.IO.Compression.GZipStream" />, <see cref="T:System.IO.Compression.ZipArchive" />, <see cref="T:System.IO.Compression.ZipFile" />, and <see cref="T:System.IO.Compression.ZipFileExtensions" /> classes include a parameter named compressionLevel that lets you specify the compression level:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.DeflateStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionLevel)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.DeflateStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionLevel,System.Boolean)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.GZipStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionLevel)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.GZipStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionLevel,System.Boolean)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String,System.IO.Compression.CompressionLevel)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipFile.CreateFromDirectory(System.String,System.String,System.IO.Compression.CompressionLevel,System.Boolean)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String,System.IO.Compression.CompressionLevel)" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies values that indicate whether a compression operation emphasizes speed or compression size.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Fastest">
@@ -24,7 +69,10 @@
         <ReturnType>System.IO.Compression.CompressionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compression operation should complete as quickly as possible, even if the resulting file is not optimally compressed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoCompression">
@@ -38,7 +86,10 @@
         <ReturnType>System.IO.Compression.CompressionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No compression should be performed on the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Optimal">
@@ -52,7 +103,10 @@
         <ReturnType>System.IO.Compression.CompressionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compression operation should be optimally compressed, even if the operation takes a longer time to complete.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

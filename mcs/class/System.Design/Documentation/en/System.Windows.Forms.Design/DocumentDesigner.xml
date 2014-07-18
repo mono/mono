@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DocumentDesigner" FullName="System.Windows.Forms.Design.DocumentDesigner">
   <TypeSignature Language="C#" Value="public class DocumentDesigner : System.Windows.Forms.Design.ScrollableControlDesigner, System.ComponentModel.Design.IRootDesigner, System.Drawing.Design.IToolboxUser" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This designer is a root designer, meaning that it provides the root-level design mode view for the associated document when it is viewed in design mode.</para>
+      <para>You can associate a designer with a type using a <see cref="T:System.ComponentModel.DesignerAttribute" />. For an overview of customizing design time behavior, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Base designer class for extending the design mode behavior of, and providing a root-level design mode view for, a <see cref="T:System.Windows.Forms.Control" /> that supports nested controls and should receive scroll messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +34,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +55,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,8 +83,11 @@
       </Parameters>
       <Docs>
         <param name="component">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for the existence of a menu editor service and creates one if one does not already exist.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,10 +107,17 @@
         <Parameter Name="selectionType" Type="System.Windows.Forms.Design.Behavior.GlyphSelectionType" />
       </Parameters>
       <Docs>
-        <param name="selectionType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> representing the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects.</para>
+        </returns>
+        <param name="selectionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.GlyphSelectionType" />  value that specifies the selection state.</param>
       </Docs>
     </Member>
     <Member MemberName="GetToolSupported">
@@ -101,10 +130,20 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a tool is supported, it will be enabled in the toolbox when the designer receives focus. Otherwise, it will be disabled. Once a tool is marked as enabled or disabled it can not be queried again.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified tool is supported by the designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool should be enabled on the toolbox; false if the document designer doesn't know how to use the tool.</para>
+        </returns>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to test for toolbox support. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +160,13 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the designer with the specified component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to associate with the designer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,8 +180,11 @@
         <ReturnType>System.Windows.Forms.Design.IMenuEditorService</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the menuEditorService variable to null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,10 +202,18 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the context menu of the document designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the context menu should be displayed.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal screen coordinate to display the context menu at. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical screen coordinate to display the context menu at. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -174,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called immediately after the handle for the designer has been created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -207,9 +264,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface method override adds a set of properties to this designer's component at design time. This method adds the following browsable properties: "Location", and "BackColor".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adjusts the set of properties the component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the properties for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -223,9 +287,15 @@
         <ReturnType>System.Windows.Forms.Design.SelectionRules</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a <see cref="T:System.Windows.Forms.Design.SelectionRules" /> that prevents the document from being resized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.Design.SelectionRules" /> for the designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -246,10 +316,20 @@
         <Parameter Name="technology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <param name="technology">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="T:System.ComponentModel.Design.ViewTechnology" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the view for this designer.</para>
+        </returns>
+        <param name="technology">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ViewTechnology" /> that indicates a particular view technology.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IRootDesigner.SupportedTechnologies">
@@ -263,9 +343,15 @@
         <ReturnType>System.ComponentModel.Design.ViewTechnology[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.Design.IRootDesigner.SupportedTechnologies" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Drawing.Design.IToolboxUser.GetToolSupported">
@@ -282,10 +368,20 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Drawing.Design.IToolboxUser.GetToolSupported(System.Drawing.Design.ToolboxItem)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool is supported by the toolbox and can be enabled; false if the document designer does not know how to use the tool.</para>
+        </returns>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to be tested for toolbox support.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Drawing.Design.IToolboxUser.ToolPicked">
@@ -302,9 +398,16 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.DocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Drawing.Design.IToolboxUser.ToolPicked(System.Drawing.Design.ToolboxItem)" />.</para>
+        </summary>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to select.</param>
       </Docs>
     </Member>
     <Member MemberName="ToolPicked">
@@ -317,9 +420,17 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Drawing.Design.IToolboxUser.ToolPicked(System.Drawing.Design.ToolboxItem)" /> is called when the user double-clicks on a toolbox item. The document designer should create a component for the specified tool. Only tools that are enabled in the toolbox will be passed to this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the specified tool.</para>
+        </summary>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to create a component for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

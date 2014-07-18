@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageList" FullName="System.Windows.Forms.ImageList">
   <TypeSignature Language="C#" Value="public sealed class ImageList : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -27,8 +28,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ImageList" /> is typically used by other controls, such as the <see cref="T:System.Windows.Forms.ListView" />, <see cref="T:System.Windows.Forms.TreeView" />, or <see cref="T:System.Windows.Forms.ToolBar" />. You can add bitmaps or icons to the <see cref="T:System.Windows.Forms.ImageList" />, and the other controls are able to use the images as they require.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.ImageList" /> uses a handle to manage the list of images. The <see cref="P:System.Windows.Forms.ImageList.Handle" /> is not created until certain operations, such as getting the <see cref="P:System.Windows.Forms.ImageList.Handle" /> or calling <see cref="M:System.Windows.Forms.ImageList.Draw(System.Drawing.Graphics,System.Drawing.Point,System.Int32)" />, are performed on the image list. Performing other operations, such as setting the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> or <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> will cause the <see cref="P:System.Windows.Forms.ImageList.Handle" /> to be recreated. Therefore, you should perform these operations before you add images to the <see cref="T:System.Windows.Forms.ImageList" />. In addition, when you work with forms that will be localized, you should always add an <see cref="T:System.Windows.Forms.ImageList" /> and images when the Language property of a form is set to Default. Changing the form's language before you add images will corrupt the application resource files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods to manage a collection of <see cref="T:System.Drawing.Image" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +46,53 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Windows.Forms.ImageList" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Item </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> </para>
+              </term>
+              <description>
+                <para>In the .NET Framework version 1.0, the default is <see cref="F:System.Windows.Forms.ColorDepth.Depth4Bit" />. In the .NET Framework version 1.1 or later, the default is <see cref="F:System.Windows.Forms.ColorDepth.Depth8Bit" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> </para>
+              </term>
+              <description>
+                <para>The default is a <see cref="T:System.Drawing.Size" /> object with a height and width of 16 by 16. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ImageList.TransparentColor" /> </para>
+              </term>
+              <description>
+                <para>The default value is <see cref="P:System.Drawing.Color.Transparent" />. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ImageList" /> class with default values for <see cref="P:System.Windows.Forms.ImageList.ColorDepth" />, <see cref="P:System.Windows.Forms.ImageList.ImageSize" />, and <see cref="P:System.Windows.Forms.ImageList.TransparentColor" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,9 +106,16 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ImageList" /> constructor enables you to associate a <see cref="T:System.Windows.Forms.ImageList" /> with any <see cref="T:System.ComponentModel.Container" /> object. By associating the <see cref="T:System.Windows.Forms.ImageList" /> like this, you hand over control of the lifetime of the <see cref="T:System.Windows.Forms.ImageList" /> to the <see cref="T:System.ComponentModel.Container" />. This can be useful if you use a number of components in your application, and want to dispose of all of them simultaneously. For example, if you associate a <see cref="T:System.Windows.Forms.ToolTip" />, an <see cref="T:System.Windows.Forms.ImageList" />, and a <see cref="T:System.Windows.Forms.Timer" /> with a <see cref="T:System.ComponentModel.Container" />, calling <see cref="M:System.ComponentModel.Container.Dispose" /> on the Container will force disposal of all of these components as well.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ImageList" /> class, associating it with a container.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing <see cref="T:System.ComponentModel.IContainer" /> to associate with this instance of <see cref="T:System.Windows.Forms.ImageList" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +129,15 @@
         <ReturnType>System.Windows.Forms.ColorDepth</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set the color depth to a new value, the <see cref="P:System.Windows.Forms.ImageList.Handle" /> for the image list is recreated. Because setting the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> property causes the handle to be recreated, you should set <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> prior to setting the <see cref="P:System.Windows.Forms.ImageList.Images" /> property. When the handle for the <see cref="T:System.Windows.Forms.ImageList" /> has been created, setting the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> or <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> properties in code, after setting the <see cref="P:System.Windows.Forms.ImageList.Images" /> property, will cause the collection of images set for the <see cref="P:System.Windows.Forms.ImageList.Images" /> property to be deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the color depth of the image list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,9 +154,19 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.ImageList.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:System.Windows.Forms.ImageList" />. The <see cref="M:System.Windows.Forms.ImageList.Dispose(System.Boolean)" /> method leaves the <see cref="T:System.Windows.Forms.ImageList" /> in an unusable state. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.ImageList.Dispose(System.Boolean)" /> before you release your last reference to the <see cref="T:System.Windows.Forms.ImageList" />. Otherwise, the resources the <see cref="T:System.Windows.Forms.ImageList" /> is using will not be freed until garbage collection calls the <see cref="T:System.Windows.Forms.ImageList" /> object's destructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the used by the <see cref="T:System.Windows.Forms.ImageList" />, and optionally releases managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,11 +185,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the image indicated by the specified index on the specified <see cref="T:System.Drawing.Graphics" /> at the given location.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> to draw on. </param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location defined by a <see cref="T:System.Drawing.Point" /> at which to draw the image. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the image in the <see cref="T:System.Windows.Forms.ImageList" /> to draw. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,12 +215,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the image indicated by the given index on the specified <see cref="T:System.Drawing.Graphics" /> at the specified location.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> to draw on. </param>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal position at which to draw the image. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical position at which to draw the image. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the image in the <see cref="T:System.Windows.Forms.ImageList" /> to draw. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,14 +249,26 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The image is stretched or compressed as necessary to fit the bounds provided.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the image indicated by the given index on the specified <see cref="T:System.Drawing.Graphics" /> using the specified location and size.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> to draw on. </param>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal position at which to draw the image. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical position at which to draw the image. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width, in pixels, of the destination image. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height, in pixels, of the destination image. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the image in the <see cref="T:System.Windows.Forms.ImageList" /> to draw. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,9 +293,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This corresponds to a Win32 HIMAGELIST handle. The handle is not created until you need to use it. Getting the handle causes it to be created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the handle of the image list object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,9 +326,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the underlying Win32 handle has been created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -244,9 +356,15 @@
         <ReturnType>System.Windows.Forms.ImageList+ImageCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the image collection has not yet been created, it is created when you retrieve this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ImageList.ImageCollection" /> for this image list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -265,9 +383,17 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property prior to adding images to the image collection causes the images to be resized to the image size specified.</para>
+          <para>When you set the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property to a new value, the <see cref="P:System.Windows.Forms.ImageList.Handle" /> for the image list is recreated.</para>
+          <para>Because setting the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property causes the handle to be recreated, you should set <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> prior to setting the <see cref="P:System.Windows.Forms.ImageList.Images" /> property. When the handle for the <see cref="T:System.Windows.Forms.ImageList" /> has been created, setting the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> or <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> properties in code, after setting the <see cref="P:System.Windows.Forms.ImageList.Images" /> property, will cause the collection of images set for the <see cref="P:System.Windows.Forms.ImageList.Images" /> property to be deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the images in the image list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -292,9 +418,16 @@
         <ReturnType>System.Windows.Forms.ImageListStreamer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ImageListStreamer" /> is the data portion of the image list. When you work with forms that will be localized, you should always add an <see cref="T:System.Windows.Forms.ImageList" /> and images when the Language property of a form is set to Default. Changing the form's language before you add images will corrupt the image stream.</para>
+          <para>You can pass this handle to another instance of an <see cref="T:System.Windows.Forms.ImageList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ImageListStreamer" /> associated with this image list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,8 +449,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to do special processing when the <see cref="P:System.Windows.Forms.ImageList.Handle" /> is recreated by actions such as changing the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> or <see cref="P:System.Windows.Forms.ImageList.ImageSize" />. Special processing may be required because setting the <see cref="P:System.Windows.Forms.ImageList.ColorDepth" /> or the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property after setting the <see cref="P:System.Windows.Forms.ImageList.Images" /> property causes the handle to be recreated and the images to be discarded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ImageList.Handle" /> is recreated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -345,10 +484,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that contains additional data about the <see cref="T:System.Windows.Forms.ImageList" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -362,9 +504,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ImageList.ToString" /> method returns a string that includes the <see cref="P:System.Windows.Forms.ImageList.ImageCollection.Count" /> and <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Windows.Forms.ImageList" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.ImageList" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -378,9 +529,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transparent color is not rendered when the image is drawn.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color to treat as transparent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetPeerTcpBindingElement" FullName="System.ServiceModel.Configuration.NetPeerTcpBindingElement">
   <TypeSignature Language="C#" Value="public class NetPeerTcpBindingElement : System.ServiceModel.Configuration.StandardBindingElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NetPeerTcpBindingElement extends System.ServiceModel.Configuration.StandardBindingElement implements class System.ServiceModel.Configuration.IBindingConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML element that specifies a binding for peer channel specific TCP messaging.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.NetPeerTcpBindingElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +45,14 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.NetPeerTcpBindingElement" /> class.  </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.String" /> that specifies the name to associate with this binding element.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -54,9 +66,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListenIPAddress">
@@ -75,9 +90,12 @@
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the IP address on which the peer node will listen for TCP messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferPoolSize">
@@ -99,9 +117,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, for a buffer pool that stores TCP messages processed by the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxReceivedMessageSize">
@@ -123,9 +144,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default maximum message size if 65,536 bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the maximum size, in bytes, for messages received by peer TCP bindings configured with this element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -142,9 +169,14 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the configuration element settings with the information from the supplied network binding when a configuration event is raised.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.Channels.Binding" /> that contains a specific to networking binding from which this configuration element should obtain the new settings when a configuration application event is raised.</param>
       </Docs>
     </Member>
     <Member MemberName="Port">
@@ -166,9 +198,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the network interface port on which this binding will process peer channel TCP messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -182,9 +217,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of configuration properties for this binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReaderQuotas">
@@ -203,9 +241,12 @@
         <ReturnType>System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration element for reader quotas for bindings configured with this element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Resolver">
@@ -224,9 +265,12 @@
         <ReturnType>System.ServiceModel.Configuration.PeerResolverElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration element for a peer resolver associated with this binding configuration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -245,9 +289,12 @@
         <ReturnType>System.ServiceModel.Configuration.PeerSecurityElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security configuration element for this binding configuration.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoginTextLayout" FullName="System.Web.UI.WebControls.LoginTextLayout">
   <TypeSignature Language="C#" Value="public enum LoginTextLayout" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the position of labels relative to their associated text boxes for the <see cref="T:System.Web.UI.WebControls.Login" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="TextOnLeft">
@@ -20,8 +24,11 @@
         <ReturnType>System.Web.UI.WebControls.LoginTextLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Places labels to the left of the associated text entry fields.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>System.Web.UI.WebControls.LoginTextLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Places labels above the associated text entry fields. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

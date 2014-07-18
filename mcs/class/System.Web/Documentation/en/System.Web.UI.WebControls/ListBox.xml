@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListBox" FullName="System.Web.UI.WebControls.ListBox">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ListBox : System.Web.UI.WebControls.ListControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -25,8 +26,123 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.ListBox" /> control to create a list control that allows single or multiple item selection. Use the <see cref="P:System.Web.UI.WebControls.ListBox.Rows" /> property to specify the height of the control. To enable multiple item selection, set the <see cref="P:System.Web.UI.WebControls.ListBox.SelectionMode" /> property to ListSelectionMode.Multiple. </para>
+      <para>To specify the items that you want to appear in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control, place a ListItem element for each entry between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection to examine the <see cref="T:System.Web.UI.WebControls.ListItem" /> objects contained in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. For example, you can determine the selected item(s) in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control by enumerating the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection and testing the <see cref="P:System.Web.UI.WebControls.ListItem.Selected" /> value for each <see cref="T:System.Web.UI.WebControls.ListItem" /> element.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ListBox" /> control also supports data binding. To bind the control to a data source, first create a data source, such as one of the <see cref="T:System.Web.UI.DataSourceControl" /> objects, that contains the items to display in the control. Next, use the <see cref="M:System.Web.UI.Control.DataBind" /> method to bind the data source to the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. Use the <see cref="P:System.Web.UI.WebControls.ListControl.DataTextField" /> and <see cref="P:System.Web.UI.WebControls.ListControl.DataValueField" /> properties to specify which field in the data source to bind to the Text and Value properties, respectively, of each list item in the control. The <see cref="T:System.Web.UI.WebControls.ListBox" /> control will now display the information from the data source.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+      </block>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:ListBox
+    AccessKey="string"
+    AppendDataBoundItems="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    AutoPostBack="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CausesValidation="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    CssClass="string"
+    DataMember="string"
+    DataSource="string"
+    DataSourceID="string"
+    DataTextField="string"
+    DataTextFormatString="string"
+    DataValueField="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDataBound="DataBound event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnSelectedIndexChanged="SelectedIndexChanged event handler"
+    OnTextChanged="TextChanged event handler"
+    OnUnload="Unload event handler"
+    Rows="integer"
+    runat="server"
+    SelectedIndex="integer"
+    SelectedValue="string"
+    SelectionMode="<codeFeaturedElement>Single</codeFeaturedElement>|Multiple"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+            &lt;asp:ListItem
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Selected="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Text="string"
+                Value="string"
+            /&gt;
+&lt;/asp:ListBox&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a list box control that allows single or multiple item selection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +151,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ListBox" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ListBox" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,9 +175,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds name, size, multiple, and onchange to the list of attributes to render.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +196,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.ListBox.BorderColor" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +226,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.BorderStyle" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.ListBox.BorderStyle" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +256,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.Unit" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.ListBox.BorderWidth" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border width for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,9 +289,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.ListBox.GetSelectedIndices" /> method to identify or access the selected items in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. Each element in the returned array represents the index for a selected list item. You can use the index values to access the items in the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the array of index values for currently selected items in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of integers, each representing the index of a selected item in the list box.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadPostData">
@@ -158,11 +317,24 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers, when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.ListBox" /> class.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method indicates if the state of the <see cref="T:System.Web.UI.WebControls.ListBox" /> control has changed. In other words, it determines if each list item in the control has the same <see cref="P:System.Web.UI.WebControls.ListItem.Selected" /> value as the last posted value. A user selecting an item in the control changes the <see cref="P:System.Web.UI.WebControls.ListItem.Selected" /> value for the corresponding <see cref="T:System.Web.UI.WebControls.ListItem" /> object in the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection of the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. If some list items are selected in the control, or if the <see cref="T:System.Web.UI.WebControls.ListBox" /> is disabled, <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> returns false. </para>
+          <para>When the <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method returns true for a control, the ASP.NET page framework invokes the <see cref="M:System.Web.UI.WebControls.RadioButtonList.RaisePostDataChangedEvent" /> method for the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the posted content of the list control, if it is different from the last posting.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control, used to index the <paramref name="postCollection" />.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that contains value information indexed by control identifiers. </param>
       </Docs>
     </Member>
     <Member MemberName="OnPreRender">
@@ -175,9 +347,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.OnPreRender(System.EventArgs)" /> method is used primarily by control developers, when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.ListBox" /> class. The <see cref="M:System.Web.UI.WebControls.ListBox.OnPreRender(System.EventArgs)" /> method allows derived classes to handle the <see cref="E:System.Web.UI.Control.PreRender" /> event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.OnPreRender(System.EventArgs)" /> method performs any necessary prerendering steps prior to saving view state and rendering content for the <see cref="T:System.Web.UI.WebControls.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the <see cref="T:System.Web.UI.WebControls.ListBox" /> control prior to rendering on the client.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,8 +375,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.RaisePostDataChangedEvent" /> method is used primarily by control developers, when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+          <para>The ASP.NET page framework calls the <see cref="M:System.Web.UI.WebControls.ListBox.RaisePostDataChangedEvent" /> method on a <see cref="T:System.Web.UI.WebControls.ListBox" /> control when the <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method indicates that the state of the list items have changed in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. The <see cref="M:System.Web.UI.WebControls.ListBox.RaisePostDataChangedEvent" /> method calls the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method to raise the <see cref="E:System.Web.UI.WebControls.ListControl.SelectedIndexChanged" /> event. Control developers can override the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method to perform custom processing when the user selects list items in the control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.RaisePostDataChangedEvent" /> method can optionally perform validation before raising the <see cref="E:System.Web.UI.WebControls.ListControl.SelectedIndexChanged" /> event for the control. To validate a group of controls on the page when a list item within the <see cref="T:System.Web.UI.WebControls.ListBox" /> is selected, set the <see cref="P:System.Web.UI.WebControls.ListControl.AutoPostBack" /> and <see cref="P:System.Web.UI.WebControls.ListControl.CausesValidation" /> properties to true, and then specify the group of controls to validate in the <see cref="P:System.Web.UI.WebControls.ListControl.ValidationGroup" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method whenever posted data for the <see cref="T:System.Web.UI.WebControls.ListBox" /> control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RenderContents">
@@ -225,9 +413,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ListBox.Rows" /> property to specify the number of rows to display in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+          <block subset="none" type="note">
+            <para>The number of rows must be between one and 2000. Values outside of this range will raise an exception.</para>
+          </block>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ListBox.Rows" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of rows displayed in the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,9 +445,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ListSelectionMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ListBox.SelectionMode" /> property to specify the mode behavior of the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. Setting this property to ListSelectionMode.Single indicates only a single item can be selected from the <see cref="T:System.Web.UI.WebControls.ListBox" /> control, while ListSelectionMode.Multiple specifies multiple items can be selected.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.ListBox.SelectionMode" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the selection mode of the <see cref="T:System.Web.UI.WebControls.ListBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,11 +481,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.ListBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method to process posted data for changes to a <see cref="T:System.Web.UI.WebControls.ListBox" /> object. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.System#Web#UI#IPostBackDataHandler#LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListBox" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the posted content of the list control, if it is different from the last posting.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the posted collection that references the content to load. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection posted to the server. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -295,8 +512,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.ListBox.RaisePostDataChangedEvent" /> method to raise an event when the posted data for a <see cref="T:System.Web.UI.WebControls.ListBox" /> object changes. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ListBox.System#Web#UI#IPostBackDataHandler#LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListBox" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method whenever posted data for the <see cref="T:System.Web.UI.WebControls.ListBox" /> control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolTip">

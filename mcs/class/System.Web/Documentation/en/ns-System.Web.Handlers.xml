@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Handlers" FullName="System.Web.Handlers" FullNameSP="System.Web.Handlers" Maintainer="Mono">
   <Docs>
-    <summary>
-    </summary>
     <remarks>
       <para>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Handlers" /> namespace contains HTTP handler classes that process HTTP requests to a Web server.</para>
+    </summary>
   </Docs>
 </Namespace>

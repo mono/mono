@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceDesigner" FullName="System.Web.UI.Design.DataSourceDesigner">
   <TypeSignature Language="C#" Value="public class DataSourceDesigner : System.Web.UI.Design.ControlDesigner, System.Web.UI.Design.IDataSourceDesigner" />
   <AssemblyInfo>
@@ -13,8 +14,24 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class is the base class for data source designers, such as the <see cref="T:System.Web.UI.Design.WebControls.SqlDataSourceDesigner" />, <see cref="T:System.Web.UI.Design.WebControls.AccessDataSourceDesigner" />, and <see cref="T:System.Web.UI.Design.WebControls.ObjectDataSourceDesigner" /> classes. If you create a new data source control, you might also want to create a custom control designer for your control and derive it from the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
+      <para>The <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class has two event methods: the <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnDataSourceChanged(System.EventArgs)" /> and <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnSchemaRefreshed(System.EventArgs)" /> methods. Both of these events can be temporarily disabled with the <see cref="M:System.Web.UI.Design.DataSourceDesigner.SuppressDataSourceEvents" /> method, which sets the <see cref="P:System.Web.UI.Design.DataSourceDesigner.SuppressingDataSourceEvents" /> property. The event methods can be enabled again with the <see cref="M:System.Web.UI.Design.DataSourceDesigner.ResumeDataSourceEvents" /> method.</para>
+      <para>There are two static methods that you can use to evaluate the equivalency of schemas or views without creating an instance of the class:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.SchemasEquivalent(System.Web.UI.Design.IDataSourceSchema,System.Web.UI.Design.IDataSourceSchema)" /> method compares two schemas.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.ViewSchemasEquivalent(System.Web.UI.Design.IDataSourceViewSchema,System.Web.UI.Design.IDataSourceViewSchema)" /> method compares the schemas of two views.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides design-time support in a design host for the <see cref="T:System.Web.UI.DataSourceControl" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +42,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.#ctor" /> constructor is called by the design host at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActionLists">
@@ -39,9 +62,12 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of items that are used to create an action list menu at design time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanConfigure">
@@ -54,9 +80,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanConfigure" /> property in a custom class to enable or disable design-time configuration for a specific data source.</para>
+          <para>A design host such as vsprvslong uses the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanConfigure" /> property to determine whether a command to configure the data source appears in the action list menu at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="M:System.Web.UI.Design.DataSourceDesigner.Configure" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRefreshSchema">
@@ -69,9 +102,31 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanRefreshSchema" /> property in a derived class to enable or disable the ability to refresh the schema at design time for a specific data source. If your application requires an invariant data structure and the schema will never change, you want the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanRefreshSchema" /> property to return false.</para>
+          <para>A design host such as vsprvslong uses the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanRefreshSchema" /> property to determine whether a command to refresh the schema appears in the action list menu at design time.</para>
+          <para>In a design host such as vsprvslong, you can see the <see cref="P:System.Web.UI.Design.DataSourceDesigner.CanRefreshSchema" /> property in action by completing the following process:</para>
+          <list type="ordered">
+            <item>
+              <para>On your page, place a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> or an <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control.</para>
+            </item>
+            <item>
+              <para>In Design view, on the action list, click <ui>Configure</ui>.</para>
+            </item>
+            <item>
+              <para>Remove a few fields from the data source. </para>
+            </item>
+            <item>
+              <para>On the action list, click <ui>Refresh Schema</ui>.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Configure">
@@ -85,8 +140,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.Configure" /> method is not supported in the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class; however, it can be overridden by custom data source designers inheriting from the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
+          <para>In a design host such as vsprvslong, you can see the <see cref="M:System.Web.UI.Design.DataSourceDesigner.Configure" /> method in action by completing the following process:</para>
+          <list type="ordered">
+            <item>
+              <para>Put a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> or an <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control on your page.</para>
+            </item>
+            <item>
+              <para>In Design view, on the action list, clicking <ui>Configure</ui>.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Launches the data source configuration utility in the design host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSourceChanged">
@@ -99,8 +169,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when any property of the associated data source changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDesignTimeHtml">
@@ -114,9 +187,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of the <see cref="M:System.Web.UI.Design.DataSourceDesigner.GetDesignTimeHtml" /> method returns the result from the base <see cref="M:System.Web.UI.Design.ControlDesigner.CreatePlaceHolderDesignTimeHtml" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the HTML markup for displaying the associated data source control at design time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The markup for the design-time display.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetView">
@@ -132,10 +214,20 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In derived classes, if <paramref name="viewName" /> does not exist, the <see cref="M:System.Web.UI.Design.DataSourceDesigner.GetView(System.String)" /> method should return null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> object that is identified by the view name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation always returns null.</para>
+        </returns>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the view.</param>
       </Docs>
     </Member>
     <Member MemberName="GetViewNames">
@@ -149,9 +241,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of the view names that are available in this data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of view names.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnDataSourceChanged">
@@ -167,9 +265,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnDataSourceChanged(System.EventArgs)" /> method notifies the control designers of each control that is bound to the associated data source to refresh its control in the design host. The <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnDataSourceChanged(System.EventArgs)" /> method can be suppressed with the <see cref="M:System.Web.UI.Design.DataSourceDesigner.SuppressDataSourceEvents" /> method or by calling the <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method with an argument of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Design.DataSourceDesigner.DataSourceChanged" /> event when the properties of the data source have changed and the <see cref="P:System.Web.UI.Design.DataSourceDesigner.SuppressingDataSourceEvents" /> value is false.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object provided by the calling object.</param>
       </Docs>
     </Member>
     <Member MemberName="OnSchemaRefreshed">
@@ -185,9 +290,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnSchemaRefreshed(System.EventArgs)" /> method notifies the control designers of each control that is bound to the associated data source that the fields in the schema have changed. The <see cref="M:System.Web.UI.Design.DataSourceDesigner.OnSchemaRefreshed(System.EventArgs)" /> method can be suppressed with the <see cref="M:System.Web.UI.Design.DataSourceDesigner.SuppressDataSourceEvents" /> method or by calling the <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> property with an argument of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Design.DataSourceDesigner.SchemaRefreshed" /> event when the schema of the data source has changed and the <see cref="P:System.Web.UI.Design.DataSourceDesigner.SuppressingDataSourceEvents" /> value is false.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="RefreshSchema">
@@ -203,9 +315,16 @@
         <Parameter Name="preferSilent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preferSilent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method is not supported in the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class. However, it is supported in derived classes, such as the <see cref="T:System.Web.UI.Design.WebControls.XmlDataSourceDesigner" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the schema from the data source, while optionally suppressing events.</para>
+        </summary>
+        <param name="preferSilent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to allow events when refreshing the schema; false to disable the <see cref="E:System.Web.UI.Design.DataSourceDesigner.DataSourceChanged" /> and <see cref="E:System.Web.UI.Design.DataSourceDesigner.SchemaRefreshed" /> events when refreshing the schema.</param>
       </Docs>
     </Member>
     <Member MemberName="ResumeDataSourceEvents">
@@ -219,8 +338,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source events can be suppressed by setting the <see cref="P:System.Web.UI.Design.DataSourceDesigner.SuppressingDataSourceEvents" /> property to false or by calling the <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method with an argument of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores data source events after the data source events have been suppressed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaRefreshed">
@@ -233,8 +358,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the schema has been refreshed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemasEquivalent">
@@ -251,11 +379,22 @@
         <Parameter Name="schema2" Type="System.Web.UI.Design.IDataSourceSchema" />
       </Parameters>
       <Docs>
-        <param name="schema1">To be added.</param>
-        <param name="schema2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparison of the two schemas is based on the views, as well as the names and types of the fields that are contained in the views. The <see cref="M:System.Web.UI.Design.DataSourceDesigner.SchemasEquivalent(System.Web.UI.Design.IDataSourceSchema,System.Web.UI.Design.IDataSourceSchema)" /> method can be used without an instance of the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a value that indicates whether two schemas are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both schemas are equivalent; otherwise, false.</para>
+        </returns>
+        <param name="schema1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first schema to compare (derived from the <see cref="T:System.Web.UI.Design.IDataSourceSchema" />).</param>
+        <param name="schema2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second schema to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="SuppressDataSourceEvents">
@@ -269,8 +408,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Postpones all data source events until after the <see cref="M:System.Web.UI.Design.DataSourceDesigner.ResumeDataSourceEvents" /> method is called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuppressingDataSourceEvents">
@@ -283,9 +425,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSourceDesigner.SuppressingDataSourceEvents" /> property can be set by calling the <see cref="M:System.Web.UI.Design.DataSourceDesigner.SuppressDataSourceEvents" /> or <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method with an argument of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="E:System.Web.UI.Design.DataSourceDesigner.DataSourceChanged" /> event or the <see cref="M:System.Web.UI.Design.DataSourceDesigner.RefreshSchema(System.Boolean)" /> method occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewSchemasEquivalent">
@@ -302,11 +450,22 @@
         <Parameter Name="viewSchema2" Type="System.Web.UI.Design.IDataSourceViewSchema" />
       </Parameters>
       <Docs>
-        <param name="viewSchema1">To be added.</param>
-        <param name="viewSchema2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.ViewSchemasEquivalent(System.Web.UI.Design.IDataSourceViewSchema,System.Web.UI.Design.IDataSourceViewSchema)" /> method can be used without an instance of the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a value that determines whether two schema views are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both views are equivalent; otherwise, false. </para>
+        </returns>
+        <param name="viewSchema1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first view to compare (derived from the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />).</param>
+        <param name="viewSchema2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second view to compare.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RuntimeVariablesExpression" FullName="System.Linq.Expressions.RuntimeVariablesExpression">
   <TypeSignature Language="C#" Value="public sealed class RuntimeVariablesExpression : System.Linq.Expressions.Expression" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RuntimeVariablesExpression extends System.Linq.Expressions.Expression" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type is necessary for implementing "eval" in dynamic languages. It evaluates to an instance of <see cref="T:System.Collections.Generic.IList`1" /> at run time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An expression that provides runtime read/write permission for variables.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
@@ -50,9 +57,12 @@
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the node type of this Expression. Extension nodes should return <see cref="F:System.Linq.Expressions.ExpressionType.Extension" /> when overriding this method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -66,9 +76,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the static type of the expression that this <see cref="T:System.Linq.Expressions.Expression" /> represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -85,10 +98,17 @@
         <Parameter Name="variables" Type="System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.ParameterExpression&gt;" />
       </Parameters>
       <Docs>
-        <param name="variables">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="variables">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.RuntimeVariablesExpression.Variables" /> property of the result.</param>
       </Docs>
     </Member>
     <Member MemberName="Variables">
@@ -102,9 +122,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ParameterExpression&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The variables or parameters to which to provide runtime access.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

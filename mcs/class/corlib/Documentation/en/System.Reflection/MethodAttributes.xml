@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodAttributes" FullName="System.Reflection.MethodAttributes" FullNameSP="System_Reflection_MethodAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable MethodAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum MethodAttributes" />
@@ -22,12 +23,13 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Specifies flags for method attributes.</para>
-    </summary>
     <remarks>
       <para>This enumeration is used by the <see cref="P:System.Reflection.MethodBase.Attributes" /> property.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies flags for method attributes. These flags are defined in the corhdr.h file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abstract">
@@ -46,12 +48,11 @@
       <Parameters />
       <MemberValue>Abstract</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the type that declares the method does not provide
-      an implementation.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the class does not provide an implementation of this method.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -71,12 +72,11 @@
       <Parameters />
       <MemberValue>Assembly</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is accessible throughout the
-      assembly.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible to any class of this assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -94,8 +94,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, CheckAccessOnOverride</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method can only be overridden when it is also accessible.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FamANDAssem">
@@ -114,12 +117,11 @@
       <Parameters />
       <MemberValue>FamANDAssem</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is accessible only to members of the type that defines the method and its subclasses in the assembly that
-      contains the defining type.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible to members of this type and its derived types that are in this assembly only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -139,12 +141,11 @@
       <Parameters />
       <MemberValue>Family</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is accessible only to the members of the type
-      that defines it and its subclasses.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible only to members of this class and its derived classes.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -164,12 +165,11 @@
       <Parameters />
       <MemberValue>FamORAssem</MemberValue>
       <Docs>
-        <summary>
-   Specifies that the method is accessible to members of
-   the type that defines the method and its subclasses, and throughout the
-   assembly.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible to derived classes anywhere, as well as to any class in the assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -189,11 +189,11 @@
       <Parameters />
       <MemberValue>Final</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method cannot be overridden.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method cannot be overridden.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -211,8 +211,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, HasSecurity</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method has security associated with it. Reserved flag for runtime use only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HideBySig">
@@ -231,16 +234,11 @@
       <Parameters />
       <MemberValue>HideBySig</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is hidden
-      by name and signature.
-      </para>
-          <para>
-            <block subset="none" type="note">A method that is not hidden by name 
-      and signature is hidden by name only. </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method hides by name and signature; otherwise, by name only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -260,13 +258,11 @@
       <Parameters />
       <MemberValue>MemberAccessMask</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a bit-mask that, when combined with 
-      the attributes of a method using the logical AND operator, yields
-      the bits that specify the accessibility of a method.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves accessibility information.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -286,12 +282,11 @@
       <Parameters />
       <MemberValue>VtableLayoutMask</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method always gets a new slot in the
-      v-table.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method always gets a new slot in the vtable.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -311,13 +306,11 @@
       <Parameters />
       <MemberValue>PinvokeImpl</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method implementation is forwarded
-      through PInvoke (Platform Invocation
-      Services).
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method implementation is forwarded through PInvoke (Platform Invocation Services).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -337,12 +330,11 @@
       <Parameters />
       <MemberValue>Private</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is accessible only to
-      members in the defining type.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible only to the current class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -362,11 +354,11 @@
       <Parameters />
       <MemberValue>ReuseSlot</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the member cannot be referenced.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the member cannot be referenced.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -386,11 +378,11 @@
       <Parameters />
       <MemberValue>Public</MemberValue>
       <Docs>
-        <summary>
-   Specifies that the method is accessible to members of any
-   type.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is accessible to any object for which this object is in scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -408,8 +400,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, RequireSecObject</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method calls another method containing security code. Reserved flag for runtime use only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReservedMask">
@@ -426,8 +421,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a reserved flag for runtime use only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReuseSlot">
@@ -446,17 +444,11 @@
       <Parameters />
       <MemberValue>ReuseSlot</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method will
-      reuse an existing slot
-      in the v-table.
-      </para>
-          <para>
-            <block subset="none" type="note">This is the default behavior. 
-   </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method will reuse an existing slot in the vtable. This is the default behavior.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -474,8 +466,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, RTSpecialName</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the common language runtime checks the name encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecialName">
@@ -494,16 +489,11 @@
       <Parameters />
       <MemberValue>SpecialName</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the method is treated in a special way by some tools. </para>
-          <block subset="none" type="note">
-            <para>For more information on special names, see Partition I of the CLI 
-         Specification.</para>
-            <para>For more information on <see langword="SpecialName " />in metadata, see 
-      Partition II of the CLI Specification.</para>
-          </block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is special. The name describes how this method is special.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -523,15 +513,11 @@
       <Parameters />
       <MemberValue>Static</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the method is invoked on the defining type.</para>
-          <para>
-            <block subset="none" type="note">For method 
-      invocation, the target of a static method is a <see cref="T:System.Type" />
-      object that represents the type where the method is defined.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is defined on the type; otherwise, it is defined per instance.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -549,8 +535,11 @@
       </ReturnValue>
       <MemberValue>ReuseSlot, UnmanagedExport</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the managed method is exported by thunk to unmanaged code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Virtual">
@@ -569,11 +558,11 @@
       <Parameters />
       <MemberValue>Virtual</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is virtual.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the method is virtual.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -593,14 +582,11 @@
       <Parameters />
       <MemberValue>VtableLayoutMask</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies a bit-mask that, when combined with 
-      the attributes of a method using the logical AND operator,
-      yields the v-table attributes of a
-      method.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves vtable attributes.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignTimeVisibleAttribute" FullName="System.ComponentModel.DesignTimeVisibleAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DesignTimeVisibleAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DesignTimeVisibleAttribute extends System.Attribute" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" /> is a hint to the Designer. The Designer will ignore this attribute for components that have a UI presence. It can only be applied to classes.</para>
+      <para>The <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" /> is most useful when you have a control that accepts child components. For example, the <see cref="T:System.Windows.Forms.TreeView" /> control's node items should not appear in the component tray because they are drawn by the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" /> marks a component's visibility. If <see cref="F:System.ComponentModel.DesignTimeVisibleAttribute.Yes" /> is present, a visual designer can show this component on a designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" /> set to the default value of false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +66,13 @@
         <Parameter Name="visible" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="visible">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" /> with the <see cref="P:System.ComponentModel.DesignTimeVisibleAttribute.Visible" /> property set to the given value in <paramref name="visible" />.</para>
+        </summary>
+        <param name="visible">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value that the <see cref="P:System.ComponentModel.DesignTimeVisibleAttribute.Visible" /> property will be set against. </param>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -73,8 +89,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default visibility which is Yes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -93,10 +112,11 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
         <summary>To be added</summary>
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -132,9 +152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating if this instance is equal to the <see cref="F:System.ComponentModel.DesignTimeVisibleAttribute.Default" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if this instance is equal to the <see cref="F:System.ComponentModel.DesignTimeVisibleAttribute.Default" /> value; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="No">
@@ -151,8 +177,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a component as not visible in a visual designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Visible">
@@ -168,9 +197,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the component should be shown at design time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Yes">
@@ -187,8 +219,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a component as visible in a visual designer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

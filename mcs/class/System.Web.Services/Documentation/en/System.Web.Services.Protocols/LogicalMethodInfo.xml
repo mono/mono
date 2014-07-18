@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LogicalMethodInfo" FullName="System.Web.Services.Protocols.LogicalMethodInfo">
   <TypeSignature Language="C#" Value="public sealed class LogicalMethodInfo" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> is used primarily by a SOAP extension to interrogate the details of the XML Web service method with which the SOAP extension is configured to run. Depending on how the SOAP extension is configured, it can find out details about the XML Web service method in the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> method of <see cref="T:System.Web.Services.Protocols.SoapExtension" /> that takes a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />. The <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> provides details such as the XML Web service method's parameters by accessing the <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.Parameters" /> property and any custom attributes applied to the XML Web service method using the <see cref="M:System.Web.Services.Protocols.LogicalMethodInfo.GetCustomAttributes(System.Type)" /> property.</para>
+      <para>For more details on SOAP extensions see the <see cref="T:System.Web.Services.Protocols.SoapExtension" /> class or <format type="text/html"><a href="97D81ACE-95E7-4ACC-AE39-9692A0021E95">[&lt;topic://cpconAlteringSOAPMessageUsingSOAPExtensions&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the attributes and metadata for an XML Web service method. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +35,11 @@
       </Parameters>
       <Docs>
         <param name="method_info">a <see cref="T:System.Reflection.MethodInfo" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> class with the <see cref="T:System.Reflection.MethodInfo" /> passed in.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +54,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous design pattern in the common language runtime involves calling a Begin method to start the asynchronous method invocation and an End method to complete the invocation. The Begin method takes two additional parameters besides the parameters defined by the synchronous version of the method: one to store a delegate and one to store any state information that needs to be passed on to the delegate. This property represents the parameter for the delegate with a parameter name of <paramref name="AsyncCallback" />.</para>
+          <para>For more information on invoking XML Web services asynchronously, see <format type="text/html"><a href="F9E26A43-063A-440A-8C73-A02F2CCF3EA0">[&lt;topic://cpconInvokingWebServicesAsynchronously&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameter information for the <paramref name="AsyncCallback" /> parameter of a Begin method in an asynchronous invocation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +78,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous design pattern in the common language runtime involves calling a Begin method to start the asynchronous method invocation and an End method to complete the invocation. The Begin method typically returns immediately with an object implementing the <see cref="T:System.IAsyncResult" /> interface, which can then be passed to the End method at a later time to complete the asynchronous method invocation. The returned object implementing the <see cref="T:System.IAsyncResult" /> interface is represented by this property.</para>
+          <para>For more information on invoking XML Web services asynchronously, see <format type="text/html"><a href="F9E26A43-063A-440A-8C73-A02F2CCF3EA0">[&lt;topic://cpconInvokingWebServicesAsynchronously&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return value of a Begin asynchronous method invocation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +102,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous design pattern in the common language runtime involves calling a Begin method to start the asynchronous method invocation and an End method to complete the invocation. The Begin method takes two additional parameters besides the parameters defined by the synchronous version of the method: one to store a delegate and one to store any state information that needs to be passed on to the delegate. This property represents the state information that needs to be passed into the delegate.</para>
+          <para>For more information on invoking XML Web services asynchronously, see <format type="text/html"><a href="F9E26A43-063A-440A-8C73-A02F2CCF3EA0">[&lt;topic://cpconInvokingWebServicesAsynchronously&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameter information for the <paramref name="AsyncState" /> parameter of a Begin method in an asynchronous invocation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,13 +131,23 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="target">To be added: an object of type 'object'</param>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <param name="callback">To be added: an object of type 'AsyncCallback'</param>
-        <param name="asyncState">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IAsyncResult'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous invocation of the method represented by this <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> which is passed to <see cref="M:System.Web.Services.Protocols.LogicalMethodInfo.EndInvoke(System.Object,System.IAsyncResult)" /> to obtain the return values from the remote method call.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the <see cref="T:System.Object" /> on which to invoke the method on. </param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method. This is an array of objects with the same number, order, and type as the parameters of the method. If the method does not require any parameters, <paramref name="values" /> should be null. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to call when the asynchronous invoke is complete. If <paramref name="callback" /> is null, the delegate is not called. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />State information that is passed on to the delegate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +162,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.MethodInfo" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes and metadata for a Begin method in an asynchronous invocation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,9 +185,15 @@
       </Parameters>
       <Docs>
         <param name="method_infos">a <see cref="T:System.Reflection.MethodInfo[]" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo[]" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given an array of <see cref="T:System.Reflection.MethodInfo" /> that can contain information about both asynchronous and synchronous methods, creates an array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />, representing the methods within <paramref name="methodInfos" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -160,10 +212,17 @@
       </Parameters>
       <Docs>
         <param name="method_infos">a <see cref="T:System.Reflection.MethodInfo[]" /></param>
-        <param name="types">a <see cref="T:System.Web.Services.Protocols.LogicalMethodTypes" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo[]" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given an array of <see cref="T:System.Reflection.MethodInfo" />, where the returned array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> can be restricted to only asynchronous or synchronous methods, creates an array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />, representing the methods within <paramref name="methodInfos" />, filtered by the value of <paramref name="types" />.</para>
+        </returns>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Web.Services.Protocols.LogicalMethodTypes" /> values. Determines whether just asynchronous or synchronous methods or both are included in the returned array of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +237,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ICustomAttributeProvider" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes applied to the method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +256,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.DeclaringType" /> property retrieves a reference to a <see cref="T:System.Type" /> for the type that declares this member. A member of a class (or interface) is either declared or inherited from a base class (or interface). The returned <see cref="T:System.Type" /> might not be the same as the <see cref="T:System.Type" /> of the class implementing the XML Web service (if that class derives from a base class and the method represented by this class is declared in that base class then the <see cref="T:System.Type" /> returned is the base class).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class that declares the method represented by the current <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -214,11 +282,19 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="target">To be added: an object of type 'object'</param>
-        <param name="asyncResult">To be added: an object of type 'IAsyncResult'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends an asynchronous invocation of the method represented by the current <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects containing the return value and any by-reference or out parameters of the derived class method.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the <see cref="T:System.Object" /> on which to invoke the method. </param>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned from <see cref="M:System.Web.Services.Protocols.LogicalMethodInfo.BeginInvoke(System.Object,System.Object[],System.AsyncCallback,System.Object)" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,9 +309,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.MethodInfo" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes and metadata for an End method of an asynchronous invocation to a method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -252,10 +331,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first custom attribute applied to the type, if any custom attributes are applied to the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the first custom attribute applied to the <paramref name="type" /> parameter.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which the custom attributes are applied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,10 +358,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the custom attributes applied to the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> containing the custom attributes applied to <paramref name="type" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which the custom attributes are applied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -290,9 +383,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use an instance of <see cref="T:System.Reflection.ParameterInfo" /> to obtain information about the parameter's data type, default value, and so on.</para>
+          <para>
+            <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.InParameters" /> returns an array of <see cref="T:System.Reflection.ParameterInfo" /> objects representing the parameters passed into a method, in order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters passed into the method represented by the instance of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -310,11 +411,19 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="target">To be added: an object of type 'object'</param>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the method represented by the current <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Object" /> representing the return value and out parameters of the invoked method.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the <see cref="T:System.Object" /> to invoke the method. </param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method. This is an array of objects with the same number, order, and type as the parameters of the method. If the method does not require any parameters, the <paramref name="values" /> parameter should be null. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -328,9 +437,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the method represented by the instance of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> is invoked asynchronously.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -348,9 +460,15 @@
       </Parameters>
       <Docs>
         <param name="method_info">a <see cref="T:System.Reflection.MethodInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the method passed in represents a Begin method of an asynchronous invocation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="methodInfo" /> parameter is a Begin method of an asynchronous invocation; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -368,9 +486,15 @@
       </Parameters>
       <Docs>
         <param name="method_info">a <see cref="T:System.Reflection.MethodInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the method passed in represents an End method of an asynchronous invocation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="methodInfo" /> parameter is an End method of an asynchronous invocation; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -384,9 +508,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the return type for the method represented by the instance of <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> is void.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -401,9 +528,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.MethodInfo" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes and metadata for a synchronous method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -417,9 +547,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the method represented by this <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -434,9 +567,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a <see cref="T:System.Reflection.ParameterInfo" /> to obtain information about the parameter's data type, default value, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the out parameters for the method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -451,9 +590,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ParameterInfo[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a <see cref="T:System.Reflection.ParameterInfo" /> to obtain information about the parameter's data type, default value, and so on.</para>
+          <para>
+            <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.Parameters" /> returns an array of <see cref="T:System.Reflection.ParameterInfo" /> objects representing the parameters passed into a method, in order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters for the method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -467,9 +614,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return type of this method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -484,9 +634,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Reflection.ICustomAttributeProvider" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes for the return type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -501,9 +654,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

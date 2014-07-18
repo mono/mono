@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbPermission" FullName="System.Data.OleDb.OleDbPermission">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OleDbPermission : System.Data.Common.DBDataPermission" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is intended for future use when the .NET Framework Data Provider for OLE DB is enabled for partial trust scenarios. The .NET Framework Data Provider for OLE DB currently requires FullTrust permission. Currently, using the OleDbPermission class has no effect. For more information, see <format type="text/html"><a href="93E099EB-DAA1-4F1E-B031-C1E10A996F88">Code Access Security and ADO.NET</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables the .NET Framework Data Provider for OLE DB to help make sure that a user has a security level sufficient to access an OLE DB data source.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +55,13 @@
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'Security.Permissions.PermissionState'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,10 +77,18 @@
         <Parameter Name="allowBlankPassword" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'Security.Permissions.PermissionState'</param>
-        <param name="allowBlankPassword">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Permissions.PermissionState" /> enumeration takes precedence over the <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> property. Therefore, if you set <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> to false, you must also set <see cref="T:System.Security.Permissions.PermissionState" /> to None to prevent a user from making a connection using a blank password.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
+        <param name="allowBlankPassword">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether a blank password is allowed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,9 +108,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Data.OleDb.OleDbPermission" /> as an <see cref="T:System.Security.IPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,9 +169,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property has been marked as obsolete. Setting this property will have no effect.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

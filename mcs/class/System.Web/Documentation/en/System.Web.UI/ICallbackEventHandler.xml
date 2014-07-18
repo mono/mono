@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICallbackEventHandler" FullName="System.Web.UI.ICallbackEventHandler">
   <TypeSignature Language="C#" Value="public interface ICallbackEventHandler" />
   <AssemblyInfo>
@@ -6,9 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface for any custom control that needs to receive callback events. For more information, see <format type="text/html"><a href="dfaaa7d4-e1f2-4322-b2f5-796e0419f185">Client Callbacks Without Postbacks in ASP.NET Pages</a></format>. </para>
+      <para>Examples of controls that implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface include the <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.TreeView" /> controls. When a callback event targets a control that implements the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface, the <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method is called to handle the event, passing the event argument as a parameter and the <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" /> method returns the result of the callback.</para>
+      <para>Controls that retrieve data from a data source control during callback can do so synchronously or asynchronously. ASP.NET controls like <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.TreeView" /> are implemented synchronously. Synchronous callbacks do not prevent the user from working in the browser. In synchronous mode, only one callback at a time can execute, with the last callback taking precedence. When a Web control is implemented to support asynchronous behavior, multiple callbacks can be raised simultaneously. For details on asynchronous programming, see <format type="text/html"><a href="c6baed9f-2a25-4728-9a9a-53b7b14840cf">Asynchronous Programming Design Patterns</a></format>.</para>
+      <para>You can specify whether callback events originating from the user interface rendered by a control implementing the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface are validated. Validation of events is a good security practice. However, for performance reasons you can disable it. To control whether event validation is performed on callback events, set the enableEventValidation attribute of the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive or the enableEventValidation attribute of the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages Element (ASP.NET Settings Schema)</a></format> of the Web.config file. If you set the <see cref="P:System.Web.UI.Page.EnableEventValidation" /> property in code, set it in the Page_Init phase of page processing. For more information on balancing the security benefit of event validation with its performance cost, see <format type="text/html"><a href="f882bf1b-a009-4312-ac06-74370ffabc0b">Performance Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to indicate that a control can be the target of a callback event on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetCallbackResult">
@@ -19,10 +29,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exceptions thrown in <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> will not prevent <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" /> from being called and returning a result. To prevent <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" /> from returning a result, set a flag when an exception is thrown in <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> and return an empty string from <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the results of a callback event that targets a control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the callback.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,9 +58,16 @@
       </Parameters>
       <Docs>
         <param name="eventArgs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When null is used as the event argument parameter, the string is serialized to "null" and sent back to the server. Because there is no way to distinguish between null and "null", you should avoid using null argument parameters with callbacks.</para>
+          <para>Exceptions thrown in <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> will not prevent <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" /> from being called and returning a result. To prevent <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" /> from returning a result, set a flag when an exception is thrown in <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> and return an empty string from <see cref="M:System.Web.UI.ICallbackEventHandler.GetCallbackResult" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a callback event that targets a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

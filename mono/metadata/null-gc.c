@@ -11,6 +11,7 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/runtime.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 
 #ifdef HAVE_NULL_GC
@@ -19,13 +20,19 @@ void
 mono_gc_base_init (void)
 {
 	MonoThreadInfoCallbacks cb;
+	int dummy;
 
 	memset (&cb, 0, sizeof (cb));
-	cb.mono_method_is_critical = mono_runtime_is_critical_method;
+	/* TODO: This casts away an incompatible pointer type warning in the same
+	         manner that boehm-gc does it. This is probably worth investigating
+	         more carefully. */
+	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
 	cb.mono_gc_pthread_create = (gpointer)mono_gc_pthread_create;
 	cb.thread_exit = mono_gc_pthread_exit;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
+
+	mono_thread_info_attach (&dummy);
 }
 
 void
@@ -184,7 +191,7 @@ mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* va
 void
 mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 {
-	mono_gc_memmove (dest_ptr, src_ptr, count * sizeof (gpointer));
+	mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
 }
 
 void
@@ -207,14 +214,14 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr)
 void
 mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *klass)
 {
-	mono_gc_memmove (dest, src, count * mono_class_value_size (klass, NULL));
+	mono_gc_memmove_atomic (dest, src, count * mono_class_value_size (klass, NULL));
 }
 
 void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {
 	/* do not copy the sync state */
-	mono_gc_memmove ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
+	mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 			mono_object_class (obj)->instance_size - sizeof (MonoObject));
 }
 
@@ -282,6 +289,12 @@ mono_gc_clear_domain (MonoDomain *domain)
 
 int
 mono_gc_get_suspend_signal (void)
+{
+	return -1;
+}
+
+int
+mono_gc_get_restart_signal (void)
 {
 	return -1;
 }
@@ -372,7 +385,7 @@ mono_gc_conservatively_scan_area (void *start, void *end)
 }
 
 void *
-mono_gc_scan_object (void *obj)
+mono_gc_scan_object (void *obj, void *gc_data)
 {
 	g_assert_not_reached ();
 	return NULL;

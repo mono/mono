@@ -934,7 +934,27 @@ namespace Mono.CSharp
 			if (c < 0x80)
 				return false;
 
-			return Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
+			return is_identifier_part_character_slow_part (c);
+		}
+
+		static bool is_identifier_part_character_slow_part (char c)
+		{
+			if (Char.IsLetter (c))
+				return true;
+
+			switch (Char.GetUnicodeCategory (c)) {
+				case UnicodeCategory.ConnectorPunctuation:
+
+				// combining-character: A Unicode character of classes Mn or Mc
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.SpacingCombiningMark:
+
+				// decimal-digit-character: A Unicode character of the class Nd 
+				case UnicodeCategory.DecimalDigitNumber:
+				return true;
+			}
+
+			return false;
 		}
 
 		public static bool IsKeyword (string s)
@@ -1259,6 +1279,8 @@ namespace Mono.CSharp
 			PushPosition ();
 			current_token = Token.NONE;
 			int next_token;
+			int parens = 0;
+
 			switch (xtoken ()) {
 			case Token.LITERAL:
 			case Token.TRUE:
@@ -1279,6 +1301,13 @@ namespace Mono.CSharp
 			case Token.COLON:
 				next_token = Token.INTERR_NULLABLE;
 				break;
+
+			case Token.OPEN_PARENS:
+			case Token.OPEN_PARENS_CAST:
+			case Token.OPEN_PARENS_LAMBDA:
+				next_token = -1;
+				++parens;
+				break;
 				
 			default:
 				next_token = -1;
@@ -1297,14 +1326,19 @@ namespace Mono.CSharp
 					
 				case Token.COLON:
 					next_token = Token.INTERR;
-					break;							
-					
+					break;
+
+				case Token.OPEN_PARENS:
+				case Token.OPEN_PARENS_CAST:
+				case Token.OPEN_PARENS_LAMBDA:
+					++parens;
+					goto default;
+
 				default:
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
-					int parens = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
@@ -1322,9 +1356,13 @@ namespace Mono.CSharp
 							--braces;
 							continue;
 						case Token.CLOSE_PARENS:
-							if (parens > 0)
+							if (parens > 0) {
 								--parens;
-							continue;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
 						}
 
 						if (braces != 0)
@@ -3039,7 +3077,7 @@ namespace Mono.CSharp
 
 							continue;
 						}
-					} else if (Char.IsLetter ((char) c) || Char.GetUnicodeCategory ((char) c) == UnicodeCategory.ConnectorPunctuation) {
+					} else if (is_identifier_part_character_slow_part ((char) c)) {
 						id_builder [pos++] = (char) c;
 						continue;
 					}

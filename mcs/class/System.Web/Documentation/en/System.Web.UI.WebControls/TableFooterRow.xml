@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableFooterRow" FullName="System.Web.UI.WebControls.TableFooterRow">
   <TypeSignature Language="C#" Value="public class TableFooterRow : System.Web.UI.WebControls.TableRow" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> class represents a footer row in a <see cref="T:System.Web.UI.WebControls.Table" /> control. This class supports displaying tables on devices with a limited screen size. On these devices, a table with many columns and rows must be rendered across multiple pages. Adding a <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> to a <see cref="T:System.Web.UI.WebControls.Table" /> control allows you to specify a footer row that is rendered as the last row on each page that displays a view of the table. For more information about the view formats for a table rendered on a device with a limited screen size, see <see cref="T:System.Web.UI.WebControls.Table" />.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> object can contain only <see cref="T:System.Web.UI.WebControls.TableCell" /> objects. To add content to the <see cref="T:System.Web.UI.WebControls.TableFooterRow" />, you must add one or more <see cref="T:System.Web.UI.WebControls.TableCell" /> objects to the row. Then, set the <see cref="P:System.Web.UI.WebControls.TableCell.Text" /> property of each <see cref="T:System.Web.UI.WebControls.TableCell" /> object in the row to specify the contents of each cell. Alternatively, you can add a control to a <see cref="T:System.Web.UI.WebControls.TableCell" /> object to specify its contents.</para>
+      <para>You can programmatically manage the cells in the <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> by using the <see cref="P:System.Web.UI.WebControls.TableRow.Cells" /> collection. The <see cref="P:System.Web.UI.WebControls.TableRow.Cells" /> collection is a collection of <see cref="T:System.Web.UI.WebControls.TableCell" /> objects that represent the cells in the row.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> inherits properties from <see cref="T:System.Web.UI.WebControls.TableRow" /> that allow you to control how the contents in the row are displayed. For example, you can use the <see cref="P:System.Web.UI.WebControls.TableRow.HorizontalAlign" /> and <see cref="P:System.Web.UI.WebControls.TableRow.VerticalAlign" /> properties to specify the alignment of the contents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a footer row in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TableFooterRow" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -221,8 +221,10 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 		int addr_length;
 		int msg_type;
 		int table;
+#ifdef NL_DEBUG
 		int protocol;
 		int scope;
+#endif
 		int rtm_type;
 		gboolean have_dst;
 		gboolean have_src;
@@ -250,8 +252,10 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 
 		addr_length = (family == AF_INET) ? 4 : 16;
 		table = rtp->rtm_table;
+#ifdef NL_DEBUG
 		protocol = rtp->rtm_protocol;
 		scope = rtp->rtm_scope;
+#endif
 		rtm_type = rtp->rtm_type;
 		NL_DEBUG_PRINT ("\tRTMSG table: %d %s", table, FIND_RT_TABLE_NAME (table));
 		if (table != RT_TABLE_MAIN && table != RT_TABLE_LOCAL)

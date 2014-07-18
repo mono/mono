@@ -107,6 +107,15 @@ int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
 	int *gid,
 	char **name,
 	char **home,
+	char **shell);
+
+int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
+	char **account,
+	char **password,
+	int *uid,
+	int *gid,
+	char **name,
+	char **home,
 	char **shell
 	) {
 

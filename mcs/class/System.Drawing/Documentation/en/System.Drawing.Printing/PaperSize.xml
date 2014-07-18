@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PaperSize" FullName="System.Drawing.Printing.PaperSize">
   <TypeSignature Language="C#" Value="public class PaperSize" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by the <see cref="P:System.Drawing.Printing.PrinterSettings.PaperSizes" /> and <see cref="P:System.Drawing.Printing.PageSettings.PaperSize" /> properties to get the paper sizes that are available on the printer and to set the paper size for a page, respectively.</para>
+      <para>You can use the <see cref="Overload:System.Drawing.Printing.PaperSize.#ctor" /> constructor to specify a custom paper size. The <see cref="P:System.Drawing.Printing.PaperSize.Width" /> and <see cref="P:System.Drawing.Printing.PaperSize.Height" /> property values can be set only for custom <see cref="T:System.Drawing.Printing.PaperSize" /> objects.</para>
+      <para>For more information about printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the size of a piece of paper.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PaperSize" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,11 +51,20 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Printing.PaperSize" /> created with this constructor always has its <see cref="P:System.Drawing.Printing.PaperSize.Kind" /> property set to <see cref="F:System.Drawing.Printing.PaperKind.Custom" />. The <see cref="P:System.Drawing.Printing.PaperSize.Width" /> and <see cref="P:System.Drawing.Printing.PaperSize.Height" /> property values can be set only for custom <see cref="T:System.Drawing.Printing.PaperSize" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PaperSize" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the paper. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the paper, in hundredths of an inch. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the paper, in hundredths of an inch. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +80,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This height measurement is for the portrait orientation of the paper. The <see cref="P:System.Drawing.Printing.PaperSize.Width" /> and <see cref="P:System.Drawing.Printing.PaperSize.Height" /> property values can be set only for custom <see cref="T:System.Drawing.Printing.PaperSize" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of the paper, in hundredths of an inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +102,15 @@
         <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PaperKind'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="Overload:System.Drawing.Printing.PaperSize.#ctor" /> constructor to specify a custom paper size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of paper.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +126,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set the paper name only if the <see cref="P:System.Drawing.Printing.PaperSize.Kind" /> property is set to <see cref="F:System.Drawing.Printing.PaperKind.Custom" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type of paper.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -112,9 +151,1195 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the integer values of the <see cref="T:System.Drawing.Printing.PaperSize" /> enumeration members. A value equal to 48 or 49 or larger than 118 indicates a custom paper size; however, the <see cref="P:System.Drawing.Printing.PaperSize.RawKind" /> property will return the actual integer value for the size.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Integer</para>
+                </term>
+                <description>
+                  <para>PaperSize member</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Letter" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterSmall" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Tabloid" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Ledger" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Legal" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>6</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Statement" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>7</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Executive" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>8</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A3" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>9</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>10</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4Small" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>11</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A5" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>12</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>13</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B5" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>14</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Folio" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>15</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Quarto" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>16</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard10x14" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>17</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard11x17" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>18</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Note" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>19</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Number9Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>20</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Number10Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>21</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Number11Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>22</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Number12Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>23</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Number14Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>24</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.CSheet" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>25</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.DSheet" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>26</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.ESheet" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>27</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.DLEnvelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>28</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.C5Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>29</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.C3Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>30</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.C4Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>31</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.C6Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>32</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.C65Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>33</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B4Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>34</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B5Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>35</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B6Envelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>36</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.ItalyEnvelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>37</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.MonarchEnvelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>38</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PersonalEnvelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>39</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.USStandardFanfold" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>40</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.GermanStandardFanfold" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>41</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.GermanLegalFanfold" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>42</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.IsoB4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>43</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapanesePostcard" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>44</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard9x11" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>45</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard10x11" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>46</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard15x11" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>47</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.InviteEnvelope" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>50</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterExtra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>51</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LegalExtra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>52</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.TabloidExtra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>53</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4Extra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>54</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterTransverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>55</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4Transverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>56</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterExtraTransverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>57</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.APlus" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>58</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.BPlus" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>59</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterPlus" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>60</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4Plus" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>61</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A5Transverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>62</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B5Transverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>63</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A3Extra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>64</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A5Extra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>65</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B5Extra" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>66</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A2" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>67</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A3Transverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>68</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A3ExtraTransverse" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>69</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapanesePostcard" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>70</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A6" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>71</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeKakuNumber2" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>72</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeKakuNumber3" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>73</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeChouNumber3" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>74</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeChouNumber4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>75</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.LetterRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>76</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A3Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>77</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A4Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>78</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A5Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>79</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B4JisRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>80</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B5JisRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>81</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapanesePostcardRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>82</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseDoublePostcardRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>83</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.A6Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>84</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeKakuNumber2Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>85</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeChouNumber3Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>86</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeChouNumber4Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>87</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeChouNumber4Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>88</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B6Jis" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>89</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.B6JisRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>90</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Standard12x11" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>91</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeYouNumber4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>92</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.JapaneseEnvelopeYouNumber4Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>93</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc16K" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>94</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc32K" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>95</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc32KBig" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>96</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber1" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>97</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber2" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>98</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber3" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>99</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber4" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>100</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber5" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>101</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber6" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>102</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber7" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>103</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber8" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>104</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber9" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>105</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber10" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>106</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc16KRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>107</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc32KRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>108</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.Prc32KBigRotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>109</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber1Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>110</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber2Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>111</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber3Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>112</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber4Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>113</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber5Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>114</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber6Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>115</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber7Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>116</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber8Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>117</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber9Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>118</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PaperKind.PrcEnvelopeNumber10Rotated" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than 118</para>
+              </term>
+              <description>
+                <para>A custom paper size</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an integer representing one of the <see cref="T:System.Drawing.Printing.PaperSize" /> values or a custom value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -125,9 +1350,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information about the <see cref="T:System.Drawing.Printing.PaperSize" /> in string form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +1374,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This width measurement is for the portrait orientation of the paper. The <see cref="P:System.Drawing.Printing.PaperSize.Width" /> and <see cref="P:System.Drawing.Printing.PaperSize.Height" /> property values can be set only for custom <see cref="T:System.Drawing.Printing.PaperSize" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the paper, in hundredths of an inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

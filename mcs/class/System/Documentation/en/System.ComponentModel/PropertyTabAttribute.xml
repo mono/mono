@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyTabAttribute" FullName="System.ComponentModel.PropertyTabAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PropertyTabAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PropertyTabAttribute extends System.Attribute" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.PropertyTabAttribute" /> lets you add a new property page to a <see cref="T:System.Windows.Forms.PropertyGrid" /> control. The <see cref="T:System.ComponentModel.PropertyTabAttribute" /> can add additional property tabs to expose property information other than a component's default set of properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the property tab or tabs to display for the specified class or classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +43,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a default constructor that creates an uninitialized <see cref="T:System.ComponentModel.PropertyTabAttribute" />. This constructor can be used to derive from this attribute and specify multiple tab types by calling <see cref="M:System.ComponentModel.PropertyTabAttribute.InitializeArrays(System.String[],System.ComponentModel.PropertyTabScope[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +67,13 @@
         <Parameter Name="tabClassName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tabClassName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> class using the specified tab class name.</para>
+        </summary>
+        <param name="tabClassName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly qualified name of the type of tab to create. For an example of this format convention, see <see cref="P:System.Type.AssemblyQualifiedName" />. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -73,9 +90,13 @@
         <Parameter Name="tabClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="tabClass">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> class using the specified type of tab.</para>
+        </summary>
+        <param name="tabClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of tab to create. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -93,10 +114,15 @@
         <Parameter Name="tabScope" Type="System.ComponentModel.PropertyTabScope" />
       </Parameters>
       <Docs>
-        <param name="tabClassName">To be added: an object of type 'string'</param>
-        <param name="tabScope">To be added: an object of type 'PropertyTabScope'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> class using the specified tab class name and tab scope.</para>
+        </summary>
+        <param name="tabClassName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly qualified name of the type of tab to create. For an example of this format convention, see <see cref="P:System.Type.AssemblyQualifiedName" />. </param>
+        <param name="tabScope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyTabScope" /> that indicates the scope of this tab. If the scope is <see cref="F:System.ComponentModel.PropertyTabScope.Component" />, it is shown only for components with the corresponding <see cref="T:System.ComponentModel.PropertyTabAttribute" />. If it is <see cref="F:System.ComponentModel.PropertyTabScope.Document" />, it is shown for all components on the document. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -114,10 +140,15 @@
         <Parameter Name="tabScope" Type="System.ComponentModel.PropertyTabScope" />
       </Parameters>
       <Docs>
-        <param name="tabClass">To be added: an object of type 'Type'</param>
-        <param name="tabScope">To be added: an object of type 'PropertyTabScope'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> class using the specified type of tab and tab scope.</para>
+        </summary>
+        <param name="tabClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of tab to create. </param>
+        <param name="tabScope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyTabScope" /> that indicates the scope of this tab. If the scope is <see cref="F:System.ComponentModel.PropertyTabScope.Component" />, it is shown only for components with the corresponding <see cref="T:System.ComponentModel.PropertyTabAttribute" />. If it is <see cref="F:System.ComponentModel.PropertyTabScope.Document" />, it is shown for all components on the document. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -136,10 +167,17 @@
         <Parameter Name="other" Type="System.ComponentModel.PropertyTabAttribute" />
       </Parameters>
       <Docs>
-        <param name="other">To be added: an object of type 'PropertyTabAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ComponentModel.PropertyTabAttribute" /> instances are equal; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyTabAttribute" /> to compare to this instance, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -158,10 +196,17 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="other" /> refers to the same <see cref="T:System.ComponentModel.PropertyTabAttribute" /> instance; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -178,9 +223,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the object the attribute belongs to.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitializeArrays">
@@ -200,10 +251,19 @@
         <Parameter Name="tabScopes" Type="System.ComponentModel.PropertyTabScope[]" />
       </Parameters>
       <Docs>
-        <param name="tabClassNames">To be added: an object of type 'string []'</param>
-        <param name="tabScopes">To be added: an object of type 'PropertyTabScope []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.PropertyTabAttribute.InitializeArrays(System.String[],System.ComponentModel.PropertyTabScope[])" /> provides a utility function that can be used to set the types of tab classes that this <see cref="T:System.ComponentModel.PropertyTabAttribute" /> specifies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the attribute using the specified names of tab classes and array of tab scopes.</para>
+        </summary>
+        <param name="tabClassNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of fully qualified type names of the types to create for tabs on the Properties window. </param>
+        <param name="tabScopes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scope of each tab. If the scope is <see cref="F:System.ComponentModel.PropertyTabScope.Component" />, it is shown only for components with the corresponding <see cref="T:System.ComponentModel.PropertyTabAttribute" />. If it is <see cref="F:System.ComponentModel.PropertyTabScope.Document" />, it is shown for all components on the document. </param>
       </Docs>
     </Member>
     <Member MemberName="InitializeArrays">
@@ -223,10 +283,19 @@
         <Parameter Name="tabScopes" Type="System.ComponentModel.PropertyTabScope[]" />
       </Parameters>
       <Docs>
-        <param name="tabClasses">To be added: an object of type 'Type []'</param>
-        <param name="tabScopes">To be added: an object of type 'PropertyTabScope []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.PropertyTabAttribute.InitializeArrays(System.String[],System.ComponentModel.PropertyTabScope[])" /> provides a utility function that can be used to set the types of tab classes that this <see cref="T:System.ComponentModel.PropertyTabAttribute" /> specifies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the attribute using the specified names of tab classes and array of tab scopes.</para>
+        </summary>
+        <param name="tabClasses">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of tabs to create. </param>
+        <param name="tabScopes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scope of each tab. If the scope is <see cref="F:System.ComponentModel.PropertyTabScope.Component" />, it is shown only for components with the corresponding <see cref="T:System.ComponentModel.PropertyTabAttribute" />. If it is <see cref="F:System.ComponentModel.PropertyTabScope.Document" />, it is shown for all components on the document. </param>
       </Docs>
     </Member>
     <Member MemberName="TabClasses">
@@ -242,9 +311,15 @@
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All specified types must be able to be assigned to a <see cref="T:System.Windows.Forms.Design.PropertyTab" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the types of tabs that this attribute uses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TabClassNames">
@@ -260,9 +335,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of the tab classes that this attribute uses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TabScopes">
@@ -278,9 +356,12 @@
         <ReturnType>System.ComponentModel.PropertyTabScope[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PropertyTabScope []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of tab scopes of each tab of this <see cref="T:System.ComponentModel.PropertyTabAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

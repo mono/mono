@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITransportHeaders" FullName="System.Runtime.Remoting.Channels.ITransportHeaders">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ITransportHeaders" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITransportHeaders" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores a collection of headers used in the channel sinks.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetEnumerator">
@@ -34,9 +38,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Collections.IEnumerator" /> that iterates over all entries in the <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerator" /> that iterates over all entries in the <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">

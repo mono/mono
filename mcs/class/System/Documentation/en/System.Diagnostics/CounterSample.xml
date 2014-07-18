@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CounterSample" FullName="System.Diagnostics.CounterSample">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct CounterSample" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CounterSample extends System.ValueType" />
@@ -15,8 +16,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a structure that holds the raw data for a performance counter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,15 +43,28 @@
         <Parameter Name="counterType" Type="System.Diagnostics.PerformanceCounterType" />
       </Parameters>
       <Docs>
-        <param name="rawValue">To be added: an object of type 'long'</param>
-        <param name="baseValue">To be added: an object of type 'long'</param>
-        <param name="counterFrequency">To be added: an object of type 'long'</param>
-        <param name="systemFrequency">To be added: an object of type 'long'</param>
-        <param name="timeStamp">To be added: an object of type 'long'</param>
-        <param name="timeStamp100nSec">To be added: an object of type 'long'</param>
-        <param name="counterType">To be added: an object of type 'PerformanceCounterType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to take an initial sample of the performance counter. The System Monitor supplies values for these parameters automatically when you call the <see cref="M:System.Diagnostics.PerformanceCounter.NextSample" /> method for the first time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterSample" /> structure and sets the <see cref="P:System.Diagnostics.CounterSample.CounterTimeStamp" /> property to 0 (zero).</para>
+        </summary>
+        <param name="rawValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The numeric value associated with the performance counter sample. </param>
+        <param name="baseValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional, base raw value for the counter, to use only if the sample is based on multiple counters. </param>
+        <param name="counterFrequency">
+          <attribution license="cc4" from="Microsoft" modified="false" />The frequency with which the counter is read. </param>
+        <param name="systemFrequency">
+          <attribution license="cc4" from="Microsoft" modified="false" />The frequency with which the system reads from the counter. </param>
+        <param name="timeStamp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The raw time stamp. </param>
+        <param name="timeStamp100nSec">
+          <attribution license="cc4" from="Microsoft" modified="false" />The raw, high-fidelity time stamp. </param>
+        <param name="counterType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.PerformanceCounterType" /> object that indicates the type of the counter for which this sample is a snapshot. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -71,16 +88,30 @@
         <Parameter Name="counterTimeStamp" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="rawValue">To be added: an object of type 'long'</param>
-        <param name="baseValue">To be added: an object of type 'long'</param>
-        <param name="counterFrequency">To be added: an object of type 'long'</param>
-        <param name="systemFrequency">To be added: an object of type 'long'</param>
-        <param name="timeStamp">To be added: an object of type 'long'</param>
-        <param name="timeStamp100nSec">To be added: an object of type 'long'</param>
-        <param name="counterType">To be added: an object of type 'PerformanceCounterType'</param>
-        <param name="counterTimeStamp">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to take samples after you have already taken an initial sample of the performance counter. The System Monitor supplies values for these parameters automatically when you call the <see cref="M:System.Diagnostics.PerformanceCounter.NextSample" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterSample" /> structure and sets the <see cref="P:System.Diagnostics.CounterSample.CounterTimeStamp" /> property to the value that is passed in.</para>
+        </summary>
+        <param name="rawValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The numeric value associated with the performance counter sample. </param>
+        <param name="baseValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional, base raw value for the counter, to use only if the sample is based on multiple counters. </param>
+        <param name="counterFrequency">
+          <attribution license="cc4" from="Microsoft" modified="false" />The frequency with which the counter is read. </param>
+        <param name="systemFrequency">
+          <attribution license="cc4" from="Microsoft" modified="false" />The frequency with which the system reads from the counter. </param>
+        <param name="timeStamp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The raw time stamp. </param>
+        <param name="timeStamp100nSec">
+          <attribution license="cc4" from="Microsoft" modified="false" />The raw, high-fidelity time stamp. </param>
+        <param name="counterType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.PerformanceCounterType" /> object that indicates the type of the counter for which this sample is a snapshot. </param>
+        <param name="counterTimeStamp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time at which the sample was taken. </param>
       </Docs>
     </Member>
     <Member MemberName="BaseValue">
@@ -96,9 +127,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an optional, base raw value for the counter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Calculate">
@@ -117,10 +151,17 @@
         <Parameter Name="counterSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <param name="counterSample">To be added: an object of type 'CounterSample'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the performance data of the counter, using a single sample point. This method is generally used for uncalculated performance counter types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The calculated performance value.</para>
+        </returns>
+        <param name="counterSample">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterSample" /> structure to use as a base point for calculating performance data. </param>
       </Docs>
     </Member>
     <Member MemberName="Calculate">
@@ -140,11 +181,19 @@
         <Parameter Name="nextCounterSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <param name="counterSample">To be added: an object of type 'CounterSample'</param>
-        <param name="nextCounterSample">To be added: an object of type 'CounterSample'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the performance data of the counter, using two sample points. This method is generally used for calculated performance counter types, such as averages.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The calculated performance value.</para>
+        </returns>
+        <param name="counterSample">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterSample" /> structure to use as a base point for calculating performance data. </param>
+        <param name="nextCounterSample">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterSample" /> structure to use as an ending point for calculating performance data. </param>
       </Docs>
     </Member>
     <Member MemberName="CounterFrequency">
@@ -160,9 +209,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw counter frequency.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CounterTimeStamp">
@@ -178,9 +230,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the counter's time stamp.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CounterType">
@@ -196,9 +251,12 @@
         <ReturnType>System.Diagnostics.PerformanceCounterType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PerformanceCounterType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the performance counter type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -215,8 +273,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an empty, uninitialized performance counter sample of type NumberOfItems32.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -235,9 +296,18 @@
       </Parameters>
       <Docs>
         <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified <see cref="T:System.Diagnostics.CounterSample" /> structure is equal to the current <see cref="T:System.Diagnostics.CounterSample" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="sample" /> is equal to the current instance; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -256,9 +326,18 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified structure is a <see cref="T:System.Diagnostics.CounterSample" /> structure and is identical to the current <see cref="T:System.Diagnostics.CounterSample" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.Diagnostics.CounterSample" /> structure and is identical to the current instance; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -274,9 +353,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for the current counter sample.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current counter sample.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -297,9 +382,18 @@
       <Docs>
         <param name="obj1">To be added.</param>
         <param name="obj2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are equal; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -320,9 +414,18 @@
       <Docs>
         <param name="obj1">To be added.</param>
         <param name="obj2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are not equal if any of their property values are different.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two <see cref="T:System.Diagnostics.CounterSample" /> structures are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are not equal; otherwise, false</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RawValue">
@@ -338,9 +441,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw value of the counter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemFrequency">
@@ -356,9 +462,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw system frequency.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeStamp">
@@ -374,9 +483,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw time stamp.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeStamp100nSec">
@@ -392,9 +504,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw, high-fidelity time stamp.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AuthorizationRule" FullName="System.Web.Configuration.AuthorizationRule">
   <TypeSignature Language="C#" Value="public sealed class AuthorizationRule : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.AuthorizationRule" /> class provides a way to programmatically access and modify the authorization section of a configuration file.</para>
+      <para>This type is part of a group that includes the <see cref="T:System.Web.Configuration.AuthorizationSection" />, the <see cref="T:System.Web.Configuration.AuthorizationRuleCollection" />, and the <see cref="T:System.Web.Configuration.AuthorizationRuleAction" /> types. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.Configuration.AuthorizationSection" /> can update the configuration information at any level in the configuration hierarchy.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.AuthorizationRule" /> class allows you to programmatically access and modify the authorization section of a configuration file. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +32,17 @@
         <Parameter Name="action" Type="System.Web.Configuration.AuthorizationRuleAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.AuthorizationRule.#ctor(System.Web.Configuration.AuthorizationRuleAction)" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Configuration.AuthorizationRule" /> class using the passed object. </para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.AuthorizationRule" /> object to use to initialize the new instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +55,16 @@
         <ReturnType>System.Web.Configuration.AuthorizationRuleAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, the authorization module iterates through allow and deny elements until it finds the first access rule that fits a particular user. It then grants or denies access to a URL resource depending on whether the first access rule found is allow or deny. Access is allowed by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.Configuration.AuthorizationRule" /> action.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +80,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is equal to the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +105,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer representing the hash code for the current object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +128,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the collection has been modified since it was last saved or loaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any contained element has been modified; otherwise, false. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +185,13 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the collection of the <see cref="T:System.Web.Configuration.AuthorizationRule" /> properties.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -201,10 +247,16 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.AuthorizationRule.Roles" /> property is a list of roles that are granted or denied access to the resource. There must be at least one value in either the <see cref="P:System.Web.Configuration.AuthorizationRule.Users" /> property collection or the <see cref="P:System.Web.Configuration.AuthorizationRule.Roles" /> property collection, or both.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the roles associated with the resource.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -286,10 +338,16 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.AuthorizationRule.Users" /> property is a list of users that are granted or denied access to the resource. There must be at least one value in either the <see cref="P:System.Web.Configuration.AuthorizationRule.Users" /> property collection or the <see cref="P:System.Web.Configuration.AuthorizationRule.Roles" /> property collection, or both.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the users associated with the resource.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -310,10 +368,16 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.AuthorizationRule.Verbs" /> property is a comma-separated list of HTTP transmission methods that are granted or denied access to the resource.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the verbs associated with the resource.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

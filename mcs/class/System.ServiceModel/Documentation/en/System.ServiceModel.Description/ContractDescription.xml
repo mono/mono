@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractDescription" FullName="System.ServiceModel.Description.ContractDescription">
   <TypeSignature Language="C#" Value="public class ContractDescription" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ContractDescription extends System.Object" />
@@ -15,8 +16,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A indigo2 contract is a collection of operations that specifies what the endpoint communicates to the outside world. Each operation is a message exchange. For example, a request message and an associated reply message form a request/reply message exchange. </para>
+      <para>A <see cref="T:System.ServiceModel.Description.ContractDescription" /> object is used to describe indigo2 contracts and their operations. Within a <see cref="T:System.ServiceModel.Description.ContractDescription" />, each contract operation has a corresponding <see cref="T:System.ServiceModel.Description.OperationDescription" /> that describes aspects of the each operation that is part of the contract, such as whether the operation is one-way or request/reply. Each <see cref="T:System.ServiceModel.Description.OperationDescription" /> also describes the messages that make up the operation using a <see cref="T:System.ServiceModel.Description.MessageDescriptionCollection" />. <see cref="T:System.ServiceModel.Description.ContractDescription" /> contains a reference to an interface that defines the contract using the programming model. This interface is marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" /> and its methods that correspond to endpoint operations are marked with the <see cref="T:System.ServiceModel.OperationContractAttribute" />. </para>
+      <para>A <newTerm>duplex</newTerm> contract defines the following logical sets of operations: </para>
+      <list type="bullet">
+        <item>
+          <para>A set that the service exposes for the client to call. </para>
+        </item>
+        <item>
+          <para>A set that the client exposes for the service to call. </para>
+        </item>
+      </list>
+      <para>The programming model for defining a duplex contract is to split each set in a separate interface and apply attributes to each interface. In this case, <see cref="T:System.ServiceModel.Description.ContractDescription" /> contains a reference to each of the interfaces that groups them into one duplex contract. </para>
+      <para>Similar to bindings, each contract has a <see cref="P:System.ServiceModel.Description.ContractDescription.Name" /> and <see cref="P:System.ServiceModel.Description.ContractDescription.Namespace" /> that uniquely identify it in the metadata of the service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes a indigo1 contract that specifies what an endpoint communicates to the outside world.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +49,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ContractDescription" /> class with a specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the contract.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,10 +70,18 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace can be an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ContractDescription" /> class with a namespace-qualified name specified.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the contract.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace that contains the name of the contract.</param>
       </Docs>
     </Member>
     <Member MemberName="Behaviors">
@@ -64,9 +95,12 @@
         <ReturnType>System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IContractBehavior&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the behaviors associated with the contract description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CallbackContractType">
@@ -80,9 +114,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.ContractDescription.CallbackContractType" /> property is not serializable, so it is only available when the description is bound to runtime. It cannot be imported or exported as part of the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of callback contract that the contract description specifies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConfigurationName">
@@ -96,9 +136,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the configuration name for the contract description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContractBehaviors">
@@ -112,9 +155,12 @@
         <ReturnType>System.Collections.ObjectModel.KeyedCollection&lt;System.Type,System.ServiceModel.Description.IContractBehavior&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of behavior for the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContractType">
@@ -128,9 +174,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.ContractDescription.ContractType" /> property is not serializable, so it is only available when the description is bound to runtime. It cannot be imported or exported as part of the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contract type that the contract description specifies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetContract">
@@ -147,10 +199,20 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="contractType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the contract description for a specified type of contract.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract.</para>
+        </returns>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
       </Docs>
     </Member>
     <Member MemberName="GetContract">
@@ -168,11 +230,22 @@
         <Parameter Name="serviceImplementation" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contractType">To be added.</param>
-        <param name="serviceImplementation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the contract description for a specified type of contract and service implementation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract and service implementation.</para>
+        </returns>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
+        <param name="serviceImplementation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that implements the service.</param>
       </Docs>
     </Member>
     <Member MemberName="GetContract">
@@ -190,11 +263,22 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="contractType">To be added.</param>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the contract description for a specified type of contract and a specified type of service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract and type of service.</para>
+        </returns>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of service.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInheritedContracts">
@@ -209,9 +293,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of contract descriptions that are inherited by the current contract description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ContractDescription" /> that is inherited by the current contract description.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasProtectionLevel">
@@ -225,9 +315,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ServiceModel.Description.ContractDescription.ProtectionLevel" /> is set, the <see cref="P:System.ServiceModel.Description.ContractDescription.HasProtectionLevel" /> property is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the contract has had a protection level set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -241,9 +337,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -257,9 +356,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace can be an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace for the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Operations">
@@ -273,9 +378,12 @@
         <ReturnType>System.ServiceModel.Description.OperationDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of operation descriptions associated with the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProtectionLevel">
@@ -289,9 +397,15 @@
         <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ServiceModel.Description.ContractDescription.ProtectionLevel" /> is set, the <see cref="P:System.ServiceModel.Description.ContractDescription.HasProtectionLevel" /> property is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the level of security protection associated with the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SessionMode">
@@ -305,9 +419,15 @@
         <ReturnType>System.ServiceModel.SessionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reliable session is a way of correlating a set of messages exchanged between two or more endpoints (using the <see cref="http://go.microsoft.com/fwlink/?LinkId=96680">WS-ReliableMessaging</see> specification) to provide assurances of the reliability of the connection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a session is required by the contract.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

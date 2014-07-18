@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapFormatter" FullName="System.Runtime.Serialization.Formatters.Soap.SoapFormatter">
   <TypeSignature Language="C#" Value="public sealed class SoapFormatter : System.Runtime.Remoting.Messaging.IRemotingFormatter" />
   <AssemblyInfo>
@@ -14,8 +15,42 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Beginning with the .NET Framework 2.0, this class is obsolete. Use <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> instead.</para>
+      </block>
+      <para>The <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> and <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> classes implement the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" /> interface to support remote procedure calls (RPCs), and the <see cref="T:System.Runtime.Serialization.IFormatter" /> interface (inherited by the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" />) to support serialization of a graph of objects. The <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> class also supports RPCs with <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> objects, without using the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" /> functionality.</para>
+      <para>During RPCs, the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" /> interface allows the specification of two separate object graphs: the graph of objects to serialize, and an additional graph that contains an array of header objects that convey information about the remote function call (for example, transaction ID or a method signature). For proper serialization, the root object of the first graph must be an object that implements either the <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> interface or the <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" /> interface.</para>
+      <para>During deserialization of an RPC, a <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> delegate is specified to the <see cref="M:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Deserialize(System.IO.Stream)" /> method of the formatter. The remoting infrastructure uses the <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> delegate to produce an object that supports the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface. This object contains the information stored in the headers, and becomes the root of the graph returned by the deserializer.</para>
+      <para>The <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> can also handle RPCs that are produced with objects that implement the <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> interface. To create an RPC without using the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" /> functionality, place an object that supports the <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> interface at the root of a graph being serialized. To deserialize an RPC created in this manner the <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.TopObject" /> property must be set to another object that supports the <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> interface, and contains the relevant remote call information.</para>
+      <format type="text/html">
+        <h2>TimeSpan Serialization</h2>
+      </format>
+      <para>TimeSpan objects are serialized according to the ISO 8601: 1998 section 5.5.3.2.1 "Alternative" standard. </para>
+      <format type="text/html">
+        <h2>Version Information</h2>
+      </format>
+      <para>The <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> does not support serialization compatibility between versions of the .NET Framework. Serialization between versions 1.1 and 2.0 types in the Framework often fails. The following actions can be taken to remedy this issue:</para>
+      <list type="bullet">
+        <item>
+          <para>Convert to use the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />, which provides compatibility between 1.1 and 2.0.</para>
+        </item>
+        <item>
+          <para>Convert existing persisted data to the new format.</para>
+        </item>
+        <item>
+          <para>Convert all producers and consumers of serialized data to version 2.0.</para>
+        </item>
+        <item>
+          <para>Avoid using types that changed from 1.1 to 2.0.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes and deserializes an object, or an entire graph of connected objects, in SOAP format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +58,44 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.SurrogateSelector" /> </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.Context" /> </para>
+              </term>
+              <description>
+                <para>A new <see cref="T:System.Runtime.Serialization.StreamingContext" /> initialized to specify that the serialized data can be transmitted to or received from any of the other contexts</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> class with default property values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,10 +110,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="selector">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Objects are serialized to, or deserialized from, the specified <see cref="T:System.IO.Stream" />.</para>
+          <para>The serialization or deserialization process uses the specified <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> to search for surrogates that are registered for the object types you want to deserialize. Surrogates are helpers that serialize and deserialize objects of specific classes. The default <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> cannot handle the serialization of objects that derive from the <see cref="T:System.MarshalByRefObject" /> for remoting purposes. In a remoting situation the specified <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> replaces the object derived from <see cref="T:System.MarshalByRefObject" /> with a <see cref="T:System.Runtime.Remoting.ObjRef" /> object that is serialized by the specified surrogate selector. Therefore, if you want to use remote objects, set the <paramref name="selector" /> parameter to an instance of <see cref="T:System.Runtime.Remoting.Messaging.RemotingSurrogateSelector" />. If you do not need surrogates, set the <paramref name="selector" /> parameter to be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> class with the specified <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </summary>
+        <param name="selector">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> to use with the new instance of <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />. Can be null. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that holds the source and destination of the serialization. If the <paramref name="context" /> parameter is null, then the <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.Context" /> defaults to <see cref="F:System.Runtime.Serialization.StreamingContextStates.CrossMachine" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +136,12 @@
         <ReturnType>System.Runtime.Serialization.Formatters.FormatterAssemblyStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the behavior of the deserializer with regards to finding and loading assemblies.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,9 +155,12 @@
         <ReturnType>System.Runtime.Serialization.SerializationBinder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.SerializationBinder" /> that controls the binding of a serialized object to a type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,9 +174,15 @@
         <ReturnType>System.Runtime.Serialization.StreamingContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.StreamingContext" /> provides an enumeration that describes the source and the destination for a given serialized stream, as well as a way for serialization to retain that context and an additional caller-defined context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.StreamingContext" /> used with this <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,10 +199,23 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For successful deserialization, the current position in the stream must be at the beginning of the object graph.</para>
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the data on the provided stream and reconstitutes the graph of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph (root).</para>
+        </returns>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,11 +233,30 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Messaging.HeaderHandler" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added.</param>
-        <param name="handler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Headers are used only for specific remoting applications. The <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> parameter is one of two ways to return headers from a stream in SOAP Remote Procedure Call (RPC) format. The other way is to use the <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.TopObject" /> property.</para>
+          <para>For successful deserialization, the current position in the stream must be at the beginning of the object graph.</para>
+          <format type="text/html">
+            <h2>TimeSpan Serialization</h2>
+          </format>
+          <para>TimeSpan objects are serialized according to the ISO 8601: 1998 section 5.5.3.2.1 "Alternative" standard.</para>
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the stream into an object graph with any headers in that stream being handled by the given <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph (root).</para>
+        </returns>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize.</param>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to handle any headers found on the stream. Can be null. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +270,15 @@
         <ReturnType>System.Runtime.Serialization.Formatters.TypeFilterLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Supported values are <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> and <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" /> (the default). For details about deserialization levels, see <format type="text/html"><a href="313a0e88-5b2b-4a17-8391-0ddf9f7a787b">Automatic Deserialization in .NET Remoting</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.Formatters.TypeFilterLevel" /> of automatic deserialization for .NET Framework remoting.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,10 +296,18 @@
         <Parameter Name="graph" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added.</param>
-        <param name="graph">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TimeSpan objects are serialized according to the ISO 8601: 1998 section 5.5.3.2.1 "Alternative" standard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes an object or graph of objects with the specified root to the given <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream onto which the formatter puts the data to serialize. </param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object, or root of the object graph, to serialize. All child objects of this root object are automatically serialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,11 +326,21 @@
         <Parameter Name="headers" Type="System.Runtime.Remoting.Messaging.Header[]" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added.</param>
-        <param name="graph">To be added.</param>
-        <param name="headers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Headers are used only for specific remoting applications.</para>
+          <para>TimeSpan objects are serialized according to the ISO 8601: 1998 section 5.5.3.2.1 "Alternative" standard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes an object or graph of objects with the specified root to the given <see cref="T:System.IO.Stream" /> in the SOAP Remote Procedure Call (RPC) format.</para>
+        </summary>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream onto which the formatter puts the data to serialize. </param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object or root of the object graph to serialize. All child objects of this root object are automatically serialized. </param>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />Remoting headers to include in the serialization. Can be null. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +354,15 @@
         <ReturnType>System.Runtime.Serialization.ISurrogateSelector</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by <see cref="N:System.Runtime.Remoting" /> to generate <see cref="T:System.Runtime.Remoting.ObjRef" /> instances for <see cref="T:System.MarshalByRefObject" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.SurrogateSelector" /> that controls type substitution during serialization and deserialization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -222,9 +376,15 @@
         <ReturnType>System.Runtime.Serialization.Formatters.ISoapMessage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used for SOAP remote procedure call (RPC) format and specifies that the SOAP top record is a method called remotely, not a common language runtime object type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> into which the SOAP top object is deserialized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,9 +398,12 @@
         <ReturnType>System.Runtime.Serialization.Formatters.FormatterTypeStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format in which type descriptions are laid out in the serialized stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

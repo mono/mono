@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICustomFactory" FullName="System.Runtime.InteropServices.ICustomFactory">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ICustomFactory" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICustomFactory" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can enable custom activation by providing a proxy class that implements ICustomFactory and attributing the <see cref="T:System.MarshalByRefObject" /> class with the <see cref="T:System.Runtime.Remoting.Proxies.ProxyAttribute" />. When the class is activated, the proxy's <see cref="M:System.Runtime.InteropServices.ICustomFactory.CreateInstance(System.Type)" /> method is called by the common language runtime to activate the class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables users to write activation code for managed objects that extend <see cref="T:System.MarshalByRefObject" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateInstance">
@@ -36,10 +43,20 @@
         <Parameter Name="serverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serverType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>CreateInstance is called by the common language runtime when a new object of the specified type needs to be created. Override this method to provide your own custom class factory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.MarshalByRefObject" /> associated with the specified type.</para>
+        </returns>
+        <param name="serverType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to activate. </param>
       </Docs>
     </Member>
   </Members>

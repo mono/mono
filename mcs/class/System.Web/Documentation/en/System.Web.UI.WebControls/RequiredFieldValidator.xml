@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RequiredFieldValidator" FullName="System.Web.UI.WebControls.RequiredFieldValidator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class RequiredFieldValidator : System.Web.UI.WebControls.BaseValidator" />
   <AssemblyInfo>
@@ -19,8 +20,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this control to make an input control a required field. The input control fails validation if its value does not change from the <see cref="P:System.Web.UI.WebControls.RequiredFieldValidator.InitialValue" /> property upon losing focus.</para>
+      <para>Multiple validators can be associated with the same input control. For example, a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> can be used to ensure input to a control, while at the same time a <see cref="T:System.Web.UI.WebControls.RangeValidator" /> can be used to ensure that the input is within a specified data range.</para>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, make sure that the validator control and the control it is associated with are in the same panel. For more information about using the <see cref="T:System.Web.UI.UpdatePanel" /> control for partial-page updates, see <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>For additional information on validation controls, see <see cref="T:System.Web.UI.WebControls.BaseValidator" />.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Makes the associated input control a required field.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +45,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,8 +70,11 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the HTML attributes and styles that need to be rendered for the control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +89,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called during the validation stage when ASP.NET processes a Web Form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value in the input control is valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +112,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the initial value of the input control.</para>
+          <para>Validation fails only if the value of the associated input control matches this <see cref="P:System.Web.UI.WebControls.RequiredFieldValidator.InitialValue" /> upon losing focus.</para>
+          <block subset="none" type="note">
+            <para>The strings in both the <see cref="P:System.Web.UI.WebControls.RequiredFieldValidator.InitialValue" /> property and the input control are trimmed to remove extra spaces before and after the string before validation is performed.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initial value of the associated input control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

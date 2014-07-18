@@ -4,7 +4,7 @@ class MainClass
 {
 	public struct DC
 	{
-		private readonly Guid m_Id;
+		public readonly Guid m_Id;
 
 		public DC (Guid Id)
 		{
@@ -27,6 +27,10 @@ class MainClass
 		if (dc.Id.Equals (default (Guid)))
 			return 1;
 
+		if (dc.m_Id.Equals (default (Guid)))
+			return 2;
+
+Console.WriteLine ("ok");
 		return 0;
 	}
 }

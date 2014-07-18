@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageListCodeDomSerializer" FullName="System.Windows.Forms.Design.ImageListCodeDomSerializer">
   <TypeSignature Language="C#" Value="public class ImageListCodeDomSerializer : System.ComponentModel.Design.Serialization.CodeDomSerializer" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes string dictionaries.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.ImageListCodeDomSerializer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -39,11 +46,22 @@
         <Parameter Name="codeObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="codeObject">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Design.ImageListCodeDomSerializer.Deserialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method uses the serialization manager to create objects and resolve data types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the specified serialized Code Document Object Model (CodeDOM) object into an object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized CodeDOM object.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />A serialization manager interface that is used during the deserialization process.</param>
+        <param name="codeObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A serialized CodeDOM object to deserialize.</param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -60,11 +78,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified object into a Code Document Object Model (CodeDOM) object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM object representing the object that has been serialized.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use during serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
   </Members>

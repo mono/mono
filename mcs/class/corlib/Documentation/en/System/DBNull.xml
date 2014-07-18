@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DBNull" FullName="System.DBNull">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class DBNull : IConvertible, System.Runtime.Serialization.ISerializable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DBNull extends System.Object implements class System.IConvertible, class System.Runtime.Serialization.ISerializable" />
@@ -26,35 +27,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>System representation of a database null.</summary>
     <remarks>
-      <para>When a SQL query returns null, it is converted to a System.DBNull value, specifically the <see cref="P:System.DBNull.Value" /> instance, which is the only instance of the type ever used.  Thus, one may compare values t DBNull using reference equality to <see cref="P:System.DBNull.Value" /> (== DBNull.Value).  You then do not need to create a new instance of this type.</para>
-      <para>You can convert this to a blank <see cref="T:System.String" /> by using Convert.ToString(). See example below.</para>
-      <para />
-      <example>
-        <code lang="C#">
-	SqlConnection dbConn = new SqlConnection("server=myserver;database=mydb;uid=myuserid;pwd=mypassword");
-	dbConn.Open();
-	
-	SqlCommand command = new SqlCommand("select something that returns a null value", dbConn);
-	SqlDataReader reader = command.ExecuteReader();
-	
-	while (reader.Read()) {
-		// if it's a DBNull, myString will contain a blank String
-		string myString = Convert.ToString(reader.GetValue(0));
-
-		// if you prefer to check for the DBNull try this
-		object possibleNull = reader.GetValue(0);
-		if (possibleNull == DBNull.Value) {
-			// do something
-		}
-	}
-	
-	reader.Close();
-	dbConn.Close();
-  </code>
-      </example>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DBNull" /> class represents a nonexistent value. In a database, for example, a column in a row of a table might not contain any data whatsoever. That is, the column is considered to not exist at all instead of merely not having a value. A <see cref="T:System.DBNull" /> object represents the nonexistent column. Additionally, COM interop uses the <see cref="T:System.DBNull" /> class to distinguish between a VT_NULL variant, which indicates a nonexistent value, and a VT_EMPTY variant, which indicates an unspecified value.</para>
+      <para>The <see cref="T:System.DBNull" /> type is a singleton class, which means only one <see cref="T:System.DBNull" /> object exists. The <see cref="F:System.DBNull.Value" /> member represents the sole <see cref="T:System.DBNull" /> object. <see cref="F:System.DBNull.Value" /> can be used to explicitly assign a nonexistent value to a database field, although most ADO.NET data providers automatically assign values of <see cref="T:System.DBNull" /> when a field does not have a valid value. You can determine whether a value retrieved from a database field is a <see cref="T:System.DBNull" /> value by passing the value of that field to the DBNull.Value.Equals method. However, some languages and database objects supply methods that make it easier to determine whether the value of a database field is <see cref="F:System.DBNull.Value" />. These include the Visual Basic IsDBNull function, the <see cref="M:System.Convert.IsDBNull(System.Object)" /> method, the <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> method, and the <see cref="M:System.Data.IDataRecord.IsDBNull(System.Int32)" /> method.</para>
+      <para>Do not confuse the notion of null in an object-oriented programming language with a <see cref="T:System.DBNull" /> object. In an object-oriented programming language, null means the absence of a reference to an object. <see cref="T:System.DBNull" /> represents an uninitialized variant or nonexistent database column.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a nonexistent value. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetObjectData">
@@ -74,10 +56,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface and returns the data needed to serialize the <see cref="T:System.DBNull" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object containing information required to serialize the <see cref="T:System.DBNull" /> object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> object containing the source and destination of the serialized stream associated with the <see cref="T:System.DBNull" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeCode">
@@ -94,9 +81,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeCode'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.TypeCode" /> value for <see cref="T:System.DBNull" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.TypeCode" /> value for <see cref="T:System.DBNull" />, which is <see cref="F:System.TypeCode.DBNull" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToBoolean">
@@ -115,10 +108,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToByte">
@@ -137,10 +137,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToChar">
@@ -159,10 +166,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToDateTime">
@@ -181,10 +195,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToDecimal">
@@ -203,10 +224,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToDouble">
@@ -225,10 +253,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToInt16">
@@ -247,10 +282,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToInt32">
@@ -269,10 +311,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToInt64">
@@ -291,10 +340,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToSByte">
@@ -313,10 +369,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToSingle">
@@ -335,10 +398,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToType">
@@ -359,10 +429,20 @@
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Three conversions are supported: If the <paramref name="type" /> parameter specifies <see cref="T:System.Object" /> or <see cref="T:System.DBNull" />, the return value is the current <see cref="T:System.DBNull" /> object itself. If the <paramref name="type" /> parameter specifies <see cref="T:System.String" />, the return value is the string returned by the <see cref="M:System.DBNull.ToString" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current <see cref="T:System.DBNull" /> object to the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The boxed equivalent of the current <see cref="T:System.DBNull" /> object, if that conversion is supported; otherwise, an exception is thrown and no value is returned. </para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface and is used to augment the conversion. If null is specified, format information is obtained from the current culture. </param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToUInt16">
@@ -381,10 +461,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToUInt32">
@@ -403,10 +490,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="System.IConvertible.ToUInt64">
@@ -425,10 +519,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to make this conversion throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. The return value for this member is not used.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -445,9 +546,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty string (<see cref="F:System.String.Empty" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string (<see cref="F:System.String.Empty" />).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -466,10 +573,17 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty string using the specified <see cref="T:System.IFormatProvider" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string (<see cref="F:System.String.Empty" />).</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IFormatProvider" /> to be used to format the return value.</param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -486,8 +600,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This is a static instance of <see cref="T:System.DBNull" /> which is the only instance of <see cref="T:System.DBNull" /> ever used.</summary>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.DBNull" /> is a singleton class, which means only this instance of this class can exist.</para>
+          <para>If a database field has missing data, you can use the <see cref="F:System.DBNull.Value" /> property to explicitly assign a <see cref="T:System.DBNull" /> object value to the field. However, most data providers do this automatically.</para>
+          <para>To evaluate database fields to determine whether their values are <see cref="T:System.DBNull" />, you can pass the field value to the DBNull.Value.Equals method. However, this method is rarely used because there are a number of other ways to evaluate a database field for missing data. These include the Visual Basic IsDBNull function, the <see cref="M:System.Convert.IsDBNull(System.Object)" /> method, the <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> method, the <see cref="M:System.Data.IDataRecord.IsDBNull(System.Int32)" /> method, and several other methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the sole instance of the <see cref="T:System.DBNull" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

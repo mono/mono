@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolboxItemAttribute" FullName="System.ComponentModel.ToolboxItemAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ToolboxItemAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ToolboxItemAttribute extends System.Attribute" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class provides a way to specify an attribute for a <see cref="T:System.Drawing.Design.ToolboxItem" />. In addition to what the <see cref="T:System.Attribute" /> class provides, this class of object stores the type of the toolbox item.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an attribute of a toolbox item.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +45,16 @@
         <Parameter Name="defaultType" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="defaultType">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.ComponentModel.ToolboxItemAttribute.ToolboxItemType" /> property is set to <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class and specifies whether to use default initialization values.</para>
+        </summary>
+        <param name="defaultType">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a toolbox item attribute for a default type; false to associate no default toolbox item support for this attribute. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,8 +72,14 @@
       </Parameters>
       <Docs>
         <param name="toolboxItemName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor expects the <paramref name="toolboxItemTypeName" /> parameter to be in the form &lt;name of the item type&gt;, &lt;name of the assembly&gt; (for example, System.Drawing.Design.ToolboxItem, System.Drawing.Design).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class using the specified name of the type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -76,9 +96,13 @@
         <Parameter Name="toolboxItemType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="toolboxItemType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class using the specified type of the toolbox item.</para>
+        </summary>
+        <param name="toolboxItemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the toolbox item. </param>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -95,8 +119,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.ComponentModel.ToolboxItemAttribute.ToolboxItemType" /> property is set to <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class and sets the type to the default, <see cref="T:System.Drawing.Design.ToolboxItem" />. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -154,9 +184,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, this value returns false from the method defined in the <see cref="T:System.Attribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current value of the attribute is the default value for the attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current value of the attribute is the default; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -173,8 +212,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ToolboxItemAttribute" /> class and sets the type to null. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolboxItemType">
@@ -190,9 +232,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the toolbox item.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolboxItemTypeName">
@@ -208,9 +253,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type of the current <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

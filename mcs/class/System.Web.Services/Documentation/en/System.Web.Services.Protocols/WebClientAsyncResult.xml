@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebClientAsyncResult" FullName="System.Web.Services.Protocols.WebClientAsyncResult">
   <TypeSignature Language="C#" Value="public class WebClientAsyncResult : IAsyncResult" Maintainer="auto" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you call the BeginMyMethodName method, where MyMethodName is the synchronous version of the method, on an XML Web service proxy class, an instance of the <see cref="T:System.Web.Services.Protocols.WebClientAsyncResult" /> is returned. Following the standard asynchronous design pattern, that instance of <see cref="T:System.Web.Services.Protocols.WebClientAsyncResult" /> must later be passed to EndMyMethodName to complete the asynchronous method call.</para>
+      <para>For details on calling XML Web services asynchronously, see <format type="text/html"><a href="F9E26A43-063A-440A-8C73-A02F2CCF3EA0">[&lt;topic://cpconInvokingWebServicesAsynchronously&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an implementation of <see cref="T:System.IAsyncResult" /> for use by XML Web service proxies to implement the standard asynchronous method pattern.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abort">
@@ -29,8 +37,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels an asynchronous XML Web service request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +55,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object provided in the last parameter to the Begin method asynchronous call.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +75,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Threading.WaitHandle" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.WaitHandle" /> can be used to perform a <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" />, <see cref="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" />, or <see cref="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> to wait for the asynchronous call to complete.</para>
+          <para>For more details, see <see cref="P:System.IAsyncResult.AsyncWaitHandle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.WaitHandle" /> that is used to wait for an asynchronous operation to complete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +98,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Web.Services.Protocols.WebClientAsyncResult.CompletedSynchronously" /> is set to true within the <see cref="T:System.AsyncCallback" /> delegate, it is probable that the thread that called <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.BeginInvoke(System.String,System.Object[],System.AsyncCallback,System.Object)" /> is the current thread. In this case, you should be careful about making another asynchronous Begin call from the callback method, since it can cause the stack to grow without bound if the calls continue to complete synchronously. Instead, the call should be completed at the original call site, outside the callback method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the Begin call completed synchronously.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +120,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the asynchronous XML Web service request has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

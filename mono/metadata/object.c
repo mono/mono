@@ -1350,6 +1350,9 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			int method_slot_in_interface;
 			for (method_slot_in_interface = 0; method_slot_in_interface < iface->method.count; method_slot_in_interface++) {
 				MonoMethod *method = mono_class_get_method_by_index (iface, method_slot_in_interface);
+
+				if (method->is_generic)
+					has_generic_virtual = TRUE;
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface, slot_num);
 			}
 			interface_offset += iface->method.count;
@@ -3342,7 +3345,7 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 void
 mono_field_static_get_value (MonoVTable *vt, MonoClassField *field, void *value)
 {
-	return mono_field_static_get_value_for_thread (mono_thread_internal_current (), vt, field, value);
+	mono_field_static_get_value_for_thread (mono_thread_internal_current (), vt, field, value);
 }
 
 /**

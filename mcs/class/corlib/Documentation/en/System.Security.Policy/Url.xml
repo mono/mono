@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Url" FullName="System.Security.Policy.Url">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class Url : System.Security.Policy.EvidenceBase, System.Security.Policy.IBuiltInEvidence, System.Security.Policy.IIdentityPermissionFactory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit Url extends System.Security.Policy.EvidenceBase implements class System.Security.Policy.IBuiltInEvidence, class System.Security.Policy.IIdentityPermissionFactory" />
@@ -26,8 +27,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The presence of <see cref="T:System.Security.Policy.Url" /> evidence produces a <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> in the grant set. If there is a <see cref="M:System.Security.CodeAccessPermission.Demand" /> for <see cref="T:System.Security.Permissions.UrlIdentityPermission" />, the <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> that corresponds to the <see cref="T:System.Security.Policy.Url" /> evidence is compared to the demanded permission.</para>
+      <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file. For example, http://www.fourthcoffee.com/process/grind.htm is a complete URL.</para>
+      <para>URLs can be matched exactly or by a wildcard in the final position. For example, http://www.fourthcoffee.com/process/* is a wildcard URL.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the URL from which a code assembly originates as evidence for policy evaluation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +53,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.Url" /> class with the URL from which a code assembly originates.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of origin for the associated code assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -63,9 +76,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new copy of the evidence object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the evidence object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateIdentityPermission">
@@ -84,10 +103,17 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an identity permission corresponding to the current instance of the <see cref="T:System.Security.Policy.Url" /> evidence class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> for the specified <see cref="T:System.Security.Policy.Url" /> evidence.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set from which to construct the identity permission. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -106,10 +132,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Security.Policy.Url" /> evidence object to the specified object for equivalence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Security.Policy.Url" /> objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Url" /> evidence object to test for equivalence with the current object. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -126,9 +159,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code of the current URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current URL.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Policy.IBuiltInEvidence.GetRequiredSize">
@@ -217,9 +256,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the current <see cref="T:System.Security.Policy.Url" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current <see cref="T:System.Security.Policy.Url" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -235,9 +280,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL from which the code assembly originates.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

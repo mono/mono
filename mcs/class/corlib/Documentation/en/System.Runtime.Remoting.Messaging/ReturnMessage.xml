@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReturnMessage" FullName="System.Runtime.Remoting.Messaging.ReturnMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ReturnMessage : System.Runtime.Remoting.Messaging.IInternalMessage, System.Runtime.Remoting.Messaging.IMethodReturnMessage" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ReturnMessage extends System.Object implements class System.Runtime.Remoting.Messaging.IInternalMessage, class System.Runtime.Remoting.Messaging.IMessage, class System.Runtime.Remoting.Messaging.IMethodMessage, class System.Runtime.Remoting.Messaging.IMethodReturnMessage" />
@@ -26,8 +27,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>This class makes a link demand and an inheritance demand at the class level. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have infrastructure permission. For details about security demands, see <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> and <format type="text/html"><a href="28B9ADBB-8F08-4F10-B856-DBF59EB932D9">[&lt;topic://cpconInheritanceDemands&gt;]</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds a message returned in response to a method call on a remote object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,10 +54,15 @@
         <Parameter Name="mcm" Type="System.Runtime.Remoting.Messaging.IMethodCallMessage" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="mcm">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> class.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that was thrown during execution of the remotely called method. </param>
+        <param name="mcm">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> with which to create an instance of the <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> class. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,13 +83,21 @@
         <Parameter Name="mcm" Type="System.Runtime.Remoting.Messaging.IMethodCallMessage" />
       </Parameters>
       <Docs>
-        <param name="ret">To be added.</param>
-        <param name="outArgs">To be added: an object of type 'object []'</param>
-        <param name="outArgsCount">To be added.</param>
-        <param name="callCtx">To be added: an object of type 'LogicalCallContext'</param>
-        <param name="mcm">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> class with all the information returning to the caller after the method call.</para>
+        </summary>
+        <param name="ret">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object returned by the invoked method from which the current <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> instance originated. </param>
+        <param name="outArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The objects returned from the invoked method as out parameters. </param>
+        <param name="outArgsCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of out parameters returned from the invoked method. </param>
+        <param name="callCtx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> of the method call. </param>
+        <param name="mcm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original method call to the invoked method. </param>
       </Docs>
     </Member>
     <Member MemberName="ArgCount">
@@ -91,9 +113,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of arguments of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Args">
@@ -109,9 +134,12 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specified argument passed to the method called on the remote object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exception">
@@ -127,9 +155,12 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Exception'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception that was thrown during the remote method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetArg">
@@ -148,10 +179,17 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="argNum">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a specified argument passed to the remote method during the method call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An argument passed to the remote method during the method call.</para>
+        </returns>
+        <param name="argNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the requested argument. </param>
       </Docs>
     </Member>
     <Member MemberName="GetArgName">
@@ -170,10 +208,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of a specified method argument.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a specified method argument.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the requested argument name. </param>
       </Docs>
     </Member>
     <Member MemberName="GetOutArg">
@@ -192,10 +237,17 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="argNum">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the object passed as an out or ref parameter during the remote method call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object passed as an out or ref parameter during the remote method call.</para>
+        </returns>
+        <param name="argNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the requested out or ref parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="GetOutArgName">
@@ -214,10 +266,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of a specified out or ref parameter passed to the remote method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the name of the specified out or ref parameter, or null if the current method is not implemented.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the requested argument. </param>
       </Docs>
     </Member>
     <Member MemberName="HasVarArgs">
@@ -233,9 +292,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the called method accepts a variable number of arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LogicalCallContext">
@@ -251,9 +313,12 @@
         <ReturnType>System.Runtime.Remoting.Messaging.LogicalCallContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LogicalCallContext'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodBase">
@@ -269,9 +334,12 @@
         <ReturnType>System.Reflection.MethodBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Reflection.MethodBase'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Reflection.MethodBase" /> of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodName">
@@ -287,9 +355,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodSignature">
@@ -305,9 +376,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of <see cref="T:System.Type" /> objects containing the method signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutArgCount">
@@ -323,9 +397,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of out or ref arguments on the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutArgs">
@@ -341,9 +418,12 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specified object passed as an out or ref parameter to the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -359,9 +439,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IDictionary'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.IDictionary" /> of properties contained in the current <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnValue">
@@ -377,9 +460,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object returned by the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Remoting.Messaging.IInternalMessage.TargetIdentity">
@@ -447,9 +533,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the type on which the remote method was called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Uri">
@@ -465,9 +554,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI of the remote object on which the remote method was called.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

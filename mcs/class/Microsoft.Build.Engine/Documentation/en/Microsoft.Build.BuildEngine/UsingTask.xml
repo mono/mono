@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UsingTask" FullName="Microsoft.Build.BuildEngine.UsingTask">
   <TypeSignature Language="C#" Value="public class UsingTask" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a single <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element in an vstecmsbuild project. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AssemblyFile">
@@ -21,10 +25,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <unmanagedCodeEntityReference>AssemblyFile</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +44,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <unmanagedCodeEntityReference>AssemblyName</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +63,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <unmanagedCodeEntityReference>Condition</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +82,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element was imported into the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +101,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <unmanagedCodeEntityReference>TaskName</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="20247902-9446-4a1f-8253-5c7a17e4fe43">UsingTask</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityContextKeyIdentifierClause" FullName="System.ServiceModel.Security.SecurityContextKeyIdentifierClause">
   <TypeSignature Language="C#" Value="public class SecurityContextKeyIdentifierClause : System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityContextKeyIdentifierClause extends System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the key identifier clause for a security context token.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +29,16 @@
         <Parameter Name="contextId" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more about the <paramref name="contextId" /> parameter, see <see cref="P:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken.ContextId" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityContextKeyIdentifierClause" /> class using the specified context identifier.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique ID of the security context.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +53,19 @@
         <Parameter Name="generation" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more about the <paramref name="contextId" /> parameter, see <see cref="P:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken.ContextId" />.</para>
+          <para>For more about the <paramref name="generation" /> parameter, see <see cref="P:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken.KeyGeneration" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityContextKeyIdentifierClause" /> class using the specified context identifier and generation.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the Context ID of the security context.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that refers to the Key generation of the Security Context Token.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -62,12 +82,23 @@
         <Parameter Name="derivationLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <param name="generation">To be added.</param>
-        <param name="derivationNonce">To be added.</param>
-        <param name="derivationLength">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="derivationNonce" /> and <paramref name="derivationLength" /> are used for implied derived keys. This is supported only on the sending side.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityContextKeyIdentifierClause" /> class with the specified values.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context ID part of the identifier clause.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The generation part of the identifier clause.</param>
+        <param name="derivationNonce">
+          <attribution license="cc4" from="Microsoft" modified="false" />The nonce ("number used once") used to derive the token.</param>
+        <param name="derivationLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the key being derived.</param>
       </Docs>
     </Member>
     <Member MemberName="ContextId">
@@ -81,9 +112,12 @@
         <ReturnType>System.Xml.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ID of the security context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Generation">
@@ -97,9 +131,12 @@
         <ReturnType>System.Xml.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the generation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -116,10 +153,17 @@
         <Parameter Name="keyIdentifierClause" Type="System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
       </Parameters>
       <Docs>
-        <param name="keyIdentifierClause">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares a specified <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to the current instance of the <see cref="T:System.ServiceModel.Security.SecurityContextKeyIdentifierClause" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two instances are equal; otherwise, false.</para>
+        </returns>
+        <param name="keyIdentifierClause">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to be compared.</param>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -137,11 +181,19 @@
         <Parameter Name="generation" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares a specified <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to the current instance of the <see cref="T:System.ServiceModel.Security.SecurityContextKeyIdentifierClause" /> class with the specified context identifier and generation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two instances are equal; otherwise, false.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context ID part of the identifier clause.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The generation part of the identifier clause.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -156,9 +208,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a text representation of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of the class.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

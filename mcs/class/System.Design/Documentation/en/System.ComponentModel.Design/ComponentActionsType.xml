@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentActionsType" FullName="System.ComponentModel.Design.ComponentActionsType">
   <TypeSignature Language="C#" Value="public enum ComponentActionsType" />
   <AssemblyInfo>
@@ -8,8 +9,43 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table describes the two options for associating an object-bound smart tag to a component.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Smart-tag model</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Pull</para>
+          </term>
+          <description>
+            <para>The class derived from <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> that is associated with the component overrides the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property to return the collection of smart tags for that component.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Push</para>
+          </term>
+          <description>
+            <para>A call to the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> method explicitly associates the specified smart tags with the specified component.</para>
+          </description>
+        </item>
+      </list>
+      <para>For more information about these smart-tag models, see the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> and <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> classes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of object-bound smart tag with respect to how it was associated with the component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -22,7 +58,10 @@
         <ReturnType>System.ComponentModel.Design.ComponentActionsType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Both types of smart tags.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -35,7 +74,10 @@
         <ReturnType>System.ComponentModel.Design.ComponentActionsType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pull model smart tags only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Service">
@@ -48,7 +90,10 @@
         <ReturnType>System.ComponentModel.Design.ComponentActionsType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Push model smart tags only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

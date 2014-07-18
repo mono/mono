@@ -42,8 +42,8 @@ namespace Mono.Unmanaged.Check {
 		private static extern int g_module_close (IntPtr handle);
 
 		// Warning
-		[DllImport ("libglib-2.0.so")]
-		private static extern void g_free (IntPtr mem);
+		[DllImport ("libMonoPosixHelper.so")]
+		private static extern int Mono_Posix_Stdlib_TMP_MAX ();
 
 		// Error: no such library
 		[DllImport ("does-not-exist")]
@@ -60,7 +60,7 @@ namespace Mono.Unmanaged.Check {
 		Test ()
 		{
 			g_module_close (IntPtr.Zero);
-			g_free (IntPtr.Zero);
+			Mono_Posix_Stdlib_TMP_MAX ();
 			Foo ();
 			RenameMe ();
 			DoesNotExist ();

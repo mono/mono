@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolBar" FullName="System.Windows.Forms.ToolBar">
   <TypeSignature Language="C#" Value="public class ToolBar : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -27,8 +28,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolBar" /> controls are used to display <see cref="T:System.Windows.Forms.ToolBarButton" /> controls that can appear as a standard button, a toggle-style button, or a drop-down style button. You can assign images to the buttons by creating an <see cref="T:System.Windows.Forms.ImageList" />, assigning it to the <see cref="P:System.Windows.Forms.ToolBar.ImageList" /> property of the toolbar, and assigning the image index value to the <see cref="P:System.Windows.Forms.ToolBarButton.ImageIndex" /> property each <see cref="T:System.Windows.Forms.ToolBarButton" />. You can then assign text to be displayed underneath or to the right of the image by setting the <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> property of the <see cref="T:System.Windows.Forms.ToolBarButton" />.</para>
+      <para>Set the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property of the toolbar to <see cref="F:System.Windows.Forms.ToolBarAppearance.Flat" /> to give the toolbar and its buttons a flat appearance. As the mouse pointer moves over the buttons, their appearance changes to three-dimensional. Toolbar buttons can be divided into logical groups by using separators. A separator is a toolbar button with the <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> property set to ToolBarButtonStyle.Separator. Button separators appear as lines rather than spaces between the buttons when the toolbar has a flat appearance. If the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property is set to <see cref="F:System.Windows.Forms.ToolBarAppearance.Normal" />, the toolbar buttons appear raised and three-dimensional.</para>
+      <para>If you specify a value for the <see cref="P:System.Windows.Forms.ToolBar.ButtonSize" /> property, all buttons in the tool bar are restricted to the specified size. Otherwise, the buttons adjust their size depending on their content, and the <see cref="P:System.Windows.Forms.ToolBar.ButtonSize" /> property returns the initial size of the largest button.</para>
+      <para>To create a collection of <see cref="T:System.Windows.Forms.ToolBarButton" /> controls to display on the <see cref="T:System.Windows.Forms.ToolBar" />, add the buttons individually by using the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Add(System.Windows.Forms.ToolBarButton)" /> or <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Insert(System.Int32,System.Windows.Forms.ToolBarButton)" /> methods of the <see cref="P:System.Windows.Forms.ToolBar.Buttons" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows toolbar. Although <see cref="T:System.Windows.Forms.ToolStrip" /> replaces and adds functionality to the <see cref="T:System.Windows.Forms.ToolBar" /> control of previous versions, <see cref="T:System.Windows.Forms.ToolBar" /> is retained for both backward compatibility and future use if you choose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +47,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A newly created toolbar control is empty; add <see cref="T:System.Windows.Forms.ToolBarButton" /> controls by setting the <see cref="P:System.Windows.Forms.ToolBar.Buttons" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolBar" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +76,15 @@
         <ReturnType>System.Windows.Forms.ToolBarAppearance</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property affects the appearance of the buttons assigned to the toolbar. When the appearance is set to ToolBarAppearance.Normal, the toolbar's buttons appear three-dimensional and raised. Set the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property of the toolbar to ToolBarAppearance.Flat to give the toolbar's buttons a flat appearance. As the mouse pointer moves over the flat buttons, they appear raised and three-dimensional. Separators on a <see cref="T:System.Windows.Forms.ToolBar" /> with the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property set to <see cref="F:System.Windows.Forms.ToolBarAppearance.Flat" /> appear as etched lines rather than spaces between the raised buttons. The flat style buttons give your application a more Web-like look.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or set the value that determines the appearance of a toolbar control and its buttons.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +115,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.ToolBar.AutoSize" /> is set to true, the <see cref="T:System.Windows.Forms.ToolBar" /> control sizes itself to accommodate the toolbar buttons, based upon the button size, the number of <see cref="T:System.Windows.Forms.ToolBarButton" /> objects it contains, and the <see cref="T:System.Windows.Forms.DockStyle" /> of the toolbar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the toolbar adjusts its size automatically, based on the size of the buttons and the dock style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,8 +148,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolBar.AutoSize" /> property has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackColor">
@@ -138,9 +173,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -162,8 +200,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.BackColor" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.BackColorChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.BackColor" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +229,12 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,8 +256,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.BackgroundImage" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.BackgroundImageChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -235,9 +288,12 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the layout for background image.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -258,8 +314,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.BackgroundImageLayout" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.BackgroundImageLayoutChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BorderStyle">
@@ -277,9 +339,15 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ToolBar" /> can take on a sunken, three-dimensional appearance when the <see cref="T:System.Windows.Forms.BorderStyle" /> property is set to BorderStyle.Fixed3D. To display a flat thin border around the toolbar control, set the <see cref="T:System.Windows.Forms.BorderStyle" /> property to BorderStyle.FixedSingle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the toolbar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,8 +361,14 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonClickEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.Windows.Forms.ToolBarButton" /> on the <see cref="T:System.Windows.Forms.ToolBar" /> is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -308,8 +382,14 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonClickEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a drop-down style <see cref="T:System.Windows.Forms.ToolBarButton" /> or its down arrow is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -334,9 +414,15 @@
         <ReturnType>System.Windows.Forms.ToolBar+ToolBarButtonCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.Buttons" /> property is a zero-based indexed collection used to hold all the <see cref="T:System.Windows.Forms.ToolBarButton" /> controls assigned to the toolbar. Because the property is read-only, it can not be assigned a collection of toolbar buttons directly. Toolbar buttons can be added or removed by using the methods inherited from the <see cref="T:System.Windows.Forms.ToolBar.ToolBarButtonCollection" /> class. Use the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Add(System.Windows.Forms.ToolBarButton)" /> method to add individual buttons and the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Remove(System.Windows.Forms.ToolBarButton)" /> method to delete a button. Call the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Clear" /> method to remove all the buttons from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Windows.Forms.ToolBarButton" /> controls assigned to the toolbar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -358,9 +444,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ToolBar.ButtonSize" /> is not set, it is set to its default. Alternatively, a <see cref="T:System.Drawing.Size" /> is computed to accommodate the largest <see cref="T:System.Drawing.Image" /> and text assigned to the <see cref="T:System.Windows.Forms.ToolBarButton" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the buttons on the toolbar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -375,8 +467,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a handle for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -390,9 +485,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the required creation parameters when the control handle is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -406,9 +504,15 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As implemented in the <see cref="T:System.Windows.Forms.ToolBar" /> class, this property always returns the <see cref="F:System.Windows.Forms.ImeMode.Disable" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default Input Method Editor (IME) mode supported by this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -422,9 +526,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -441,9 +548,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.ToolBar" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ToolBar" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -462,9 +577,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dividers are displayed to help distinguish the toolbar from adjacent controls, such as menus. A divider is displayed as a raised edge along the top of the <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the toolbar displays a divider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -486,9 +607,12 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which control borders are docked to its parent control and determines how a control is resized with its parent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -510,9 +634,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DropDownArrows">
@@ -530,9 +657,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.ToolBar.DropDownArrows" /> is set to false, no down arrows display on drop-down style toolbar buttons. When the user clicks the drop-down button on the toolbar, the menu drops down for selection. When the drop-down arrow is displayed, the user must press the down arrow to display the menu.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether drop-down buttons on a toolbar display down arrows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -554,9 +687,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the forecolor .</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -578,8 +714,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.ForeColor" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.ForeColorChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.ForeColor" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -598,9 +740,15 @@
         <ReturnType>System.Windows.Forms.ImageList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you create an <see cref="T:System.Windows.Forms.ImageList" /> and assign it to the <see cref="P:System.Windows.Forms.ToolBar.ImageList" /> property, you can assign an image from the collection to the <see cref="T:System.Windows.Forms.ToolBarButton" /> controls by assigning the image's index value to the <see cref="P:System.Windows.Forms.ToolBarButton.ImageIndex" /> property of the toolbar button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of images available to the toolbar button controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -625,9 +773,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the images in the image list assigned to the toolbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -649,9 +800,12 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -673,8 +827,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.ImeMode" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.ImeModeChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.ImeMode" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -691,9 +851,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.ToolBarButtonClickEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolBar.OnButtonClick(System.Windows.Forms.ToolBarButtonClickEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolBar.ButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ToolBarButtonClickEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -710,9 +878,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.ToolBarButtonClickEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolBar.OnButtonDropDown(System.Windows.Forms.ToolBarButtonClickEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolBar.ButtonDropDown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ToolBarButtonClickEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -729,9 +905,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolBar.OnFontChanged(System.EventArgs)" /> method resizes the toolbar buttons to fit the size of the new font.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -748,9 +931,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -767,9 +954,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Resize" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -791,8 +982,11 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -814,9 +1008,12 @@
         <ReturnType>System.Windows.Forms.RightToLeft</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -838,8 +1035,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.RightToLeft" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.RightToLeftChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.RightToLeft" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -860,10 +1063,15 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="factor">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales a control's location, size, padding and margin.</para>
+        </summary>
+        <param name="factor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which the height and width of the control will be scaled.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BoundsSpecified" /> value that specifies the bounds of the control to use when defining its size and position.</param>
       </Docs>
     </Member>
     <Member MemberName="ScaleCore">
@@ -885,10 +1093,15 @@
         <Parameter Name="dy" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="dx">To be added.</param>
-        <param name="dy">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not relevant for this class.</para>
+        </summary>
+        <param name="dx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal scaling factor.</param>
+        <param name="dy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical scaling factor.</param>
       </Docs>
     </Member>
     <Member MemberName="SetBoundsCore">
@@ -905,13 +1118,24 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolBar.SetBoundsCore(System.Int32,System.Int32,System.Int32,System.Int32,System.Windows.Forms.BoundsSpecified)" /> method ignores width if the <see cref="P:System.Windows.Forms.ToolBar.Dock" /> property is set to <see cref="F:System.Windows.Forms.DockStyle.Left" /> or <see cref="F:System.Windows.Forms.DockStyle.Right" /> and the <see cref="P:System.Windows.Forms.ToolBar.AutoSize" /> property is set to true. <see cref="M:System.Windows.Forms.ToolBar.SetBoundsCore(System.Int32,System.Int32,System.Int32,System.Int32,System.Windows.Forms.BoundsSpecified)" /> ignores height if the <see cref="P:System.Windows.Forms.ToolBar.Dock" /> property is set to <see cref="F:System.Windows.Forms.DockStyle.Top" /> or <see cref="F:System.Windows.Forms.DockStyle.Bottom" /> and the <see cref="P:System.Windows.Forms.ToolBar.AutoSize" /> property is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified bounds of the <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new Left property value of the control.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new Top property value of the control.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new Width property value of the control.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not used.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.BoundsSpecified" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -933,9 +1157,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the text displayed by the ToolTip, set the <see cref="P:System.Windows.Forms.ToolBarButton.ToolTipText" /> property of each <see cref="T:System.Windows.Forms.ToolBarButton" /> on the <see cref="T:System.Windows.Forms.ToolBar" />. To cause the ToolTip to display as the user moves the mouse pointer over the toolbar button, set the <see cref="P:System.Windows.Forms.ToolBar.ShowToolTips" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the toolbar displays a ToolTip for each button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -954,9 +1184,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -984,9 +1217,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text for the toolbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1008,9 +1244,15 @@
         <ReturnType>System.Windows.Forms.ToolBarTextAlign</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> can be aligned underneath or to the right of the image displayed on the <see cref="T:System.Windows.Forms.ToolBarButton" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of text in relation to each image displayed on the toolbar button controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1032,8 +1274,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBar.Text" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.ToolBar.TextChanged" /> event to detect the change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ToolBar.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1048,9 +1296,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolBar.ToString" /> method returns a string that includes the type, the value of the <see cref="P:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Count" /> property in the <see cref="T:System.Windows.Forms.ToolBar.ToolBarButtonCollection" />, and the string returned by the <see cref="M:System.Windows.Forms.ToolBar.ToString" /> method of the toolbar’s first button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A String that represents the current <see cref="T:System.Windows.Forms.ToolBar" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1091,9 +1348,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Toolbar buttons can be divided into logical groups by using separators. A separator is a toolbar button with the <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> property set to ToolBarButtonStyle.Separator. If the <see cref="P:System.Windows.Forms.ToolBar.Wrappable" /> property is set to true and the toolbar becomes too small to display all the buttons on the same line, the toolbar is broken into additional lines, with the breaks occurring at the separators. This ensures that button groups stay together. Toolbar buttons that are not in a group can be separated when the toolbar wraps. The toolbar can become too small to display all its buttons on the same line if its parent <see cref="T:System.Windows.Forms.Form" /> is resized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the toolbar buttons wrap to the next line if the toolbar becomes too small to display all the buttons on the same line.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

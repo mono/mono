@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SimpleWorkerRequest" FullName="System.Web.Hosting.SimpleWorkerRequest">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SimpleWorkerRequest : System.Web.HttpWorkerRequest" />
   <AssemblyInfo>
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This simple implementation of HttpWorkerRequest provides the request URL and the query string and captures the body of the output into a <see cref="T:System.IO.TextWriter" />. To achieve richer functionality, such as providing posted content and headers and capturing the response headers or response body as binary data, you should extend SimpleWorkerRequest and override the appropriate HttpWorkerRequest methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple implementation of the <see cref="T:System.Web.HttpWorkerRequest" /> abstract class that can be used to host ASP.NET applications outside an Internet Information Services (IIS) application. You can employ SimpleWorkerRequest directly or extend it.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,11 +40,17 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="page">To be added.</param>
-        <param name="query">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Hosting.SimpleWorkerRequest" /> class when the target application domain has been created using the <see cref="M:System.Web.Hosting.ApplicationHost.CreateApplicationHost(System.Type,System.String,System.String)" /> method.</para>
+        </summary>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The page to be requested (or the virtual path to the page, relative to the application directory). </param>
+        <param name="query">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the query string. </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> that captures output from the response </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,13 +69,21 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="appVirtualDir">To be added.</param>
-        <param name="appPhysicalDir">To be added.</param>
-        <param name="page">To be added.</param>
-        <param name="query">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Hosting.SimpleWorkerRequest" /> class for use in an arbitrary application domain, when the user code creates an <see cref="T:System.Web.HttpContext" /> (passing the SimpleWorkerRequest as an argument to the HttpContext constructor).</para>
+        </summary>
+        <param name="appVirtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application directory; for example, "/app". </param>
+        <param name="appPhysicalDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application directory; for example, "c:\app". </param>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path for the request (relative to the application directory). </param>
+        <param name="query">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the query string. </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> that captures the output from the response. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,8 +98,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Web.HttpWorkerRequest" /> that request processing for the current request is complete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +119,13 @@
         <Parameter Name="finalFlush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="finalFlush">a <see cref="T:System.Boolean" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends all pending response data to the client.</para>
+        </summary>
+        <param name="finalFlush">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this is the last time response data will be flushed; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -112,9 +140,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the virtual path to the currently executing server application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The virtual path of the current application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,9 +163,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the UNC-translated path to the currently executing server application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path of the current application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +186,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the physical path to the requested URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path to the requested URI.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -163,9 +209,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the physical file path to the requested URI (and translates it from virtual path to physical path: for example, "/proj1/page.aspx" to "c:\dir\page.aspx") </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated physical file path to the requested URI.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +232,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the HTTP request verb.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP verb for this request.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +255,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the HTTP version string of the request (for example, "HTTP/1.1").</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP version string returned in the request header.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -214,9 +278,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server IP address of the interface on which the request was received.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server IP address of the interface on which the request was received.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,9 +301,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the port number on which the request was received.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server port number on which the request was received.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,9 +324,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Gets the path info part of a request.</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>Path info is a string which follows the script name in the URI of the request. For example, if the script name is 'foo.aspx' and the URI is '/somedir/foo.aspx/bar/baz', then the path info is '/bar/baz'.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns additional path information for a resource with a URL extension. That is, for the path /virdir/page.html/tail, the return value is /tail.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Additional path information for a resource.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -265,9 +347,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the query string specified in the request URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request query string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -282,9 +370,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the URL path contained in the header with the query string appended.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The raw URL path of the request header.</para>
+          <block subset="none" type="note">
+            <para>The returned URL is not normalized. Using the URL for access control, or security-sensitive decisions can expose your application to canonicalization security vulnerabilities.</para>
+          </block>
+          <para />
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -299,9 +397,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the IP address of the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The client's IP address.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,9 +420,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Gets the port number of the remote endpoint.</summary>
-        <returns>A <see cref="T:System.Int32" /> containing the port number of the remote endpoint.</returns>
         <remarks>When a client (web browser) connects to a server, it is assigned a port to communicate over. This value represents that port.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the client's port number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The client's port number.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,10 +445,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a single server variable from a dictionary of server variables associated with the request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested server variable.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the requested server variable. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -353,9 +470,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the virtual path to the requested URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path to the requested URI.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,9 +493,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.IntPtr" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the client's impersonation token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value representing the client's impersonation token. The default is <see cref="F:System.IntPtr.Zero" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -387,9 +516,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full physical path to the Machine.config file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -404,9 +536,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the directory where the ASP.NET binaries are installed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -423,10 +558,17 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the physical path corresponding to the specified virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path that corresponds to the virtual path specified in the <paramref name="path" /> parameter.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,9 +585,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full physical path to the root Web.config file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendKnownResponseHeader">
@@ -459,10 +604,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="index">a <see cref="T:System.Int32" /></param>
-        <param name="value">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a standard HTTP header to the response.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The header index. For example, <see cref="F:System.Web.HttpWorkerRequest.HeaderContentLength" />. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The header value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -481,11 +631,17 @@
         <Parameter Name="length" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="handle">a <see cref="T:System.IntPtr" /></param>
-        <param name="offset">a <see cref="T:System.Int64" /></param>
-        <param name="length">a <see cref="T:System.Int64" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of the file with the specified handle to the response and specifies the starting position in the file and the number of bytes to send.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of the file to send. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position in the file. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -504,11 +660,17 @@
         <Parameter Name="length" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="filename">a <see cref="T:System.String" /></param>
-        <param name="offset">a <see cref="T:System.Int64" /></param>
-        <param name="length">a <see cref="T:System.Int64" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of the file with the specified name to the response and specifies the starting position in the file and the number of bytes to send.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file to send. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position in the file. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -526,10 +688,15 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="data">a <see cref="T:System.Byte[]" /></param>
-        <param name="length">a <see cref="T:System.Int32" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of a byte array to the response and specifies the number of bytes to send.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to send. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -547,10 +714,15 @@
         <Parameter Name="statusDescription" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="statusCode">a <see cref="T:System.Int32" /></param>
-        <param name="statusDescription">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTTP status code and status description of the response; for example, SendStatus(200, "Ok").</para>
+        </summary>
+        <param name="statusCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The status code to send </param>
+        <param name="statusDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />The status description to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -568,10 +740,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">a <see cref="T:System.String" /></param>
-        <param name="value">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a nonstandard HTTP header to the response.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the header to send.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the header.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRunningObjectTable" FullName="System.Runtime.InteropServices.ComTypes.IRunningObjectTable">
   <TypeSignature Language="C#" Value="public interface IRunningObjectTable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRunningObjectTable" />
@@ -16,9 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can retrieve an interface to the running object table by calling the COM <see cref="http://go.microsoft.com/fwlink/?LinkId=163472">GetRunningObjectTable</see> function.</para>
+      <para>For more information, see the documentation for the COM <see cref="http://go.microsoft.com/fwlink/?LinkId=163473">IRunningObjectTable</see> interface in the MSDN library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IRunningObjectTable interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnumRunning">
@@ -105,11 +114,21 @@
         <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <param name="pmkObjectName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the documentation for the <see cref="http://go.microsoft.com/fwlink/?LinkId=163478">IRunningObjectTable::IsRunning</see> method in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified moniker is currently registered in the Running Object Table (ROT).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HRESULT value that indicates the success or failure of the operation.</para>
+        </returns>
+        <param name="pmkObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker to search for in the Running Object Table (ROT). </param>
       </Docs>
     </Member>
     <Member MemberName="NoteChangeTime">
@@ -152,12 +171,24 @@
         <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <param name="grfFlags">To be added.</param>
-        <param name="punkObject">To be added.</param>
-        <param name="pmkObjectName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ROT references to <paramref name="punkObject" /> (weak and strong) determine object lifetime. For more information, see the documentation for the COM <see cref="http://go.microsoft.com/fwlink/?LinkId=163474">IRunningObjectTable::Register</see> method in the MSDN library. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers that the supplied object has entered the running state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that can be used to identify this ROT entry in subsequent calls to <see cref="M:System.Runtime.InteropServices.ComTypes.IRunningObjectTable.Revoke(System.Int32)" /> or <see cref="M:System.Runtime.InteropServices.ComTypes.IRunningObjectTable.NoteChangeTime(System.Int32,System.Runtime.InteropServices.ComTypes.FILETIME@)" />.</para>
+        </returns>
+        <param name="grfFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether the Running Object Table's (ROT) reference to <paramref name="punkObject" /> is weak or strong, and controls access to the object through its entry in the ROT. </param>
+        <param name="punkObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the object being registered as running. </param>
+        <param name="pmkObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker that identifies <paramref name="punkObject" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Revoke">
@@ -175,10 +206,21 @@
         <Parameter Name="dwRegister" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dwRegister">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the documentation for the <see cref="http://go.microsoft.com/fwlink/?LinkId=163480">IRunningObjectTable::Revoke</see> method in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters the specified object from the Running Object Table (ROT).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HRESULT value that indicates the success or failure of the operation.</para>
+        </returns>
+        <param name="dwRegister">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Running Object Table (ROT) entry to revoke. </param>
       </Docs>
     </Member>
   </Members>

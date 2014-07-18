@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SingleTagSectionHandler" FullName="System.Configuration.SingleTagSectionHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SingleTagSectionHandler : System.Configuration.IConfigurationSectionHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SingleTagSectionHandler extends System.Object implements class System.Configuration.IConfigurationSectionHandler" />
@@ -19,8 +20,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles configuration sections that are represented by a single XML tag in the .config file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SingleTagSectionHandler" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -57,12 +64,21 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added: an object of type 'object'</param>
-        <param name="context">To be added: an object of type 'object'</param>
-        <param name="section">To be added: an object of type 'Xml.XmlNode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to create a new instance of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created object handler.</para>
+        </returns>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent of this object.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context of this object.</param>
+        <param name="section">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> object in the configuration.</param>
       </Docs>
     </Member>
   </Members>

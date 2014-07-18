@@ -1,10 +1,10 @@
 #include Mono.CSharp.dll.sources
 ../corlib/System.Reflection.Emit/AssemblyBuilderAccess.cs
 ../corlib/System.Reflection.Emit/FlowControl.cs
-../corlib/System.Reflection.Emit/Opcode.cs
-../corlib/System.Reflection.Emit/OpcodeNames.cs
-../corlib/System.Reflection.Emit/Opcodes.cs
-../corlib/System.Reflection.Emit/OpcodeType.cs
+../corlib/System.Reflection.Emit/OpCode.cs
+../corlib/System.Reflection.Emit/OpCodeNames.cs
+../corlib/System.Reflection.Emit/OpCodes.cs
+../corlib/System.Reflection.Emit/OpCodeType.cs
 ../corlib/System.Reflection.Emit/OperandType.cs
 ../corlib/System.Reflection.Emit/PEFileKinds.cs
 ../corlib/System.Reflection.Emit/Label.cs

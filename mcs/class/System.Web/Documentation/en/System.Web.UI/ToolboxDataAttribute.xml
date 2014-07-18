@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolboxDataAttribute" FullName="System.Web.UI.ToolboxDataAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ToolboxDataAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By default, the visual designer of a tool such as Visual Studio, creates an empty tag. This is a tag representing a control in its default state, when the control is dropped from the toolbox of a visual designer onto the design surface. To specify initial default values, a control can make use of this attribute. You can use this attribute to customize the initial HTML content that is placed in the designer when the control is dragged from the toolbox onto the form.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the default tag generated for a custom control when it is dragged from a toolbox in a tool such as Microsoft Visual Studio.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +37,13 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> class. </para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to be set as the <see cref="P:System.Web.UI.ToolboxDataAttribute.Data" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +57,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string representing the initial values of the control's property, which is used in a visual designer for creating an instance of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,8 +77,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default <see cref="T:System.Web.UI.ToolboxDataAttribute" /> value for a custom control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,10 +98,20 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ToolboxDataAttribute.Equals(System.Object)" /> method first compares the objects for equality.  If the comparison returns false, the <see cref="M:System.Web.UI.ToolboxDataAttribute.Equals(System.Object)" /> method then compares the data of the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> object to the data of the given object after first testing the given object to make sure that the given object is not null and is also typed as <see cref="T:System.Web.UI.ToolboxDataAttribute" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> object is equal to the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> object is equal to the given object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code of the custom control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer representing the hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +149,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default is an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> object contains the default value for the <see cref="P:System.Web.UI.ToolboxDataAttribute.Data" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the <see cref="T:System.Web.UI.ToolboxDataAttribute" /> contains the default value for the <see cref="P:System.Web.UI.ToolboxDataAttribute.Data" /> property; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

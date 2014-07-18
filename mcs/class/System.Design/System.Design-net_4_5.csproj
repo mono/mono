@@ -19,12 +19,13 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;DRAWING_DESIGN_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;DRAWING_DESIGN_DEP</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -378,9 +379,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -389,45 +394,41 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
-      <Name>System\System-net_4_5-2</Name>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
-      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Web\System.Web-net_4_5-1.csproj">
-      <Project>{85F119B8-8463-4D6F-9852-DAB8C4070BD5}</Project>
-      <Name>System.Web\System.Web-net_4_5-1</Name>
+    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
+      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
+      <Name>System.Web-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
+    <ProjectReference Include="../System.Drawing/System.Drawing-net_4_5.csproj">
       <Project>{CB1CB976-AA54-4553-B0E7-05665B199EC4}</Project>
-      <Name>System.Drawing\System.Drawing-net_4_5</Name>
+      <Name>System.Drawing-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Accessibility\Accessibility-net_4_5.csproj">
+    <ProjectReference Include="../Accessibility/Accessibility-net_4_5.csproj">
       <Project>{FACE8136-C95A-4788-90B2-DB0ECF7A020A}</Project>
-      <Name>Accessibility\Accessibility-net_4_5</Name>
+      <Name>Accessibility-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+    <ProjectReference Include="../System.Data/System.Data-net_4_5.csproj">
       <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
-      <Name>System.Data\System.Data-net_4_5</Name>
+      <Name>System.Data-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
       <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration\System.Configuration-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Drawing.Design\System.Drawing.Design-net_4_0.csproj">
-      <Project>{81FDD05B-E6D8-4667-B637-99DA7C1D7284}</Project>
-      <Name>System.Drawing.Design\System.Drawing.Design-net_4_0</Name>
+      <Name>System.Configuration-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

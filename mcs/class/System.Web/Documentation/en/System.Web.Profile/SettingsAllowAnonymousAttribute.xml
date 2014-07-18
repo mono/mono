@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsAllowAnonymousAttribute" FullName="System.Web.Profile.SettingsAllowAnonymousAttribute">
   <TypeSignature Language="C#" Value="public sealed class SettingsAllowAnonymousAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,57 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.SettingsAllowAnonymousAttribute" /> class is used to identify whether a property of a custom profile implementation can be accessed if the user is an anonymous user. For information about enabling anonymous identification, see the documentation provided for the <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification</a></format> configuration element.</para>
+      <para>If no <see cref="T:System.Web.Profile.SettingsAllowAnonymousAttribute" /> is specified for a profile property, anonymous access of the profile property is not allowed.</para>
+      <para>A custom profile implementation is a class that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> abstract class and defines properties for the user profile that are not specified in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. You can specify a custom user-profile type in the application's Web.config file with the inherits attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element as shown in the following example.</para>
+      <para>&lt;configuration&gt;</para>
+      <para>  &lt;connectionStrings&gt;</para>
+      <para>    &lt;add </para>
+      <para>      name="SqlServices" </para>
+      <para>      connectionString="Data Source=localhost;Integrated Security=SSPI;Initial Catalog=aspnetdb;" /&gt;</para>
+      <para>  &lt;/connectionStrings&gt;</para>
+      <para />
+      <para>  &lt;system.web&gt;</para>
+      <para>    &lt;authentication mode="Forms" &gt;</para>
+      <para>      &lt;forms </para>
+      <para>        loginUrl="login.aspx"</para>
+      <para>        name=".ASPXFORMSAUTH" /&gt;</para>
+      <para>    &lt;/authentication&gt;</para>
+      <para />
+      <para>    &lt;authorization&gt;</para>
+      <para>      &lt;deny users="?" /&gt;</para>
+      <para>    &lt;/authorization&gt;</para>
+      <para />
+      <para>    &lt;profile inherits="Samples.AspNet.Profile.EmployeeProfile"</para>
+      <para>             defaultProvider="SqlProvider"&gt;</para>
+      <para>      &lt;providers&gt;</para>
+      <para>        &lt;clear /&gt;</para>
+      <para>        &lt;add</para>
+      <para>          name="SqlProvider"</para>
+      <para>          type="System.Web.Profile.SqlProfileProvider" </para>
+      <para>          connectionStringName="SqlServices" </para>
+      <para>          description="SQL Profile Provider for Sample"/&gt; </para>
+      <para>        &lt;add</para>
+      <para>          name="EmployeeInfoProvider"</para>
+      <para>          type="System.Web.Profile.SqlProfileProvider" </para>
+      <para>          connectionStringName="SqlServices" </para>
+      <para>          description="SQL Profile Provider for Employee Info"/&gt; </para>
+      <para>      &lt;/providers&gt;</para>
+      <para />
+      <para>      &lt;properties&gt;</para>
+      <para>        &lt;add name="GarmentSize" /&gt;</para>
+      <para>      &lt;/properties&gt;</para>
+      <para>    &lt;/profile&gt;</para>
+      <para>  &lt;/system.web&gt;</para>
+      <para>&lt;/configuration&gt;</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies whether a profile property can be set or accessed for an anonymous user.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +75,19 @@
         <Parameter Name="allow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="allow">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.SettingsAllowAnonymousAttribute" /> class is used to identify whether a property of a custom profile implementation can be accessed if the user is an anonymous user. For information about enabling anonymous identification, see the <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification</a></format> configuration element.</para>
+          <para>If no <see cref="T:System.Web.Profile.SettingsAllowAnonymousAttribute" /> is specified for a profile property, anonymous access to the profile property is not allowed.</para>
+          <para>A custom profile implementation is a class that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> abstract class and defines properties for the user profile that are not specified in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Profile.SettingsAllowAnonymousAttribute" /> class and specifies whether to allow anonymous access to the associated profile property.</para>
+        </summary>
+        <param name="allow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if anonymous users can access the associated profile property; otherwise false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +100,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the associated property of a custom profile implementation can be accessed if the user is an anonymous user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +120,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Web.Profile.SettingsAllowAnonymousAttribute.Allow" /> property is set to the default value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Web.Profile.SettingsAllowAnonymousAttribute.Allow" /> property is set to the default value; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace System {
 	internal static class Platform {
-#if MONOTOUCH
+#if MONOTOUCH || XAMMAC
 		public static bool IsMacOS {
 			get { return true; }
 		}

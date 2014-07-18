@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HijriCalendar" FullName="System.Globalization.HijriCalendar">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class HijriCalendar : System.Globalization.Calendar" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit HijriCalendar extends System.Globalization.Calendar" />
@@ -19,8 +20,209 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Hijri calendar recognizes one era: A.H. (Latin "Anno Hegirae", which means "the year of the migration," in reference to the migration of Muhammad (PBUH) from Mecca).</para>
+      <block subset="none" type="note">
+        <para>For information about using the <see cref="T:System.Globalization.HijriCalendar" /> class and the other calendar classes in the .NET Framework, see <format type="text/html"><a href="0c1534e5-979b-4c8a-a588-1c24301aefb3">Working with Calendars</a></format>.</para>
+      </block>
+      <para>In every 30-year cycle that ends with a year that is evenly divisible by 30, the 2nd, 5th, 7th, 10th, 13th, 16th, 18th, 21st, 24th, 26th, and 29th years are leap years. A common year has 354 days and a leap year has 355 days.</para>
+      <para>The Hijri calendar has 12 months with 29 to 30 days each: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>GetMonth value </para>
+            </term>
+            <description>
+              <para>Month </para>
+            </description>
+            <description>
+              <para>Days in common years </para>
+            </description>
+            <description>
+              <para>Days in leap years </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>محرم (Muharram) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>صفر (Safar) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>‏ربيع الاول (Rabi I) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>‏ربيع الثاني (Rabi II) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>5 </para>
+          </term>
+          <description>
+            <para>جمادى الاولى (Jumada I) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>6 </para>
+          </term>
+          <description>
+            <para>جمادى الثانية (Jumada II) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>7 </para>
+          </term>
+          <description>
+            <para>رجب (Rajab) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>8 </para>
+          </term>
+          <description>
+            <para>شعبان (Shaban) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>9 </para>
+          </term>
+          <description>
+            <para>رمضان (Ramadan) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>10 </para>
+          </term>
+          <description>
+            <para>شوال (Shawwal) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>11 </para>
+          </term>
+          <description>
+            <para>ذو القعدة (Zulkadah) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>12 </para>
+          </term>
+          <description>
+            <para>ذو الحجة (Zulhijjah) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+      </list>
+      <para>Ramadan, the month of fasting in the Muslim world, officially starts and ends according to a decree that is based on the observation of the new moon. Therefore, the number of days in Shaban and the number of days in Ramadan vary.</para>
+      <para>The date January 1, 2001 A.D. in the Gregorian calendar is roughly equivalent to the sixth day of Shawwal in the year 1421 A.H. in the Hijri calendar.</para>
+      <para>This implementation of the <see cref="T:System.Globalization.HijriCalendar" /> class adjusts the calendar date by adding or subtracting a value from zero to two days to accommodate the variances in the start and the end of Ramadan and to accommodate the date difference between countries/regions. That value is stored in the <see cref="P:System.Globalization.HijriCalendar.HijriAdjustment" /> property. If <see cref="P:System.Globalization.HijriCalendar.HijriAdjustment" /> is not set explicitly, it derives its value from the settings in the regional and language options portion of Control Panel and is stored in the registry value HKEY_CURRENT_USER\Control Panel\International\AddHijriDate. However, that information can change during the life of the <see cref="T:System.AppDomain" />. The <see cref="T:System.Globalization.HijriCalendar" /> class does not detect changes in the system settings automatically.</para>
+      <para>Each <see cref="T:System.Globalization.CultureInfo" /> supports a set of calendars. The <see cref="P:System.Globalization.CultureInfo.Calendar" /> property returns the default calendar for the culture, and the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property returns an array containing all the calendars supported by the culture. To change the calendar used by a <see cref="T:System.Globalization.CultureInfo" />, the application should set the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> to a new <see cref="T:System.Globalization.Calendar" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the Hijri calendar.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +237,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.HijriCalendar" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddMonths">
@@ -56,11 +261,26 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="months">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The year part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting month is outside the year of the specified <see cref="T:System.DateTime" />. This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, if the specified month is Zulkadah, which has 30 days, the specified day is the 30th day of that month, and the value of the <paramref name="months" /> parameter is 3, the resulting year is one more than the specified year, the resulting month is Safar, and the resulting day is the 29th day, which is the last day in Safar.</para>
+          <para>If the value of the <paramref name="months" /> parameter is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of months away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of months to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to add months to. </param>
+        <param name="months">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of months to add. </param>
       </Docs>
     </Member>
     <Member MemberName="AddYears">
@@ -80,11 +300,26 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="years">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The month part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />. This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, Zulhijjah has 29 days, except during leap years when it has 30 days. If the specified date is the 30th day of Zulhijjah in a leap year and the value of <paramref name="years" /> is 1, the resulting date will be the 29th day of Zulhijjah in the following year.</para>
+          <para>If <paramref name="years" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#8</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of years away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of years to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to add years to. </param>
+        <param name="years">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of years to add. </param>
       </Docs>
     </Member>
     <Member MemberName="AlgorithmType">
@@ -104,10 +339,13 @@
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current calendar is solar-based, lunar-based, or a combination of both.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DaysInYearBeforeMinSupportedYear">
@@ -121,9 +359,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns a constant value of 354.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of days in the year that precedes the year that is specified by the <see cref="P:System.Globalization.HijriCalendar.MinSupportedDateTime" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Eras">
@@ -139,9 +383,15 @@
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Hijri calendar recognizes one era: A.H. (Latin "Anno Hegirae", which means "the year of the migration," in reference to the migration of Muhammad (PBUH) from Mecca). This property always returns an array with only one element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of eras in the <see cref="T:System.Globalization.HijriCalendar" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDayOfMonth">
@@ -160,10 +410,17 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 30 that represents the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDayOfWeek">
@@ -182,10 +439,88 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DayOfWeek" /> values are as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DayOfWeek value </para>
+                </term>
+                <description>
+                  <para>which indicates </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Sunday </para>
+              </term>
+              <description>
+                <para>الاحد (Al-Ahad) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Monday </para>
+              </term>
+              <description>
+                <para>الاثنين (Al-Ithnayn) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Tuesday </para>
+              </term>
+              <description>
+                <para>الثلاثاء (At-Thulaathaa') </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Wednesday </para>
+              </term>
+              <description>
+                <para>الاربعاء (Al-Arbi'aa') </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Thursday </para>
+              </term>
+              <description>
+                <para>الخميس (Al-Khamiis) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Friday </para>
+              </term>
+              <description>
+                <para>الجمعة (Al-Jumu'ah) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Saturday </para>
+              </term>
+              <description>
+                <para>السبت (As-Sabt) </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDayOfYear">
@@ -204,10 +539,20 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day of the year is defined as the number of days from the first day of the year. For example, <see cref="M:System.Globalization.HijriCalendar.GetDayOfYear(System.DateTime)" /> for the first day of the first month returns 1, and <see cref="M:System.Globalization.HijriCalendar.GetDayOfYear(System.DateTime)" /> for the last day of the last month returns the total number of days in that year, which is the same value returned by <see cref="M:System.Globalization.HijriCalendar.GetDaysInYear(System.Int32,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 355 that represents the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDaysInMonth">
@@ -228,12 +573,24 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 29 or 30 for Zulhijjah (<paramref name="month" /> = 12), depending on whether <paramref name="year" /> is a leap year.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified month of the specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDaysInYear">
@@ -253,11 +610,19 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year and era. The number of days is 354 in a common year or 355 in a leap year.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEra">
@@ -276,10 +641,20 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Hijri calendar recognizes one era: A.H. (Latin "Anno Hegirae", which means "the year of the migration," in reference to the migration of Muhammad (PBUH) from Mecca).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the era in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the era in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="GetLeapMonth">
@@ -303,11 +678,22 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a calendar that supports the notion of a leap month, the leap month can occur either after a particular month or after any month in a year. For example, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns a number between 1 and 13 that indicates the month associated with a specified date. If there is a leap month between the eighth and ninth months of the year, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns 8 for the eighth month, 9 for the leap eighth month, and 10 for the ninth month.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the leap month for a specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always 0 because the <see cref="T:System.Globalization.HijriCalendar" /> type does not support the notion of a leap month.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An era. Specify <see cref="F:System.Globalization.Calendar.CurrentEra" /> or <see cref="F:System.Globalization.HijriCalendar.HijriEra" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMonth">
@@ -326,10 +712,17 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 12 that represents the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="GetMonthsInYear">
@@ -349,11 +742,19 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of months in the specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year and era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="GetYear">
@@ -372,10 +773,17 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
     </Member>
     <Member MemberName="HijriAdjustment">
@@ -390,9 +798,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HijriCalendar" /> class adjusts the calendar date by adding or subtracting a value from zero to two days to accommodate the variances in the start and the end of Ramadan and to accommodate the date difference between countries/regions. That value is stored in the <see cref="P:System.Globalization.HijriCalendar.HijriAdjustment" /> property. If <see cref="P:System.Globalization.HijriCalendar.HijriAdjustment" /> is not set explicitly, it derives its value from the settings in the regional and language options portion of Control Panel and is stored in the registry value HKEY_CURRENT_USER\Control Panel\International\AddHijriDate. However, that information can change during the life of the <see cref="T:System.AppDomain" />. The <see cref="T:System.Globalization.HijriCalendar" /> class does not detect changes in the system settings automatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of days to add or subtract from the calendar to accommodate the variances in the start and the end of Ramadan and to accommodate the date difference between countries/regions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HijriEra">
@@ -410,8 +824,15 @@
       <Parameters />
       <MemberValue>1</MemberValue>
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Globalization.HijriCalendar.HijriEra" /> field is 1.</para>
+          <para>The Hijri calendar recognizes one era: A.H. (Latin "Anno Hegirae", which means "the year of the migration," in reference to the migration of Muhammad (PBUH) from Mecca).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the current era. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLeapDay">
@@ -433,13 +854,27 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In every 30-year cycle that ends with a year that is evenly divisible by 30, the 2nd, 5th, 7th, 10th, 13th, 16th, 18th, 21st, 24th, 26th, and 29th years are leap years. A common year has 354 days and a leap year has 355 days.</para>
+          <para>A leap day is a day that occurs only in a leap year. In the Hijri calendar, the 30th day of Zulhijjah is the only leap day.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified date is a leap day.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 30 that represents the day. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="IsLeapMonth">
@@ -460,12 +895,25 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In every 30-year cycle that ends with a year that is evenly divisible by 30, the 2nd, 5th, 7th, 10th, 13th, 16th, 18th, 21st, 24th, 26th, and 29th years are leap years. A common year has 354 days and a leap year has 355 days.</para>
+          <para>A leap month is an entire month that occurs only in a leap year. The Hijri calendar does not have any leap months.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified month in the specified year and era is a leap month.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="IsLeapYear">
@@ -485,11 +933,22 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In every 30-year cycle that ends with a year that is evenly divisible by 30, the 2nd, 5th, 7th, 10th, 13th, 16th, 18th, 21st, 24th, 26th, and 29th years are leap years. A common year has 354 days and a leap year has 355 days.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified year in the specified era is a leap year.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="MaxSupportedDateTime">
@@ -509,10 +968,16 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>December 31, 9999 C.E. is equivalent to the 3rd day of the 4th month of the year 9666 in the Hijri calendar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the latest date and time supported by this calendar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinSupportedDateTime">
@@ -532,10 +997,16 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Microsoft Visual Basic represents time of day as the specified time on the minimum date  supported by the <see cref="T:System.DateTime" /> type, which is January 1, 0001 C.E. However, the <see cref="T:System.Globalization.HijriCalendar" /> type does not support that minimum date. Consequently, if you call a method to format the time of day using the current calendar but you do not specify a format specifier, formatting uses the ISO 8601 sortable ("s") date/time pattern format specifier instead of the default general ("G") date/time pattern format specifier. For more information, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard DateTime Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the earliest date and time supported by this calendar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToDateTime">
@@ -561,17 +1032,31 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="hour">To be added.</param>
-        <param name="minute">To be added.</param>
-        <param name="second">To be added.</param>
-        <param name="millisecond">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date, time, and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 30 that represents the day. </param>
+        <param name="hour">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 23 that represents the hour. </param>
+        <param name="minute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the minute. </param>
+        <param name="second">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the second. </param>
+        <param name="millisecond">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 999 that represents the millisecond. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
     </Member>
     <Member MemberName="ToFourDigitYear">
@@ -590,10 +1075,23 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Globalization.HijriCalendar.TwoDigitYearMax" /> is the last year in the 100-year range that can be represented by a two-digit year. The century is determined by finding the sole occurrence of the two-digit <paramref name="year" /> within that 100-year range. For example, if <see cref="P:System.Globalization.HijriCalendar.TwoDigitYearMax" /> is set to 1429, the 100-year range is from 1330 to 1429; therefore, a 2-digit value of 30 is interpreted as 1330, while a 2-digit value of 29 is interpreted as 1429.</para>
+          <para>
+            <see cref="M:System.Globalization.HijriCalendar.ToFourDigitYear(System.Int32)" /> supports either a two-digit year or a four-digit year. Passing a two-digit year value (less than 100) causes the method to convert the value to a four-digit value according to the <see cref="P:System.Globalization.HijriCalendar.TwoDigitYearMax" /> value representing the appropriate century. If the application supplies a four-digit year value that is within the supported calendar range to <see cref="M:System.Globalization.HijriCalendar.ToFourDigitYear(System.Int32)" />, the method returns the actual input value. If the application supplies a four-digit value that is outside the supported calendar range, or if it supplies a negative value, the method throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified year to a four-digit year by using the <see cref="P:System.Globalization.HijriCalendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that contains the four-digit representation of <paramref name="year" />.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A two-digit or four-digit integer that represents the year to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="TwoDigitYearMax">
@@ -609,9 +1107,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property allows a 2-digit year to be properly translated to a 4-digit year. For example, if this property is set to 1429, the 100-year range is from 1330 to 1429. Therefore, a 2-digit value of 30 is interpreted as 1330, while a 2-digit value of 29 is interpreted as 1429.</para>
+          <para>The initial value of this property is derived from the settings in the regional and language options portion of Control Panel. However, that information can change during the life of the <see cref="T:System.AppDomain" />. The <see cref="T:System.Globalization.HijriCalendar" /> class does not detect changes in the system settings automatically.</para>
+          <para>The application should set this value to 99 to indicate that 2-digit years are to be taken literally. For example, if this property is set to 99, the 100-year range is from 0 (not a valid value for most calendars) to 99. Therefore, a 2-digit value of 30 is interpreted as 30.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the last year of a 100-year range that can be represented by a 2-digit year.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

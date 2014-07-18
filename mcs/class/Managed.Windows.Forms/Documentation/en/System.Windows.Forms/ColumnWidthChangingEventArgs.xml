@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColumnWidthChangingEventArgs" FullName="System.Windows.Forms.ColumnWidthChangingEventArgs">
   <TypeSignature Language="C#" Value="public class ColumnWidthChangingEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ListView.ColumnWidthChanging" /> event is a cancelable event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.ColumnWidthChanging" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +29,16 @@
         <Parameter Name="newWidth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added.</param>
-        <param name="newWidth">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ColumnWidthChangingEventArgs" /> class with the specified column index and width.</para>
+        </summary>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the column whose width is changing.</param>
+        <param name="newWidth">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new width for the column.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,12 +53,21 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added.</param>
-        <param name="newWidth">To be added.</param>
-        <param name="cancel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passing in true for the <paramref name="cancel" /> parameter will cause the width change to be canceled, and the column will return to its previous size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ColumnWidthChangingEventArgs" /> class, specifying the column index and width and whether to cancel the event.</para>
+        </summary>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the column whose width is changing.</param>
+        <param name="newWidth">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new width of the column.</param>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cancel the width change; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +80,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the column whose width is changing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +99,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When handing the <see cref="E:System.Windows.Forms.ListView.ColumnWidthChanging" /> event, the <see cref="P:System.Windows.Forms.ColumnWidthChangingEventArgs.NewWidth" /> property enables you to verify whether the new width meets the requirements of your application and to either adjust the width or cancel the event if it does not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the new width for the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

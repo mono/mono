@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaException" FullName="System.Xml.Schema.XmlSchemaException">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaException : SystemException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit XmlSchemaException extends System.SystemException" />
@@ -15,8 +16,16 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Xml.Schema.XmlSchemaException" /> class may contain sensitive information that should not be exposed in untrusted scenarios. For example, the <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property returns the URI path to the schema file that caused the exception. The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property should not be exposed in untrusted scenarios. Exceptions should be properly handled so that this sensitive information is not exposed in untrusted scenarios.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Returns detailed information about the schema exception.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +38,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,10 +58,14 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaException" /> class with the exception message specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,10 +83,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'System.Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'System.Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new XmlSchemaException object with the given SerializationInfo and StreamingContext information that contains all the properties of the XmlSchemaException.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />SerializationInfo.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />StreamingContext.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -88,10 +109,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="innerException">To be added: an object of type 'System.Exception'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaException" /> class with the exception message and original <see cref="T:System.Exception" /> object that caused this exception specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original T:System.Exception object that caused this exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -109,13 +135,20 @@
         <Parameter Name="linePosition" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <param name="lineNumber">To be added.</param>
-        <param name="linePosition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaException" /> class with the exception message specified, and the original <see cref="T:System.Exception" /> object, line number, and line position of the XML that cause this exception specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original T:System.Exception object that caused this exception.</param>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line number of the XML that caused this exception.</param>
+        <param name="linePosition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line position of the XML that caused this exception.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -135,10 +168,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Streams all the XmlSchemaException properties into the SerializationInfo class for the given StreamingContext.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SerializationInfo. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The StreamingContext information. </param>
       </Docs>
     </Member>
     <Member MemberName="LineNumber">
@@ -154,9 +192,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number indicating where the error occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinePosition">
@@ -172,9 +213,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line position indicating where the error occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Message">
@@ -190,9 +234,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the error condition of this exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceSchemaObject">
@@ -208,9 +255,15 @@
         <ReturnType>System.Xml.Schema.XmlSchemaObject</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaObject'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This can be queried for the LineNumber, LinePosition, and SourceUri of the XML Schema definition language (XSD) schema file. A return value of nil indicates a syntactic parsing validation error in the SOM.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlSchemaObject that produced the XmlSchemaException.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceUri">
@@ -226,9 +279,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property returns the URI path to the schema file that caused the exception. The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property should not be exposed in untrusted scenarios.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Uniform Resource Identifier (URI) location of the schema that caused the exception.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

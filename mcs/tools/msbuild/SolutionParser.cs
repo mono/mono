@@ -123,7 +123,11 @@ namespace Mono.XBuild.CommandLine {
 			StreamReader reader = new StreamReader (file);
 			string slnVersion = GetSlnFileVersion (reader);
 			if (slnVersion == "12.00")
+#if XBUILD_12
 				projects.DefaultToolsVersion = "12.0";
+#else
+				projects.DefaultToolsVersion = "4.0";
+#endif
 			else if (slnVersion == "11.00")
 				projects.DefaultToolsVersion = "4.0";
 			else if (slnVersion == "10.00")
@@ -206,7 +210,7 @@ namespace Mono.XBuild.CommandLine {
 
 				if (!File.Exists (filename)) {
 					RaiseWarning (0, String.Format ("Project file {0} referenced in the solution file, " +
-								"not found. Ignoring.", filename));
+								" not found. Ignoring.", filename));
 					continue;
 				}
 

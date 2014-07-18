@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrintControllerWithStatusDialog" FullName="System.Windows.Forms.PrintControllerWithStatusDialog">
   <TypeSignature Language="C#" Value="public class PrintControllerWithStatusDialog : System.Drawing.Printing.PrintController" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements a <see cref="T:System.Drawing.Printing.PrintController" /> and adds a status dialog box. A print controller specifies how a <see cref="T:System.Drawing.Printing.PrintDocument" /> is printed.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class, see the <see cref="Overload:System.Windows.Forms.PrintControllerWithStatusDialog.#ctor" /> constructor.</para>
+      <para>For more information about printing with Windows Forms, see the <see cref="N:System.Drawing.Printing" /> namespace overview. If you want to print from a Windows Presentation Foundation application, see the <see cref="N:System.Printing" /> namespace.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls how a document is printed from a Windows Forms application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,9 +30,13 @@
         <Parameter Name="underlyingController" Type="System.Drawing.Printing.PrintController" />
       </Parameters>
       <Docs>
-        <param name="underlyingController">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class, wrapping the supplied <see cref="T:System.Drawing.Printing.PrintController" />.</para>
+        </summary>
+        <param name="underlyingController">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintController" /> to encapsulate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,10 +51,15 @@
         <Parameter Name="dialogTitle" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="underlyingController">To be added.</param>
-        <param name="dialogTitle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class, wrapping the supplied <see cref="T:System.Drawing.Printing.PrintController" /> and specifying a title for the dialog box.</para>
+        </summary>
+        <param name="underlyingController">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintController" /> to encapsulate. </param>
+        <param name="dialogTitle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing a title for the status dialog box. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +76,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.PrintControllerWithStatusDialog.IsPreview" /> checks the <see cref="P:System.Drawing.Printing.PrintController.IsPreview" /> property of the underlying controller.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating this <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> is used for print preview.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnEndPage">
@@ -74,10 +98,20 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class calls the <see cref="M:System.Drawing.Printing.PrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method on the encapsulated <see cref="T:System.Drawing.Printing.PrintController" />.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method is called immediately after the <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event. If an exception is thrown inside a <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event of a <see cref="T:System.Drawing.Printing.PrintDocument" />, <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> is not called.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method creates the <see cref="T:System.Drawing.Graphics" /> object that is sent to the printer. After <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> object to a graphic of a single page. (Use <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> to set how to print a page in a document. For example, you can adjust page settings separately for each page.) <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> clears the <see cref="T:System.Drawing.Graphics" /> object, while the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the control sequence that determines when and how to print a page of a document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document currently being printed.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,10 +129,20 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class calls the <see cref="M:System.Drawing.Printing.PrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method on the encapsulated <see cref="T:System.Drawing.Printing.PrintController" />.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method is called immediately after the <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method creates the <see cref="T:System.Drawing.Graphics" /> object that is sent to the printer. After <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> object to a graphic of a single page. (Use <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> to determine when and how to print a document. For example, you can delay printing for 30 minutes or adjust the printer settings for the document.) The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" /> object, while <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> deallocates the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the control sequence that determines when and how to print a document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document currently being printed.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,11 +160,25 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class calls the <see cref="M:System.Drawing.Printing.PrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method on the encapsulated <see cref="T:System.Drawing.Printing.PrintController" />.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method is called immediately before the <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method creates the <see cref="T:System.Drawing.Graphics" /> object that is sent to the printer. After <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> sets the <see cref="T:System.Drawing.Graphics" /> object to a graphic of a single page. The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" /> object, while the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+          <para>Use <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> to set how to print a page in a document. For example, you can adjust page settings separately for each page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the control sequence that determines when and how to print a page of a document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Graphics" /> object that represents a page from a <see cref="T:System.Drawing.Printing.PrintDocument" />.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document currently being printed.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,10 +196,22 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class calls the <see cref="M:System.Drawing.Printing.PrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method on the encapsulated <see cref="T:System.Drawing.Printing.PrintController" />.</para>
+          <para>The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method is called immediately after the <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> event.</para>
+          <para>Use <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> to determine when and how to print a document. For example, you can delay printing for 30 minutes or adjust the printer settings for the document. <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> object that is sent to the printer. After <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> object to a graphic of a single page. The <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" /> object, while the <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.PrintControllerWithStatusDialog.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is a good place to verify that <see cref="T:System.Drawing.Printing.PrinterSettings" /> are valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the control sequence that determines when and how to print a document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document currently being printed.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

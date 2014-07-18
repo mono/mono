@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceDocumentFormatter" FullName="System.ServiceModel.Syndication.ServiceDocumentFormatter">
   <TypeSignature Language="C#" Value="public abstract class ServiceDocumentFormatter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ServiceDocumentFormatter extends System.Object" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is abstract and cannot be instantiated directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class used as a base class for other formatters, such as <see cref="T:System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ServiceDocumentFormatter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,9 +53,13 @@
         <Parameter Name="documentToWrite" Type="System.ServiceModel.Syndication.ServiceDocument" />
       </Parameters>
       <Docs>
-        <param name="documentToWrite">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ServiceDocumentFormatter" /> class. </para>
+        </summary>
+        <param name="documentToWrite">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="CanRead">
@@ -62,10 +76,19 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid service document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+true, if the XML reader contains a valid service document, otherwise false.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XML reader to check.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCategory">
@@ -82,10 +105,19 @@
         <Parameter Name="inlineCategories" Type="System.ServiceModel.Syndication.InlineCategoriesDocument" />
       </Parameters>
       <Docs>
-        <param name="inlineCategories">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.
+</para>
+        </returns>
+        <param name="inlineCategories">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Syndication.InlineCategories" /> instance used to create the new categories document.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCollection">
@@ -102,10 +134,19 @@
         <Parameter Name="workspace" Type="System.ServiceModel.Syndication.Workspace" />
       </Parameters>
       <Docs>
-        <param name="workspace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> instance.
+</para>
+        </returns>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Syndication.Workspace" /> instance used to create the new collection.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDocumentInstance">
@@ -120,9 +161,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> instance. 
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateInlineCategories">
@@ -139,10 +188,19 @@
         <Parameter Name="collection" Type="System.ServiceModel.Syndication.ResourceCollectionInfo" />
       </Parameters>
       <Docs>
-        <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> instance.
+</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to create the new <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateReferencedCategories">
@@ -159,10 +217,19 @@
         <Parameter Name="collection" Type="System.ServiceModel.Syndication.ResourceCollectionInfo" />
       </Parameters>
       <Docs>
-        <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.
+</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> instance to use to create the new <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateWorkspace">
@@ -179,10 +246,19 @@
         <Parameter Name="document" Type="System.ServiceModel.Syndication.ServiceDocument" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.Workspace" /></para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new <see cref="T:System.ServiceModel.Syndication.Workspace" />.
+</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to create the new workspace.</param>
       </Docs>
     </Member>
     <Member MemberName="Document">
@@ -196,9 +272,12 @@
         <ReturnType>System.ServiceModel.Syndication.ServiceDocument</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> associated with the formatter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -217,11 +296,17 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to use to read the element extensions.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of an element extension to be loaded.</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -240,11 +325,17 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="collection">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to load the element extensions.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of an extension to load.</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -263,11 +354,17 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="document">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to read the element extensions.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of an extension to load.</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -286,11 +383,17 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="workspace">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.Workspace" /> to use to load the element extensions.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of an extension to load.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadFrom">
@@ -307,9 +410,13 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a service document from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDocument">
@@ -326,9 +433,13 @@
         <Parameter Name="document" Type="System.ServiceModel.Syndication.ServiceDocument" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to write.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -349,14 +460,27 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the attribute extension was successfully parsed.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to use to parse the attribute extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -377,14 +501,27 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="collection">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the attribute extension was parsed successfully.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to parse the attribute.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -405,14 +542,27 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="document">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extensions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the attribute extension was parsed successfully.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute extension to parse.</param>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to parse the attribute extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -433,14 +583,27 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="workspace">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the attribute extension was parsed successfully.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.Workspace" /> to use to parse the attribute.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -459,12 +622,23 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the element extension was parsed successfully.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to use to parse the element extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -483,12 +657,23 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="collection">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the element extension was parsed successfully.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to parse the element extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -507,12 +692,23 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="document">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the element extension was successfully parsed.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to parse the element extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -531,12 +727,23 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="workspace">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a <see cref="T:System.Boolean" /> that indicates whether the element extension was parsed successfully.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.Workspace" /> to use to parse the element extension.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -550,9 +757,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the formatter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -571,11 +781,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes attribute extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to use to write the element extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -594,11 +810,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="collection">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes attribute extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to write the attribute extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the attribute extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -617,11 +839,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="document">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes attribute extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to write the attribute extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the attribute extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -640,11 +868,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="workspace">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes attribute extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.Workspace" /> to use to write the attribute extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the attribute extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -663,11 +897,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes element extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />The  <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to use to write the element extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the element extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -686,11 +926,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="collection">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes element extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> to use to write the element extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the element extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -709,11 +955,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="document">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes element extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> to use to write the element extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the element extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -732,11 +984,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="workspace">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes element extensions.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="workspace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.Workspace" /> to use to write the element extensions.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing the element extensions.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -753,9 +1011,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a service document to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
       </Docs>
     </Member>
   </Members>

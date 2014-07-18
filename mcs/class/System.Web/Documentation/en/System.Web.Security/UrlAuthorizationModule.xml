@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UrlAuthorizationModule" FullName="System.Web.Security.UrlAuthorizationModule">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class UrlAuthorizationModule : System.Web.IHttpModule" />
   <AssemblyInfo>
@@ -17,8 +18,21 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.UrlAuthorizationModule" /> determines whether the current user is permitted access to the requested URL, based on the user <see cref="P:System.Security.Principal.IIdentity.Name" /> or the list of roles that a user is a member of. For information about how the user name is determined, see <format type="text/html"><a href="fc10b0ef-4ce4-4a7f-9174-886325221ee1">ASP.NET Authentication</a></format>. For information about how to manage user roles, see <format type="text/html"><a href="01954ce4-39a2-487f-8153-a69f6f6f3195">Managing Authorization Using ASP.NET Roles</a></format>.</para>
+      <para>Authorization for a user or a role is managed using the <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> configuration element. You can allow or deny a user or a role using the allow or deny subelements, respectively. The allow and deny subelements are interpreted in the order they appear in the configuration. Once an element specifies that access is allowed or denied, the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> completes its authorization check. For example, the following <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section from a Web.config file requires users to log on (by denying anonymous users), and then allows only users in the Administrators role to have access. Users not in the Administrators role are denied.</para>
+      <code>&lt;authorization&gt;
+  &lt;deny users="?" /&gt;
+  &lt;allow roles="Administrators" /&gt;
+  &lt;deny users="*" /&gt;
+&lt;/authorization&gt;</code>
+      <para>A user or role must be specifically denied to refuse the user or role permission to a URL. That is, if the previous example had not specified the &lt;deny users="*" /&gt; element, then all authenticated users would have been allowed access to the requested URL, regardless of what role they were a member of.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Verifies that the user has permission to access the URL requested. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +41,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called from application code.</para>
+          <para>ASP.NET calls this constructor to create an instance of the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> class. After calling the constructor, it calls the <see cref="M:System.Web.Security.UrlAuthorizationModule.Init(System.Web.HttpApplication)" /> method to initialize the new <see cref="T:System.Web.Security.UrlAuthorizationModule" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,12 +71,26 @@
         <Parameter Name="verb" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="user">To be added.</param>
-        <param name="verb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.UrlAuthorizationModule.CheckUrlAccessForPrincipal(System.String,System.Security.Principal.IPrincipal,System.String)" /> method checks to see whether the current user is granted access to the requested file in the Web.config file for the application.</para>
+          <para>If the HTTP verb used to make the request is GET, POST, or HEAD, the <see cref="M:System.Web.Security.UrlAuthorizationModule.CheckUrlAccessForPrincipal(System.String,System.Security.Principal.IPrincipal,System.String)" /> method checks for read access to the file. If any other verb is used, the <see cref="M:System.Web.Security.UrlAuthorizationModule.CheckUrlAccessForPrincipal(System.String,System.Security.Principal.IPrincipal,System.String)" /> checks for read/write access to the file.</para>
+          <para>For more information and an example Web.config file, see the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> class documentation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the user has access to the requested file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current user can access the file; otherwise, false.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the file.</param>
+        <param name="user">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Principal.IPrincipal" /> object representing the current user.</param>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP verb used to make the request.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -66,8 +101,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources, other than memory, used by the <see cref="T:System.Web.Security.UrlAuthorizationModule" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,9 +125,17 @@
         <Parameter Name="app" Type="System.Web.HttpApplication" />
       </Parameters>
       <Docs>
-        <param name="app">a <see cref="T:System.Web.HttpApplication" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="M:System.Web.Security.UrlAuthorizationModule.Init(System.Web.HttpApplication)" /> method ensures that the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> is included in the processing of the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> object.</para>
+        </summary>
+        <param name="app">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpApplication" /> instance. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

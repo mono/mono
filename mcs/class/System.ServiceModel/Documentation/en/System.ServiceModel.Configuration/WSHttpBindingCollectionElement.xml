@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSHttpBindingCollectionElement" FullName="System.ServiceModel.Configuration.WSHttpBindingCollectionElement">
   <TypeSignature Language="C#" Value="public class WSHttpBindingCollectionElement : System.ServiceModel.Configuration.StandardBindingCollectionElement&lt;System.ServiceModel.WSHttpBinding,System.ServiceModel.Configuration.WSHttpBindingElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi WSHttpBindingCollectionElement extends System.ServiceModel.Configuration.StandardBindingCollectionElement`2&lt;class System.ServiceModel.WSHttpBinding, class System.ServiceModel.Configuration.WSHttpBindingElement&gt;" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that contains sub-elements that specify settings for using the wsHttpBinding binding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.WSHttpBindingCollectionElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

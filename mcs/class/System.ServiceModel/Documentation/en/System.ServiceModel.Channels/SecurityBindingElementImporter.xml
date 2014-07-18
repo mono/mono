@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityBindingElementImporter" FullName="System.ServiceModel.Channels.SecurityBindingElementImporter">
   <TypeSignature Language="C#" Value="public class SecurityBindingElementImporter : System.ServiceModel.Description.IPolicyImportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityBindingElementImporter extends System.Object implements class System.ServiceModel.Description.IPolicyImportExtension" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an extensibility point for extending the standard security policy import.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SecurityBindingElementImporter" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxPolicyRedirections">
@@ -42,9 +49,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This quota is useful when importing security policy that involves an issued token. The issued token policy may contain a link to the issuing party's policy, which may itself involve an issued token. So importing the security policy for a service that requires issued token authentication may involve importing policy from the token-issuing services. Services that are incorrectly configured could result in a cycle in these policy redirections. This setting prevents the client from getting into an infinite loop due to incorrectly configured services by limiting the maximum number of redirections (10) that the client's policy import does when obtaining issued token policy.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum allowed number of policy redirections.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy">
@@ -62,10 +75,14 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
         <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a custom policy assertion about bindings.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataImporter" /> that you can use to modify the importing process.</param>
       </Docs>
     </Member>
   </Members>

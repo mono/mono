@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IResourceUrlGenerator" FullName="System.Web.UI.IResourceUrlGenerator">
   <TypeSignature Language="C#" Value="public interface IResourceUrlGenerator" />
   <AssemblyInfo>
@@ -6,9 +7,27 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET version 2.0 provides the ability to retrieve embedded resources from an assembly for controls, such as the <see cref="T:System.Web.UI.Page" /> control. At run time, the URL to the embedded resource can be retrieved using the <see cref="M:System.Web.UI.ClientScriptManager.GetWebResourceUrl(System.Type,System.String)" /> method of the <see cref="T:System.Web.UI.ClientScriptManager" /> class. To provide a design-time means for generating a resource URL from an assembly, designer hosts can offer a service that implements the <see cref="T:System.Web.UI.IResourceUrlGenerator" /> interface. For more information: </para>
+      <list type="bullet">
+        <item>
+          <para>On using resources in localization, see <format type="text/html"><a href="0936b3b2-9e6e-4abe-9c06-364efef9dbbd">ASP.NET Web Page Resources Overview</a></format>. </para>
+        </item>
+        <item>
+          <para>On using embedded resources, see <format type="text/html"><a href="d8e0e5c0-1958-422b-b4f5-ebe63f6c45cb">How to: Use Resources to Set ASP.NET Control Property Values</a></format> and <format type="text/html"><a href="7a06d512-6fc3-40ca-9cb6-7f41d1a9fa28">How to: Read Resource Values Programmatically</a></format>. </para>
+        </item>
+        <item>
+          <para>On control designers, see <format type="text/html"><a href="1d5a99d7-0a72-403e-812e-2c1ab595c810">Introduction to ASP.NET Control Designers</a></format>. </para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.IResourceUrlGenerator" /> interface has one method, the <see cref="M:System.Web.UI.IResourceUrlGenerator.GetResourceUrl(System.Type,System.String)" /> method, that returns a URL reference to a resource given the resource type and name.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method that a designer-host must implement to provide URL reference look-up for embedded resources.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetResourceUrl">
@@ -22,12 +41,23 @@
         <Parameter Name="resource" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
         <param name="resource">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, the <see cref="M:System.Web.UI.ClientScriptManager.GetWebResourceUrl(System.Type,System.String)" /> method returns a URL to a resource. The <see cref="T:System.Web.Handlers.AssemblyResourceLoader" /> class defines the HTTP handler that is used to load embedded resources.</para>
+          <para>At design time, the <see cref="M:System.Web.UI.ClientScriptManager.GetWebResourceUrl(System.Type,System.String)" /> method of the <see cref="T:System.Web.UI.ClientScriptManager" /> class detects design mode and delegates to the designer-host service implementation, which returns a URL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a URL reference to an embedded resource in an assembly that is used at design time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL reference to the resource.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type in the assembly that contains the embedded resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

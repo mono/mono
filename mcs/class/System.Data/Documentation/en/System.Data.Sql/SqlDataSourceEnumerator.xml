@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataSourceEnumerator" FullName="System.Data.Sql.SqlDataSourceEnumerator">
   <TypeSignature Language="C#" Value="public sealed class SqlDataSourceEnumerator : System.Data.Common.DbDataSourceEnumerator" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Both SQL Server 2000 and SQL Server 2005 make it possible for applications to determine the existence of SQL Server instances within the current network. The <see cref="T:System.Data.Sql.SqlDataSourceEnumerator" /> class exposes this information to the application developer, providing a <see cref="T:System.Data.DataTable" /> containing information about all the available servers. This returned table contains a list of server instances that matches the list provided when a user attempts to create a new connection, and on the <paramref name="Connection Properties" /> dialog box, expands the drop-down list containing all the available servers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism for enumerating all available instances of SQL Server within the local network.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetDataSources">
@@ -22,10 +29,66 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The table returned by this method contains the following columns, all of which contain strings:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Column</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ServerName</para>
+              </term>
+              <description>
+                <para>Name of the server.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>InstanceName</para>
+              </term>
+              <description>
+                <para>Name of the server instance. Blank if the server is running as the default instance.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsClustered</para>
+              </term>
+              <description>
+                <para>Indicates whether the server is part of a cluster.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Version</para>
+              </term>
+              <description>
+                <para>Version of the server (8.00.x for SQL Server 2000, and 9.00.x for SQL Server 2005).</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Due to the nature of the mechanism used by <see cref="T:System.Data.Sql.SqlDataSourceEnumerator" /> to locate data sources on a network, the method will not always return a complete list of the available servers, and the list might not be the same on every call. If you plan to use this function to let users select a server from a list, make sure that you always also supply an option to type in a name that is not in the list, in case the server enumeration does not return all the available servers. In addition, this method may take a significant amount of time to execute, so be careful about calling it when performance is critical.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Data.DataTable" /> containing information about all visible SQL Server 2000 or SQL Server 2005 instances.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> containing information about the visible SQL Server instances.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +101,16 @@
         <ReturnType>System.Data.Sql.SqlDataSourceEnumerator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.Sql.SqlDataSourceEnumerator" /> class does not provide a constructor. Use the <see cref="P:System.Data.Sql.SqlDataSourceEnumerator.Instance" /> property to retrieve an instance of the class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of the <see cref="T:System.Data.Sql.SqlDataSourceEnumerator" />, which can be used to retrieve information about available SQL Server instances.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

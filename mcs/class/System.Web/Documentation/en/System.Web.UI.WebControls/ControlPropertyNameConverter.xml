@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlPropertyNameConverter" FullName="System.Web.UI.WebControls.ControlPropertyNameConverter">
   <TypeSignature Language="C#" Value="public class ControlPropertyNameConverter : System.ComponentModel.StringConverter" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ControlPropertyNameConverter" /> class derives from the <see cref="T:System.ComponentModel.StringConverter" /> class and provides a list of property names for display in a property grid control in design-time environments.</para>
+      <block subset="none" type="note">
+        <para>You should never access a type converter directly. Instead, call the appropriate converter by using the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. For more information, see the examples in the <see cref="T:System.ComponentModel.TypeConverter" /> base class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter that retrieves a list of property names for the current control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called directly. You should never access a type converter directly. Instead, call the appropriate converter by using the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. For more information, see the examples in the <see cref="T:System.ComponentModel.TypeConverter" /> base class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ControlPropertyNameConverter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,10 +56,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ControlPropertyNameConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method returns a <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> collection that contains a set of strings representing the names of the current control's properties. </para>
+          <para>Use the <paramref name="context" /> parameter to extract additional information about the design-time environment from which this converter is invoked. This parameter can be null, and properties on the context object can return null. If the <paramref name="context" /> parameter is null, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of property names for the control within a designer that implements <see cref="T:System.ComponentModel.Design.IDesignerHost" /> when provided with a format context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> that contains a set of strings representing property names for the current control. If the current control is null, an empty collection is returned. If the <paramref name="context" /> parameter is null, null is returned.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesExclusive">
@@ -59,10 +86,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ControlPropertyNameConverter.GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext)" /> method always returns false to indicate that the list of property values returned by the <see cref="Overload:System.Web.UI.WebControls.ControlPropertyNameConverter.GetStandardValues" /> method is not an exclusive list of possible values.</para>
+          <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, and properties on the context object can return null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the collection of standard values returned by the <see cref="Overload:System.Web.UI.WebControls.ControlPropertyNameConverter.GetStandardValues" /> method is an exclusive list of possible values, using the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false in all cases, which indicates that the list is not exclusive.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesSupported">
@@ -78,10 +116,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ControlPropertyNameConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> method returns a value that indicates whether this object supports a standard set of values. </para>
+          <para>The <paramref name="context" /> parameter extracts additional information about the design-time environment from which this converter is invoked. This parameter can be null, and properties on the context object can return null. If the <paramref name="context" /> parameter is null, this method returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this object supports a standard set of values that can be chosen from a list, using the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="context" /> parameter is not null; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be null.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DrawListViewColumnHeaderEventArgs" FullName="System.Windows.Forms.DrawListViewColumnHeaderEventArgs">
   <TypeSignature Language="C#" Value="public class DrawListViewColumnHeaderEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ListView.DrawColumnHeader" /> event lets you customize (or owner-draw) the appearance of a <see cref="T:System.Windows.Forms.ListView" /> control in the details view.</para>
+      <para>The <see cref="E:System.Windows.Forms.ListView.DrawColumnHeader" /> event is raised by a <see cref="T:System.Windows.Forms.ListView" /> control when its <see cref="P:System.Windows.Forms.ListView.OwnerDraw" /> property is set to true and its <see cref="P:System.Windows.Forms.ListView.View" /> property is set to <see cref="F:System.Windows.Forms.View.Details" />. The <see cref="T:System.Windows.Forms.DrawListViewColumnHeaderEventArgs" /> passed to the event handler contains information about the <see cref="T:System.Windows.Forms.ColumnHeader" /> to draw and also provides methods to help you draw the header.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.Header" /> property to retrieve information about the column header to draw. Use the <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.Graphics" /> property to do the actual drawing within the area specified by the <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.Bounds" /> property. To draw standard <see cref="T:System.Windows.Forms.ListView" /> elements that do not need customization, use the <see cref="M:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.DrawBackground" /> and <see cref="Overload:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.DrawText" /> methods.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.DrawDefault" /> property when you want the operating system to draw the subitem. This is useful when you want to customize only specific headers.</para>
+      <block subset="none" type="note">
+        <para>To avoid issues with graphics flickering when owner drawing, override the <see cref="T:System.Windows.Forms.ListView" /> control and set the <see cref="P:System.Windows.Forms.ListView.DoubleBuffered" /> property to true. This feature is available only on Windows XP and the Windows Server 2003 family when your application calls the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.DrawColumnHeader" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,16 +43,27 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="columnIndex">To be added.</param>
-        <param name="header">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <param name="font">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DrawListViewColumnHeaderEventArgs" /> class. </para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> surface on which to draw. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> within which to draw.</param>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the header's column within the <see cref="P:System.Windows.Forms.ListView.Columns" /> collection.</param>
+        <param name="header">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnHeader" /> representing the header to draw.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.ListViewItemStates" /> values indicating the current state of the column header.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The foreground <see cref="T:System.Drawing.Color" /> of the header.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The background <see cref="T:System.Drawing.Color" /> of the header.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> used for the header text.</param>
       </Docs>
     </Member>
     <Member MemberName="BackColor">
@@ -52,9 +76,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the background color of the header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bounds">
@@ -67,9 +94,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location specified by this property is relative to the upper-left corner of the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size and location of the column header to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ColumnIndex">
@@ -82,9 +115,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the <see cref="T:System.Windows.Forms.ColumnHeader" /> representing the header to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawBackground">
@@ -98,8 +134,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to draw the standard background for the column header. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background of the column header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawDefault">
@@ -112,9 +154,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property when handling the <see cref="E:System.Windows.Forms.ListView.DrawColumnHeader" /> event for headers that you do not want to customize. If you set this property to true, the header will be drawn as usual.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the column header should be drawn by the operating system instead of owner-drawn.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -128,8 +176,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you do not need to customize the appearance of the header text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the column header text using the default formatting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -145,9 +199,16 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you do not need to customize the appearance of the header text. The <see cref="T:System.Windows.Forms.TextFormatFlags" /> values specified in the <paramref name="flags" /> parameter let you provide formatting properties for the header, such as text alignment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the column header text, formatting it with the specified <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -160,9 +221,12 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font used to draw the column header text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForeColor">
@@ -175,9 +239,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the foreground color of the header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Graphics">
@@ -190,9 +257,15 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Graphics" /> class provides properties and methods useful for drawing on the display device.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> used to draw the column header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Header">
@@ -205,9 +278,15 @@
         <ReturnType>System.Windows.Forms.ColumnHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful when the <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.State" /> property does not provide adequate information to meet your needs. The <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.State" /> property provides only basic state information that you can use, for example, to determine whether the mouse is over the column header. The <see cref="P:System.Windows.Forms.DrawListViewColumnHeaderEventArgs.Header" /> property, on the other hand, allows you to access all members of the <see cref="T:System.Windows.Forms.ColumnHeader" /> representing the header. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ColumnHeader" /> representing the column header to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="State">
@@ -220,9 +299,15 @@
         <ReturnType>System.Windows.Forms.ListViewItemStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine whether the mouse pointer is over the header or whether the user has clicked the header. The <see cref="T:System.Windows.Forms.ListViewItemStates" /> values for these states are <see cref="F:System.Windows.Forms.ListViewItemStates.Hot" /> and <see cref="F:System.Windows.Forms.ListViewItemStates.Selected" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the column header.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

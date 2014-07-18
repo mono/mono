@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime" /> namespace contains advanced types that support diverse namespaces such as the System, Runtime, and the Security namespaces.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The types found in this namespace are intended for use in advanced development. </para>
+    </remarks>
   </Docs>
 </Namespace>

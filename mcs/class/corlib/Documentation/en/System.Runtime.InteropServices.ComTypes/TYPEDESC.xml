@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TYPEDESC" FullName="System.Runtime.InteropServices.ComTypes.TYPEDESC">
   <TypeSignature Language="C#" Value="public struct TYPEDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit TYPEDESC extends System.ValueType" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about TYPEDESC, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the type of a variable, return type of a function, or the type of a function parameter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="lpValue">
@@ -28,9 +36,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about TYPEDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the variable is VT_SAFEARRAY or VT_PTR, the lpValue field contains a pointer to a TYPEDESC that specifies the element type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="vt">
@@ -45,9 +59,15 @@
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about TYPEDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the variant type for the item described by this TYPEDESC.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

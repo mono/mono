@@ -5,6 +5,7 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace MonoTests.System.Reflection.Emit
 	[TestFixture]
 	public class CustomAttributeBuilderTest
 	{
+		static string tempDir = Path.Combine (Path.GetTempPath (), typeof (CustomAttributeBuilderTest).FullName);
 		
 		// the CustomAttribute class is used for testing and it has to be public
 		//since it will be associated with a class that belongs to another assembly 
@@ -77,8 +79,26 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
-		
+		[SetUp]
+		public void SetUp ()
+		{
+			Random AutoRand = new Random ();
+			string basePath = tempDir;
+			while (Directory.Exists (tempDir))
+				tempDir = Path.Combine (basePath, AutoRand.Next ().ToString ());
+			Directory.CreateDirectory (tempDir);
+		}
 
+		[TearDown]
+		public void TearDown ()
+		{
+			try {
+				// This throws an exception under MS.NET, since the directory contains loaded
+				// assemblies.
+				Directory.Delete (tempDir, true);
+			} catch (Exception) {
+			}
+		}
 		
 		[Test]
 		public void CtorOneTest ()
@@ -677,6 +697,35 @@ namespace MonoTests.System.Reflection.Emit
 		public class CattrE : Attribute
 		{
 		    public CattrE (bool[] b) {}
+		}
+
+		public class JaggedAttr : Attribute {
+			public static string[][] Data { get; set; }
+
+			public JaggedAttr (string[][] data) {
+				Data = data;
+			}
+		}
+
+		[Test]
+		public void JaggedArrays () {
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("Foo"), AssemblyBuilderAccess.Save, tempDir);
+			var modb = ab.DefineDynamicModule ("Foo", "Foo.dll");
+			var tb = modb.DefineType ("T");
+			tb.SetCustomAttribute (new
+								   CustomAttributeBuilder(typeof (JaggedAttr).GetConstructors ()[0],
+														  new object[] { new string[][] { new string[] { "foo" }, new string[] { "bar" } } }));
+			tb.CreateType ();
+			ab.Save ("Foo.dll");
+
+			string assemblyPath = Path.Combine (tempDir, "Foo.dll");
+			Type t = Assembly.LoadFrom (assemblyPath).GetType ("T");
+			Assert.AreEqual (1, t.GetCustomAttributes (false).Length);
+
+			string[][] res = JaggedAttr.Data;
+			Assert.AreEqual (2, res.Length);
+			Assert.AreEqual ("foo", res [0][0]);
+			Assert.AreEqual ("bar", res [1][0]);
 		}
 	}
 }

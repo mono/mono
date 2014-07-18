@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSHttpBinding" FullName="System.ServiceModel.WSHttpBinding">
   <TypeSignature Language="C#" Value="public class WSHttpBinding : System.ServiceModel.WSHttpBindingBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WSHttpBinding extends System.ServiceModel.WSHttpBindingBase" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.WSHttpBinding" /> is similar to the <see cref="T:System.ServiceModel.BasicHttpBinding" /> but provides more Web service features. It uses the HTTP transport and provides message security, as does <see cref="T:System.ServiceModel.BasicHttpBinding" />, but it also provides transactions, reliable messaging, and WS-Addressing, either enabled by default or available through a single control setting.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an interoperable binding that supports distributed transactions and secure, reliable sessions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.WSHttpBinding" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,8 +49,11 @@
       </Parameters>
       <Docs>
         <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.WSHttpBinding" /> class with a specified type of security used by the binding. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,8 +68,11 @@
       </Parameters>
       <Docs>
         <param name="configurationName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.WSHttpBinding" /> class with a binding specified by its configuration name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -72,9 +88,13 @@
       </Parameters>
       <Docs>
         <param name="mode">To be added.</param>
-        <param name="reliableSessionEnabled">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.WSHttpBinding" /> class with a specified type of security used by the binding and a value that indicates whether a reliable session is enabled. </para>
+        </summary>
+        <param name="reliableSessionEnabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a reliable session is enabled; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="AllowCookies">
@@ -88,9 +108,44 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting <see cref="P:System.ServiceModel.BaseHttpBinding.AllowCookies" /> to true is useful when a client is interacting with one web service that uses cookies.  If you are accessing multiple services with the same cookie, set <see cref="P:System.ServiceModel.BaseHttpBinding.AllowCookies" /> to false and you will have to manually add the cookie header to each outgoing message. The following code shows how to do this: </para>
+          <code>MyWebServiceClient client = new MyWebServiceClient();
+
+        using (new OperationContextScope(client.InnerChannel))
+        {
+            client.DoSomething();
+
+            // Extract the cookie embedded in the received web service response
+            // and stores it locally
+            HttpResponseMessageProperty response = (HttpResponseMessageProperty)
+            OperationContext.Current.IncomingMessageProperties[
+                HttpResponseMessageProperty.Name];
+            sharedCookie = response.Headers["Set-Cookie"];
+        }
+
+        MyOtherWebServiceClient otherClient = new MyOtherWebServiceClient();
+
+        using (new OperationContextScope(otherClient.InnerChannel))
+        {
+            // Embeds the extracted cookie in the next web service request
+            // Note that we manually have to create the request object since
+            // since it doesn't exist yet at this stage 
+            HttpRequestMessageProperty request = new HttpRequestMessageProperty();
+            request.Headers["Cookie"] = sharedCookie;
+            OperationContext.Current.OutgoingMessageProperties[
+                HttpRequestMessageProperty.Name] = request;
+
+            otherClient.DoSomethingElse();
+        }
+</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the WCF client will automatically store and resend any cookies sent by a single web service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElements">
@@ -105,9 +160,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the binding elements is important. It reflects the order in which the protocol and transport channels are constructed and stacked. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an ordered collection of binding elements contained in the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> that contains the ordered stack of binding elements described by the <see cref="T:System.ServiceModel.WSHttpBinding" /> binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMessageSecurity">
@@ -122,9 +186,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the security binding element from the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> from the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTransport">
@@ -139,9 +209,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the transport binding element from the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> from the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -155,9 +231,15 @@
         <ReturnType>System.ServiceModel.WSHttpSecurity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To use something other than the default security type, use the <see cref="M:System.ServiceModel.WSHttpBinding.#ctor(System.ServiceModel.SecurityMode)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security settings used with this binding.  </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

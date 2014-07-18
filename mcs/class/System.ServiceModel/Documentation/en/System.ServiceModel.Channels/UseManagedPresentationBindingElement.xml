@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UseManagedPresentationBindingElement" FullName="System.ServiceModel.Channels.UseManagedPresentationBindingElement">
   <TypeSignature Language="C#" Value="public sealed class UseManagedPresentationBindingElement : System.ServiceModel.Channels.BindingElement, System.ServiceModel.Description.IPolicyExportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UseManagedPresentationBindingElement extends System.ServiceModel.Channels.BindingElement implements class System.ServiceModel.Description.IPolicyExportExtension" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by an identity provider to express in its policy the fact that it supports the infocard1 profile of WS-Trust. Identity providers that publish such a policy assertion should be able to issue tokens based on that infocard1 profile.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A binding element used to communicate with a infocard Security Token Service that supports the infocard1 profile of WS-Trust.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.UseManagedPresentationBindingElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -43,9 +53,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the current binding element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingElement" /> that is a copy of the current element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProperty&lt;T&gt;">
@@ -69,11 +85,22 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this to request a typed object such as an interface for setting properties or getting status from the appropriate layer in the binding stack. If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no binding layer supported the requested object, then the method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a typed object requested, if present, from the appropriate layer in the binding stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested if it is present or null if it is not.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> that provides context for the binding element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object being queried for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy">
@@ -91,10 +118,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="exporter">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports custom policy assertions in the binding element into the WSDL information.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> that you can use to modify the exporting process.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that you can use to insert your custom policy assertion.</param>
       </Docs>
     </Member>
   </Members>

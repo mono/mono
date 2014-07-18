@@ -38,7 +38,11 @@ namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
-	public class WindowsIdentity : IIdentity, IDeserializationCallback, ISerializable, IDisposable {
+	public class WindowsIdentity :
+#if NET_4_5
+	System.Security.Claims.ClaimsIdentity,
+#endif
+	IIdentity, IDeserializationCallback, ISerializable, IDisposable {
 		private IntPtr _token;
 		private string _type;
 		private WindowsAccountType _account;
@@ -168,7 +172,9 @@ namespace System.Security.Principal {
 		}
 
 		// properties
-
+#if NET_4_5
+		sealed override
+#endif
 		public string AuthenticationType {
 			get { return _type; }
 		}
@@ -178,7 +184,12 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.Anonymous); }
 		}
 
-		public virtual bool IsAuthenticated
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public bool IsAuthenticated
 		{
 			get { return _authenticated; }
 		}
@@ -193,7 +204,12 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.System); }
 		}
 
-		public virtual string Name
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public string Name
 		{
 			get {
 				if (_name == null) {

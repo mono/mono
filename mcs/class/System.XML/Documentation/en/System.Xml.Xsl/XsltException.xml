@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XsltException" FullName="System.Xml.Xsl.XsltException">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XsltException : SystemException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit XsltException extends System.SystemException" />
@@ -15,8 +16,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>Represents a dynamic XSL transformation error.</summary>
     <remarks>An instance of this class will be created to be thrown on an XSLT dynamic (that is, evaluation, transformation) error.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an error occurs while processing an XSLT transformation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +33,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XsltException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,10 +53,14 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XsltException" /> class with a specified error message. </para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that describes the error.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,10 +78,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance to deserialize.</param>
-        <param name="context">A <see cref="T:System.Runtime.Serialization.StreamingContext" /> instance to deserialize.</param>
-        <summary>The constructor for runtime serialization.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XsltException class using the information in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> objects.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SerializationInfo object containing all the properties of an XsltException. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The StreamingContext object. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -88,10 +104,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">A message string.</param>
-        <param name="innerException">An optional inner <see cref="T:System.Exception" />.</param>
-        <summary>The public constructor.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XsltException class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the error condition. </param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Exception" /> which threw the XsltException, if any. This value can be null. </param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -111,10 +132,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance to serialize.</param>
-        <param name="context">A <see cref="T:System.Runtime.Serialization.StreamingContext" /> instance to serialize.</param>
-        <summary>Gets runtime serialization information of this instance into the parameter streaming context.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Streams all the XsltException properties into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> class for the given <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SerializationInfo object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The StreamingContext object. </param>
       </Docs>
     </Member>
     <Member MemberName="LineNumber">
@@ -130,9 +156,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the line number of the error source (usually the related XPathNavigator's node location).</summary>
         <value>An int number that represents the line number, or 0 if such information not available.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the <see cref="T:System.Xml.Xsl.XsltCompileException" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number indicating where the error occurred in the style sheet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinePosition">
@@ -148,9 +180,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the column number of the error source (usually the related XPathNavigator's node location).</summary>
         <value>An int number that represents the column number, or 0 if such information not available.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the <see cref="T:System.Xml.Xsl.XsltCompileException" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line position indicating where the error occurred in the style sheet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Message">
@@ -166,9 +204,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the error message.</summary>
         <value>An error message string.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the formatted error message describing the current exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceUri">
@@ -184,9 +225,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the URI of the error source (usually the base URI of the  stylesheet document). It returns an empty string if such information is not available.</summary>
         <value>A string that represents the source URI.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location path of the style sheet.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MulticastDelegate" FullName="System.MulticastDelegate">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class MulticastDelegate : Delegate" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi abstract serializable beforefieldinit MulticastDelegate extends System.Delegate" />
@@ -23,8 +24,17 @@
   </Parameters>
   <ReturnValue />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.MulticastDelegate" /> is a special class. Compilers and other tools can derive from this class, but you cannot derive from it explicitly. The same is true of the <see cref="T:System.Delegate" /> class.</para>
+      <para>In addition to the methods that delegate types inherit from <see cref="T:System.MulticastDelegate" />, the common language runtime provides two special methods: BeginInvoke and EndInvoke. For more information about these methods, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Calling Asynchronous Methods Synchronously</a></format>.</para>
+      <para>A <see cref="T:System.MulticastDelegate" /> has a linked list of delegates, called an invocation list, consisting of one or more elements. When a multicast delegate is invoked, the delegates in the invocation list are called synchronously in the order in which they appear. If an error occurs during execution of the list then an exception is thrown.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a multicast delegate; that is, a delegate that can have more than one element in its invocation list.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,10 +52,18 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="target">To be added: an object of type 'object'</param>
-        <param name="method">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor cannot be used in application code. To create a delegate by specifying the name of an instance method, use an overload of the <see cref="M:System.Delegate.CreateDelegate(System.Type,System.Object,System.String)" /> method that specifies a method name and a target object. For example, the <see cref="M:System.Delegate.CreateDelegate(System.Type,System.Object,System.String)" /> method overload creates a delegate for an instance method with a specified name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MulticastDelegate" /> class.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which <paramref name="method" /> is defined. </param>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method for which a delegate is created. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,10 +81,18 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="method">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor cannot be used in application code. To create a delegate by specifying the name of a static method, use an overload of the <see cref="M:System.Delegate.CreateDelegate(System.Type,System.Type,System.String)" /> method that specifies a method name but does not specify a target object. For example, the <see cref="M:System.Delegate.CreateDelegate(System.Type,System.Type,System.String)" /> method overload creates a static delegate for a method with a specified name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MulticastDelegate" /> class.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object on which <paramref name="method" /> is defined. </param>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the static method for which a delegate is created. </param>
       </Docs>
     </Member>
     <Member MemberName="CombineImpl">
@@ -85,10 +111,17 @@
         <Parameter Name="follow" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="follow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines this <see cref="T:System.Delegate" /> with the specified <see cref="T:System.Delegate" /> to form a new delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate that is the new root of the <see cref="T:System.MulticastDelegate" /> invocation list.</para>
+        </returns>
+        <param name="follow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to combine with this delegate. </param>
       </Docs>
     </Member>
     <Member MemberName="DynamicInvokeImpl">
@@ -107,10 +140,17 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the full invocation list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the return value of the encapsulated method.</para>
+        </returns>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to pass to the encapsulated method. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -129,10 +169,21 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
+          <para>Two invocation list elements are equal if they invoke the same instance method on the same target instance, or they invoke the same static method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether this multicast delegate and the specified object are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> and this instance have the same invocation lists; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -149,9 +200,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInvocationList">
@@ -168,9 +225,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array contains a set of delegates, each with an invocation list of one entry. Invoking these delegates sequentially, in the order they appear in the array, produces the same results as invoking the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the invocation list of this multicast delegate, in invocation order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of delegates whose invocation lists collectively match the invocation list of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -190,10 +256,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method stores all the information in <paramref name="info" /> necessary to serialize this instance.</para>
+          <para>The <paramref name="context" /> parameter is reserved and is not currently used in the execution of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with all the data needed to serialize this instance.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that holds all the data needed to serialize or deserialize this instance. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) The location where serialized data is stored and retrieved. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -213,11 +288,23 @@
         <Parameter Name="d2" Type="System.MulticastDelegate" />
       </Parameters>
       <Docs>
-        <param name="d1">To be added.</param>
-        <param name="d2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
+          <para>Two invocation list elements are equal if they invoke the same instance method on the same target instance, or they invoke the same static method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.MulticastDelegate" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> have the same invocation lists; otherwise, false.</para>
+        </returns>
+        <param name="d1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The left operand. </param>
+        <param name="d2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The right operand. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -237,11 +324,23 @@
         <Parameter Name="d2" Type="System.MulticastDelegate" />
       </Parameters>
       <Docs>
-        <param name="d1">To be added.</param>
-        <param name="d2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
+          <para>Two invocation list elements are equal if they invoke the same instance method on the same target instance, or they invoke the same static method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.MulticastDelegate" /> objects are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> do not have the same invocation lists; otherwise, false.</para>
+        </returns>
+        <param name="d1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The left operand. </param>
+        <param name="d2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The right operand. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveImpl">
@@ -260,10 +359,17 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an element from the invocation list of this <see cref="T:System.MulticastDelegate" /> that is equal to the specified delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="value" /> is found in the invocation list for this instance, then a new <see cref="T:System.Delegate" /> without <paramref name="value" /> in its invocation list; otherwise, this instance with its original invocation list.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to search for in the invocation list. </param>
       </Docs>
     </Member>
   </Members>

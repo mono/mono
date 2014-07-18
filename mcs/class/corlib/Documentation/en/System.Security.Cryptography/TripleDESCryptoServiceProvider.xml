@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TripleDESCryptoServiceProvider" FullName="System.Security.Cryptography.TripleDESCryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class TripleDESCryptoServiceProvider : System.Security.Cryptography.TripleDES" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TripleDESCryptoServiceProvider extends System.Security.Cryptography.TripleDES" />
@@ -20,8 +21,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Managed implementation of the Triple Data Encryption Standard (3DES), a 192 bits (168 bits effective) symmetric cipher.</summary>
-    <remarks>In Mono this class is completely implemented in managed code.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This algorithm supports key lengths from 128 bits to 192 bits in increments of 64 bits.</para>
+      <block subset="none" type="note">
+        <para>A newer symmetric encryption algorithm, Advanced Encryption Standard (AES), is available. Consider using the <see cref="T:System.Security.Cryptography.AesCryptoServiceProvider" /> class instead of the <see cref="T:System.Security.Cryptography.TripleDESCryptoServiceProvider" /> class. Use <see cref="T:System.Security.Cryptography.TripleDESCryptoServiceProvider" /> only for compatibility with legacy applications and data.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a wrapper object to access the cryptographic service provider (CSP) version of the <see cref="T:System.Security.Cryptography.TripleDES" /> algorithm. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.TripleDESCryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDecryptor">
@@ -57,11 +70,22 @@
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the decryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the decryption transform.</param>
-        <summary>Creates a symmetric TripleDES decryptor transform.</summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method decrypts an encrypted message created using the <see cref="M:System.Security.Cryptography.TripleDESCryptoServiceProvider.CreateEncryptor(System.Byte[],System.Byte[])" /> overload with the same parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric <see cref="T:System.Security.Cryptography.TripleDES" /> decryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.TripleDES" /> decryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateEncryptor">
@@ -81,11 +105,22 @@
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the encryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the encryption transform.</param>
-        <summary>Creates a symmetric TripleDES encryptor transform. </summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.TripleDESCryptoServiceProvider.CreateDecryptor(System.Byte[],System.Byte[])" /> overload with the same parameters to decrypt the result of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric <see cref="T:System.Security.Cryptography.TripleDES" /> encryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.TripleDES" /> encryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateIV">
@@ -102,27 +137,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Generate a new random Initialization Vector (IV) required for some block cipher modes.</summary>
         <remarks>
-          <para>
-The IV is used for most <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Mode" /> of operation (except <see cref="E:System.Security.Cryptography.CipherMode.ECB" />). The value can be made public and must be available when decrypting the data.
-</para>
-          <para>
-IMPORTANT: If you reuse the same TripleDES object for multiple encryption using the same key it is CAPITAL that you use a different IV each time.
-</para>
-          <example>
-            <code lang="C#">
-TripleDES tdes = TripleDES.Create ();
-tdes.GenerateKey ();
-foreach (string file in files) {
-	// each file MUST be encrypted with a different IV
-	tdes.GenerateIV ();
-	// encrypt the specified file with our TripleDES key
-	EncryptFile (file, tdes);
-}
-  </code>
-          </example>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random initialization vector when none is specified.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />) to use for the algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateKey">
@@ -139,8 +161,15 @@ foreach (string file in files) {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random key when none is specified. This method will never return a weak key (see <see cref="M:System.Security.Cryptography.TripleDES.IsWeakKey(System.Byte[])" />).</para>
+          <para>This algorithm supports key lengths from 128 bits to 192 bits in increments of 64 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" /> to be used for the algorithm.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

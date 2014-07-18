@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpMessageInvoker" FullName="System.Net.Http.HttpMessageInvoker">
   <TypeSignature Language="C#" Value="public class HttpMessageInvoker : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpMessageInvoker extends System.Object implements class System.IDisposable" />
@@ -14,8 +15,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is the base type for <see cref="T:System.Net.Http.HttpClient" /> and other message originators.</para>
+      <para>Most applications that are connecting to a web site will use one of the <see cref="M:System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage)" /> methods on the <see cref="T:System.Net.Http.HttpClient" />  class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A specialty class that allows applications to call the <see cref="M:System.Net.Http.HttpMessageInvoker.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)" /> method on an Http handler chain. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +37,13 @@
         <Parameter Name="handler" Type="System.Net.Http.HttpMessageHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of a <see cref="T:System.Net.Http.HttpMessageInvoker" /> class with a specific <see cref="T:System.Net.Http.HttpMessageHandler" />.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Http.HttpMessageHandler" /> responsible for processing the HTTP response messages.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,10 +58,15 @@
         <Parameter Name="disposeHandler" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <param name="disposeHandler">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of a <see cref="T:System.Net.Http.HttpMessageInvoker" /> class with a specific <see cref="T:System.Net.Http.HttpMessageHandler" />.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Http.HttpMessageHandler" /> responsible for processing the HTTP response messages.</param>
+        <param name="disposeHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the inner handler should be disposed of by Dispose(),false if you intend to reuse the inner handler.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -64,8 +81,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources and disposes of the managed resources used by the <see cref="T:System.Net.Http.HttpMessageInvoker" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -82,9 +102,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Http.HttpMessageInvoker" /> and optionally disposes of the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to releases only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="SendAsync">
@@ -102,11 +126,24 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="request">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete once the entire response including content is read.</para>
+          <para>Most applications that are connecting to a web site will use one of the <see cref="M:System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage)" /> methods on the <see cref="T:System.Net.Http.HttpClient" />  class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send an HTTP request as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="request">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message to send.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to cancel operation.</param>
       </Docs>
     </Member>
   </Members>

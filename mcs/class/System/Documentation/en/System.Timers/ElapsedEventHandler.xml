@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ElapsedEventHandler" FullName="System.Timers.ElapsedEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void ElapsedEventHandler(object sender, ElapsedEventArgs e);" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ElapsedEventHandler extends System.MulticastDelegate" />
@@ -23,47 +24,14 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>
-      <para>Identifies the method that will be executed when the <see cref="E:System.Timers.Timer.Elapsed" /> event fires.</para>
-    </summary>
     <remarks>
-      <para>Use this delegate to attach handlers to the <see cref="E:System.Timers.Timer.Elapsed" /> event.</para>
-      <example>
-        <code lang="C#">
-using System;
-using System.Timers;
-
-public class TimerExample
-{
-	private static System.Timers.Timer ourTimer;
-
-	public static void Main()
-	{
-		ourTimer = new System.Timers.Timer();
-
-		// attach to the Elapsed event.
-		ourTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsed);
-
-		// make our timer interval 1 second
-		ourTimer.Interval = 1000;
-		
-		// don't forget to enable the timer!
-		// we could also call ourTimer.Start() here; they both have the same effect 
-		// (starting the timer).
-		ourTimer.Enabled = true;
-
-		Console.WriteLine("Waiting 10 seconds before exit...");
-		System.Threading.Thread.Sleep(10000);
-	}
-
-	private static void OnTimerElapsed(object sender, ElapsedEventArgs e)
-	{
-		Console.WriteLine("Timer elapsed at: " + e.SignalTime.ToLongTimeString());
-	}
-}
-  </code>
-      </example>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create an <see cref="T:System.Timers.ElapsedEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Timers.Timer.Elapsed" /> event of a <see cref="T:System.Timers.Timer" />.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

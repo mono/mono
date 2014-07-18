@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDictionaryReader" FullName="System.Xml.XmlDictionaryReader">
   <TypeSignature Language="C#" Value="public abstract class XmlDictionaryReader : System.Xml.XmlReader" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlDictionaryReader extends System.Xml.XmlReader" />
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Methods in this class read <see cref="T:System.Xml.XmlDictionary" /> objects.</para>
+      <para>This class is derived from <see cref="T:System.Xml.XmlReader" />. </para>
+      <para>Note that there is a known issue with the normalization of linefeed characters inside of CDATA sections that you may encounter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class that the indigo1 derives from <see cref="T:System.Xml.XmlReader" /> to do serialization and deserialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The only constructor for this class is the default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of this class.  Invoked only by its derived classes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanCanonicalize">
@@ -38,9 +53,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false. Its derived classes can override to return true if they support canonicalization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -58,11 +79,22 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -80,11 +112,22 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -103,12 +146,25 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -128,13 +184,26 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -154,13 +223,28 @@
         <Parameter Name="session" Type="System.Xml.XmlBinaryReaderSession" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="session">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -181,14 +265,29 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas that apply to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -209,14 +308,31 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="session">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -238,15 +354,30 @@
         <Parameter Name="session" Type="System.Xml.XmlBinaryReaderSession" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="session">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBinaryReader">
@@ -269,16 +400,32 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="session">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other <see cref="T:System.Xml.XmlDictionaryReader" /> properties are set to default values or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that can read .NET Binary XML Format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDictionaryReader">
@@ -295,10 +442,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> from an existing <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Xml.XmlReader" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -317,12 +471,24 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a stream, using the character encoding specified by <paramref name="encoding" />, an instance of <see cref="T:System.Text.Encoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encoding of the stream.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -341,12 +507,24 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a stream, using one of the character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the stream.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -366,13 +544,26 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a stream, using one of the character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />. The message is of the specified MIME type. If <paramref name="contentType" /> is null, the Content-Type MIME header must be present in the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the stream.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type MIME type of the message.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -393,14 +584,28 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a buffer with a specified offset and count, using the character encoding specified by <paramref name="encoding" />, an instance of <see cref="T:System.Text.Encoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encoding of the input.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -421,14 +626,28 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a buffer with a specified offset and count, using one of the character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the input.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -450,15 +669,30 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a buffer with a specified offset and count, using one of the  character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />. The message is of the specified MIME type. If <paramref name="contentType" /> is null, the Content-Type MIME header must be present in the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the input.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type MIME type of the message.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas to apply to this reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -480,15 +714,30 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="maxBufferSize">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a stream, using one of the character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />. The message is of the specified MIME type. If <paramref name="contentType" /> is null, the Content-Type MIME header must be present in the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the stream.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type MIME type of the message.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The MIME type of the message.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply to the reader.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMtomReader">
@@ -512,17 +761,34 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="maxBufferSize">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads from a buffer with a specified offset and count, using one of the character encodings specified by <paramref name="encodings" />, an array of instances of <see cref="T:System.Text.Encoding" />. The message is of the specified MIME type. If <paramref name="contentType" /> is null, the Content-Type MIME header must be present in the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" /> that reads XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the input.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type MIME type of the message.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply to the reader.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowed size of the buffer.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextReader">
@@ -540,11 +806,22 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader created is optimized for reading UTF-8 text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas applied to the reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextReader">
@@ -562,11 +839,22 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader created is optimized for reading UTF-8 text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas applied to the reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextReader">
@@ -586,13 +874,26 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader created is optimized for reading UTF-8 text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quotas applied to the reader.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextReader">
@@ -612,13 +913,26 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader created is optimized for reading UTF-8 text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> object that specifies the encoding properties to apply.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextReader">
@@ -640,15 +954,30 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader created is optimized for reading UTF-8 text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> object that specifies the encoding properties to apply.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="EndCanonicalization">
@@ -663,8 +992,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not yet implemented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAttribute">
@@ -682,11 +1014,19 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the value of an attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the attribute.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that represents the local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that represents the namespace of the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOfLocalName">
@@ -704,11 +1044,23 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localNames">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="localNames" /> is an array of strings, and <paramref name="namespaceUri" /> is a string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the local name of the current node within an array of names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the local name of the current node within an array of names.</para>
+        </returns>
+        <param name="localNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string array of local names to be searched.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOfLocalName">
@@ -726,11 +1078,23 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localNames">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="localNames" /> is an array of <see cref="T:System.Xml.XmlDictionaryString" />, and <paramref name="namespaceUri" /> is an <see cref="T:System.Xml.XmlDictionaryString" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the local name of the current node within an array of names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the local name of the current node within an array of names.</para>
+        </returns>
+        <param name="localNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryString" /> array of local names to be searched.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IsArray">
@@ -767,10 +1131,17 @@
         <Parameter Name="localName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the parameter, <paramref name="localName" />, is the local name of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="localName" /> matches local name of the current node; otherwise false.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IsLocalName">
@@ -787,10 +1158,17 @@
         <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the parameter, <paramref name="localName" />, is the local name of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="localName" /> matches local name of the current node; otherwise false.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that represents the local name of the current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IsNamespaceUri">
@@ -807,10 +1185,17 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the parameter, <paramref name="namespaceUri" />, is the namespace of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="namespaceUri" /> matches namespace of the current node; otherwise false.</para>
+        </returns>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IsNamespaceUri">
@@ -827,10 +1212,17 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the parameter, <paramref name="namespaceUri" />, is the namespace of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="namespaceUri" /> matches namespace of the current node; otherwise false.</para>
+        </returns>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />Namespace of current node.</param>
       </Docs>
     </Member>
     <Member MemberName="IsStartArray">
@@ -868,11 +1260,19 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the first tag is a start tag or empty element tag and if the local name and namespace URI match those of the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the first tag in the array is a start tag or empty element tag and matches <paramref name="localName" /> and <paramref name="namespaceUri" />; otherwise false.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that represents the local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that represents the namespace of the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="IsTextNode">
@@ -889,10 +1289,17 @@
         <Parameter Name="nodeType" Type="System.Xml.XmlNodeType" />
       </Parameters>
       <Docs>
-        <param name="nodeType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the current node is a text node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the node type is <see cref="F:System.Xml.XmlNodetype.Text" />, <see cref="F:System.Xml.XmlNodetype.Whitespace" />, <see cref="F:System.Xml.XmlNodetype.SignificantWhitespace" />, <see cref="F:System.Xml.XmlNodetype.CDATA" />, or <see cref="F:System.Xml.XmlNodetype.Attribute" />; otherwise false.</para>
+        </returns>
+        <param name="nodeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the node being tested.</param>
       </Docs>
     </Member>
     <Member MemberName="MoveToStartElement">
@@ -907,8 +1314,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the current content node is a start element or an empty element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveToStartElement">
@@ -925,9 +1335,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the current content node is a start element or an empty element and if the <see cref="P:System.Xml.XmlReader.Name" /> property of the element matches the given argument.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Xml.XmlReader.Name" /> property of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="MoveToStartElement">
@@ -945,10 +1359,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the current content node is a start element or an empty element and if the <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the element matches the given arguments.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="MoveToStartElement">
@@ -966,10 +1385,15 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the current content node is a start element or an empty element and if the <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the element matches the given argument.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="Quotas">
@@ -983,9 +1407,12 @@
         <ReturnType>System.Xml.XmlDictionaryReaderQuotas</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the quota values that apply to the current instance of this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1006,14 +1433,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Boolean" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1034,14 +1471,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.DateTime" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1062,14 +1509,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Decimal" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1090,14 +1547,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Double" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1118,14 +1585,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Guid" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1146,14 +1623,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of short integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1174,14 +1661,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1202,14 +1699,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of long integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1230,14 +1737,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of float numbers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The umber of float numbers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the float numbers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1258,14 +1775,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.TimeSpan" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1286,14 +1813,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Boolean" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1314,14 +1851,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.DateTime" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1342,14 +1889,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Decimal" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1370,14 +1927,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Double" /> nodes type into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1398,14 +1965,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Guid" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1426,14 +2003,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of short integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1454,14 +2041,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1482,14 +2079,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of long integers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of integers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the integers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1510,14 +2117,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of float numbers into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of float numbers put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the float numbers are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadArray">
@@ -1538,14 +2155,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="array">To be added.</param>
-        <param name="offset">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.TimeSpan" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of nodes put in the array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the nodes are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadBooleanArray">
@@ -1563,11 +2190,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Boolean" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> array of the <see cref="T:System.Boolean" /> nodes.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadBooleanArray">
@@ -1585,11 +2223,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads repeated occurrences of <see cref="T:System.Boolean" /> nodes into a typed array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> array of the <see cref="T:System.Boolean" /> nodes.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAs">
@@ -1607,11 +2256,18 @@
         <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
         <param name="nsResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated text content or attribute value converted to the requested type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the value to be returned.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsBase64">
@@ -1626,9 +2282,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the Base64 decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the Base64 decoded binary bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsBinHex">
@@ -1643,9 +2308,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the BinHex decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the BinHex decoded binary bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsBinHex">
@@ -1662,10 +2336,17 @@
         <Parameter Name="maxByteArrayContentLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="maxByteArrayContentLength">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the BinHex decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the BinHex decoded binary bytes.</para>
+        </returns>
+        <param name="maxByteArrayContentLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum array length.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsChars">
@@ -1684,12 +2365,21 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="chars">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content into a char array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Number of characters read.</para>
+        </returns>
+        <param name="chars">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array into which the characters are put.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to put in the array.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsDecimal">
@@ -1704,9 +2394,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to decimal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decimal representation of node's content.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsFloat">
@@ -1721,9 +2417,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to float.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The float representation of node's content.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsGuid">
@@ -1738,9 +2440,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to guid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The guid representation of node's content.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsQualifiedName">
@@ -1776,9 +2484,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this read operation is limited by the MaxStringContentLength quota</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node content in a string representation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsString">
@@ -1795,10 +2512,20 @@
         <Parameter Name="maxStringContentLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="maxStringContentLength">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this read operation is limited by the MaxStringContentLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Node content in string representation.</para>
+        </returns>
+        <param name="maxStringContentLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum string length.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsString">
@@ -1857,9 +2584,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.TimeSpan" /> representation of node's content.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsUniqueId">
@@ -1874,9 +2608,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a unique identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a unique identifier.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadDateTimeArray">
@@ -1894,11 +2634,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.DateTime" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.DateTime" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDateTimeArray">
@@ -1916,11 +2667,19 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.DateTime" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.DateTime" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDecimalArray">
@@ -1938,11 +2697,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.Decimal" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Decimal" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDecimalArray">
@@ -1960,11 +2730,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.Decimal" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Decimal" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDoubleArray">
@@ -1982,11 +2763,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.Double" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Double" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadDoubleArray">
@@ -2004,11 +2796,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a <see cref="T:System.Double" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Double" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsBase64">
@@ -2023,9 +2826,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to a array of Base64 bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as an array of Base64 bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsBinHex">
@@ -2040,9 +2852,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a node's content to an array of BinHex bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as an array of BinHex bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsBoolean">
@@ -2057,9 +2878,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.Boolean" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Boolean" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDateTime">
@@ -2074,9 +2901,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.DateTime" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDecimal">
@@ -2091,9 +2924,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Decimal" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDouble">
@@ -2108,9 +2947,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Double" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsFloat">
@@ -2125,9 +2970,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a floating point number (<see cref="T:System.Single" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a floating point number (<see cref="T:System.Single" />).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsGuid">
@@ -2142,9 +2993,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.Guid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.Guid" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsInt">
@@ -2159,9 +3016,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to an integer (<see cref="T:System.Int32" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as an integer (<see cref="T:System.Int32" />).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsLong">
@@ -2176,9 +3039,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a long integer (<see cref="T:System.Int64" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a long integer (<see cref="T:System.Int64" />).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsString">
@@ -2193,9 +3062,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this read operation is limited by the MaxStringContentLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.String" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsTimeSpan">
@@ -2210,9 +3088,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a <see cref="T:System.TimeSpan" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsUniqueId">
@@ -2227,9 +3111,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an element's content to a unique identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node's content represented as a unique identifier.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadFullStartElement">
@@ -2244,8 +3134,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current node is an element and advances the reader to the next node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadFullStartElement">
@@ -2262,9 +3155,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current node is an element with the given <paramref name="name" /> and advances the reader to the next node.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadFullStartElement">
@@ -2282,10 +3179,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current node is an element with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> and advances the reader to the next node.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadFullStartElement">
@@ -2303,10 +3205,15 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current node is an element with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> and advances the reader to the next node.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadGuidArray">
@@ -2324,11 +3231,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of <see cref="T:System.Guid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Guid" />.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadGuidArray">
@@ -2346,11 +3264,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of <see cref="T:System.Guid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Guid" />.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt16Array">
@@ -2368,11 +3297,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of short integers (<see cref="T:System.Int16" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of short integers (<see cref="T:System.Int16" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt16Array">
@@ -2390,11 +3330,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of short integers (<see cref="T:System.Int16" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of short integers (<see cref="T:System.Int16" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt32Array">
@@ -2412,11 +3363,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of integers (<see cref="T:System.Int32" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of integers (<see cref="T:System.Int32" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt32Array">
@@ -2434,11 +3396,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of integers (<see cref="T:System.Int32" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of integers (<see cref="T:System.Int32" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt64Array">
@@ -2456,11 +3429,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of long integers (<see cref="T:System.Int64" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of long integers (<see cref="T:System.Int64" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadInt64Array">
@@ -2478,11 +3462,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of long integers (<see cref="T:System.Int64" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of long integers (<see cref="T:System.Int64" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadSingleArray">
@@ -2500,11 +3495,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of float numbers (<see cref="T:System.Single" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of float numbers (<see cref="T:System.Single" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadSingleArray">
@@ -2522,11 +3528,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into an array of float numbers (<see cref="T:System.Single" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of float numbers (<see cref="T:System.Single" />).</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadStartElement">
@@ -2544,10 +3561,15 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current node is an element with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> and advances the reader to the next node.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadString">
@@ -2562,9 +3584,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of the current node into a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the contents of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadString">
@@ -2581,10 +3609,17 @@
         <Parameter Name="maxStringContentLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="maxStringContentLength">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of the current node into a string with a given maximum length.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the contents of the current node.</para>
+        </returns>
+        <param name="maxStringContentLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />Maximum allowed string length.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadTimeSpanArray">
@@ -2602,11 +3637,22 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into a <see cref="T:System.TimeSpan" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.TimeSpan" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadTimeSpanArray">
@@ -2624,11 +3670,22 @@
         <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer allocated by this read operation is limited by the MaxArrayLength quota.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of a series of nodes with the given <paramref name="localName" /> and <paramref name="namespaceUri" /> into a <see cref="T:System.TimeSpan" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.TimeSpan" /> array.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadValueAsBase64">
@@ -2650,9 +3707,15 @@
         <param name="bytes">To be added.</param>
         <param name="start">To be added.</param>
         <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not implemented.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not implemented.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="StartCanonicalization">
@@ -2671,11 +3734,20 @@
         <Parameter Name="inclusivePrefixes" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="includeComments">To be added.</param>
-        <param name="inclusivePrefixes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Start reading the canonical octets of the XML being read to this reader from the supplied stream until the matching EndCanonicalization call is made. The content read from the main reader stream is unaffected by this call. <paramref name="includeComments" /> defines whether comments are to be included in the canonical input and <paramref name="inclusivePrefixes" /> provides the list of prefixes to be treated as inclusive prefixes with the exclusive canonicalization algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not yet implemented.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to read from.</param>
+        <param name="includeComments">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines whether comments are included.</param>
+        <param name="inclusivePrefixes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefixes to be included.</param>
       </Docs>
     </Member>
     <Member MemberName="TryGetArrayLength">

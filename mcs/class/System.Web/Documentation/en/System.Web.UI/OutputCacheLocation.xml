@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OutputCacheLocation" FullName="System.Web.UI.OutputCacheLocation">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum OutputCacheLocation" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The values specified by this enumeration are used when you include an @ OutputCache directive in an .aspx file. These values determine the cache location for page output. For more information, see <format type="text/html"><a href="E9666A1B-88DF-4931-AF0B-A754FC65660B">Caching ASP.NET Pages</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the valid values for controlling the location of the output-cached HTTP response for a resource.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Any">
@@ -25,8 +32,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache can be located on the browser client (where the request originated), on a proxy server (or any other server) participating in the request, or on the server where the request was processed. This value corresponds to the <see cref="F:System.Web.HttpCacheability.Public" /> enumeration value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +52,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache is located on the browser client where the request originated. This value corresponds to the <see cref="F:System.Web.HttpCacheability.Private" /> enumeration value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +72,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache can be stored in any HTTP 1.1 cache-capable devices other than the origin server. This includes proxy servers and the client that made the request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +92,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache is disabled for the requested page. This value corresponds to the <see cref="F:System.Web.HttpCacheability.NoCache" /> enumeration value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,8 +112,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache is located on the Web server where the request was processed. This value corresponds to the <see cref="F:System.Web.HttpCacheability.Server" /> enumeration value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,8 +131,11 @@
       </ReturnValue>
       <MemberValue>ServerAndClient</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output cache can be stored only at the origin server or at the requesting client. Proxy servers are not allowed to cache the response. This value corresponds to the combination of the <see cref="F:System.Web.HttpCacheability.Private" /> and <see cref="F:System.Web.HttpCacheability.Server" /> enumeration values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

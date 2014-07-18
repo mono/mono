@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageBoxOptions" FullName="System.Windows.Forms.MessageBoxOptions">
   <TypeSignature Language="C#" Value="public enum MessageBoxOptions" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the <see cref="T:System.Windows.Forms.MessageBox" /> class.</para>
+      <para>If you do not want to specify this parameter when calling methods on <see cref="T:System.Windows.Forms.MessageBox" />, you can pass in 0 instead.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies options on a <see cref="T:System.Windows.Forms.MessageBox" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DefaultDesktopOnly">
@@ -25,7 +33,16 @@
         <ReturnType>System.Windows.Forms.MessageBoxOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constant is the same as ServiceNotification except that the system displays the message box only on the default desktop of the interactive window station</para>
+          <para>
+            <see cref="F:System.Windows.Forms.MessageBoxOptions.DefaultDesktopOnly" /> will cause the application that raised the <see cref="T:System.Windows.Forms.MessageBox" /> to lose focus. The <see cref="T:System.Windows.Forms.MessageBox" /> that is displayed will not use visual styles. For more information, see <format type="text/html"><a href="a5b178ba-610e-46c4-a6c0-509c0886a744">Rendering Controls with Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message box is displayed on the active desktop.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +56,10 @@
         <ReturnType>System.Windows.Forms.MessageBoxOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message box text is right-aligned.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +73,10 @@
         <ReturnType>System.Windows.Forms.MessageBoxOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the message box text is displayed with right to left reading order.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +90,14 @@
         <ReturnType>System.Windows.Forms.MessageBoxOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller is a service notifying the user of an event. The function displays a message box on the current active desktop, even if there is no user logged on to the computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message box is displayed on the active desktop.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AceFlags" FullName="System.Security.AccessControl.AceFlags">
   <TypeSignature Language="C#" Value="public enum AceFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AceFlags extends System.Enum" />
@@ -15,9 +16,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the inheritance and auditing behavior of an access control entry (ACE).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AuditFlags">
@@ -32,8 +36,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All access attempts are audited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainerInherit">
@@ -48,8 +55,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The access mask is propagated to child container objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FailedAccess">
@@ -64,8 +74,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Failed access attempts are audited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InheritanceFlags">
@@ -80,8 +93,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A logical OR of <see cref="F:System.Security.AccessControl.AceFlags.ObjectInherit" />, <see cref="F:System.Security.AccessControl.AceFlags.ContainerInherit" />, <see cref="F:System.Security.AccessControl.AceFlags.NoPropagateInherit" />, and <see cref="F:System.Security.AccessControl.AceFlags.InheritOnly" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Inherited">
@@ -96,8 +112,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ACE is inherited from a parent container rather than being explicitly set for an object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InheritOnly">
@@ -112,8 +131,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The access mask is propagated only to child objects. This includes both container and leaf child objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -128,8 +150,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No ACE flags are set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoPropagateInherit">
@@ -144,8 +169,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The access checks do not apply to the object; they only apply to its children.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectInherit">
@@ -160,8 +188,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The access mask is propagated onto child leaf objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuccessfulAccess">
@@ -176,8 +207,11 @@
         <ReturnType>System.Security.AccessControl.AceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Successful access attempts are audited.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

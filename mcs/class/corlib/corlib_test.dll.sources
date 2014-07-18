@@ -230,6 +230,7 @@ System.Security.AccessControl/RawAclTest.cs
 System.Security.AccessControl/RawSecurityDescriptorTest.cs
 System.Security.AccessControl/RegistrySecurityTest.cs
 System.Security.AccessControl/SystemAclTest.cs
+System.Security.Claims/ClaimsIdentityTest.cs
 System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AesCfbTest.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs

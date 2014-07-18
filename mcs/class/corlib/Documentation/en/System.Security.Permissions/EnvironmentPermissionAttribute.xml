@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EnvironmentPermissionAttribute" FullName="System.Security.Permissions.EnvironmentPermissionAttribute" FullNameSP="System_Security_Permissions_EnvironmentPermissionAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable EnvironmentPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <TypeSignature Language="C#" Value="public sealed class EnvironmentPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
@@ -24,28 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Used to declaratively specify security actions to control
-      access to environment variables.</para>
-    </summary>
-    <remarks>
-      <para>Environment variable names are case-insensitive. Multiple environment variable names are specified by separating the names
-      using the <see cref="F:System.IO.Path.PathSeparator" />
-      string.</para>
-      <block subset="none" type="note">
-        <para> The level of access to one or more environment variables is
-         specified using the members of the current instance. For example, to specify
-         read permissions for an environment variable, set the <see cref="P:System.Security.Permissions.EnvironmentPermissionAttribute.Read" /> property equal
-         to the name of the environment variable.</para>
-        <para> The security information declared by a security attribute is stored in the
-         metadata of the attribute target, and is accessed by the system at run-time.
-         Security attributes are used for declarative security only. For imperative
-         security, use the corresponding permission class, <see cref="T:System.Security.Permissions.EnvironmentPermission" />
-         .</para>
-        <para>The allowable <see cref="T:System.Security.Permissions.EnvironmentPermissionAttribute" /> targets are determined by the
-   <see cref="T:System.Security.Permissions.SecurityAction" /> passed to the constructor.</para>
-      </block>
-    </remarks>
     <example>
       <para> The following example shows a declarative request for
       the ability to read the specified environment variables. The <see cref="F:System.Security.Permissions.SecurityAction.RequestMinimum" />
@@ -65,6 +44,16 @@
    </c>
       </para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> that is used.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. For imperative security, use the corresponding permission class.</para>
+      <para>Environment variable names are case-insensitive. Multiple environment variable names are specified by separating the names using <see cref="F:System.IO.Path.PathSeparator" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.EnvironmentPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -82,14 +71,15 @@
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Security.Permissions.EnvironmentPermissionAttribute" /> class
- with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
-        </summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.EnvironmentPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -106,9 +96,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Environment variable names are case-insensitive. Multiple environment variable names are specified by separating the names using <see cref="F:System.IO.Path.PathSeparator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets full access for the environment variables specified by the string value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreatePermission">
@@ -126,27 +122,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should only be called by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
         <summary>
-          <para> Returns a new 
-   <see cref="T:System.Security.Permissions.EnvironmentPermission" /> that
-      contains the security information of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Security.Permissions.EnvironmentPermission" />.</para>
         </summary>
         <returns>
-          <para>A new <see cref="T:System.Security.Permissions.EnvironmentPermission" />
-object with the security information of the current
-instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Permissions.EnvironmentPermission" /> that corresponds to this attribute.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>Applications typically do not call this method; it is intended for use by the
-         system.</para>
-            <para>The security information described by a security attribute is stored in the
-         metadata of the attribute target, and is accessed by the system at run-time. The
-         system uses the object returned by this method to convert the security
-         information of the current instance into the form stored in metadata.</para>
-            <para>This method overrides <see cref="M:System.Security.Permissions.SecurityAttribute.CreatePermission" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -165,28 +153,18 @@ instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the environment variables for which read access is
- secured.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" />
 containing one or more environment variables for which read access is secured.</para>
         </value>
         <remarks>
-          <para>Multiple environment variable names are specified by separating the names
- using the <see cref="F:System.IO.Path.PathSeparator" /> string. Environment variable names are
- case-insensitive.</para>
-          <para>
-            <block subset="none" type="note">The security action passed to the constructor of the current instance determines how
- the specified environment variables are secured. For example, if the action is
- <see cref="F:System.Security.Permissions.SecurityAction.RequestMinimum" /> , then the target
- of the current instance requires read access to the specified variables in order to
- execute. If the action is <see cref="F:System.Security.Permissions.SecurityAction.RequestRefuse" />, then the
- system does not allow the target to read the specified
- variables.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Environment variable names are case-insensitive. Multiple environment variable names are specified by separating the names using <see cref="F:System.IO.Path.PathSeparator" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets read access for the environment variables specified by the string value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -205,27 +183,17 @@ containing one or more environment variables for which read access is secured.</
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets
- the environment variables for which write access is secured.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing one or more environment variables for which write access is secured.</para>
         </value>
         <remarks>
-          <para>Multiple environment variable names are specified by separating the names
- using the <see cref="F:System.IO.Path.PathSeparator" /> string. Environment variable names are
- case-insensitive.</para>
-          <para>
-            <block subset="none" type="note">The security action passed to the
- constructor of the current instance determines how the specified environment
- variables are secured. For example, if the action is <see cref="F:System.Security.Permissions.SecurityAction.RequestMinimum" /> , then the target of
- the current instance requires write access to the specified variables in order
- to execute. If the action is <see cref="F:System.Security.Permissions.SecurityAction.RequestRefuse" />,
- then the system does not allow the target to write the specified
- variables.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Environment variable names are case-insensitive. Multiple environment variable names are specified by separating the names using <see cref="F:System.IO.Path.PathSeparator" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets write access for the environment variables specified by the string value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

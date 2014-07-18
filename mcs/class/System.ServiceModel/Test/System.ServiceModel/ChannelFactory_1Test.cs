@@ -483,12 +483,12 @@ namespace MonoTests.System.ServiceModel
 			var host = new ServiceHost (typeof (OneWayService));
 			host.AddServiceEndpoint (typeof (IOneWayService),
 				new BasicHttpBinding (),
-				new Uri ("http://localhost:8080"));
+				new Uri ("http://localhost:30158"));
 			host.Open ();
 			try {
 				var cf = new ChannelFactory<IOneWayService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:8080"));
+					new EndpointAddress ("http://localhost:30158"));
 				var ch = cf.CreateChannel ();
 				ch.GiveMessage ("test");
 				

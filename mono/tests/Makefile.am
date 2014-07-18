@@ -1,6 +1,6 @@
 SUBDIRS = cas assemblyresolve gc-descriptors
 
-check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test_platform test-process-exit test-messages rm-empty-logs
+check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-messages rm-empty-logs
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
 
@@ -43,6 +43,7 @@ STRESS_TESTS_SRC=	\
 	monitor-stress.cs	\
 	thread-stress.cs	\
 	gc-stress.cs		\
+	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
 	assembly-load-stress.cs
@@ -398,7 +399,6 @@ BASE_TEST_CS_SRC=		\
 	allow-synchronous-major.cs	\
 	unload-appdomain-on-shutdown.cs	\
 	block_guard_restore_aligment_on_exit.cs	\
-	finally_block_ending_in_dead_bb.cs	\
 	thread_static_gc_layout.cs \
 	sleep.cs
 
@@ -406,19 +406,20 @@ TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
 	async-exc-compilation.cs \
 	filter-stack.cs	\
-	finally_guard.cs
+	finally_guard.cs \
+	finally_block_ending_in_dead_bb.cs
 
 TEST_CS_SRC_GEN = \
 	runtime-invoke.gen.cs \
 	imt_big_iface_test.cs
 
 if AMD64
-TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
 # #651684
 PLATFORM_DISABLED_TESTS = finally_guard.exe
 else
 if X86
-TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
 else
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN)
 endif
@@ -434,7 +435,7 @@ endif
 if X86
 
 if HOST_WIN32
-PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe
+PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe
 endif
 
 endif
@@ -469,6 +470,7 @@ PLATFORM_DISABLED_TESTS= abort-stress-1.exe \
                          bug-70561.exe \
                          finalizer-abort.exe \
                          finally_guard.exe \
+                         finally_block_ending_in_dead_bb.exe \
                          main-returns-abort-resetabort.exe \
                          main-returns-background-abort-resetabort.exe \
                          thread6.exe \
@@ -551,7 +553,8 @@ DISABLED_TESTS=			\
 	bug-348522.2.exe	\
 	bug-459094.exe \
 	delegate-invoke.exe \
-	$(PLATFORM_DISABLED_TESTS)
+	$(PLATFORM_DISABLED_TESTS) \
+	$(EXTRA_DISABLED_TESTS)
 
 DISABLED_TESTS_WRENCH=	\
 	$(DISABLED_TESTS)	\
@@ -562,7 +565,8 @@ DISABLED_TESTS_WRENCH=	\
 	assemblyresolve_event3.exe \
 	delegate2.exe	\
 	finally_guard.exe \
-	gc-altstack.exe
+	gc-altstack.exe \
+	generic-xdomain.2.exe
 
 AOT_DISABLED_TESTS=constraints-load.exe
 
@@ -825,8 +829,8 @@ runtest: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQS
 	fi
 
 runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
-	if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	@$(RUNTIME) ./test-runner.exe -j a --disabled '$${disabled_tests}' $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
+	$(RUNTIME) ./test-runner.exe -j a --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
@@ -884,6 +888,25 @@ test-type-load: TestDriver.dll
 	@echo "Testing load-exception.exe..."
 	@$(RUNTIME) load-exceptions.exe > load-exceptions.exe.stdout 2> load-exceptions.exe.stderr
 
+EXTRA_DIST += custom-attr-errors.cs custom-attr-errors-lib.cs
+test-cattr-type-load: TestDriver.dll custom-attr-errors.cs custom-attr-errors-lib.cs
+	$(MCS) -D:WITH_MEMBERS /t:library $(srcdir)/custom-attr-errors-lib.cs
+	$(MCS) -r:TestDriver.dll -r:custom-attr-errors-lib.dll  $(srcdir)/custom-attr-errors.cs
+	$(MCS) /t:library $(srcdir)/custom-attr-errors-lib.cs
+	@echo "Testing custom-attribute-load-exceptions.exe..."
+	@$(RUNTIME) custom-attr-errors.exe > custom-attr-errors.exe.stdout 2> custom-attr-errors.exe.stderr
+
+EXTRA_DIST += reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
+test-reflection-load-with-context: TestDriver.dll reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
+	rm -rf reflection-load-dir
+	mkdir reflection-load-dir
+	$(MCS) /t:library $(srcdir)/reflection-load-with-context-second-lib.cs -out:reflection-load-dir/reflection-load-with-context-second-lib.dll
+	$(MCS) /t:library -r:reflection-load-dir/reflection-load-with-context-second-lib.dll $(srcdir)/reflection-load-with-context-lib.cs -out:reflection-load-dir/reflection-load-with-context-lib.dll
+	$(MCS) reflection-load-with-context.cs
+	@echo "Testing reflection-load-with-context.cs.exe..."
+	@$(RUNTIME) reflection-load-with-context.exe > reflection-load-with-context.exe.stdout 2> reflection-load-with-context.exe.stderr
+
+
 EXTRA_DIST += debug-casts.cs
 # This depends on TLS, so its not ran by default
 debug-casts:
@@ -906,6 +929,7 @@ SGEN_TESTS =	\
 	sgen-cementing-stress.exe	\
 	sgen-case-23400.exe	\
 	sgen-new-threads-dont-join-stw.exe	\
+	gc-graystack-stress.exe	\
 	bug-17590.exe
 
 SGEN_CONFIGURATIONS =	\
@@ -914,7 +938,12 @@ SGEN_CONFIGURATIONS =	\
 	"major=marksweep-conc|ms-conc"	\
 	"major=marksweep-conc,minor=split|ms-conc-split"	\
 	"minor=split|ms-split"	\
-	"minor=split,alloc-ratio=95|ms-split-95"
+	"minor=split,alloc-ratio=95|ms-split-95"	\
+	"|plain-clear-at-gc|clear-at-gc"	\
+	"major=marksweep-par|ms-par-clear-at-gc|clear-at-gc"	\
+	"major=marksweep-conc|ms-conc-clear-at-gc|clear-at-gc"	\
+	"minor=split|ms-split-clear-at-gc|clear-at-gc"
+
 
 #FIXME We should move to use SGEN_CONFIGURATIONS once sgen supports trailling commas or its argument list.
 SGEN_BRIDGE_CONFIGURATIONS =	\
@@ -935,8 +964,9 @@ sgen-regular-tests: $(SGEN_TESTS)
 		for conf in $(SGEN_CONFIGURATIONS); do 	\
 			name=`echo $$conf | cut -d\| -f 2`;	\
 			params=`echo $$conf | cut -d\| -f 1`;	\
+			debug_opt=`echo $$conf | cut -d\| -f 3`;	\
 			test_name="$${test}|$${name}";	\
-			if MONO_GC_PARAMS="$$params" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
+			if MONO_GC_PARAMS="$$params" MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="$$debug_opt" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -961,7 +991,7 @@ sgen-bridge-tests1: sgen-bridge.exe sgen-bridge-major-fragmentation.exe
 			name=`echo $$conf | cut -d\| -f 2`;	\
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${test}|$${name}";	\
-			if MONO_GC_PARAMS="bridge=Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
+			if MONO_GC_DEBUG="bridge=Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -986,7 +1016,7 @@ sgen-bridge-tests2: sgen-bridge-xref.exe
 			name=`echo $$conf | cut -d\| -f 2`;	\
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${test}|$${name}";	\
-			if MONO_GC_PARAMS="bridge=2Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
+			if MONO_GC_DEBUG="bridge=2Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -1221,7 +1251,7 @@ GSHARED_TESTS = \
 		generic-sealed-virtual.2.exe generic-system-arrays.2.exe	\
 		generic-stack-traces.2.exe generic-stack-traces2.2.exe		\
 		bug-472600.2.exe bug-473482.2.exe bug-473999.2.exe		\
-		bug-479763.2.exe generic-xdomain.2.exe				\
+		bug-479763.2.exe				\
 		generic-type-load-exception.2.exe bug-616463.exe	\
 		bug-1147.exe
 

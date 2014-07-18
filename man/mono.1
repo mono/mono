@@ -937,11 +937,11 @@ Override the automatic cpu detection mechanism. Currently used only on arm.
 The format of the value is as follows:
 .nf
 
-	"armvV [thumb]"
+	"armvV [thumb[2]]"
 
 .fi
 where V is the architecture number 4, 5, 6, 7 and the options can be currently be
-"thunb". Example:
+"thumb" or "thumb2". Example:
 .nf
 
 	MONO_CPU_ARCH="armv4 thumb" mono ...
@@ -1355,6 +1355,8 @@ loader in subtle ways.
 .Sp
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
+.Sp
+Relative paths are resolved based on the launch-time current directory.
 .Sp
 Alternative solutions to MONO_PATH include: installing libraries into
 the Global Assembly Cache (see gacutil(1)) or having the dependent

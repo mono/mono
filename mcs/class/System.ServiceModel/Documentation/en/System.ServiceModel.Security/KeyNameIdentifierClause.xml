@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyNameIdentifierClause" FullName="System.ServiceModel.Security.KeyNameIdentifierClause">
   <TypeSignature Language="C#" Value="public class KeyNameIdentifierClause : System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit KeyNameIdentifierClause extends System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the key name identifier clause in a security token.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +29,13 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.KeyNameIdentifierClause" /> class.  </para>
+        </summary>
+        <param name="keyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key name.</param>
       </Docs>
     </Member>
     <Member MemberName="KeyName">
@@ -41,9 +49,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -61,9 +72,15 @@
       </Parameters>
       <Docs>
         <param name="clause">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether a <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> matches the current instance of this class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a match; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -80,10 +97,17 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the specified key name matches the current instance's key name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a match; otherwise, false. </para>
+        </returns>
+        <param name="keyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security key name clause.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -98,9 +122,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> that represents the current Object. (Inherited from <see cref="T:System.Object" />)</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current Object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

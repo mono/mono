@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripOverflow" FullName="System.Windows.Forms.ToolStripOverflow">
   <TypeSignature Language="C#" Value="public class ToolStripOverflow : System.Windows.Forms.ToolStripDropDown" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If there are more overflow items than can be displayed on the form, use the <format type="text/html"><a href="e681f3ab-94ba-4b2b-ac64-1dfad46caa25">ToolStrip Items Collection Editor</a></format> to manage this situation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages the overflow behavior of a <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +38,13 @@
         <Parameter Name="parentItem" Type="System.Windows.Forms.ToolStripItem" />
       </Parameters>
       <Docs>
-        <param name="parentItem">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripOverflow" /> class derived from a base <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </summary>
+        <param name="parentItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> from which to derive this <see cref="T:System.Windows.Forms.ToolStripOverflow" /> instance. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateAccessibilityInstance">
@@ -47,9 +58,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.ToolStripOverflow.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the dnprdnshort.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessibility object for the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DisplayedItems">
@@ -62,9 +85,15 @@
         <ReturnType>System.Windows.Forms.ToolStripItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripOverflow.DisplayedItems" /> property to get everything the <see cref="T:System.Windows.Forms.ToolStrip" /> currently displays, including items the user did not add, such as a <see cref="T:System.Windows.Forms.ToolStripOverflowButton" />. Use the <see cref="P:System.Windows.Forms.ToolStripOverflow.Items" /> property to get all items on the <see cref="T:System.Windows.Forms.ToolStrip" />, including those not being displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all of the items that are currently being displayed on the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredSize">
@@ -80,10 +109,17 @@
         <Parameter Name="constrainingSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="constrainingSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the size of a rectangular area into which a control can be fitted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered pair of type <see cref="T:System.Drawing.Size" /> representing the width and height of a rectangle.</para>
+        </returns>
+        <param name="constrainingSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control.</param>
       </Docs>
     </Member>
     <Member MemberName="Items">
@@ -96,9 +132,15 @@
         <ReturnType>System.Windows.Forms.ToolStripItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripOverflow.Items" /> property to get all items on the <see cref="T:System.Windows.Forms.ToolStrip" />, including those not being displayed. Use the <see cref="P:System.Windows.Forms.ToolStripOverflow.DisplayedItems" /> property to get only those items that are currently displayed on the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all of the items on the <see cref="T:System.Windows.Forms.ToolStrip" />, whether they are currently being displayed or not.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LayoutEngine">
@@ -129,9 +171,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripOverflow.OnLayout(System.Windows.Forms.LayoutEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Layout" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.LayoutEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDisplayedItems">
@@ -145,8 +195,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the collection of displayed and overflow items after a layout is done.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

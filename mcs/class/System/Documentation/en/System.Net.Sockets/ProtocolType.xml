@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolType" FullName="System.Net.Sockets.ProtocolType" FullNameSP="System_Net_Sockets_ProtocolType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ProtocolType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ProtocolType" />
@@ -15,16 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies the protocols used by the <see cref="T:System.Net.Sockets.Socket" /> class.
-   </para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.Net.Sockets.ProtocolType" /> enumeration is used with the
-<see cref="T:System.Net.Sockets.Socket" /> class. This enumeration specifies the 
-   protocols that a socket instance can use to transport
-   data. </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.Socket" /> class uses the <see cref="T:System.Net.Sockets.ProtocolType" /> enumeration to inform the Windows Sockets API of the requested protocol. Low-level driver software for the requested protocol must be present on the computer for the <see cref="T:System.Net.Sockets.Socket" /> to be created successfully.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the protocols that the <see cref="T:System.Net.Sockets.Socket" /> class supports.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ggp">
@@ -44,7 +43,8 @@
       <MemberValue>Ggp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Gateway To Gateway Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gateway To Gateway Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -66,7 +66,8 @@
       <MemberValue>Icmp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Control Message Protocol (ICMP) as defined by IETF RFC 1792.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Control Message Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -83,7 +84,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Control Message Protocol for IPv6.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Idp">
@@ -103,7 +107,8 @@
       <MemberValue>Idp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Inter-Domain Policy Protocol (IDP) as defined by IETF RFC 1764.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Datagram Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -125,7 +130,8 @@
       <MemberValue>Igmp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Group Management Protocol (IGMP) as defined by IETF RFC 2236.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Group Management Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -147,12 +153,8 @@
       <MemberValue>IP</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Protocol (IP) as defined by IETF RFC 791, 792, 919, 
-      922, and 1112.</para>
-          <block subset="none" type="note">
-            <para>Multiple names are defined for this value based on prior art.
-         This value is identical to <see cref="F:System.Net.Sockets.ProtocolType.Unspecified" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -169,7 +171,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Authentication header. For details, see RFC 2292 section 2.2.1, available at http://www.ietf.org.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPSecEncapsulatingSecurityPayload">
@@ -184,7 +189,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Encapsulating Security Payload header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv4">
@@ -199,7 +207,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol version 4.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6">
@@ -216,8 +227,11 @@
       </ReturnValue>
       <MemberValue>IPv6</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol version 6 (IPv6). </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6DestinationOptions">
@@ -232,7 +246,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Destination Options header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6FragmentHeader">
@@ -247,7 +264,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Fragment header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6HopByHopOptions">
@@ -262,7 +282,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Hop by Hop Options header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6NoNextHeader">
@@ -277,7 +300,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 No next header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6RoutingHeader">
@@ -292,7 +318,10 @@
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Routing header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ipx">
@@ -312,7 +341,8 @@
       <MemberValue>Ipx</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Internetwork Packet Exchange Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Packet Exchange Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -334,7 +364,8 @@
       <MemberValue>ND</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Net Disk Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Net Disk Protocol (unofficial).</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -356,7 +387,8 @@
       <MemberValue>Pup</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Xerox Post Office Update Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>PARC Universal Packet Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -378,7 +410,8 @@
       <MemberValue>Raw</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Raw IP packet protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raw IP packet protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -400,7 +433,8 @@
       <MemberValue>Spx</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Sequenced Packet Exchange Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sequenced Packet Exchange protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -422,7 +456,8 @@
       <MemberValue>SpxII</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Sequenced Packet Exchange Version 2 Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sequenced Packet Exchange version 2 protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -444,7 +479,8 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Transmission Control Protocol (TCP) as defined by IETF RFC 793. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transmission Control Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -466,7 +502,8 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the User Datagram Protocol (UDP) as defined by IETF RFC 768. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>User Datagram Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -488,8 +525,8 @@
       <MemberValue>Unknown</MemberValue>
       <Docs>
         <summary>
-          <para>Used to indicate an uninitialized state. This member is not to
-      be used when constructing instances of the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unknown protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -511,11 +548,8 @@
       <MemberValue>IP</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unspecified protocol.</para>
-          <block subset="none" type="note">
-            <para>Multiple names are defined for this value based on prior art. 
-         This value is identical to <see cref="F:System.Net.Sockets.ProtocolType.IP" />.</para>
-          </block>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

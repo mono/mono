@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXsltContextVariable" FullName="System.Xml.Xsl.IXsltContextVariable">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IXsltContextVariable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXsltContextVariable" />
@@ -11,8 +12,14 @@
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information on using <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> , see article Q324899, "HOW TO: Implement and Use Custom Functions When You Execute XPath Queries in Visual Basic .NET" in the Microsoft Knowledge Base at http://support.microsoft.com.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to a given variable that is defined in the style sheet during runtime execution.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Evaluate">
@@ -31,10 +38,17 @@
         <Parameter Name="xsltContext" Type="System.Xml.Xsl.XsltContext" />
       </Parameters>
       <Docs>
-        <param name="xsltContext">To be added: an object of type 'XsltContext'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates the variable at runtime and returns an object that represents the value of the variable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the value of the variable. Possible return types include number, string, Boolean, document fragment, or node set.</para>
+        </returns>
+        <param name="xsltContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltContext" /> representing the execution context of the variable. </param>
       </Docs>
     </Member>
     <Member MemberName="IsLocal">
@@ -50,9 +64,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the variable is local.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsParam">
@@ -68,9 +85,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the variable is an Extensible Stylesheet Language Transformations (XSLT) parameter. This can be a parameter to a style sheet or a template.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VariableType">
@@ -86,9 +106,12 @@
         <ReturnType>System.Xml.XPath.XPathResultType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XPath.XPathResultType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XPath.XPathResultType" /> representing the XML Path Language (XPath) type of the variable.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

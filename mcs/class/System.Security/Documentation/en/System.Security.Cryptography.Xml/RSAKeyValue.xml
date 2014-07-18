@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RSAKeyValue" FullName="System.Security.Cryptography.Xml.RSAKeyValue">
   <TypeSignature Language="C#" Value="public class RSAKeyValue : System.Security.Cryptography.Xml.KeyInfoClause" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RSAKeyValue extends System.Security.Cryptography.Xml.KeyInfoClause" />
@@ -14,8 +15,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represent the XMLDSIG DSAKeyValue element which contains an XML representation of a RSA public key.</summary>
-    <remarks>The &lt;RSAKeyValue&gt; element is detailled in section 4.4.2.2 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.RSAKeyValue" /> class represents the &lt;RSAKeyValue&gt; element of an XML signature defined by the XML digital signature specification. The &lt;RSAKeyValue&gt; element is the subelement of the &lt;KeyInfo&gt; element (represented by the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class) that describes an <see cref="T:System.Security.Cryptography.RSA" /> public key. The &lt;RSAKeyValue&gt; element contains the public key that corresponds to the private key used to digitally sign a document. A recipient of the document uses the public key to validate the XML signature.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.RSAKeyValue" /> class whenever you want to add a public key to your XML digital signature.</para>
+      <para>If a key is not explicitly supplied to the constructor, a new <see cref="T:System.Security.Cryptography.RSA" /> key pair is randomly generated. </para>
+      <para>For more information about the &lt;RSAKeyValue&gt; element, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;RSAKeyValue&gt; element of an XML signature.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +40,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a new instance of the default implementation of <see cref="T:System.Security.Cryptography.RSA" /> to hold the public key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.RSAKeyValue" /> class with a new randomly generated <see cref="T:System.Security.Cryptography.RSA" /> public key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,9 +64,13 @@
         <Parameter Name="key" Type="System.Security.Cryptography.RSA" />
       </Parameters>
       <Docs>
-        <param name="key">a <see cref="T:System.Security.Cryptography.RSA" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.RSAKeyValue" /> class with the specified <see cref="T:System.Security.Cryptography.RSA" /> public key.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of an implementation of <see cref="T:System.Security.Cryptography.RSA" /> that holds the public key. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -67,9 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.RSA" /> key clause.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.RSA" /> key clause.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Key">
@@ -86,9 +112,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.RSA" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.RSAKeyValue.Key" /> property represents the public key to add to an XML digital signature using the &lt;Modulus&gt; subelement and the &lt;Exponent&gt; subelement of the &lt;RSAKeyValue&gt; element.</para>
+          <para>For more information about XML digital signatures, see the W3C specification at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the instance of <see cref="T:System.Security.Cryptography.RSA" /> that holds the public key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -107,9 +140,13 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads an <see cref="T:System.Security.Cryptography.RSA" /> key clause from an XML element.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element from which to load the <see cref="T:System.Security.Cryptography.RSA" /> key clause. </param>
       </Docs>
     </Member>
   </Members>

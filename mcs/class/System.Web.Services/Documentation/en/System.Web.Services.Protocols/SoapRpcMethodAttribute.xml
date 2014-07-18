@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapRpcMethodAttribute" FullName="System.Web.Services.Protocols.SoapRpcMethodAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SoapRpcMethodAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Web Services Description Language (WSDL) defines two styles for how an XML Web service method, or operation, can be formatted in a SOAP message: RPC and Document. RPC formatting refers to formatting the operation according to the SOAP specification for using SOAP for RPC; otherwise known as Section 7 of the SOAP specification. RPC formatting states that all parameters are encapsulated within a single XML element named after the XML Web service method and that each XML element within that XML element represents a parameter named after the parameter it is representing.</para>
+      <para>SOAP messages formatted in both the RPC and Document styles can be used to communicate with an XML Web service in a Remote Procedure Call (RPC) manner; however the Document style can also easily be used to communicate in a loosely coupled manner. Therefore, Document style XML Web services is recommended. For more details, see the Customizing SOAP Messages topic.</para>
+      <para>For more details, see <format type="text/html"><a href="1D777288-C0D9-4E6A-B638-F010DA031952">[&lt;topic://cpconCustomizingSOAPInASPNETWebServicesWebServiceClients&gt;]</a></format>.</para>
+      <para>This attribute can be applied to an XML Web service method on the server and a proxy class on the client. XML Web service methods that have the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.OneWay" /> property set to true do not have access to their <see cref="T:System.Web.HttpContext" />. As such, accessing any of the properties of the <see cref="T:System.Web.Services.WebService" /> class return null.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that SOAP messages sent to and from the method use RPC formatting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> class, setting all properties to their default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +57,13 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> class, setting the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.Action" /> property to the value of the <paramref name="action" /> parameter.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The intent of the SOAP request. Sets the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.Action" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +78,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.Action" /> property is a URI indicating the intent of the SOAP request. However, the SOAP specification places no restrictions on the format and whether the URI refers to an existing document. The presence and content of the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.Action" /> property can be used by Web servers such as firewalls to appropriately filter SOAP request messages in HTTP.</para>
+          <para>By default, the .NET Framework version 1.1 publishes the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.Action" /> property in the soapAction attribute of the soap:operation element for each supported SOAP binding in WSDL documents generated for an XML Web service. The supported SOAP binding is SOAP 1.1.</para>
+          <para>For more information about the SOAP specification, see the W3C Web site (http://www.w3.org/TR/SOAP).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAPAction HTTP header field of the SOAP request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,9 +103,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binding, as defined by Web Services Description Language (WSDL), is similar to an interface in that it defines a concrete set of operations. With respect to ASP.NET, each XML Web service method is an operation within a binding. XML Web service methods are members of the default binding for an XML Web service or a binding specified within a <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> applied to an XML Web service. An XML Web service can implement multiple bindings, if multiple <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> attributes are applied to an XML Web service.</para>
+          <para>Once one or more <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> attributes are applied to an XML Web service, a <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> can be applied to individual XML Web service methods to indicate the binding operation implemented by a particular XML Web service method. Set the <see cref="P:System.Web.Services.Protocols.SoapDocumentMethodAttribute.Binding" /> property of <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> to specify the binding an XML Web service method implements an operation for. Only one <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> can be applied to an XML Web service method. Therefore, an XML Web service method can only implement an operation for one binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding that an XML Web service method implements an operation for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +127,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an XML Web service method has the <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.OneWay" /> property set to true, the XML Web service client does not have to wait for the Web server to finish processing the XML Web service method. As soon as the Web server has deserialized the <see cref="T:System.Web.Services.Protocols.SoapServerMessage" />, but before it invokes the XML Web service method, the server returns an HTTP 202 status code. An HTTP 202 status code indicates to the client that the Web server has started processing the message. Therefore, an XML Web service client receives no acknowledgment that the Web server successfully processed the message.</para>
+          <para>One-way methods cannot have a return value or any <paramref name="out" /> parameters.</para>
+          <para>If you are using the .NET Framework version 1.0 XML Web service methods that have either the <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> attribute applied to them with the <see cref="P:System.Web.Services.Protocols.SoapDocumentMethodAttribute.OneWay" /> property set to true, do not allow access to their <see cref="T:System.Web.HttpContext" /> using the static <see cref="P:System.Web.HttpContext.Current" /> property. To access the <see cref="T:System.Web.HttpContext" />, derive the class implementing the XML Web service method from <see cref="T:System.Web.Services.WebService" /> and access the <see cref="P:System.Web.Services.WebService.Context" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether an XML Web service client waits for the Web server to finish processing an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -112,9 +152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is obsolete. It does not affect any behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element associated with the SOAP request for an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,9 +175,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace associated with the SOAP request for an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +195,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.ResponseElementName" /> property defines the XML element used to encapsulate the parameters within the Body element of the SOAP response.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element associated with the SOAP response for an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -163,9 +218,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapRpcMethodAttribute.ResponseNamespace" /> property is used in the XSD schema for the XML Web service method in its service description.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace associated with the SOAP response for an XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -187,9 +248,15 @@
         <ReturnType>System.Web.Services.Description.SoapBindingUse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is <see cref="F:System.Web.Services.Description.SoapBindingUse.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding used when invoking the method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -262,8 +262,7 @@ namespace Mono.CSharp {
 					iface_found = true;
 					continue;
 				}
-
-
+					
 				var constraint_tp = type as TypeParameterSpec;
 				if (constraint_tp != null) {
 					if (tparam_types == null) {
@@ -312,6 +311,12 @@ namespace Mono.CSharp {
 									break;
 							}
 						}
+					}
+
+					if (constraint_tp.TypeArguments != null) {
+						var eb = constraint_tp.GetEffectiveBase ();
+						if (eb != null && !CheckConflictingInheritedConstraint (spec, eb, spec.BaseType, context, constraint.Location))
+							break;
 					}
 
 					if (constraint_tp.HasSpecialStruct) {
@@ -615,6 +620,11 @@ namespace Mono.CSharp {
 			spec.SetMetaInfo (type);
 		}
 
+		public void Define (TypeParameter tp)
+		{
+			builder = tp.builder;
+		}
+
 		public void EmitConstraints (GenericTypeParameterBuilder builder)
 		{
 			var attr = GenericParameterAttributes.None;
@@ -764,6 +774,7 @@ namespace Mono.CSharp {
 		int tp_pos;
 		TypeSpec[] targs;
 		TypeSpec[] ifaces_defined;
+		TypeSpec effective_base;
 
 		//
 		// Creates type owned type parameter
@@ -1027,23 +1038,27 @@ namespace Mono.CSharp {
 				return BaseType.IsStruct ? BaseType.BaseType : BaseType;
 			}
 
-			var types = targs;
-			if (HasTypeConstraint) {
-				Array.Resize (ref types, types.Length + 1);
+			if (effective_base != null)
+				return effective_base;
 
-				for (int i = 0; i < types.Length - 1; ++i) {
-					types[i] = types[i].BaseType;
+			var types = new TypeSpec [HasTypeConstraint ? targs.Length + 1 : targs.Length];
+
+			for (int i = 0; i < targs.Length; ++i) {
+				var t = targs [i];
+
+				// Same issue as above, inherited constraints can be of struct type
+				if (t.IsStruct) {
+					types [i] = t.BaseType;
+					continue;
 				}
 
-				types[types.Length - 1] = BaseType;
-			} else {
-				types = types.Select (l => l.BaseType).ToArray ();
+				types [i] = ((TypeParameterSpec)t).GetEffectiveBase ();
 			}
 
-			if (types != null)
-				return Convert.FindMostEncompassedType (types);
+			if (HasTypeConstraint)
+				types [types.Length - 1] = BaseType;
 
-			return BaseType;
+			return effective_base = Convert.FindMostEncompassedType (types);
 		}
 
 		public override string GetSignatureForDocumentation ()
@@ -1307,12 +1322,17 @@ namespace Mono.CSharp {
 
 			if (targs != null) {
 				foreach (var ta in targs) {
-					var b_type = ta.BaseType;
-					if (b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
-						cache.AddBaseType (b_type);
-
 					var tps = ta as TypeParameterSpec;
-					var ifaces = tps != null ? tps.InterfacesDefined : ta.Interfaces;
+					IList<TypeSpec> ifaces;
+					if (tps != null) {
+						var b_type = tps.GetEffectiveBase ();
+						if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
+							cache.AddBaseType (b_type);
+
+						ifaces = tps.InterfacesDefined;
+					} else {
+						ifaces = ta.Interfaces;
+					}
 
 					if (ifaces != null) {
 						foreach (var iface_type in ifaces) {
@@ -1334,7 +1354,15 @@ namespace Mono.CSharp {
 
 			if (TypeArguments != null) {
 				foreach (var t in TypeArguments) {
-					if (((TypeParameterSpec) t).IsConvertibleToInterface (iface))
+					var tps = t as TypeParameterSpec;
+					if (tps != null) {
+						if (tps.IsConvertibleToInterface (iface))
+							return true;
+
+						continue;
+					}
+
+					if (t.ImplementsInterface (iface, false))
 						return true;
 				}
 			}
@@ -1442,13 +1470,18 @@ namespace Mono.CSharp {
 			if (tp != null)
 				return Inflate (tp);
 
-			var ac = type as ArrayContainer;
-			if (ac != null) {
-				var et = Inflate (ac.Element);
-				if (et != ac.Element)
-					return ArrayContainer.MakeType (context.Module, et, ac.Rank);
+			var ec = type as ElementTypeSpec;
+			if (ec != null) {
+				var et = Inflate (ec.Element);
+				if (et != ec.Element) {
+					var ac = ec as ArrayContainer;
+					if (ac != null)
+						return ArrayContainer.MakeType (context.Module, et, ac.Rank);
 
-				return ac;
+					throw new NotImplementedException ();
+				}
+
+				return ec;
 			}
 
 			if (type.Kind == MemberKind.MissingType)
@@ -2153,6 +2186,8 @@ namespace Mono.CSharp {
 
 			atypes = new TypeSpec [count];
 
+			var errors = ec.Module.Compiler.Report.Errors;
+
 			for (int i = 0; i < count; i++){
 				var te = args[i].ResolveAsType (ec);
 				if (te == null) {
@@ -2176,7 +2211,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!ok)
+			if (!ok || errors != ec.Module.Compiler.Report.Errors)
 				atypes = null;
 
 			return ok;
@@ -2396,6 +2431,8 @@ namespace Mono.CSharp {
 				return null;
 
 			TypeSpec[] atypes = args.Arguments;
+			if (atypes == null)
+				return null;
 
 			//
 			// Now bind the parameters

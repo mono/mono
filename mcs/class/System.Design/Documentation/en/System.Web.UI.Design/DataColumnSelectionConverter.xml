@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataColumnSelectionConverter" FullName="System.Web.UI.Design.DataColumnSelectionConverter">
   <TypeSignature Language="C#" Value="public class DataColumnSelectionConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -9,8 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> class to convert object types before assignment to a control property. In general, the <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> class supports converting string object types and supplies a list of standard values available for assignment to the associated control property. The standard values collection is the list of field names for bound column fields for the current <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+      <para>To support converting additional object types, derive a class from <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> and override the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> and <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> methods for the additional object types. To support a custom list of standard assignable values, override the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method.</para>
+      <para>Apply the <see cref="T:System.ComponentModel.TypeConverterAttribute" /> attribute to specify the <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> class as the type converter for a control property. For example, the <see cref="P:System.Web.UI.WebControls.GridView.RowHeaderColumn" /> property of the <see cref="T:System.Web.UI.WebControls.GridView" /> control specifies <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> as its type converter.</para>
+      <block subset="none" type="note">
+        <para>You should never access a type converter directly. Instead, call the appropriate converter by using a <see cref="T:System.ComponentModel.TypeDescriptor" /> object. For more information, see the examples in <see cref="T:System.ComponentModel.TypeConverter" />.</para>
+      </block>
+      <para>The <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValuesSupported" /> method indicates that the converter supports returning a list of available values through the <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues" /> method. The <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValuesExclusive" /> method indicates that the list is not an exclusive list of possible values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter for a property representing the field name of a bound column field in a <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +34,16 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>You should never access a type converter directly. Instead, call the appropriate converter by using a <see cref="T:System.ComponentModel.TypeDescriptor" /> object. For more information, see the examples in <see cref="T:System.ComponentModel.TypeConverter" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanConvertFrom">
@@ -39,11 +60,23 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="sourceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method to determine whether the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> method supports converting the source type.</para>
+          <para>The <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> method can convert only from a string, so the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method returns true when <paramref name="sourceType" /> is a string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified source type can be converted to the type of the associated control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the converter can perform the conversion; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  implementation that can be used to gain additional context information.</param>
+        <param name="sourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert from.</param>
       </Docs>
     </Member>
     <Member MemberName="ConvertFrom">
@@ -61,12 +94,25 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="value" /> is a string, then the string representation of <paramref name="value" /> is returned. If <paramref name="value" /> is null, an empty string ("") is returned. For all other values, a <see cref="T:System.NotSupportedException" /> exception is thrown. </para>
+          <para>Call the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method to determine whether the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> method supports converting the source type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object to the type of the associated control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> instance that represents the converted object.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  implementation that can be used to gain additional context information.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> object that can be used to support localization features.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValues">
@@ -82,10 +128,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method uses the <see cref="P:System.ComponentModel.ITypeDescriptorContext.Instance" /> property of the specified <paramref name="context" /> object to obtain an <see cref="T:System.ComponentModel.IComponent" /> implementation. If the <see cref="T:System.ComponentModel.IComponent" /> implementation is available, it is used to access the associated control at design time and retrieve the list of available values from the associated <see cref="T:System.Web.UI.WebControls.GridView" /> component.</para>
+          <para>The collection of available values is built from the bound column fields in the <see cref="T:System.Web.UI.WebControls.GridView" /> control. The bound column fields consist of <see cref="T:System.Web.UI.WebControls.BoundField" /> objects in the <see cref="P:System.Web.UI.WebControls.GridView.Columns" /> collection, and from the bound column fields automatically generated for fields in the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of available values that can be assigned to the associated control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> instance containing available values for assignment to the associated control property.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  implementation that can be used to gain additional context information.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesExclusive">
@@ -101,10 +158,20 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValuesExclusive" /> method for a <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> instance returns false, indicating that the list returned by the <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues" /> method is not an exclusive list of all possible assignable values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this converter returns a list containing all possible values that can be assigned to the associated control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter returns a list containing all possible values that can be assigned to the associated control property; otherwise false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  implementation that can be used to gain additional context information.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesSupported">
@@ -120,10 +187,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> method indicates whether the converter supports returning a list of available values through the <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method. </para>
+          <para>The <see cref="Overload:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValuesSupported" /> method for the <see cref="T:System.Web.UI.Design.DataColumnSelectionConverter" /> object returns true if the specified <paramref name="context" /> object supplies an <see cref="T:System.ComponentModel.IComponent" /> implementation in its <see cref="P:System.ComponentModel.ITypeDescriptorContext.Instance" /> property. The <see cref="M:System.Web.UI.Design.DataColumnSelectionConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method uses the <see cref="T:System.ComponentModel.IComponent" /> implementation to access the associated control at design time and retrieve the list of available bound column fields from the associated <see cref="T:System.Web.UI.WebControls.GridView" /> component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this converter returns a set of available values for assignment to a control property, within the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter returns a standard set of available values for assignment to the associated control property; otherwise false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  implementation that can be used to gain additional context information.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IControlDesignerView" FullName="System.Web.UI.Design.IControlDesignerView">
   <TypeSignature Language="C#" Value="public interface IControlDesignerView" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is intended for use by design host developers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for access to the visual representation and content of a control at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ContainingRegion">
@@ -20,9 +27,12 @@
         <ReturnType>System.Web.UI.Design.DesignerRegion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer region that contains the associated control, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetBounds">
@@ -38,10 +48,17 @@
         <Parameter Name="region" Type="System.Web.UI.Design.DesignerRegion" />
       </Parameters>
       <Docs>
-        <param name="region">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the outer bounds of the designer view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> containing information about the location and measurements of the view at design time.</para>
+        </returns>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> for which you want to retrieve the bounds.</param>
       </Docs>
     </Member>
     <Member MemberName="Invalidate">
@@ -57,9 +74,13 @@
         <Parameter Name="rectangle" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="rectangle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the design host that the area represented by the provided rectangle needs to be repainted on the design surface.</para>
+        </summary>
+        <param name="rectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> representing the location and outer measurements of the view on the design surface. The coordinate-system origin for this rectangle is the top-left corner of the element to which the behavior is attached.</param>
       </Docs>
     </Member>
     <Member MemberName="NamingContainerDesigner">
@@ -72,9 +93,12 @@
         <ReturnType>System.ComponentModel.Design.IDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer component for the naming container of the associated control, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -91,10 +115,15 @@
         <Parameter Name="setFlag" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="viewFlags">To be added.</param>
-        <param name="setFlag">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.Design.IControlDesignerView.SetFlags(System.Web.UI.Design.ViewFlags,System.Boolean)" />.</para>
+        </summary>
+        <param name="viewFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A member of the <see cref="T:System.Web.UI.Design.ViewFlags" /> enumeration.</param>
+        <param name="setFlag">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the flag, false to cancel the flag.</param>
       </Docs>
     </Member>
     <Member MemberName="SetRegionContent">
@@ -111,10 +140,15 @@
         <Parameter Name="content" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="region">To be added.</param>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Puts the provided content into the provided designer region.</para>
+        </summary>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.DesignerRegion" /> into which the content is to be put.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML markup to be put into the designer region.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportsRegions">
@@ -127,9 +161,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether designer regions are supported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -143,8 +180,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the associated control to redraw the invalidated regions within its client area.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewEvent">
@@ -157,8 +197,25 @@
         <ReturnType>System.Web.UI.Design.ViewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> is raised by the design host if any of the following occur:</para>
+          <list type="bullet">
+            <item>
+              <para>The user clicks on the view in the design host,</para>
+            </item>
+            <item>
+              <para>The design host repaints the client region on the design surface,</para>
+            </item>
+            <item>
+              <para>The user has elected to change the editing mode of an editable region corresponding to a template.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An event raised by the design host for the view and designer component.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

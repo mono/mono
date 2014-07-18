@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParameterBuilder" FullName="System.Reflection.Emit.ParameterBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ParameterBuilder : System.Runtime.InteropServices._ParameterBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit ParameterBuilder extends System.Object implements class System.Runtime.InteropServices._ParameterBuilder" />
@@ -29,8 +30,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Parameter attributes need to consistent with the method signature. If you specify Out attributes for a parameter, you should ensure that the type of that method parameter is a ByRef type.</para>
+      <para>Some <see cref="T:System.Reflection.Emit.ParameterBuilder" /> attributes require that you call <see cref="M:System.Reflection.Emit.TypeBuilder.DefineMethod(System.String,System.Reflection.MethodAttributes,System.Type,System.Type[])" /> with viable parameters in order for the Microsoft intermediate language (MSIL) to work correctly at runtime. For example, if you define a <see cref="T:System.Reflection.Emit.ParameterBuilder" /> with ParameterAttributes.Out for parameter 1 of a MethodBuilder, then parameter 1 of <see cref="T:System.Reflection.Emit.MethodBuilder" /> must be a reference such as Type.GetType("System.String&amp;"), rather than Type.GetType("System.String").</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates or associates parameter information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attributes">
@@ -46,9 +54,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the attribute correspond to the values of the <see cref="T:System.Reflection.ParameterAttributes" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the attributes for this parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetToken">
@@ -65,9 +79,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ParameterToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the token for this parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token for this parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsIn">
@@ -83,9 +103,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method depends on an optional metadata flag. This flag can be inserted by compilers, but the compilers are not obligated to do so.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves whether this is an input parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsOptional">
@@ -101,9 +127,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves whether this parameter is optional.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsOut">
@@ -119,9 +148,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves whether this parameter is an output parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -137,9 +169,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the name of this parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Position">
@@ -155,9 +190,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the signature position for this parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetConstant">
@@ -176,9 +214,17 @@
         <Parameter Name="defaultValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="defaultValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="defaultValue" /> is restricted to the following types: Boolean, SByte, Int16, Int32, Int64, Byte, UInt16, UInt32, UInt64, Single, Double, DateTime, Char, String, and Enum. If the parameter type is a reference type, CLS compliance requires <paramref name="defaultValue" /> to be null. However, starting with the net_v40_long, <paramref name="defaultValue" /> can be non-null for a reference type as long as the value can be assigned to that reference type. For example, an Int32 value can be assigned to a parameter of type <see cref="T:System.Object" />. This is not CLS-compliant, but it can be useful in interop scenarios.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the default value of the parameter.</para>
+        </summary>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value of this parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -197,9 +243,13 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class to define the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -224,10 +274,18 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification in the ECMA Partition II documentation for details on how to format <paramref name="binaryAttribute" />. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="SetMarshal">
@@ -251,9 +309,18 @@
         <Parameter Name="unmanagedMarshal" Type="System.Reflection.Emit.UnmanagedMarshal" />
       </Parameters>
       <Docs>
-        <param name="unmanagedMarshal">To be added: an object of type 'UnmanagedMarshal'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should throw the following exception but currently does not: </para>
+          <para>
+            <see cref="T:System.InvalidOperationException" /> if the containing type has been created using TypeBuilder.CreateType().</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the marshaling for this parameter.</para>
+        </summary>
+        <param name="unmanagedMarshal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The marshaling information for this parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._ParameterBuilder.GetIDsOfNames">
@@ -303,11 +370,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._ParameterBuilder.GetTypeInfoCount">

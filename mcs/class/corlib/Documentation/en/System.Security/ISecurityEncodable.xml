@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISecurityEncodable" FullName="System.Security.ISecurityEncodable">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISecurityEncodable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecurityEncodable" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The XML representation of permissions is used to describe instances of permissions for code requests, declarative security permission sets, and security policy configuration.</para>
+      <block subset="none" type="note">
+        <para>You must implement this interface for any new permission object.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods that convert permission object state to and from XML element representation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FromXml">
@@ -36,9 +46,16 @@
         <Parameter Name="e" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'SecurityElement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom code that extends security objects needs to implement the <see cref="M:System.Security.ISecurityEncodable.ToXml" /> and <see cref="M:System.Security.ISecurityEncodable.FromXml(System.Security.SecurityElement)" /> methods to make the objects security-encodable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a specified state from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -55,9 +72,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SecurityElement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom code that extends security objects needs to implement the <see cref="M:System.Security.ISecurityEncodable.ToXml" /> and <see cref="M:System.Security.ISecurityEncodable.FromXml(System.Security.SecurityElement)" /> methods to make the objects security-encodable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

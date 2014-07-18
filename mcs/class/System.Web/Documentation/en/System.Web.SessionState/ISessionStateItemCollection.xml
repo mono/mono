@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISessionStateItemCollection" FullName="System.Web.SessionState.ISessionStateItemCollection">
   <TypeSignature Language="C#" Value="public interface ISessionStateItemCollection : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -10,9 +11,19 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> interface defines the collection of session items exposed to application code by the <see cref="T:System.Web.SessionState.HttpSessionStateContainer" /> class.</para>
+      <para>The ASP.NET implementation of the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> interface is the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> class. </para>
+      <para>If you create a class derived from the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class to store session data, you can either use the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> class to manage the stored objects or implement the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> interface on your own collection manager.</para>
+      <para>If you implement the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> interface, you must also create a class that inherits the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> class in order to make use of your <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation to manage session variables.</para>
+      <para>An <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation must also implement the members of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract for the collection used by ASP.NET session state to manage session.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clear">
@@ -23,9 +34,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In implementing the <see cref="M:System.Web.SessionState.ISessionStateItemCollection.Clear" /> method, you should set the <see cref="P:System.Web.SessionState.ISessionStateItemCollection.Dirty" /> property to true to indicate that values in the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation have been modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all values and keys from the session-state collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +55,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.ISessionStateItemCollection.Dirty" /> property is used by the <see cref="T:System.Web.SessionState.SessionStateModule" /> to determine whether the values in an <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation have been modified.</para>
+          <para>In implementing the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> interface, you should initialize the <see cref="P:System.Web.SessionState.ISessionStateItemCollection.Dirty" /> property as false and set the <see cref="P:System.Web.SessionState.SessionStateItemCollection.Dirty" /> property to true in the implementations of the <see cref="M:System.Web.SessionState.ISessionStateItemCollection.Remove(System.String)" />, <see cref="M:System.Web.SessionState.ISessionStateItemCollection.RemoveAt(System.Int32)" />, or <see cref="M:System.Web.SessionState.ISessionStateItemCollection.Clear" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the collection has been marked as changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +118,13 @@
         <ReturnType>System.Collections.Specialized.NameObjectCollectionBase+KeysCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the variable names for all values stored in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,9 +141,16 @@
       </Parameters>
       <Docs>
         <param name="itemName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In implementing the <see cref="M:System.Web.SessionState.ISessionStateItemCollection.Remove(System.String)" /> method, you should set the <see cref="P:System.Web.SessionState.ISessionStateItemCollection.Dirty" /> property to true to indicate values in the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation have been modified.</para>
+          <para>If the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation does not contain an element with the specified <paramref name="name" />, the collection should remain unchanged and no exception be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,10 +166,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In implementing the <see cref="M:System.Web.SessionState.ISessionStateItemCollection.RemoveAt(System.Int32)" /> method, you should set the <see cref="P:System.Web.SessionState.ISessionStateItemCollection.Dirty" /> property to true to indicate values in the <see cref="T:System.Web.SessionState.ISessionStateItemCollection" /> implementation have been modified.</para>
+          <para>Your implementation of the <see cref="M:System.Web.SessionState.ISessionStateItemCollection.RemoveAt(System.Int32)" /> method should throw an <see cref="T:System.ArgumentOutOfRangeException" /> exception if <paramref name="index" /> is less than zero or is equal to or greater than <see cref="P:System.Collections.ICollection.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item at a specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

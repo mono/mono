@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlReturnReader" FullName="System.Web.Services.Protocols.XmlReturnReader">
   <TypeSignature Language="C#" Value="public class XmlReturnReader : System.Web.Services.Protocols.MimeReturnReader" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> and other classes in the <see cref="N:System.Web.Services.Protocols" /> namespace support the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. Web service writers and readers serialize and deserialize, respectively, between the parameters or return objects of Web methods and the HTTP request or response streams. Web service writers and readers use HTTP for transport but don't exchange messages using the SOAP standard. The <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class implements the client-side reading of XML documents into Web method return values. The XML documents are encoded in the body of HTTP responses.</para>
+      <para>You typically will not need to use <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> directly. Instead, when the Wsdl.exe tool generates client proxy code according to the HTTP-GET or HTTP-POST implementations, it applies the <see cref="T:System.Web.Services.Protocols.HttpMethodAttribute" /> to each Web method and sets the attribute's <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ReturnFormatter" /> property to <see cref="T:System.Web.Services.Protocols.XmlReturnReader" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Reads return values from XML that is encoded in the body of incoming responses for Web service clients implemented using HTTP but without SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +53,21 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="methodInfo">a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the Initialize method. For the <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class, the initializer is an <see cref="T:System.Xml.Serialization.XmlSerializer" /> object for the return type of the Web method. </para>
+          <para>The <see cref="M:System.Web.Services.Protocols.XmlReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method is invoked during service initialization. Later, at the time a response is processed, the initializer object is passed to the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Initialize(System.Object)" /> method of another <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> instance. The other instance performs the actual reading.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an initializer for the specified method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer for the specified method.</para>
+        </returns>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,10 +84,21 @@
         <Parameter Name="methodInfos" Type="System.Web.Services.Protocols.LogicalMethodInfo[]" />
       </Parameters>
       <Docs>
-        <param name="methodInfos">a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo[]" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object[]" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the Initialize method. For the <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class, the initializer is an <see cref="T:System.Xml.Serialization.XmlSerializer" /> object for the return type of the Web method. </para>
+          <para>The <see cref="M:System.Web.Services.Protocols.XmlReturnReader.GetInitializers(System.Web.Services.Protocols.LogicalMethodInfo[])" /> method is invoked during service initialization. Later, at the time a response is processed, the initializer object for each Web method is passed to the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Initialize(System.Object)" /> method of another <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> instance. The other instance performs the actual reading.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of initializer objects corresponding to an input array of method definitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of initializer objects corresponding to an input array of method definitions.</para>
+        </returns>
+        <param name="methodInfos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web methods for which the initializers are obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +115,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Initialize(System.Object)" /> method supplies the <see cref="T:System.Xml.Serialization.XmlSerializer" /> object used by the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method to deserialize an XML document contained in the HTTP response.</para>
+          <para>The <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Initialize(System.Object)" /> method is invoked at the time a request is processed. The input parameter, <paramref name="o" />, is obtained by calling the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> or <see cref="M:System.Web.Services.Protocols.XmlReturnReader.GetInitializers(System.Web.Services.Protocols.LogicalMethodInfo[])" /> method on another instance during client initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlSerializer" /> for the return type of the Web method being invoked.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,11 +143,22 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="response">a <see cref="T:System.Net.WebResponse" /></param>
-        <param name="responseStream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To deserialize the XML content of the HTTP response, the <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class's implementation of the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method uses the <see cref="T:System.Xml.Serialization.XmlSerializer" /> object passed as an argument to the <see cref="M:System.Web.Services.Protocols.XmlReturnReader.Initialize(System.Object)" /> method. It throws an exception if the HTTP response's MIME content type is not text/xml. The method closes the response before returning the deserialized Web method return value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a return value deserialized from an XML document contained in the HTTP response.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A return value deserialized from an XML document contained in the HTTP response.</para>
+        </returns>
+        <param name="response">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpRequest" /> object containing the output message for an operation.</param>
+        <param name="responseStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> whose content is the body of the HTTP response represented by the <paramref name="response" /> parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

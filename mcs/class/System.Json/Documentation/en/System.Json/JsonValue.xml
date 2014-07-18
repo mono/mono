@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="JsonValue" FullName="System.Json.JsonValue">
   <TypeSignature Language="C#" Value="public abstract class JsonValue : System.Collections.IEnumerable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit JsonValue extends System.Object implements class System.Collections.IEnumerable" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Json value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,10 +49,17 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an InvalidOperationException.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation exception is invalid; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to check.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -62,9 +73,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Json values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -118,9 +132,12 @@
         <ReturnType>System.Json.JsonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the JSON CLR type represented by the derived type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -137,10 +154,17 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the text-based JSON from a stream into JSON CLR type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text-based JSON from a stream.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A stream that contains text-based JSON content.</param>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -157,10 +181,17 @@
         <Parameter Name="textReader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="textReader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the text-based JSON from a text reader into a JSON CLR type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text-based JSON from a text reader.</para>
+        </returns>
+        <param name="textReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TextReader over text-based JSON content.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Implicit">
@@ -938,9 +969,15 @@
       </Parameters>
       <Docs>
         <param name="jsonString">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the text-based JSON into a JSON CLR type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text-based JSON into a JSON CLR type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -957,9 +994,13 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the JsonValue CLR type into text-based JSON using a stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />Stream to which to write text-based JSON.</param>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -976,9 +1017,13 @@
         <Parameter Name="textWriter" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="textWriter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the JsonValue CLR type into text-based JSON using a text writer.</para>
+        </summary>
+        <param name="textWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextWriter used to write text-based JSON.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -993,9 +1038,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Json.JsonValue" /> enumerator.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerator.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1010,9 +1061,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves (serializes) this JSON CLR type into text-based JSON.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns string, which contains text-based JSON.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

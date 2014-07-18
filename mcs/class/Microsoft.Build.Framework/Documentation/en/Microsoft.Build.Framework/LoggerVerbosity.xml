@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoggerVerbosity" FullName="Microsoft.Build.Framework.LoggerVerbosity">
   <TypeSignature Language="C#" Value="public enum LoggerVerbosity" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The descriptions of verbosity levels are only guidelines to how a typical logger (including the default vstecmsbuild console logger) logs build events. Loggers are free to interpret verbosity levels in any way they want.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the available verbosity levels of a <see cref="T:Microsoft.Build.Utilities.Logger" />. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Detailed">
@@ -25,8 +32,11 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Detailed verbosity, which displays errors, warnings, messages with <see cref="T:Microsoft.Build.Framework.MessageImportance" /> values of <see cref="F:Microsoft.Build.Framework.MessageImportance.High" /> or <see cref="F:Microsoft.Build.Framework.MessageImportance.Normal" />, all status events, and a build summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +49,11 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Diagnostic verbosity, which displays all errors, warnings, messages, status events, and a build summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +66,11 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimal verbosity, which displays errors, warnings, messages with <see cref="T:Microsoft.Build.Framework.MessageImportance" /> values of <see cref="F:Microsoft.Build.Framework.MessageImportance.High" />, and a build summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +83,11 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Normal verbosity, which displays errors, warnings, messages with <see cref="T:Microsoft.Build.Framework.MessageImportance" /> values of <see cref="F:Microsoft.Build.Framework.MessageImportance.High" />, some status events, and a build summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +100,11 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Quiet verbosity, which displays a build summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

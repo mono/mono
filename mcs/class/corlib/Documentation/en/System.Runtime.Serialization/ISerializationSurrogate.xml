@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISerializationSurrogate" FullName="System.Runtime.Serialization.ISerializationSurrogate">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISerializationSurrogate" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISerializationSurrogate" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a serialization surrogate selector that allows one object to perform serialization and deserialization of another.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetObjectData">
@@ -38,11 +42,22 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="info">To be added: an object of type 'SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Extracts data from object <paramref name="obj" /> and stores it in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> <paramref name="info" /> parameter.</para>
+          <para>Having located the surrogate, this method stores information on the object <paramref name="obj" /> in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> <paramref name="info" /> parameter. This information describes its view of that object, including the object's fields, properties, and current values. The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> might correspond to the actual object, or it can be a synthesized view of the surrogate.</para>
+          <para>This method is protected by a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for the <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SerializationFormatter" /> specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the provided <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization. </param>
       </Docs>
     </Member>
     <Member MemberName="SetObjectData">
@@ -64,13 +79,27 @@
         <Parameter Name="selector" Type="System.Runtime.Serialization.ISurrogateSelector" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="info">To be added: an object of type 'SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <param name="selector">To be added: an object of type 'ISurrogateSelector'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Serialization.ISerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)" /> method is called during deserialization. With this method, you can take the empty <see cref="T:System.Object" /> <paramref name="obj" /> that has already been created, and enter <see cref="T:System.Runtime.Serialization.SerializationInfo" /> <paramref name="info" /> data into that object. Constructors are not invoked during deserialization of information and reconstruction of the object.</para>
+          <para>This method is protected by a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for the <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SerializationFormatter" /> specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the object using the information in the <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The populated deserialized object.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to populate. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The information to populate the object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source from which the object is deserialized. </param>
+        <param name="selector">
+          <attribution license="cc4" from="Microsoft" modified="false" />The surrogate selector where the search for a compatible surrogate begins. </param>
       </Docs>
     </Member>
   </Members>

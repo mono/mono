@@ -256,11 +256,17 @@ unsigned n;
     return (p);
 }
 
+#ifdef __GNUC__
+#define GNUC_UNUSED __attribute__((__unused__))
+#else
+#define GNUC_UNUSED
+#endif
 
 create_file_names()
 {
     int i, len;
     char *tmpdir;
+    int mkstemp_res GNUC_UNUSED;
 
 #if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
     tmpdir = ".";
@@ -303,9 +309,9 @@ create_file_names()
     prolog_file_name[len + 5] = 'p';
     local_file_name[len + 5] = 'l';
 
-    mkstemp(action_file_name);
-    mkstemp(prolog_file_name);
-    mkstemp(local_file_name);
+    mkstemp_res = mkstemp(action_file_name);
+    mkstemp_res = mkstemp(prolog_file_name);
+    mkstemp_res = mkstemp(local_file_name);
 
     len = strlen(file_prefix);
 

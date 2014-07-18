@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Panel" FullName="System.Web.UI.WebControls.Panel">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Panel : System.Web.UI.WebControls.WebControl" />
   <AssemblyInfo>
@@ -28,8 +29,88 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Panel" /> control is a container for other controls. It is especially useful when you want to generate controls programmatically, hide/show a group of controls, or localize a group of controls.</para>
+      <para>The <see cref="P:System.Web.UI.WebControls.Panel.Direction" /> property is useful for localizing a <see cref="T:System.Web.UI.WebControls.Panel" /> control's content to display text for languages that are written from right to left, such as Arabic or Hebrew.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.Panel" /> control provides several properties that allow you to customize the behavior and display of its contents. Use the <see cref="P:System.Web.UI.WebControls.Panel.BackImageUrl" /> property to display a custom image for the <see cref="T:System.Web.UI.WebControls.Panel" /> control. Use the <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property to specify scroll bars for the control. </para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Panel
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BackImageUrl="uri"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    DefaultButton="string"
+    Direction="<codeFeaturedElement>NotSet</codeFeaturedElement>|LeftToRight|RightToLeft"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    GroupingText="string"
+    Height="size"
+    HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    ScrollBars="<codeFeaturedElement>None</codeFeaturedElement>|Horizontal|Vertical|Both|Auto"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+    Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control that acts as a container for other controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +119,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Panel" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,8 +141,14 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Panel.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds information about the background image, alignment, wrap, and direction to the list of attributes to render.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,9 +163,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to display a custom image for the <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+          <para>If the image is smaller than the <see cref="T:System.Web.UI.WebControls.Panel" />, it will be tiled to fill in the <see cref="T:System.Web.UI.WebControls.Panel" />.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only on browsers that support HTML 4.0 or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the background image for the panel control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,9 +204,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Panel.CreateControlStyle" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a style object that is used internally by the <see cref="T:System.Web.UI.WebControls.Panel" /> control to implement all style related properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.PanelStyle" /> that contains the style properties of the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultButton">
@@ -124,9 +233,34 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> property to indicate which button gets clicked when the <see cref="T:System.Web.UI.WebControls.Panel" /> control has focus and the user presses the ENTER key. The <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> can be set to the identifier for a <see cref="T:System.Web.UI.WebControls.Button" /> control or any control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface except a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. </para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> is set to a control that does not implement the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface, or to a control that is not contained in the <see cref="T:System.Web.UI.WebControls.Panel" /> control, the <see cref="T:System.Web.UI.WebControls.Panel" /> control throws an exception while rendering.</para>
+          <para>Setting the <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> property is not supported for the following scenarios:</para>
+          <list type="bullet">
+            <item>
+              <para>Setting focus outside of the input controls in the panel and then pressing the ENTER key. The default post back action is not guaranteed to trigger.</para>
+            </item>
+            <item>
+              <para>Pressing the ENTER key with focus inside a multi-line textbox. In a multi-line textbox, pressing the ENTER key should create a new line in the textbox which is the expected behavior. In browsers where the pressing the ENTER key inside a multi-line textbox triggers a post back but you want the ENTER key to create a new line instead you can attach a JavaScript function to the input control. The script should capture the ENTER key and stop the post back. For example, you can use the <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> property collection to add client script for the onKeyPress event.</para>
+            </item>
+            <item>
+              <para>Referencing a default button that is a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. Only <see cref="T:System.Web.UI.WebControls.Button" /> and <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls are supported. </para>
+            </item>
+            <item>
+              <para>Changing the <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> programmatically during an asynchronous post back when the <see cref="T:System.Web.UI.WebControls.Panel" /> control is not inside of an <see cref="T:System.Web.UI.UpdatePanel" /> control. Asynchronous post backs can be enabled on a page by adding one or more <see cref="T:System.Web.UI.UpdatePanel" /> controls to the page. <see cref="T:System.Web.UI.UpdatePanel" /> controls can be used to update selected regions of a page instead of updating the whole page with a postback. For more information, see <format type="text/html"><a href="29a2265d-9674-4c19-b70e-e5560ee9689a">UpdatePanel Control Overview</a></format> and <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>. </para>
+            </item>
+            <item>
+              <para>Setting this property by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the identifier for the default button that is contained in the <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -139,9 +273,55 @@
         <ReturnType>System.Web.UI.WebControls.ContentDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Panel.Direction" /> property to specify the display direction for controls that include text in a <see cref="T:System.Web.UI.WebControls.Panel" /> control. This property is set using one of the <see cref="T:System.Web.UI.WebControls.ContentDirection" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The content direction is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>LeftToRight </para>
+              </term>
+              <description>
+                <para>The content direction is left to right. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>RightToLeft </para>
+              </term>
+              <description>
+                <para>The content direction is right to left. </para>
+              </description>
+            </item>
+          </list>
+          <para>If you specify LeftToRight, child controls that include text display from left to right. If you specify RightToLeft, child controls that include text display right to left. Use RightToLeft to display text for languages that are written from right to left, such as Arabic or Hebrew.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only on browsers that support HTML 4.0 or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the direction in which to display controls that include text in a <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GroupingText">
@@ -159,9 +339,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Panel.GroupingText" /> property to display a frame and caption for the group of controls that is contained in the <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.Panel.GroupingText" /> value of a <see cref="T:System.Web.UI.WebControls.Panel" /> control is rendered using the FIELDSET and LEGEND elements, which were introduced in the HTML 4.0 specification. If the client browser uses HTML 3.2, the <see cref="P:System.Web.UI.WebControls.Panel.GroupingText" /> value is not rendered. Refer to your client browser documentation for details on how the FIELDSET and LEGEND elements are displayed.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption for the group of controls that is contained in the panel control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizontalAlign">
@@ -172,9 +360,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HorizontalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the alignment of the elements in the <see cref="T:System.Web.UI.WebControls.Panel" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the contents within the panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,9 +396,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Panel.RenderBeginTag(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the HTML opening tag of the <see cref="T:System.Web.UI.WebControls.Panel" /> control to the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderEndTag">
@@ -220,9 +421,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Panel.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the HTML closing tag of the <see cref="T:System.Web.UI.WebControls.Panel" /> control into the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
     </Member>
     <Member MemberName="ScrollBars">
@@ -235,9 +443,71 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property to specify the visibility and position of scroll bars in a <see cref="T:System.Web.UI.WebControls.Panel" /> control. This property is set using one of the <see cref="T:System.Web.UI.WebControls.ScrollBars" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>None </para>
+              </term>
+              <description>
+                <para>No scroll bars are shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Horizontal </para>
+              </term>
+              <description>
+                <para>Only a horizontal scroll bar is shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Vertical </para>
+              </term>
+              <description>
+                <para>Only a vertical scroll bar is shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Both </para>
+              </term>
+              <description>
+                <para>Both horizontal and vertical scroll bars are shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Auto </para>
+              </term>
+              <description>
+                <para>If necessary, horizontal, vertical, or both scroll bars are shown. Otherwise, no scroll bars are shown. </para>
+              </description>
+            </item>
+          </list>
+          <para>If you specify Auto for the <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property, scroll bars are automatically shown when the size of the content in a <see cref="T:System.Web.UI.WebControls.Panel" /> control exceeds the size of the <see cref="T:System.Web.UI.WebControls.Panel" /> control itself. For example, if a <see cref="T:System.Web.UI.WebControls.Panel" /> control contains a table, and the panel is not wide enough to display all the rows in the table, a vertical scroll bar is shown. If the size of the table exceeds the height and width of the panel, both vertical and horizontal scroll bars are shown.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only on browsers that support HTML 4.0 or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the visibility and position of scroll bars in a <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wrap">
@@ -248,9 +518,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to wrap the contents of the <see cref="T:System.Web.UI.WebControls.Panel" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the content wraps within the panel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="QueuedDeliveryRequirementsMode" FullName="System.ServiceModel.QueuedDeliveryRequirementsMode">
   <TypeSignature Language="C#" Value="public enum QueuedDeliveryRequirementsMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed QueuedDeliveryRequirementsMode extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used as a parameter to the <see cref="T:System.ServiceModel.DeliveryRequirementsAttribute" /> attribute. When applied to a class, it allows the developer to specify whether the class can be used with a message queuing binding.   </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.QueuedDeliveryRequirementsMode" /> enumeration specifies queued delivery requirements.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Allowed">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotAllowed">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is not allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Required">
@@ -52,7 +65,10 @@
         <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is required.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

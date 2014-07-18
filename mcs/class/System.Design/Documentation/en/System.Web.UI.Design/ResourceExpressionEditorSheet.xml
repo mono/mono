@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceExpressionEditorSheet" FullName="System.Web.UI.Design.ResourceExpressionEditorSheet">
   <TypeSignature Language="C#" Value="public class ResourceExpressionEditorSheet : System.Web.UI.Design.ExpressionEditorSheet" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The visual designer uses the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class with the <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> class to select the individual properties of a resource reference expression, and to combine the selected resource expression property values into a resource expression.</para>
+      <para>The <see cref="M:System.Web.UI.Design.ConnectionStringsExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns a <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> object. In the expressions dialog box, when you select a control property and bind it to a resource expression, the visual designer calls the <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method. The visual designer uses the returned <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> object to prompt for the <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ClassKey" /> and <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ResourceKey" /> properties. Once the resource expression properties are selected, the visual designer calls the <see cref="M:System.Web.UI.Design.ResourceExpressionEditorSheet.GetExpression" /> method to combine the properties into a resource expression string.</para>
+      <para>The <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ResourceKey" /> property must be specified in a resource expression; it indexes the resource value. The <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ClassKey" /> property is optional. It references the class key or file name that defines the resource in the global resources folder.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a design-time editor sheet for the properties of a resource expression in the UI of a designer host at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +33,18 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ClassKey" /> and <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ResourceKey" /> property values are set using the input <paramref name="expression" /> string. The <see cref="P:System.Web.UI.Design.ExpressionEditorSheet.ServiceProvider" /> property is set using the input <paramref name="serviceProvider" /> implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> class.</para>
+        </summary>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource expression, used to initialize the expression editor sheet.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
     </Member>
     <Member MemberName="ClassKey">
@@ -45,9 +62,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In vsprvslong, global resource files are located in the App_GlobalResources folder.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key that matches the filename for the resource in the project's global resource folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExpression">
@@ -61,9 +84,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a resource expression that is formed by the expression editor sheet property values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource expression string for the current settings in the sheet.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -76,9 +105,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This base implementation always returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the resource expression string is valid.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResourceKey">
@@ -96,9 +131,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ResourceExpressionEditorSheet.ResourceKey" /> property is required for a resource expression; it indicates the name of the resource. The name of the resource is used at both run time and design time to look up a resource and assign it to a control property.</para>
+          <para>For example, if the <see cref="P:System.Web.UI.WebControls.Label.Text" /> property for a <see cref="T:System.Web.UI.WebControls.Label" /> control is assigned to the resource expression &lt;%$ Resources:Strings, labelText $&gt;, the resource expression is evaluated and the <see cref="P:System.Web.UI.WebControls.Label.Text" /> field is assigned to the labelText resource value in the Strings class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the resource, which is used as a key to find the resource value.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

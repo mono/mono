@@ -174,4 +174,13 @@ namespace AwaitNS
 			var l = await.Length;			
 		}
 	}
+
+	class TypeChecks
+	{
+		static void M (object await)
+		{
+			var b = await is Exception; 
+			var c = await as Exception;
+		}
+	}
 }

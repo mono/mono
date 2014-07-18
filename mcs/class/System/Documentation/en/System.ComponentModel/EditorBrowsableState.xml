@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EditorBrowsableState" FullName="System.ComponentModel.EditorBrowsableState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum EditorBrowsableState" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed EditorBrowsableState extends System.Enum" />
@@ -14,8 +15,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by a visual designer to determine what is visible to the user. For example, the IntelliSense engine in vsprvs never shows methods or properties that are marked as <see cref="F:System.ComponentModel.EditorBrowsableState.Never" />. Use <see cref="T:System.ComponentModel.EditorBrowsableAttribute" /> to specify the <see cref="T:System.ComponentModel.EditorBrowsableState" /> for a member.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the browsable state of a property or method from within an editor.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Advanced">
@@ -32,8 +39,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property or method is a feature that only advanced users should see. An editor can either show or hide such properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Always">
@@ -50,8 +60,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property or method is always browsable from within an editor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Never">
@@ -68,8 +81,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property or method is never browsable from within an editor.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

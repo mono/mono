@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyDescriptorCollection" FullName="System.ComponentModel.PropertyDescriptorCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PropertyDescriptorCollection : System.Collections.IDictionary, System.Collections.IList" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PropertyDescriptorCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IDictionary, class System.Collections.IEnumerable, class System.Collections.IList" />
@@ -22,8 +23,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> is read-only; it does not implement methods that add or remove properties. You must inherit from this class to implement these methods.</para>
+      <para>Using the properties available in the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> class, you can query the collection about its contents. Use the <see cref="P:System.ComponentModel.PropertyDescriptorCollection.Count" /> property to determine the number of elements in the collection. Use the <see cref="P:System.ComponentModel.PropertyDescriptorCollection.Item(System.Int32)" /> property to get a specific property by index number or by name.</para>
+      <para>In addition to properties, you can use the <see cref="M:System.ComponentModel.PropertyDescriptorCollection.Find(System.String,System.Boolean)" /> method to get a description of the property with the specified name from the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +50,13 @@
         <Parameter Name="properties" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added: an object of type 'PropertyDescriptor []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> class.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.ComponentModel.PropertyDescriptor" /> that provides the properties for this collection. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +72,15 @@
         <Parameter Name="readOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <param name="readOnly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> class, which is optionally read-only.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.ComponentModel.PropertyDescriptor" /> that provides the properties for this collection.</param>
+        <param name="readOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies that the collection cannot be modified.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -80,10 +99,17 @@
         <Parameter Name="value" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the <see cref="T:System.ComponentModel.PropertyDescriptor" /> that was added to the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -100,8 +126,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -120,10 +149,17 @@
         <Parameter Name="value" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the collection contains the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the given <see cref="T:System.ComponentModel.PropertyDescriptor" />; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to find in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -143,10 +179,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire collection to an array, starting at the specified index number.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to copy elements of the collection to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <paramref name="array" /> parameter at which copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -162,9 +203,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.ComponentModel.PropertyDescriptorCollection.Count" /> property to set the limits of a loop that iterates through a collection of objects. Because the collection is zero-based, be sure to use Count - 1 as the upper boundary of the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of property descriptors in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -181,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an empty collection that you can use instead of creating a new one with no items. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -202,11 +252,19 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the specified name, using a Boolean to indicate whether to ignore case.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the specified name, or null if the property does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to return from the collection. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if you want to ignore the case of the property name; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -223,9 +281,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of type <see cref="T:System.Collections.IEnumerator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -244,10 +308,17 @@
         <Parameter Name="value" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to return the index of. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -267,10 +338,15 @@
         <Parameter Name="value" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to the collection at the specified index number.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to add the <paramref name="value" /> parameter to the collection. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="InternalSort">
@@ -290,8 +366,11 @@
       </Parameters>
       <Docs>
         <param name="ic">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection, using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalSort">
@@ -311,8 +390,11 @@
       </Parameters>
       <Docs>
         <param name="order">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection. The specified order is applied first, followed by the default sort for this collection, which is usually alphabetical.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -375,9 +457,13 @@
         <Parameter Name="value" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to remove from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -396,9 +482,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.ComponentModel.PropertyDescriptor" /> at the specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to remove from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Sort">
@@ -415,9 +505,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection, using the default sort for this collection, which is usually alphabetical.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the sorted <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Sort">
@@ -436,10 +532,17 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="comparer">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection, using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the sorted <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A comparer to use to sort the <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Sort">
@@ -459,9 +562,15 @@
       </Parameters>
       <Docs>
         <param name="order">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection. The specified order is applied first, followed by the default sort for this collection, which is usually alphabetical.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the sorted <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Sort">
@@ -482,10 +591,17 @@
       </Parameters>
       <Docs>
         <param name="order">To be added.</param>
-        <param name="comparer">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this collection. The specified order is applied first, followed by the sort using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the sorted <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A comparer to use to sort the <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
@@ -501,9 +617,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -519,9 +638,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -537,9 +659,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Add">
@@ -559,10 +684,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element with the provided key and value to the <see cref="T:System.Collections.IDictionary" />.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to use as the key of the element to add.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to use as the value of the element to add.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Clear">
@@ -579,8 +709,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements from the <see cref="T:System.Collections.IDictionary" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Contains">
@@ -600,9 +733,15 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.IDictionary" /> contains an element with the specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.IDictionary" /> contains an element with the key; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.GetEnumerator">
@@ -624,9 +763,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of type <see cref="T:System.Collections.IEnumerator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.IsFixedSize">
@@ -642,9 +787,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.IDictionary" /> has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.IsReadOnly">
@@ -660,9 +808,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.IDictionary" /> is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Item">
@@ -700,9 +851,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> containing the keys of the <see cref="T:System.Collections.IDictionary" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Remove">
@@ -722,8 +876,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element with the specified key from the <see cref="T:System.Collections.IDictionary" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Values">
@@ -739,9 +896,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> containing the values in the <see cref="T:System.Collections.IDictionary" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -758,9 +918,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.IDictionary" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.IDictionary" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -779,10 +945,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the <see cref="T:System.Collections.IList" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -799,8 +972,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -819,10 +995,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the collection contains a specific value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item is found in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -841,10 +1024,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specified item in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list, otherwise -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -864,10 +1054,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item into the collection at a specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to insert into the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -883,9 +1078,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -901,9 +1099,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -944,9 +1145,13 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of a specified value from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to remove from the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -965,9 +1170,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentEditor" FullName="System.ComponentModel.ComponentEditor">
   <TypeSignature Language="C#" Value="public abstract class ComponentEditor" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ComponentEditor extends System.Object" />
@@ -15,8 +16,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A component editor is used to edit a component as a whole and can be used to implement a user interface similar to that of the property pages. You associate a component editor with a component by using the <see cref="T:System.ComponentModel.EditorAttribute" /> attribute.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for a custom component editor.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ComponentEditor" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EditComponent">
@@ -51,10 +61,20 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method opens an advanced user interface that you can use to edit the component. The default implementation opens a dialog box with a collection of component editor control objects and a user interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Edits the component and returns a value indicating whether the component was modified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component was modified; otherwise, false.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to be edited. </param>
       </Docs>
     </Member>
     <Member MemberName="EditComponent">
@@ -74,11 +94,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ITypeDescriptorContext'</param>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can override this method to provide a custom editing user interface for a component. From within this method you can display a dialog box or other type of user interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Edits the component and returns a value indicating whether the component was modified based upon a given context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component was modified; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional context object that can be used to obtain further information about the edit. </param>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to be edited. </param>
       </Docs>
     </Member>
   </Members>

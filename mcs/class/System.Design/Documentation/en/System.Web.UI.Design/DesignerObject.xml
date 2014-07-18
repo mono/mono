@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerObject" FullName="System.Web.UI.Design.DesignerObject">
   <TypeSignature Language="C#" Value="public abstract class DesignerObject : IServiceProvider" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an object in a design host such as vsprvslong. This class must be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +32,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DesignerObject" /> class.</para>
+        </summary>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent designer.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object.</param>
       </Docs>
     </Member>
     <Member MemberName="Designer">
@@ -44,9 +53,12 @@
         <ReturnType>System.Web.UI.Design.ControlDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the associated designer component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -62,10 +74,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a service from the design host, as identified by the provided type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service being requested.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -78,9 +97,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -93,9 +115,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object's properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IServiceProvider.GetService">
@@ -111,10 +136,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IServiceProvider.GetService(System.Type)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service being requested.</param>
       </Docs>
     </Member>
   </Members>

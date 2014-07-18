@@ -40,19 +40,19 @@ mono_threads_core_needs_abort_syscall (void)
 void
 mono_threads_core_self_suspend (MonoThreadInfo *info)
 {
-	g_assert (0);
+	g_assert_not_reached ();
 }
 
 gboolean
 mono_threads_core_suspend (MonoThreadInfo *info)
 {
-	g_assert (0);
+	g_assert_not_reached ();
 }
 
 gboolean
 mono_threads_core_resume (MonoThreadInfo *info)
 {
-	g_assert (0);
+	g_assert_not_reached ();
 }
 
 void
@@ -98,8 +98,6 @@ inner_start_thread (LPVOID arg)
 	}
 
 	result = start_func (t_arg);
-
-	g_assert (!mono_domain_get ());
 
 	mono_thread_info_detach ();
 
@@ -192,6 +190,7 @@ __readfsdword (unsigned long offset)
 void
 mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
+	MEMORY_BASIC_INFORMATION meminfo;
 #ifdef TARGET_AMD64
 	/* win7 apis */
 	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
@@ -203,9 +202,17 @@ mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
 	guint8 *stackBottom = (guint8*)*(int*)((char*)tib + 8);
 #endif
+	/*
+	Windows stacks are expanded on demand, one page at time. The TIB reports
+	only the currently allocated amount.
+	VirtualQuery will return the actual limit for the bottom, which is what we want.
+	*/
+	if (VirtualQuery (&meminfo, &meminfo, sizeof (meminfo)) == sizeof (meminfo))
+		stackBottom = MIN (stackBottom, (guint8*)meminfo.AllocationBase);
 
 	*staddr = stackBottom;
 	*stsize = stackTop - stackBottom;
+
 }
 
 gboolean

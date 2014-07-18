@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDLDESC" FullName="System.Runtime.InteropServices.IDLDESC">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct IDLDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit IDLDESC extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about IDLDESC, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IDLDESC" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="dwReserved">
@@ -37,8 +44,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about IDLDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved; set to null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wIDLFlags">
@@ -55,8 +68,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about IDLDESC, see the MSDN Library. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an <see cref="T:System.Runtime.InteropServices.IDLFLAG" /> value describing the type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataObject" FullName="System.Windows.Forms.IDataObject">
   <TypeSignature Language="C#" Value="public interface IDataObject" />
   <AssemblyInfo>
@@ -12,8 +13,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The IDataObject interface is used by the <see cref="T:System.Windows.Forms.Clipboard" /> class and in drag-and-drop operations.</para>
+      <para>When implemented in a class, the <see cref="T:System.Windows.Forms.IDataObject" /> methods allow the user to store data in multiple formats in an instance of the class. Storing data in more than one format increases the chance that a target application, whose format requirements you might not know, can retrieve the stored data. To store data in an instance of <see cref="T:System.Windows.Forms.IDataObject" />, call the <see cref="M:System.Windows.Forms.IDataObject.SetData(System.String,System.Boolean,System.Object)" /> method and specify the data format in the <paramref name="format" /> parameter. Set the <paramref name="autoConvert" /> parameter to false if you do not want stored data to be converted to another format when it is retrieved. Invoke <see cref="M:System.Windows.Forms.IDataObject.SetData(System.String,System.Boolean,System.Object)" /> multiple times on one instance of <see cref="T:System.Windows.Forms.IDataObject" /> to store data in more than one format.</para>
+      <para>You retrieve stored data from an <see cref="T:System.Windows.Forms.IDataObject" /> by calling the <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" /> method and specifying the data format in the <paramref name="format" /> parameter. Set the <paramref name="autoConvert" /> parameter to false to retrieve only data that was stored in the specified format. To convert the stored data to the specified format, set <paramref name="autoConvert" /> to true, or do not use <paramref name="autoConvert" />.</para>
+      <para>To determine the formats of the data stored in an <see cref="T:System.Windows.Forms.IDataObject" />, use the following <see cref="T:System.Windows.Forms.IDataObject" /> methods.</para>
+      <list type="bullet">
+        <item>
+          <para>Call the <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> method to retrieve an array of all the formats in which the data is available. Set the <paramref name="autoConvert" /> parameter to false to get only the formats in which the data is stored. To get all the formats in which the data is available, set <paramref name="autoConvert" /> to true, or do not use this parameter.</para>
+        </item>
+        <item>
+          <para>Call the <see cref="M:System.Windows.Forms.IDataObject.GetDataPresent(System.String,System.Boolean)" /> method to determine whether stored data is available in a certain format. If you do not want stored data to be converted to the specified format, set the <paramref name="autoConvert" /> parameter to false.</para>
+        </item>
+      </list>
+      <para>See the <see cref="T:System.Windows.Forms.DataObject" /> class for an implementation of this interface. See the <see cref="T:System.Windows.Forms.DataFormats" /> class for the predefined <see cref="T:System.Windows.Forms.Clipboard" /> data formats.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a format-independent mechanism for transferring data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetData">
@@ -26,10 +45,25 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method cannot find data in the specified format, it attempts to convert the data to the format. If the data cannot be converted to the specified format, this method returns null.</para>
+          <para>To determine whether data is associated with, or can be converted to, a format, call <see cref="M:System.Windows.Forms.IDataObject.GetDataPresent(System.String,System.Boolean)" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for a list of valid formats for the data stored in this instance.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetData(System.String,System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the data associated with the specified data format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data associated with the specified format, or null.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to retrieve. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,10 +80,25 @@
         <Parameter Name="format" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method cannot find data in the specified format, it attempts to convert the data to the format. If the data cannot be converted to the specified format, this method returns null.</para>
+          <para>To determine whether data is associated with, or can be converted to, a format, call <see cref="M:System.Windows.Forms.IDataObject.GetDataPresent(System.String,System.Boolean)" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for a list of valid formats for the data stored in this instance.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetData(System.String,System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the data associated with the specified class type format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data associated with the specified format, or null.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the format of the data to retrieve. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,11 +116,28 @@
         <Parameter Name="autoConvert" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="autoConvert">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="autoConvert" /> parameter is true and this method cannot find data in the specified format, it attempts to convert the data to the format. If the data cannot be converted to the specified format, or if the data was stored with the <paramref name="autoConvert" /> parameter set to false, this method returns null.</para>
+          <para>If the <paramref name="autoConvert" /> parameter is false, this method returns data in the specified format, or null if no data in this format can be found.</para>
+          <para>To determine whether data is associated with, or can be converted to, a format, call <see cref="M:System.Windows.Forms.IDataObject.GetDataPresent(System.String,System.Boolean)" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for a list of valid formats for the data stored in this instance.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetData(System.String,System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the data associated with the specified data format, using a Boolean to determine whether to convert the data to the format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data associated with the specified format, or null.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to retrieve. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
+        <param name="autoConvert">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to convert the data to the specified format; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,10 +154,24 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to determine whether a format exists in this <see cref="T:System.Windows.Forms.DataObject" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for the formats that are available in this instance.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetDataPresent(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether data stored in this instance is associated with, or can be converted to, the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if data stored in this instance is associated with, or can be converted to, the specified format; otherwise false.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format for which to check. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,10 +188,24 @@
         <Parameter Name="format" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to determine whether a format exists in this <see cref="T:System.Windows.Forms.DataObject" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for the formats that are available in this instance.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetDataPresent(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether data stored in this instance is associated with, or can be converted to, the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if data stored in this instance is associated with, or can be converted to, the specified format; otherwise, false.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the format for which to check. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,11 +223,44 @@
         <Parameter Name="autoConvert" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="autoConvert">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to determine whether a format exists in this <see cref="T:System.Windows.Forms.DataObject" /> before calling <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" />. Call <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> for the formats that are available in this instance.</para>
+          <para>This method returns true when: </para>
+          <list type="bullet">
+            <item>
+              <para>The <paramref name="autoConvert" /> parameter is true and the data is in a format that can be converted to the appropriate format.</para>
+            </item>
+            <item>
+              <para>The <paramref name="autoConvert" /> parameter is false and the data is in the appropriate format.</para>
+            </item>
+          </list>
+          <para>This method returns false when: </para>
+          <list type="bullet">
+            <item>
+              <para>The <paramref name="autoConvert" /> parameter is true and this method cannot find data in the specified format, and it cannot convert data to the specified format, or the data was stored with <paramref name="autoConvert" /> set to false.</para>
+            </item>
+            <item>
+              <para>The <paramref name="autoConvert" /> parameter is false, and data does not exist in this instance in the specified format.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetDataPresent(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether data stored in this instance is associated with the specified format, using a Boolean value to determine whether to convert the data to the format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data is in, or can be converted to, the specified format; otherwise, false.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format for which to check. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
+        <param name="autoConvert">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to determine whether data stored in this instance can be converted to the specified format; false to check whether the data is in the specified format. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +275,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to get the supported data formats before calling the <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" /> method. See the <see cref="T:System.Windows.Forms.DataFormats" /> class for the predefined formats.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetFormats(System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of all formats that data stored in this instance is associated with or can be converted to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the names that represents a list of all formats that are supported by the data stored in this object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,10 +307,24 @@
         <Parameter Name="autoConvert" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="autoConvert">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to get the supported data formats before calling the <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" /> method. See the <see cref="T:System.Windows.Forms.DataFormats" /> class for the predefined formats.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+          </block>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.GetFormats(System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all formats that data stored in this instance is associated with or can be converted to, using a Boolean value to determine whether to retrieve all formats that the data can be converted to or only native data formats.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the names that represents a list of all formats that are supported by the data stored in this object.</para>
+        </returns>
+        <param name="autoConvert">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to retrieve all formats that data stored in this instance is associated with or can be converted to; false to retrieve only native data formats. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -187,9 +341,18 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The format is derived from the data class.</para>
+          <para>Data stored using this method can be converted to a compatible format when it is retrieved.</para>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.SetData(System.String,System.Boolean,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the specified data in this instance, using the class of the data for the format.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to store. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -207,10 +370,20 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not know the format of the target application, you can store data in multiple formats using this method.</para>
+          <para>Data stored using this method can be converted to a compatible format when it is retrieved.</para>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.SetData(System.String,System.Boolean,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the specified data and its associated format in this instance.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format associated with the data. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to store. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -228,10 +401,20 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not know the format of the target application, you can store data in multiple formats using this method.</para>
+          <para>Data stored using this method can be converted to a compatible format when it is retrieved.</para>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.SetData(System.String,System.Boolean,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the specified data and its associated class type in this instance.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the format associated with the data. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to store. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,11 +433,21 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="autoConvert">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not know the format of the target application, you can store data in multiple formats using this method.</para>
+          <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.DataObject.SetData(System.String,System.Boolean,System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the specified data and its associated format in this instance, using a Boolean value to specify whether the data can be converted to another format.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format associated with the data. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats. </param>
+        <param name="autoConvert">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to allow the data to be converted to another format; otherwise, false. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to store. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

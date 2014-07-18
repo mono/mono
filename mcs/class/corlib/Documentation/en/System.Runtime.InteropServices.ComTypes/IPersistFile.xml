@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPersistFile" FullName="System.Runtime.InteropServices.ComTypes.IPersistFile">
   <TypeSignature Language="C#" Value="public interface IPersistFile" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPersistFile" />
@@ -16,9 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see the existing documentation for IPersistFile and IPersist in the MSDN library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IPersistFile interface, with functionality from IPersist.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetClassID">
@@ -76,10 +84,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IPersistFile::IsDirty in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks an object for changes since it was last saved to its current file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the file has changed since it was last saved; S_FALSE if the file has not changed since it was last saved.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -98,11 +115,20 @@
         <Parameter Name="dwMode" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added.</param>
-        <param name="dwMode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The STGM enumeration is not part of the .NET Framework, but is documented in the MSDN library.</para>
+          <para>For more information, see the existing documentation for IPersistFile::Load in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified file and initializes an object from the file contents.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-terminated string containing the absolute path of the file to open. </param>
+        <param name="dwMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of values from the STGM enumeration to indicate the access mode in which to open <paramref name="pszFileName" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -121,11 +147,19 @@
         <Parameter Name="fRemember" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added.</param>
-        <param name="fRemember">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IPersistFile::Save in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves a copy of the object into the specified file.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-terminated string containing the absolute path of the file to which the object is saved. </param>
+        <param name="fRemember">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to used the <paramref name="pszFileName" /> parameter as the current working file; otherwise false. </param>
       </Docs>
     </Member>
     <Member MemberName="SaveCompleted">
@@ -143,10 +177,17 @@
         <Parameter Name="pszFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IPersistFile::SaveCompleted in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the object that it can write to its file.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The absolute path of the file where the object was previously saved. </param>
       </Docs>
     </Member>
   </Members>

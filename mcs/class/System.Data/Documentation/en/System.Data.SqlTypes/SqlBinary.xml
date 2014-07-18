@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlBinary" FullName="System.Data.SqlTypes.SqlBinary">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct SqlBinary : IComparable, System.Data.SqlTypes.INullable, System.Xml.Serialization.IXmlSerializable" />
   <AssemblyInfo>
@@ -28,8 +29,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a variable-length stream of binary data to be stored in or retrieved from a database. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +44,13 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure, setting the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> property to the contents of the supplied byte array.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to be stored or retrieved. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,11 +71,23 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="x" /> will appear first in the resulting <see cref="T:System.Data.SqlTypes.SqlBinary" />, followed by <paramref name="y" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates two specified <see cref="T:System.Data.SqlTypes.SqlBinary" /> values to create a new <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBinary" /> that is the concatenated value of x and y.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" />. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" />. </param>
       </Docs>
     </Member>
     <Member MemberName="CompareTo">
@@ -83,10 +103,55 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this <see cref="T:System.Data.SqlTypes.SqlBinary" /> object to the supplied <see cref="T:System.Data.SqlTypes.SqlBinary" /> object and returns an indication of their relative values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number that indicates the relative values of this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure and the object.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The value of this <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is less than the object. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is the same as object. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is greater than object.</para>
+                <para>-or- </para>
+                <para>The object is a null reference. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlTypes.SqlBinary" /> object to be compared to this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="CompareTo">
@@ -99,10 +164,55 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this <see cref="T:System.Data.SqlTypes.SqlBinary" /> object to the supplied object and returns an indication of their relative values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number that indicates the relative values of this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure and the object.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The value of this <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is less than the object. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is the same as object. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Data.SqlTypes.SqlBinary" /> object is greater than object.</para>
+                <para>-or- </para>
+                <para>The object is a null reference. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared to this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -120,11 +230,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBinary'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to create a new <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated values of the <paramref name="x" /> and <paramref name="y" /> parameters.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,10 +259,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the supplied object parameter to the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> property of the <see cref="T:System.Data.SqlTypes.SqlBinary" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if object is an instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> and the two are equal; otherwise false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -162,11 +287,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether they are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two values are equal. Otherwise, false. If either instance is null, then the SqlBinary will be null.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +314,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,10 +342,17 @@
         <Parameter Name="schemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <param name="schemaSet">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML Schema definition language (XSD) of the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that indicates the XSD of the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </returns>
+        <param name="schemaSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GreaterThan">
@@ -220,11 +366,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is greater than the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is greater than the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,11 +396,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is greater than or equal to the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is greater than or equal to the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -260,9 +422,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> For more information, see <format type="text/html"><a href="f18b288f-b265-4bbe-957f-c6833c0645ef">Handling Null Values (ADO.NET)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure is null. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,9 +464,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid raising a <see cref="T:System.Data.SqlTypes.SqlNullValueException" />, always examine the <see cref="P:System.Data.SqlTypes.SqlBinary.IsNull" /> property before reading the <see cref="P:System.Data.SqlTypes.SqlBinary.Length" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length in bytes of the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> property. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,11 +490,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is less than the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is less than the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -338,11 +520,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is less than or equal to the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is less than or equal to the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -360,11 +550,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlBinary'</param>
-        <param name="y">To be added: an object of type 'SqlBinary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether they are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the two instances are not equal or <see cref="F:System.Data.SqlTypes.SqlBoolean.False" /> if the two instances are equal. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -379,8 +577,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null functions as a constant for the <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. For more information, see <format type="text/html"><a href="f18b288f-b265-4bbe-957f-c6833c0645ef">Handling Null Values (ADO.NET)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.DBNull" /> that can be assigned to this instance of the <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -402,11 +606,23 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="x" /> will appear first in the resulting <see cref="T:System.Data.SqlTypes.SqlBinary" />, followed by <paramref name="y" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates the two <see cref="T:System.Data.SqlTypes.SqlBinary" /> parameters to create a new <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated values of the <paramref name="x" /> and <paramref name="y" /> parameters.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -424,11 +640,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether they are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the two instances are equal or <see cref="F:System.Data.SqlTypes.SqlBoolean.False" /> if the two instances are not equal. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -486,11 +710,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is greater than the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is greater than the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_GreaterThanOrEqual">
@@ -508,11 +740,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structues to determine whether the first is greater than or equal to the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is greater than or equal to the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Implicit">
@@ -550,11 +790,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether they are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the two instances are not equal or <see cref="F:System.Data.SqlTypes.SqlBoolean.False" /> if the two instances are equal. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_LessThan">
@@ -572,11 +820,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is less than the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is less than the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="op_LessThanOrEqual">
@@ -594,11 +850,19 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Data.SqlTypes.SqlBinary" /> structures to determine whether the first is less than or equal to the second.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlBoolean" /> that is <see cref="F:System.Data.SqlTypes.SqlBoolean.True" /> if the first instance is less than or equal to the second instance. Otherwise <see cref="F:System.Data.SqlTypes.SqlBoolean.False" />. If either instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> is null, the <see cref="P:System.Data.SqlTypes.SqlBoolean.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBoolean" /> will be <see cref="F:System.Data.SqlTypes.SqlBoolean.Null" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlBinary" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.GetSchema">
@@ -612,9 +876,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlTypes.SqlBinary" /> instance is cast to an <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XMLSchema" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -630,9 +903,16 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlTypes.SqlBinary" /> instance is cast to an <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlReader" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.WriteXml">
@@ -648,9 +928,16 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlTypes.SqlBinary" /> instance is cast to an <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlWriter" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ToSqlGuid">
@@ -661,9 +948,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SqlGuid'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this instance of <see cref="T:System.Data.SqlTypes.SqlBinary" /> to <see cref="T:System.Data.SqlTypes.SqlGuid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlGuid" /> structure.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -678,9 +971,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlBinary" /> object to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> of the <see cref="T:System.Data.SqlTypes.SqlBinary" />. If the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> is null the string will contain "null".</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -694,9 +993,15 @@
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid raising a SqlNullValueException, always examine the <see cref="P:System.Data.SqlTypes.SqlBinary.IsNull" /> property before reading the <see cref="P:System.Data.SqlTypes.SqlBinary.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the <see cref="T:System.Data.SqlTypes.SqlBinary" /> structure. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

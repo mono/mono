@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStoragePermission" FullName="System.Security.Permissions.IsolatedStoragePermission">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class IsolatedStoragePermission : System.Security.CodeAccessPermission, System.Security.Permissions.IUnrestrictedPermission" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit IsolatedStoragePermission extends System.Security.CodeAccessPermission implements class System.Security.Permissions.IUnrestrictedPermission" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is an abstract base class. This class is never instantiated; instead, classes that extend it and represent access to a particular type of isolated storage are used.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents access to generic isolated storage capabilities.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,9 +48,16 @@
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'PermissionState'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates either fully restricted (None) or Unrestricted access to isolated storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.IsolatedStoragePermission" /> class with either restricted or unrestricted permission as specified.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -62,9 +76,13 @@
         <Parameter Name="esd" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="esd">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a permission with a specified state from an XML encoding.</para>
+        </summary>
+        <param name="esd">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the permission. </param>
       </Docs>
     </Member>
     <Member MemberName="IsUnrestricted">
@@ -81,9 +99,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unrestricted permission represents access to any and all resources protected by the permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the current permission is unrestricted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is unrestricted; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -100,9 +127,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the permission and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the permission, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UsageAllowed">
@@ -118,9 +151,12 @@
         <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of isolated storage containment allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserQuota">
@@ -136,9 +172,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the quota on the overall size of each user's total store.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionEditor" FullName="System.Web.UI.Design.ExpressionEditor">
   <TypeSignature Language="C#" Value="public abstract class ExpressionEditor" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A visual designer host, such as vsprvslong, uses the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class to present custom expression editor sheets to the user, and then evaluate the selected expression for design-time rendering.</para>
+      <para>When you browse the <see cref="P:System.Web.UI.Design.HtmlControlDesigner.Expressions" /> property for a control in the design-time Properties grid, the visual designer displays a dialog box to set expressions for a control property. You can select the expression type based on a list of expression prefixes. When you select an expression prefix from the list, the visual designer uses the associated <see cref="T:System.Web.UI.Design.ExpressionEditor" /> and <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> objects to set, evaluate, and convert the expression string based on the syntax for that type of expression. The visual designer sets the expression for the associated control property, and then uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+      <para>The static <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> methods get the expression editor that is associated with a particular expression prefix or expression builder. The <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> property for an <see cref="T:System.Web.UI.Design.ExpressionEditor" /> object returns the configured expression prefix. The <see cref="M:System.Web.UI.Design.ExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method evaluates an input expression string. The <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that is used to prompt for the custom expression properties in the expressions dialog box.</para>
+      <para>Typically, to support a new expression type at design time, you define a unique expression prefix and provide custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementations. Optionally, you can provide a custom <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that defines properties that are used to form the expression in the expressions dialog box. </para>
+      <para>The expression prefix identifies the custom expression type and associates an expression with the expression builder and expression editor. When custom expressions are parsed in a page, the expression prefix is used to create instances of the associated <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> classes. To associate an expression prefix with an expression builder and expression editor, apply the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> and <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attributes to the custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class and configure the expression prefix for an expression builder in the expressionBuilders element in the Web configuration file. The prefix is not required, but highly recommended.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a set of properties and methods for evaluating an expression that is associated with a control property at design time and to provide an expression editor sheet to the visual design host for use in the expression editor dialog box. This class is abstract.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class is abstract, you cannot create an instance of the  <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class directly using the <see cref="M:System.Web.UI.Design.ExpressionEditor.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,14 +57,28 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="parseTimeData">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The visual designer host uses the <see cref="M:System.Web.UI.Design.ExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method to evaluate an expression and provide the design-time value for an associated control property. </para>
+          <para>The visual designer uses the <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" /> method to parse the expression string at design time, and then calls the <see cref="M:System.Web.UI.Design.ExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method with the parsed expression data. The visual designer uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an expression string and provides the design-time value for a control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by the evaluated expression string, if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression string to evaluate. The expression does not include the expression prefix.</param>
+        <param name="parseTimeData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing additional parsing information for evaluating <paramref name="expression" />. This typically is provided by the expression builder.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the control property to which <paramref name="expression" /> is bound.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +91,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The expression prefix identifies the custom expression type and associates an expression with the expression builder and expression editor. When custom expressions are parsed in a page, the expression prefix is used to create instances of the associated <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> classes. To associate an expression prefix with an expression builder and expression editor, apply the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> and <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attributes to the custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class and configure the expression prefix for an expression builder in the expressionBuilders element in the Web configuration file.</para>
+          <para>Typically, derived classes do not override the <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> property. The base <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class sets the <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> value based on the <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attribute for the associated <see cref="T:System.Web.Compilation.ExpressionBuilder" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expression prefix that identifies expression strings that are supported by the expression editor implementation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,12 +118,26 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expressionPrefix">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the static <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> method overloads to find the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> object that is associated with a particular expression prefix or expression builder type.</para>
+          <para>For each custom expression type, an expression prefix identifies the associated expression builder and expression editor. When custom expressions are parsed in a page, the expression prefix is used to create instances of the associated <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> classes. </para>
+          <para>To associate an expression prefix with an expression builder and expression editor, apply the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> and <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attributes to the custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class and configure the expression prefix for an expression builder in the expressionBuilders element in the Web configuration file.</para>
+          <para>To find the associated expression editor for an expression prefix, the <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> method enumerates the available <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementations for a matching prefix. The <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementations can be configured in the expressionBuilders section of the Web configuration file. If an available <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementation defines the expression prefix, the <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> method returns the type that is specified in the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute of the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation that is associated with the specified expression prefix.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation associated with <paramref name="expressionPrefix" />; otherwise, null, if <paramref name="expressionPrefix" /> is not defined or is not associated with an <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</para>
+        </returns>
+        <param name="expressionPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression prefix used to find the associated expression editor.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,12 +154,26 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expressionBuilderType">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the static <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> overloads to find the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> object that is associated with a particular expression prefix or expression builder type.</para>
+          <para>For each custom expression type, an expression prefix identifies the associated expression builder and expression editor. When custom expressions are parsed in a page, the expression prefix is used to create instances of the associated <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> classes. </para>
+          <para>To associate an expression prefix with an expression builder and expression editor, apply the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> and <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attributes to the custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class and configure the expression prefix for an expression builder in the expressionBuilders element in the Web configuration file.</para>
+          <para>The <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> method enumerates the available <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementations to locate <paramref name="expressionBuilderType" />. The <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementations can be configured in the expressionBuilders section of the Web configuration file. If <paramref name="expressionBuilderType" /> is found in the set of available <see cref="T:System.Web.Compilation.ExpressionBuilder" /> implementations, the <see cref="Overload:System.Web.UI.Design.ExpressionEditor.GetExpressionEditor" /> method returns the type that is specified in the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute of the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation that is associated with the specified expression builder type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation associated with <paramref name="expressionBuilderType" />; otherwise, null, if <paramref name="expressionBuilderType" /> cannot be located or has no associated <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</para>
+        </returns>
+        <param name="expressionBuilderType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the derived expression builder class, used to locate the associated expression editor.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,12 +190,25 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns an <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that defines the strings that are combined to form a custom expression. The visual designer uses an expression editor sheet to prompt for one or more strings that combine into a custom expression. The base class method returns a default expression editor sheet, which uses a single input string to form the expression. The expression editor sheet defines the property grid for the expression. Therefore, the properties that the expression editor exposes become properties that can be defined for the expression in the dialog box.</para>
+          <para>Classes deriving from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class optionally can override the <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method to provide a custom expression editor sheet. A custom expression editor sheet can allow design-time input for multiple properties, which are combined together to form the expression string. </para>
+          <para>For example, the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class derives from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class and provides an implementation for evaluating and associating a resource string reference with a control property at design time. The <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class is associated with the expression prefix Resources and the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> implementation. The <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns a <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" />, which defines the individual properties that form a resource reference expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an expression editor sheet that is associated with the current expression editor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> that defines the custom expression properties.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression string set for a control property, used to initialize the expression editor sheet.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileManager" FullName="System.Web.Profile.ProfileManager">
   <TypeSignature Language="C#" Value="public static class ProfileManager" />
   <AssemblyInfo>
@@ -9,9 +10,41 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The ASP.NET profile is used to store and retrieve user settings in a data source such as a database. The user profile is accessed using the <see cref="P:System.Web.HttpContext.Profile" /> property of the current <see cref="T:System.Web.HttpContext" />. Profile information and property values are managed using a profile provider.</para>
+      <para>The <see cref="T:System.Web.Profile.ProfileManager" /> class is used to manage profile settings, search for user profiles, and delete user profiles that are no longer in use. The <see cref="T:System.Web.Profile.ProfileManager" /> class provides static methods and properties that can be accessed by referencing the <see cref="T:System.Web.Profile.ProfileManager" /> class in your application code. For an example, see the Example section in this topic and additional examples in the topics for members of the <see cref="T:System.Web.Profile.ProfileManager" /> class.</para>
+      <para>By default, the user profile is disabled for all ASP.NET applications. To enable the user profile, set the enabled attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element to true, as shown in the following example.</para>
+      <code>&lt;configuration&gt;
+  &lt;system.web&gt;
+    &lt;profile enabled="true" /&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+      <para>For more information about the user profile, see <format type="text/html"><a href="89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET Profile Properties Overview</a></format>.</para>
+      <para>A profile provider is used to store and retrieve properties in the user profile. The .NET Framework includes a <see cref="T:System.Web.Profile.SqlProfileProvider" /> class that stores user profile properties in a SQL Server database. A <see cref="T:System.Web.Profile.SqlProfileProvider" /> instance named AspNetSqlProvider is specified in the machine configuration as the default profile provider. The AspNetSqlProvider instance connects to the SQL Server database on the local Web server. You can specify a <see cref="T:System.Web.Profile.SqlProfileProvider" /> that connects to another SQL Server as the default profile provider by using the <format type="text/html"><a href="9e998377-b07f-44c1-ad9b-20a60e83c18f">providers</a></format> configuration element and the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element, as shown in the following example.</para>
+      <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="SqlServices" connectionString=
+      "Data Source=MySqlServer;Integrated Security=SSPI;Initial Catalog=aspnetdb;" /&gt;
+  &lt;/connectionStrings&gt;
+  &lt;system.web&gt;
+    &lt;profile defaultProvider="SqlProvider"&gt;
+      &lt;providers&gt;
+        &lt;clear /&gt;
+        &lt;add name="SqlProvider"
+          type="System.Web.Profile.SqlProfileProvider"
+          connectionStringName="SqlServices"
+          applicationName="MyApplication" /&gt;
+      &lt;/providers&gt;
+    &lt;/profile&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages user profile data and settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplicationName">
@@ -21,10 +54,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.ProfileManager" /> uses the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property to associate profile information with different applications. This enables multiple applications to use the same database to store user information without running into conflicts between duplicate users. Multiple ASP.NET applications can use the same user database by specifying the same value in the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property. The <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property can be set programmatically, or it can be set declaratively in the configuration file for the Web application by using the applicationName attribute.</para>
+          <para>If a value is not specified for the applicationName attribute in the configuration file for the Web application, then the profile providers included with the .NET Framework use the <see cref="P:System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath" /> property value for ASP.NET applications. For non-ASP.NET applications, the default value is the <see cref="P:System.Diagnostics.ProcessModule.ModuleName" /> property value, without the file extension.</para>
+          <para>The <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property exposes the <see cref="P:System.Configuration.SettingsProvider.ApplicationName" /> property of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, they may be configured with a different application name. To access the application name of a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and access the <see cref="P:System.Configuration.SettingsProvider.ApplicationName" /> property of the provider directly.</para>
+          <block subset="none" type="note">
+            <para>Because a single default profile provider instance is used for all of the requests served by an <see cref="T:System.Web.HttpApplication" /> object, you can have multiple requests executing concurrently and attempting to set the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property value. The <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property is not thread safe for multiple writes, and changing the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property value can result in unexpected behavior for multiple users of an application. It is recommended that you avoid writing code that allows users to set the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property unless you require it. An example of an application where setting the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property may be required is an administrative application that manages profile data for multiple applications. Such an application should be a single-user application and not a Web application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application for which to store and retrieve profile information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +81,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property indicates whether automatic saving of the user profile is enabled for the application. If automatic saving is enabled, the <see cref="T:System.Web.Profile.ProfileModule" /> object raises the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event and calls the <see cref="M:System.Web.Profile.ProfileBase.Save" /> method during the <see cref="E:System.Web.HttpApplication.EndRequest" /> event at the end of the execution of an ASP.NET page.</para>
+          <para>The <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property is set using the automaticSaveEnabled attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> element in the Web.config file for an ASP.NET application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user profile will be automatically saved at the end of the execution of an ASP.NET page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,12 +108,24 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <param name="userInactiveSinceDate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method is used to remove unused profile data from the data source for the application specified by the applicationName attribute in the configuration file. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched. Of the searched profiles, any profile with a <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" /> that occurs on or before the specified <paramref name="userInactiveSinceDate" /> parameter value is deleted.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, the profile information in the other data source is not deleted. To delete inactive profiles that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes user profile data for which the last activity date and time occurred before the specified date and time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are deleted.</param>
+        <param name="userInactiveSinceDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" />  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,11 +141,22 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfile(System.String)" /> method deletes all profile information and properties for the user profile for the specified <paramref name="username" /> from the data source for the specified <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" />.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfile(System.String)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.String[])" /> method of the default profile provider to perform the delete operation. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, they are not deleted. To delete profile properties that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.String[])" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the profile for the specified user name from the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user profile was found and deleted; otherwise, false.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name for the profile to be deleted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,11 +172,23 @@
         <Parameter Name="usernames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfiles(System.String[])" /> method deletes all profile information and properties for the specified profiles from the data source for the application specified by the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property. The list of profiles to delete is specified as a string array of user names. If profile properties and information exist in the data source for a user name in the <paramref name="usernames" /> parameter, they are deleted.</para>
+          <para>The return value may differ from the length of the specified array of <paramref name="usernames" />. This indicates that some of the profiles in the specified array of <paramref name="usernames" /> were already deleted from the data store.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfiles(System.String[])" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.String[])" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, they are not deleted. To delete profile properties that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.String[])" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes profile properties and information for the supplied list of user names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names for profiles to be deleted. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -118,11 +204,23 @@
         <Parameter Name="profiles" Type="System.Web.Profile.ProfileInfoCollection" />
       </Parameters>
       <Docs>
-        <param name="profiles">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfiles(System.Web.Profile.ProfileInfoCollection)" /> method deletes all profile information and properties for the specified profiles from the data source for the application specified by the <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property. The list of profiles to delete is specified using a <see cref="T:System.Web.Profile.ProfileInfoCollection" /> that is passed as the <paramref name="profiles" /> parameter. A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> can be returned from the <see cref="M:System.Web.Profile.ProfileManager.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption,System.Int32,System.Int32,System.Int32@)" />, <see cref="M:System.Web.Profile.ProfileManager.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime,System.Int32,System.Int32,System.Int32@)" />, <see cref="M:System.Web.Profile.ProfileManager.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.Int32,System.Int32,System.Int32@)" />, and <see cref="M:System.Web.Profile.ProfileManager.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> methods.</para>
+          <para>Note that the return value may differ from the <see cref="P:System.Web.Profile.ProfileInfoCollection.Count" /> value for the supplied <see cref="T:System.Web.Profile.ProfileInfoCollection" />. This indicates that some of the profiles in the specified <see cref="T:System.Web.Profile.ProfileInfoCollection" /> were already deleted from the data store.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.DeleteProfiles(System.Web.Profile.ProfileInfoCollection)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.Web.Profile.ProfileInfoCollection)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, they are not deleted. To delete profile properties that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.DeleteProfiles(System.Web.Profile.ProfileInfoCollection)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes profile properties and information from the data source for the supplied list of profiles.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
+        <param name="profiles">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Profile.ProfileInfoCollection" />  that contains profile information for profiles to be deleted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +233,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user profile is enabled for an application using the enabled attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user profile is enabled for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,13 +260,30 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <param name="usernameToMatch">To be added.</param>
-        <param name="userInactiveSinceDate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime)" /> method is used to retrieve profile information for all unused user profiles for the application specified by the applicationName attribute in the configuration file. This method will only retrieve profiles for which the profile user name matches the supplied <paramref name="usernameToMatch" /> parameter value. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched. Of the searched profiles, any profile with a <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" /> that occurs on or before the specified <paramref name="userInactiveSinceDate" /> parameter value is returned.</para>
+          <para>You can retrieve this information in pages of data using the overload for the <see cref="M:System.Web.Profile.ProfileManager.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method that takes additional <paramref name="pageIndex" /> and <paramref name="pageSize" /> parameters.</para>
+          <block subset="none" type="note">
+            <para>Your profile provider may support wildcard characters in the <paramref name="usernameToMatch" /> parameter. For example, the <see cref="M:System.Web.Profile.SqlProfileProvider.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method of the <see cref="T:System.Web.Profile.SqlProfileProvider" /> class supports wildcard characters in the <paramref name="usernameToMatch" /> parameter.</para>
+          </block>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, the data source for the other profile provider is not searched. To find inactive profiles that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.FindInactiveProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves profile information for all profiles in which the last activity date occurred on or before the specified date and time and the user name for the profile matches the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for inactive profiles in which the user name matches the supplied <paramref name="usernameToMatch" /> parameter.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" />  enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
+        <param name="usernameToMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name for which to search.</param>
+        <param name="userInactiveSinceDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" />  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -209,12 +330,26 @@
         <Parameter Name="usernameToMatch" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <param name="usernameToMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String)" /> method returns a list of all profile information for which the user name matches the supplied <paramref name="usernameToMatch" /> parameter value for the configured <see cref="P:System.Web.Profile.ProfileManager.ApplicationName" /> property value. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched.</para>
+          <para>You can retrieve profile information for user profiles in pages of data using the overload for the <see cref="M:System.Web.Profile.ProfileManager.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.Int32,System.Int32,System.Int32@)" /> method that takes additional <paramref name="pageIndex" /> and <paramref name="pageSize" /> parameters.</para>
+          <para>Note that your profile provider may support wildcard characters in the <paramref name="usernameToMatch" /> parameter. For example, the <see cref="M:System.Web.Profile.SqlProfileProvider.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.Int32,System.Int32,System.Int32@)" /> method of the <see cref="T:System.Web.Profile.SqlProfileProvider" /> class supports wildcard characters in the <paramref name="usernameToMatch" /> parameter.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.Int32,System.Int32,System.Int32@)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, the data source for the other profile provider is not searched. To find profiles that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption,System.String,System.Int32,System.Int32,System.Int32@)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves all profile information for profiles in which the user name matches the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for profiles where the user name matches the supplied <paramref name="usernameToMatch" /> parameter.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" />  enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
+        <param name="usernameToMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name for which to search.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -259,12 +394,25 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <param name="userInactiveSinceDate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method is used to retrieve profile information from the data source for all unused user profiles for the application specified by the applicationName attribute in the configuration file. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched. Of the searched profiles, any profile is returned that has a <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" /> that occurs on or before the specified <paramref name="userInactiveSinceDate" /> parameter value.</para>
+          <para>You can retrieve profile information for inactive user profiles in pages of data using the overload for the <see cref="M:System.Web.Profile.ProfileManager.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method that takes additional <paramref name="pageIndex" /> and <paramref name="pageSize" /> parameters.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, the data source for the other profile provider is not searched. To find unused profiles that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime,System.Int32,System.Int32,System.Int32@)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves all user profile data for profiles in which the last activity date occurred on or before the specified date and time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information about the inactive profiles.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
+        <param name="userInactiveSinceDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" />  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -308,11 +456,23 @@
         <Parameter Name="authenticationOption" Type="System.Web.Profile.ProfileAuthenticationOption" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption)" /> method is used to retrieve profile information from the data source for the application specified by the applicationName attribute in the configuration file. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched.</para>
+          <para>You can retrieve pages of <see cref="T:System.Web.Profile.ProfileInfo" /> objects for user profiles using the overload for the <see cref="M:System.Web.Profile.ProfileManager.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption,System.Int32,System.Int32,System.Int32@)" /> method that takes additional <paramref name="pageIndex" /> and <paramref name="pageSize" /> parameters.</para>
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption)" /> method calls the <see cref="M:System.Web.Profile.ProfileProvider.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption,System.Int32,System.Int32,System.Int32@)" /> method of the default profile provider. The default profile provider is specified using the defaultProvider attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. If the user profile contains properties that are managed by a profile provider other than the default provider, the data source for the other profile provider is not searched. To find profiles that are managed by a profile provider other than the default provider, obtain a reference to the profile provider using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property and call the <see cref="M:System.Web.Profile.ProfileProvider.GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption,System.Int32,System.Int32,System.Int32@)" /> method of the provider directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves user profile data for profiles in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for all of the profiles in the data source.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -355,12 +515,23 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <param name="userInactiveSinceDate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetNumberOfInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption,System.DateTime)" /> method is used to retrieve a count of all of the unused user profiles from the data source for the application specified by the applicationName attribute in the configuration file. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched. Of the searched profiles, all profiles are counted that have a <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" /> that occurs on or before the specified <paramref name="userInactiveSinceDate" /> parameter value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of profiles in which the last activity date occurred on or before the specified date.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in the data source for which the last activity date occurred before the specified date and time.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
+        <param name="userInactiveSinceDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> object that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate" />  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -376,11 +547,21 @@
         <Parameter Name="authenticationOption" Type="System.Web.Profile.ProfileAuthenticationOption" />
       </Parameters>
       <Docs>
-        <param name="authenticationOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileManager.GetNumberOfProfiles(System.Web.Profile.ProfileAuthenticationOption)" /> method is used to retrieve a count of all of the user profiles from the data source for the application specified by the applicationName attribute in the configuration file. Use the <paramref name="authenticationOption" /> parameter to specify whether you want only anonymous profiles, only authenticated profiles, or all profiles to be searched. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of profiles in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in the data source.</para>
+        </returns>
+        <param name="authenticationOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -393,10 +574,16 @@
         <ReturnType>System.Web.Profile.ProfileProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileManager.Provider" /> property enables you to reference the default profile provider for an application directly. This is commonly used to access custom members of the profile provider that are not part of the <see cref="T:System.Web.Profile.ProfileProvider" /> abstract base class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the default profile provider for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -409,10 +596,35 @@
         <ReturnType>System.Web.Profile.ProfileProviderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property references all of the profile providers enabled for an application, including providers added in the machine configuration and providers added in all Web.config files. You can control which profile providers are available for an application using the <format type="text/html"><a href="9e998377-b07f-44c1-ad9b-20a60e83c18f">providers</a></format> element of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> section in the configuration file. For example, the following Web.config file removes the profile providers specified in parent configuration files and adds a <see cref="T:System.Web.Profile.SqlProfileProvider" /> instance as the profile provider for the application.</para>
+          <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="SqlServices" connectionString=
+      "Data Source=MySqlServer;Integrated Security=SSPI;Initial Catalog=aspnetdb;" /&gt;
+  &lt;/connectionStrings&gt;
+  &lt;system.web&gt;
+    &lt;profile enabled="true" defaultProvider="SqlProvider"&gt;
+      &lt;providers&gt;
+        &lt;clear /&gt;
+        &lt;add name="SqlProvider"
+          type="System.Web.Profile.SqlProfileProvider"
+          connectionStringName="SqlServices"
+          applicationName="MyApplication" /&gt;
+      &lt;/providers&gt;
+    &lt;/profile&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+          <para>When specifying the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> section, you must specify a default provider by setting the defaultProvider attribute. If you do not specify a <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> section in your Web.config file, the values from the machine configuration are used and the <see cref="T:System.Web.Profile.SqlProfileProvider" /> instance named AspNetSqlProvider is established as the default provider. </para>
+          <para>You can obtain a strongly typed reference to a provider from the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> collection by indexing the profile provider by name and casting it as the desired type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the profile providers for the ASP.NET application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

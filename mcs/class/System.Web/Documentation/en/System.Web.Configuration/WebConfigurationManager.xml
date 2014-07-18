@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebConfigurationManager" FullName="System.Web.Configuration.WebConfigurationManager">
   <TypeSignature Language="C#" Value="public static class WebConfigurationManager" />
   <AssemblyInfo>
@@ -9,9 +10,36 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.WebConfigurationManager" /> class allows you to access computer and application information. </para>
+      <para>Using <see cref="T:System.Web.Configuration.WebConfigurationManager" /> is the preferred way to work with configuration files related to Web applications. For client applications, use the <see cref="T:System.Configuration.ConfigurationManager" /> class. </para>
+      <para>Your application can extend the <see cref="N:System.Configuration" /> types or use them directly to handle configuration information, as explained in the following list:</para>
+      <list type="bullet">
+        <item>
+          <para>Handling configuration. To handle configuration information using the standard types, you use one of the following approaches:</para>
+          <list type="bullet">
+            <item>
+              <para>Accessing a section. To access configuration information for your application, you must use one of the GetSection methods provided by <see cref="T:System.Web.Configuration.WebConfigurationManager" />. For &lt;appSettings&gt; and &lt;connectionStrings&gt;, you use the <see cref="P:System.Web.Configuration.WebConfigurationManager.AppSettings" /> and <see cref="P:System.Web.Configuration.WebConfigurationManager.ConnectionStrings" /> properties. These methods perform read-only operations, use a single cached instance of the configuration, and are multithread aware.</para>
+            </item>
+            <item>
+              <para>Accessing configuration files. Your application can read and write configuration settings at any level, for itself or for other applications or computers, locally or remotely. You use one of the open methods provided by <see cref="T:System.Web.Configuration.WebConfigurationManager" />. These methods will return a <see cref="T:System.Configuration.Configuration" /> object, which in turn provides the required methods and properties to handle the underlying configuration files. These methods perform read or write operations and recreate the configuration data every time a file is opened.</para>
+            </item>
+            <item>
+              <para>Advanced configuration. More advanced configuration handling is provided by the types <see cref="T:System.Configuration.SectionInformation" />, <see cref="T:System.Configuration.PropertyInformation" />, <see cref="T:System.Configuration.PropertyInformationCollection" />, <see cref="T:System.Configuration.ElementInformation" />, <see cref="T:System.Configuration.ContextInformation" />, <see cref="T:System.Configuration.ConfigurationSectionGroup" />, and <see cref="T:System.Configuration.ConfigurationSectionGroupCollection" />. </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>Extending configuration standard types. You can also provide your custom configuration elements by extending the standard configuration types such as <see cref="T:System.Configuration.ConfigurationElement" />, <see cref="T:System.Configuration.ConfigurationElementCollection" />, <see cref="T:System.Configuration.ConfigurationProperty" />, and <see cref="T:System.Configuration.ConfigurationSection" /> by using a programmatic or an attributed model. Refer to the <see cref="T:System.Configuration.ConfigurationSection" /> class for an example of how to extend a standard configuration type programmatically. Refer to the <see cref="T:System.Configuration.ConfigurationElement" /> class for an example of how to extend a standard configuration type using the attributed model.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to configuration files as they apply to Web applications.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppSettings">
@@ -21,10 +49,16 @@
         <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Configuration.AppSettingsSection" /> object contains the configuration file's &lt;appSettings&gt; section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web site's application settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +71,13 @@
         <ReturnType>System.Configuration.ConnectionStringSettingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web site's connection strings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +93,28 @@
         <Parameter Name="sectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sectionName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> is called from within a Web application, it gets the section from the configuration file selected by the system according to the Web-application configuration hierarchy. </para>
+          <block subset="none" type="note">
+            <para>If your application uses a different protocol than HTTP, the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> overload that takes both a section name and a path in its parameter list is the one to use. You must specify the configuration file path because the system cannot make any assumptions about the configuration hierarchy level. If you use the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> overload that takes only a section name, the system will always attempt to return the configuration settings at the application level. Note, though, that if its specified path is outside of the current application, the overload that takes a path will also return the application-level configuration settings for the currently running application.</para>
+          </block>
+          <para>You could call <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> from within a client application. In this case, it gets the default section from the configuration file selected by the system according to the client configuration hierarchy. Usually, this is the Machine.config file, unless you have a mapped configuration in place. For mapping configuration files, refer to the mapping methods described next.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> method is a run-time method that operates on the section of a configuration file at the hierarchy level in which the application runs. For a non-run-time operation, use <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> instead. This method operates on the specified section of a configuration file that you obtain using one of the overloaded methods for opening a configuration file, <see cref="Overload:System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the specified configuration section from the current Web application's configuration file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist. Remember that security restrictions exist on the use of <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> as a runtime operation. You might not be able to access a section at run time for modifications, for example.</para>
+        </returns>
+        <param name="sectionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,12 +131,31 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sectionName">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> is called from within a Web application, it gets the section from the configuration file defined by the specified path in the configuration hierarchy. </para>
+          <block subset="none" type="note">
+            <para>If your application uses a different protocol than HTTP, the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> overload that takes both a section name and a path in its parameter list is the one to use. You must specify the configuration file path because the system cannot make any assumptions about the configuration hierarchy level. If you use the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> overload that takes only a section name, the system will always attempt to return the configuration settings at the application level. Note, though, that if its specified path is outside of the current application, the overload that takes a path will also return the application-level configuration settings for the currently running application.</para>
+          </block>
+          <para>This method cannot be called from within a client application.</para>
+          <para>If you want to retrieve the configuration section from the configuration file located at the current Web application directory level, use the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> method. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> method is a run-time method operating on the section of a configuration file at the hierarchy level in which the application runs. For a non-run-time operation, use <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> instead. This method operates on the specified section of a configuration file that you obtain using one of the open configuration file methods.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the specified configuration section from the Web application's configuration file at the specified location.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist. Remember that security restrictions exist on the use of <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> as a run-time operation. You might not be able to access a section at run time for modifications, for instance.</para>
+        </returns>
+        <param name="sectionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual configuration file path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,11 +171,25 @@
         <Parameter Name="sectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sectionName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="M:System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection(System.String)" /> is called from within a Web application, it gets the section from the configuration file selected by the system according to the Web-application configuration hierarchy. </para>
+          <para>You could call <see cref="M:System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection(System.String)" /> from within a client application. In this case, it gets the default section from the configuration file selected by the system according to the client configuration hierarchy. Usually, this is the Machine.config file, unless you have a mapped configuration in place. For mapping configuration files, refer to the mapping methods described next.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection(System.String)" /> method is a run-time operation that acts on the section of the application configuration file located at the current level. The <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method, however, is not a run-time operation but acts on the specified section obtained through one of the methods for opening the configuration files.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the specified configuration section from the current Web application's configuration file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist, or an internal object if the section is not accessible at run time.</para>
+        </returns>
+        <param name="sectionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +203,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.ConfigurationManager.OpenMachineConfiguration" /> method opens the machine-configuration file on the computer where the application runs. This file is located in the standard build directory %windir%\Microsoft.NET\Framework\version\config.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the machine-configuration file on the current computer as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,11 +231,21 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="locationSubPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method opens the machine-configuration file that is applicable to the directory specified by the <paramref name="locationSubPath" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the machine-configuration file on the current computer as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the machine configuration applies.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,12 +262,23 @@
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method opens the machine-configuration file that is located in the directory specified by the <paramref name="locationSubPath" /> parameter and on the computer specified by the <paramref name="server" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies.</param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the server to return the configuration for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -179,13 +296,28 @@
         <Parameter Name="userToken" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to access a configuration file using impersonation. </para>
+          <block subset="none" type="note">
+            <para>The account token is usually retrieved from an instance of the <see cref="T:System.Security.Principal.WindowsIdentity" /> class or through a call to unmanaged code, such as a call to the Win32 API LogonUser. For more information about calls to unmanaged code, see <format type="text/html"><a href="eca7606e-ebfb-4f47-b8d9-289903fdc045">Consuming Unmanaged DLL Functions</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object, using the specified security context to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies.</param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the server to return the configuration for.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An account token to use.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -204,14 +336,27 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <param name="userName">To be added.</param>
-        <param name="password">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to access a configuration file using impersonation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object, using the specified security context to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies. </param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the server to return the configuration for.</param>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full user name (Domain\User) to use when opening the file.</param>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password for the user name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,11 +372,18 @@
         <Parameter Name="fileMap" Type="System.Configuration.ConfigurationFileMap" />
       </Parameters>
       <Docs>
-        <param name="fileMap">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the machine-configuration file as a <see cref="T:System.Configuration.Configuration" /> object, using the specified file mapping to allow read or write operations. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="fileMap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationFileMap" /> object to use in place of the default machine-configuration file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -248,12 +400,20 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileMap">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the machine-configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping and location to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="fileMap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationFileMap" /> object to use in place of a default machine-configuration file.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -270,12 +430,23 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileMap">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping and virtual path to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="fileMap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration file.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -293,13 +464,25 @@
         <Parameter Name="site" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileMap">To be added.</param>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified Web application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping, virtual path, and site name to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="fileMap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration-file mapping.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file.</param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -318,14 +501,27 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileMap">To be added.</param>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping, virtual path, site name, and location to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="fileMap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration-file mapping.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -341,11 +537,21 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. If null, the root Web.config file is opened.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -362,12 +568,23 @@
         <Parameter Name="site" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path and site name to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,13 +602,25 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a resource, your code must have read privileges on all the configuration files from which it inherits settings. To update a configuration file, your code must additionally have write privileges for both the configuration file and the directory in which it exists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, and location to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -410,14 +639,27 @@
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a remote resource, your code must have administrative privileges on the remote computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, and server to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies. </param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The network name of the server the Web application resides on.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -437,15 +679,33 @@
         <Parameter Name="userToken" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to access a configuration file using impersonation. </para>
+          <block subset="none" type="note">
+            <para>The account token is usually retrieved from an instance of the <see cref="T:System.Security.Principal.WindowsIdentity" /> class or through a call to unmanaged code, such as a call to the Win32 API LogonUser. For more information about calls to unmanaged code, see <format type="text/html"><a href="eca7606e-ebfb-4f47-b8d9-289903fdc045">Consuming Unmanaged DLL Functions</a></format>.</para>
+          </block>
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a remote resource, your code must have administrative privileges on the remote computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, server, and security context to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies.</param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The network name of the server the Web application resides on.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An account token to use.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -466,16 +726,33 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <param name="server">To be added.</param>
-        <param name="userName">To be added.</param>
-        <param name="password">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to access a configuration file using impersonation. </para>
+          <para>To obtain the <see cref="T:System.Configuration.Configuration" /> object for a remote resource, your code must have administrative privileges on the remote computer.</para>
+          <para>You might need to run the <format type="text/html"><a href="6491c41e-e2b0-481f-9863-db3614d5f96b">ASP.NET IIS Registration Tool (Aspnet_regiis.exe)</a></format> with the -config+ option to enable access to the configuration files on the remote computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, server, and security context to allow read or write operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the application Web site, as displayed in Internet Information Services (IIS) configuration.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific resource to which the configuration applies. </param>
+        <param name="server">
+          <attribution license="cc4" from="Microsoft" modified="false" />The network name of the server the Web application resides on.</param>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full user name (Domain\User) to use when opening the file.</param>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password for the user name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

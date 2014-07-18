@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPrincipal" FullName="System.Security.Principal.IPrincipal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IPrincipal" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPrincipal" />
@@ -16,8 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This is the common interface for all Principal classes.</summary>
-    <remarks>In addition to having an identity, a principal may also belong to specific roles.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A principal object represents the security context of the user on whose behalf the code is running, including that user's identity (<see cref="T:System.Security.Principal.IIdentity" />) and any roles to which they belong.</para>
+      <para>All principal objects are required to implement the <see cref="T:System.Security.Principal.IPrincipal" /> interface. For more information about <see cref="T:System.Security.Principal.IPrincipal" /> implementations, see the <see cref="T:System.Security.Claims.ClaimsPrincipal" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the basic functionality of a principal object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Identity">
@@ -33,9 +41,12 @@
         <ReturnType>System.Security.Principal.IIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The identity of the current principal represents.</summary>
         <value>The current identity of the principal.</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identity of the current principal.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInRole">
@@ -54,10 +65,17 @@
         <Parameter Name="role" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="role">A textual representation of the role.</param>
-        <summary>Return the membership of the current principal in the specified role.</summary>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current principal belongs to the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified role; otherwise, false.</para>
+        </returns>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the role for which to check membership. </param>
       </Docs>
     </Member>
   </Members>

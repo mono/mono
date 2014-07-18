@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtensionElementCollection" FullName="System.ServiceModel.Configuration.ExtensionElementCollection">
   <TypeSignature Language="C#" Value="public class ExtensionElementCollection : System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection&lt;System.ServiceModel.Configuration.ExtensionElement&gt;, System.Collections.ICollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExtensionElementCollection extends System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection`1&lt;class System.ServiceModel.Configuration.ExtensionElement&gt; implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
@@ -22,8 +23,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ServiceModel.Configuration.ExtensionElement" /> instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +39,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ExtensionElementCollection" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseAdd">
@@ -53,9 +60,16 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When adding, an element is considered a duplicate only if the keys are identical but the values are different. Elements with identical keys and values are accepted silently because the elements do not compete. However, an element with an identical key but a different value cannot be added because there is no logic to determine which of the competing values should be honored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a configuration element to the <see cref="T:System.ServiceModel.Configuration.ExtensionElementCollection" />.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> to add.</param>
       </Docs>
     </Member>
     <Member MemberName="BaseAdd">
@@ -73,10 +87,18 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When adding, an element is considered a duplicate only if the keys are identical but the values are different. Elements with identical keys and values are accepted silently because the elements do not compete. However, an element with an identical key but a different value cannot be added because there is no logic to determine which of the competing values should be honored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a configuration element to the <see cref="T:System.ServiceModel.Configuration.ExtensionElementCollection" />, at the specified location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index location at which to add <paramref name="element" />.</param>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> to add.</param>
       </Docs>
     </Member>
     <Member MemberName="GetElementKey">
@@ -93,10 +115,17 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element key for the specified configuration element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that acts as the key for the specified configuration element.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> to return the key for.</param>
       </Docs>
     </Member>
     <Member MemberName="ThrowOnDuplicate">
@@ -110,9 +139,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether an attempt to add a duplicate <see cref="T:System.Configuration.ConfigurationElement" /> to the <see cref="T:System.ServiceModel.Configuration.ExtensionElementCollection" /> will cause an exception to be thrown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -2,7 +2,7 @@
 // Authors
 //    Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2013 Xamarin Inc. http://www.xamarin.com
+// Copyright 2013-2014 Xamarin Inc. http://www.xamarin.com
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
@@ -73,15 +74,47 @@ namespace Xamarin.ApiDiff {
 			if (type == null)
 				return null;
 
-			// inner types
-			return GetTypeName (type.Replace ('+', '.'));
+			StringBuilder sb = null;
+			bool is_nullable = false;
+			if (type.StartsWith ("System.Nullable`1[", StringComparison.Ordinal)) {
+				is_nullable = true;
+				sb = new StringBuilder (type, 18, type.Length - 19, 1024);
+			} else {
+				sb = new StringBuilder (type);
+			}
+
+			bool is_ref = (sb [sb.Length - 1] == '&');
+			if (is_ref)
+				sb.Remove (sb.Length - 1, 1);
+
+			int array = 0;
+			while ((sb [sb.Length - 1] == ']') && (sb [sb.Length - 2] == '[')) {
+				sb.Remove (sb.Length - 2, 2);
+				array++;
+			}
+
+			bool is_pointer = (sb [sb.Length - 1] == '*');
+			if (is_pointer)
+				sb.Remove (sb.Length - 1, 1);
+
+			type = GetTypeName (sb.Replace ('+', '.').ToString ());
+			sb.Length = 0;
+			if (is_ref)
+				sb.Append (self.GetAttribute ("direction")).Append (' ');
+
+			sb.Append (type);
+
+			while (array-- > 0)
+				sb.Append ("[]");
+			if (is_nullable)
+				sb.Append ('?');
+			if (is_pointer)
+				sb.Append ('*');
+			return sb.ToString ();
 		}
 
 		static string GetTypeName (string type)
 		{
-			if (type.StartsWith ("System.Nullable`1[", StringComparison.Ordinal))
-				return type.Substring (18, type.Length - 19) + "?";
-
 			int pos = type.IndexOf ('`');
 			if (pos >= 0) {
 				int end = type.LastIndexOf (']');

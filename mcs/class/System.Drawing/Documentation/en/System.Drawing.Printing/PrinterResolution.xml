@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrinterResolution" FullName="System.Drawing.Printing.PrinterResolution">
   <TypeSignature Language="C#" Value="public class PrinterResolution" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by the <see cref="P:System.Drawing.Printing.PrinterSettings.PrinterResolutions" /> and <see cref="P:System.Drawing.Printing.PageSettings.PrinterResolution" /> properties to get the printer resolutions that are available on the printer and to set the printing resolution for a page, respectively.</para>
+      <para>Use the <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> property to determine whether the printer resolution type is the <see cref="T:System.Drawing.Printing.PrinterResolutionKind" /> value <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Custom" />. If so, use the <see cref="P:System.Drawing.Printing.PrinterResolution.X" /> and <see cref="P:System.Drawing.Printing.PrinterResolution.Y" /> properties to determine the printer resolution in the horizontal and vertical directions, respectively.</para>
+      <para>For more information on printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the resolution supported by a printer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +34,37 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Drawing.Printing.PrinterResolution" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Custom" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PrinterResolution" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Kind">
@@ -36,9 +74,12 @@
         <ReturnType>System.Drawing.Printing.PrinterResolutionKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PrinterResolutionKind'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the printer resolution.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,9 +94,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member overrides the <see cref="M:System.Object.ToString" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains information about the <see cref="T:System.Drawing.Printing.PrinterResolution" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +116,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>dmPrintQuality is a member of the DEVMODE (device mode) structure, which defines constants that map to printer quality settings. The <see cref="P:System.Drawing.Printing.PrinterResolution.X" /> property contains the value DMRES_HIGH if <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> is set to <see cref="F:System.Drawing.Printing.PrinterResolutionKind.High" />, DMRES_MEDIUM if <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> is set to <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Medium" />, DMRES_LOW if <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> is set to <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Low" />, and DMRES_DRAFT if <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> is set to <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Draft" />.</para>
+          <para>For more information about the DEVMODE structure, see the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the horizontal printer resolution, in dots per inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,9 +139,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> property is not set to <see cref="F:System.Drawing.Printing.PrinterResolutionKind.Custom" />, the default value of the <see cref="P:System.Drawing.Printing.PrinterResolution.Y" /> property is -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the vertical printer resolution, in dots per inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

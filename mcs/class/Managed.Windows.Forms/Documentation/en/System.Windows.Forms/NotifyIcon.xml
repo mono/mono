@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NotifyIcon" FullName="System.Windows.Forms.NotifyIcon">
   <TypeSignature Language="C#" Value="public sealed class NotifyIcon : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -24,8 +25,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Icons in the notification area are shortcuts to processes that are running in the background of a computer, such as a virus protection program or a volume control. These processes do not come with their own user interfaces. The <see cref="T:System.Windows.Forms.NotifyIcon" /> class provides a way to program in this functionality. The <see cref="P:System.Windows.Forms.NotifyIcon.Icon" /> property defines the icon that appears in the notification area. Pop-up menus for an icon are addressed with the <see cref="P:System.Windows.Forms.NotifyIcon.ContextMenu" /> property. The <see cref="P:System.Windows.Forms.NotifyIcon.Text" /> property assigns ToolTip text. In order for the icon to show up in the notification area, the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property must be set to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a component that creates an icon in the notification area. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +40,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a new <see cref="T:System.Windows.Forms.NotifyIcon" /> is created, the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property is set to false. You must set the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property to true in order to use the <see cref="T:System.Windows.Forms.NotifyIcon" /> you created. This instance will exist until its container releases it to garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.NotifyIcon" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +61,16 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a new <see cref="T:System.Windows.Forms.NotifyIcon" /> is created, the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property is set to false. You must set the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property to true in order to use the <see cref="T:System.Windows.Forms.NotifyIcon" /> you created. This instance will exist until its container releases it to garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.NotifyIcon" /> class with the specified container.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.IContainer" /> that represents the container for the <see cref="T:System.Windows.Forms.NotifyIcon" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,8 +87,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the balloon tip is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BalloonTipClosed">
@@ -81,8 +107,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the balloon tip is closed by the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BalloonTipIcon">
@@ -100,9 +132,12 @@
         <ReturnType>System.Windows.Forms.ToolTipIcon</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the icon to display on the balloon tip associated with the <see cref="T:System.Windows.Forms.NotifyIcon" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BalloonTipShown">
@@ -115,8 +150,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the balloon tip is displayed on the screen.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BalloonTipText">
@@ -140,9 +181,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display on the balloon tip associated with the <see cref="T:System.Windows.Forms.NotifyIcon" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BalloonTipTitle">
@@ -163,9 +207,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The title text will display in a bold font near the top of the balloon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the title of the balloon tip displayed on the <see cref="T:System.Windows.Forms.NotifyIcon" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Click">
@@ -175,8 +225,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the icon in the notification area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +254,15 @@
         <ReturnType>System.Windows.Forms.ContextMenu</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The menu is shown when the user right-clicks an icon in the notification area of the taskbar. Shortcut menus also are known as pop-up menus.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the shortcut menu for the icon.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -222,9 +284,12 @@
         <ReturnType>System.Windows.Forms.ContextMenuStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the shortcut menu associated with the <see cref="T:System.Windows.Forms.NotifyIcon" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -253,8 +318,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the icon in the notification area of the taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,9 +347,12 @@
         <ReturnType>System.Drawing.Icon</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current icon.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -295,8 +369,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks a <see cref="T:System.Windows.Forms.NotifyIcon" /> with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDoubleClick">
@@ -309,8 +389,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the <see cref="T:System.Windows.Forms.NotifyIcon" /> with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDown">
@@ -320,8 +406,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user presses the mouse button while the pointer is over the icon in the notification area of the taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,8 +427,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user moves the mouse while the pointer is over the icon in the notification area of the taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -350,8 +448,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user releases the mouse button while the pointer is over the icon in the notification area of the taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -371,9 +475,18 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimum and maximum timeout values are enforced by the operating system and are typically 10 and 30 seconds, respectively, however this can vary depending on the operating system. Timeout values that are too large or too small are adjusted to the appropriate minimum or maximum value. In addition, if the user does not appear to be using the computer (no keyboard or mouse events are occurring) then the system does not count this time towards the timeout.</para>
+          <para>Only one balloon tip can display on the taskbar at a time. Attempting to display a balloon tip when one is currently displayed on the taskbar causes the <paramref name="timeout" /> value to be ignored. The behavior is slightly different depending on the operating system and whether the balloon tip is from another, or the same, application. When the second balloon tip is from another application, the first balloon tip will display for the minimum timeout value before the second appears, regardless of the value of <paramref name="timeout" />. In most cases, if the balloon tips are from the same application, the first balloon tip immediately closes when another call to the <see cref="M:System.Windows.Forms.NotifyIcon.ShowBalloonTip(System.Int32,System.String,System.String,System.Windows.Forms.ToolTipIcon)" /> method is made. In some cases the second balloon will open on top of the first balloon.</para>
+          <para>The title text will display in a bold font near the top of the balloon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a balloon tip in the taskbar for the specified time period.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time period, in milliseconds, the balloon tip should display.</param>
       </Docs>
     </Member>
     <Member MemberName="ShowBalloonTip">
@@ -392,12 +505,24 @@
         <Parameter Name="tipIcon" Type="System.Windows.Forms.ToolTipIcon" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="tipTitle">To be added.</param>
-        <param name="tipText">To be added.</param>
-        <param name="tipIcon">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimum and maximum timeout values are enforced by the operating system and are typically 10 and 30 seconds, respectively, however this can vary depending on the operating system. Timeout values that are too large or too small are adjusted to the appropriate minimum or maximum value. In addition, if the user does not appear to be using the computer (no keyboard or mouse events are occurring) then the system does not count this time towards the timeout.</para>
+          <para>Only one balloon tip can display on the taskbar at a time. Attempting to display a balloon tip when one is currently displayed on the taskbar causes the <paramref name="timeout" /> value to be ignored. The behavior is slightly different depending on the operating system and whether the balloon tip is from another, or the same, application. When the second balloon tip is from another application, the first balloon tip will display for the minimum timeout value before the second appears, regardless of the value of <paramref name="timeout" />. In most cases, if the balloon tips are from the same application, the first balloon tip immediately closes when another call to the <see cref="M:System.Windows.Forms.NotifyIcon.ShowBalloonTip(System.Int32,System.String,System.String,System.Windows.Forms.ToolTipIcon)" /> method is made. In some cases the second balloon will open on top of the first balloon.</para>
+          <para>The title text will display in a bold font near the top of the balloon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a balloon tip with the specified title, text, and icon in the taskbar for the specified time period.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time period, in milliseconds, the balloon tip should display.</param>
+        <param name="tipTitle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title to display on the balloon tip.</param>
+        <param name="tipText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to display on the balloon tip.</param>
+        <param name="tipIcon">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ToolTipIcon" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -424,9 +549,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that contains data about the <see cref="T:System.Windows.Forms.NotifyIcon" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -447,9 +575,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the text is null, no ToolTip is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text displayed when the mouse pointer rests on a notification area icon.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -471,9 +605,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since the default value is false, in order for the icon to show up in the notification area, you must set the <see cref="P:System.Windows.Forms.NotifyIcon.Visible" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the icon is visible in the notification area of the taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

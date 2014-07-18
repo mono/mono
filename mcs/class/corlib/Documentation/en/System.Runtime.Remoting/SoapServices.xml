@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapServices" FullName="System.Runtime.Remoting.SoapServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapServices" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapServices extends System.Object" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class makes a link demand. A security exception is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides several methods for using and publishing remoted objects in SOAP format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CodeXmlNamespaceForClrTypeNamespace">
@@ -40,11 +47,23 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeNamespace">To be added: an object of type 'string'</param>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used by the .NET Framework and the SoapSuds tool to create an XML namespace name for a common language runtime object type.</para>
+          <para>For more information about SoapSuds, see <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">[&lt;topic://cpgrfsoapsudsutilitysoapsudsexe&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the common language runtime type namespace name from the provided namespace and assembly names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The common language runtime type namespace name from the provided namespace and assembly names.</para>
+        </returns>
+        <param name="typeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace that is to be coded. </param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly that is to be coded. </param>
       </Docs>
     </Member>
     <Member MemberName="DecodeXmlNamespaceForClrTypeNamespace">
@@ -148,11 +167,22 @@
         <Parameter Name="xmlNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlElement">To be added: an object of type 'string'</param>
-        <param name="xmlNamespace">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method returns values set up through <see cref="M:System.Runtime.Remoting.SoapServices.RegisterInteropXmlElement(System.String,System.String,System.Type)" /> and <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Type" /> that should be used during deserialization of an unrecognized object type with the given XML element name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of object associated with the specified XML element name and namespace.</para>
+        </returns>
+        <param name="xmlElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name of the unknown object type. </param>
+        <param name="xmlNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace of the unknown object type. </param>
       </Docs>
     </Member>
     <Member MemberName="GetInteropTypeFromXmlType">
@@ -172,11 +202,22 @@
         <Parameter Name="xmlTypeNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlType">To be added: an object of type 'string'</param>
-        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method returns values set up through <see cref="M:System.Runtime.Remoting.SoapServices.RegisterInteropXmlType(System.String,System.String,System.Type)" /> and <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the object <see cref="T:System.Type" /> that should be used during deserialization of an unrecognized object type with the given XML type name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of object associated with the specified XML type name and namespace.</para>
+        </returns>
+        <param name="xmlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type of the unknown object type. </param>
+        <param name="xmlTypeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type namespace of the unknown object type. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSoapActionFromMethodBase">
@@ -195,10 +236,20 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the given <see cref="T:System.Reflection.MethodBase" /> has not been registered with any SOAPAction value, the <see cref="M:System.Runtime.Remoting.SoapServices.GetSoapActionFromMethodBase(System.Reflection.MethodBase)" /> method returns the SOAPAction automatically cached with the <see cref="T:System.Reflection.MethodBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the SOAPAction value associated with the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction value associated with the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> that contains the method for which a SOAPAction is requested. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeAndMethodNameFromSoapAction">
@@ -269,10 +320,17 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the XML namespace used during remote calls of the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML namespace used during remote calls of the specified method.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method for which the XML namespace was requested. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXmlNamespaceForMethodResponse">
@@ -291,10 +349,17 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the XML namespace used during the generation of responses to the remote call to the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML namespace used during the generation of responses to a remote method call.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method for which the XML namespace was requested. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXmlTypeForInteropType">
@@ -339,10 +404,21 @@
         <Parameter Name="namespaceString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceString">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used by the SoapSuds tool to determine whether an XML namespace represents a common language runtime type or a type from a non-common language runtime system.</para>
+          <para>For more information about SoapSuds, see <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">[&lt;topic://cpgrfsoapsudsutilitysoapsudsexe&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the specified namespace is native to the common language runtime.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the given namespace is native to the common language runtime; otherwise, false.</para>
+        </returns>
+        <param name="namespaceString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to check in the common language runtime. </param>
       </Docs>
     </Member>
     <Member MemberName="IsSoapActionValidForMethodBase">
@@ -362,11 +438,19 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="soapAction">To be added: an object of type 'string'</param>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the specified SOAPAction is acceptable for a given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified SOAPAction is acceptable for a given <see cref="T:System.Reflection.MethodBase" />; otherwise, false.</para>
+        </returns>
+        <param name="soapAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAPAction to check against the given <see cref="T:System.Reflection.MethodBase" />. </param>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> the specified SOAPAction is checked against. </param>
       </Docs>
     </Member>
     <Member MemberName="PreLoad">
@@ -385,9 +469,16 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the .NET Framework is parsing an XML stream, it needs to know how to convert the XML read from the stream into common language runtime types. The information that specifies how the .NET Framework should generate and parse an XML stream is stored in custom attributes that are located in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace. There are two ways to specify this information in a configuration file: either by explicitly specifying the mappings, or by specifying which object types to preload. The custom attributes are read during the preloading process and the information in them is made available to the SOAP parser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preloads every <see cref="T:System.Type" /> found in the specified <see cref="T:System.Reflection.Assembly" /> from the information found in the <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> associated with each type.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Assembly" /> for each type of which to call <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />. </param>
       </Docs>
     </Member>
     <Member MemberName="PreLoad">
@@ -406,9 +497,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the .NET Framework is parsing an XML stream, it needs to know how to convert the XML read from the stream into common language runtime types. The information that specifies how the .NET Framework should generate and parse an XML stream is stored in custom attributes that are located in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace. There are two ways to specify this information in a configuration file: either by explicitly specifying the mappings, or by specifying which object types to preload. The custom attributes are read during the preloading process and the information in them is made available to the SOAP parser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preloads the given <see cref="T:System.Type" /> based on values set in a <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> on the type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to preload. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterInteropXmlElement">
@@ -429,11 +527,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="xmlElement">To be added: an object of type 'string'</param>
-        <param name="xmlNamespace">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the given XML element name and namespace with a run-time type that should be used for deserialization.</para>
+        </summary>
+        <param name="xmlElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name to use in deserialization. </param>
+        <param name="xmlNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace to use in deserialization. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The run-time <see cref="T:System.Type" /> to use in deserialization. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterInteropXmlType">
@@ -454,11 +558,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="xmlType">To be added: an object of type 'string'</param>
-        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the given XML type name and namespace with the run-time type that should be used for deserialization.</para>
+        </summary>
+        <param name="xmlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type to use in deserialization. </param>
+        <param name="xmlTypeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace to use in deserialization. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The run-time <see cref="T:System.Type" /> to use in deserialization. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterSoapActionForMethodBase">
@@ -477,9 +587,17 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction of the specified method is contained in the <see cref="P:System.Runtime.Remoting.Metadata.SoapMethodAttribute.SoapAction" /> property, or is read off the wire. The current method associates the SOAPAction with the <see cref="T:System.Reflection.MethodBase" /> for use in channel sinks.</para>
+          <para>The SOAPAction HTTP request header field indicates the intent of the SOAP HTTP request. The value is a URI identifying the intent. SOAP places no restrictions on the format or specificity of the URI or that it is resolvable. An HTTP client must use this header field when issuing a SOAP HTTP request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the specified <see cref="T:System.Reflection.MethodBase" /> with the SOAPAction cached with it.</para>
+        </summary>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method to associate with the SOAPAction cached with it. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterSoapActionForMethodBase">
@@ -499,10 +617,18 @@
         <Parameter Name="soapAction" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <param name="soapAction">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction HTTP request header field indicates the intent of the SOAP HTTP request. The value is a URI identifying the intent. SOAP places no restrictions on the format or specificity of the URI or that it is resolvable. An HTTP client must use this header field when issuing a SOAP HTTP request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the provided SOAPAction value with the given <see cref="T:System.Reflection.MethodBase" /> for use in channel sinks.</para>
+        </summary>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> to associate with the provided SOAPAction. </param>
+        <param name="soapAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAPAction value to associate with the given <see cref="T:System.Reflection.MethodBase" />. </param>
       </Docs>
     </Member>
     <Member MemberName="XmlNsForClrType">
@@ -518,9 +644,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. All XML namespaces for a common language runtime class start with the <see cref="T:System.String" /> that the current property returns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace prefix for common language runtime types.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithAssembly">
@@ -536,9 +668,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class has an assembly but no namespace, the current property returns the default XML namespace that is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default XML namespace prefix that should be used for XML encoding of a common language runtime class that has an assembly, but no native namespace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithNs">
@@ -554,9 +692,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class is part of the mscorlib assembly, the XML namespace returned by the current property is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace prefix that should be used for XML encoding of a common language runtime class that is part of the mscorlib.dll file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithNsAndAssembly">
@@ -572,9 +716,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class has an assembly and a common language runtime namespace, the current property returns the default XML namespace that is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default XML namespace prefix that should be used for XML encoding of a common language runtime class that has both a common language runtime namespace and an assembly.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

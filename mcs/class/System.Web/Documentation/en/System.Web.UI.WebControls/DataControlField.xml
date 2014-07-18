@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataControlField" FullName="System.Web.UI.WebControls.DataControlField">
   <TypeSignature Language="C#" Value="public abstract class DataControlField : System.Web.UI.IDataSourceViewSchemaAccessor, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -24,9 +25,100 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlField" /> class serves as the base class for all data control field types. Data control fields are used by data-bound controls to represent a field of data, similar to how a <see cref="T:System.Web.UI.WebControls.DataGridColumn" /> object represents a type of column in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+      <para>Use the classes that are derived from <see cref="T:System.Web.UI.WebControls.DataControlField" /> to control how a field of data is displayed in a data-bound control such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> or <see cref="T:System.Web.UI.WebControls.GridView" />. The following table lists the different data control field types provided by ASP.NET.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Column field type </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.BoundField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays the value of a field in a data source as text.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ButtonField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays a command button in a data-bound control. Depending on the control, this allows you to display either a row or a column with a custom button control, such as an Add or a Remove button.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.CheckBoxField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays a check box in a data-bound control. This data control field type is commonly used to display fields with a Boolean value.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.CommandField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays built-in command buttons to perform edit, insert, or delete operations in a data-bound control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.HyperLinkField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays the value of a field in a data source as a hyperlink. This data control field type allows you to bind a second field to the hyperlink's URL.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ImageField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays an image in a data-bound control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.TemplateField" />
+            </para>
+          </term>
+          <description>
+            <para>Displays user-defined content in a data-bound control according to a specified template.</para>
+          </description>
+        </item>
+      </list>
+      <para>You can also extend the <see cref="T:System.Web.UI.WebControls.DataControlField" /> and <see cref="T:System.Web.UI.WebControls.BoundField" /> classes to create your own data control field types.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlField" /> class provides many properties that determine how user interface (UI) elements are presented in the data-bound control. Not every control uses every available data control field property when rendering a UI. For example, the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control, which displays the data control fields as rows, includes a header item for each data control field, but no footer item. Therefore, the <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" /> and <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> properties are ignored by the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control. The <see cref="T:System.Web.UI.WebControls.GridView" /> control, however, uses the <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" /> and <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> properties if the <see cref="P:System.Web.UI.WebControls.GridView.ShowFooter" /> property is set to true. Similarly, the data control field properties affect the presentation of UI elements depending on what the element is. The <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" /> property is always applied to the field. If the type derived from <see cref="T:System.Web.UI.WebControls.DataControlField" /> contains a control, as in the <see cref="T:System.Web.UI.WebControls.ButtonField" /> or <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> classes, the <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> property is applied to the field.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class for all data control field types, which represent a column of data in tabular data-bound controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +126,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.UI.WebControls.DataControlField" /> class is abstract, you cannot create a <see cref="T:System.Web.UI.WebControls.DataControlField" /> object directly. This constructor is commonly called by the constructor of a derived class to initialize the properties defined in the <see cref="T:System.Web.UI.WebControls.DataControlField" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +155,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.OnFieldChanged" /> method is called to raise a state change event when the <see cref="P:System.Web.UI.WebControls.DataControlField.AccessibleHeaderText" /> property is set.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlField.AccessibleHeaderText" /> property is stored in view state.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets text that is rendered as the AbbreviatedText property value in some controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,9 +183,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method is a helper method used by the <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.CloneFields" /> method to create a copy of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate copy of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplicate copy of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Control">
@@ -89,10 +204,16 @@
         <ReturnType>System.Web.UI.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.Control" /> reference is set when the <see cref="M:System.Web.UI.WebControls.DataControlField.Initialize(System.Boolean,System.Web.UI.Control)" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the data control that the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object is associated with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +237,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> property governs the appearance of any Web server controls contained by types derived from <see cref="T:System.Web.UI.WebControls.DataControlField" />.</para>
+          <para>This property does not affect all derived types. The <see cref="T:System.Web.UI.WebControls.BoundField" /> control, which typically displays text data and contains only <see cref="T:System.Web.UI.WebControls.TextBox" /> controls, is only affected by the <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> property when in <see cref="F:System.Web.UI.WebControls.DataControlRowState.Edit" /> state. Web server controls such as <see cref="T:System.Web.UI.WebControls.ButtonField" /> and <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> might be affected by the <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> property, depending on the specific configuration of the control object instances contained by the field. For example, the <see cref="T:System.Web.UI.WebControls.ButtonField" /> control can be rendered as a <see cref="T:System.Web.UI.WebControls.LinkButton" />, <see cref="T:System.Web.UI.WebControls.ImageButton" />, or <see cref="T:System.Web.UI.WebControls.Button" /> object. Although a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is affected by font attributes of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object, a <see cref="T:System.Web.UI.WebControls.Button" /> control is not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style of any Web server controls contained by the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +263,17 @@
         <Parameter Name="newField" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="newField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.CopyProperties(System.Web.UI.WebControls.DataControlField)" /> method is a helper method used by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to copy the properties of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object to the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object created by the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the properties of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object to the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </summary>
+        <param name="newField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to which to copy the properties of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -152,10 +287,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.CreateField" /> method is a helper method used by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to create an empty <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object to copy the properties of the current <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object into.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates an empty <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,10 +312,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.DesignMode" /> property exposes the <see cref="P:System.Web.UI.Control.DesignMode" /> property. The <see cref="T:System.Web.UI.Control" /> instance that is passed to the <see cref="M:System.Web.UI.WebControls.DataControlField.Initialize(System.Boolean,System.Web.UI.Control)" /> method is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a data control field is currently viewed in a design-time environment.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -190,13 +340,24 @@
         <Parameter Name="includeReadOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dictionary">To be added.</param>
-        <param name="cell">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="includeReadOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.ExtractValuesFromCell(System.Collections.Specialized.IOrderedDictionary,System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState,System.Boolean)" /> method is implemented by types derived from <see cref="T:System.Web.UI.WebControls.DataControlField" /> to associate the current field with a value, if applicable. The field/value pair is stored in the <paramref name="dictionary" /> collection that is passed to the method. The <see cref="M:System.Web.UI.WebControls.DataControlField.ExtractValuesFromCell(System.Collections.Specialized.IOrderedDictionary,System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState,System.Boolean)" /> method is called by the ExtractRowValues method of data controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+          <para>Call this method when you are writing a custom data-bound control that uses <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects to assemble a set of cells and their associated values. Implement this method when you are writing a class derived from <see cref="T:System.Web.UI.WebControls.DataControlField" /> that displays user data or data-bound data. Not all derived types implement the <see cref="M:System.Web.UI.WebControls.DataControlField.ExtractValuesFromCell(System.Collections.Specialized.IOrderedDictionary,System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState,System.Boolean)" /> method, because not all fields display user data. For example, the <see cref="T:System.Web.UI.WebControls.ButtonField" /> control displays a button and has no user data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Extracts the value of the data control field from the current table cell and adds the value to the specified <see cref="T:System.Collections.IDictionary" /> collection.</para>
+        </summary>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Specialized.IOrderedDictionary" />.</param>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> that contains the text or controls of the <see cref="T:System.Web.UI.WebControls.DataControlField" />.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values.</param>
+        <param name="includeReadOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the values of read-only fields are included in the <paramref name="dictionary" /> collection; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -220,10 +381,19 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> property governs the appearance of any text displayed in the footer item of a type derived from <see cref="T:System.Web.UI.WebControls.DataControlField" />.</para>
+          <block subset="none" type="note">
+            <para>Some data-bound controls do not render a footer item for a data control field. For example, the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control displays its data control fields as rows. A footer item is not rendered for these data control fields. The <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> property is ignored in these controls.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the footer of the data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +414,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" /> property to add notes or comments to a data control field, or for other data related to the field.</para>
+          <block subset="none" type="note">
+            <para>Some data-bound controls do not render a footer item for a data control field. For example, the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control displays its data control fields as rows. A footer item is not rendered for these data control fields. The <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> property is ignored in these controls.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that is displayed in the footer item of a data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,10 +451,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> property when you want an image displayed in the header item of a data control instead of header text.</para>
+          <block subset="none" type="note">
+            <para>If both the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> and <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> properties are set, the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> property has precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of an image that is displayed in the header item of a data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -298,10 +487,16 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderStyle" /> property governs the appearance of any text displayed in the header item of a type derived from <see cref="T:System.Web.UI.WebControls.DataControlField" />. The most common application of the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderStyle" /> property is to alter the style of the column headers in a <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the header of the data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -322,10 +517,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> property to identify a field in a data control with a friendly name. The most common application of the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> property is to provide meaningful column names for data-bound fields in a <see cref="T:System.Web.UI.WebControls.GridView" /> or <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+          <block subset="none" type="note">
+            <para>If both the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> and <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> properties are set, the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> property has precedence.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that is displayed in the header item of a data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -342,12 +547,24 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="sortingEnabled">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control that the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object is associated with calls the <see cref="M:System.Web.UI.WebControls.DataControlField.Initialize(System.Boolean,System.Web.UI.Control)" /> method to initialize the field before it is added to a rows collection. Data controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> call the <see cref="M:System.Web.UI.WebControls.DataControlField.Initialize(System.Boolean,System.Web.UI.Control)" /> method in their CreateChildControls methods before calling other methods such as CreateRow to create specific rows with data.</para>
+          <para>Call this method when you are writing a custom data-bound control that uses <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects to perform basic initialization for any <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects. Implement this method if your derived type requires any object initialization before it populates <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects with data or controls in the <see cref="M:System.Web.UI.WebControls.DataControlField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs basic instance initialization for a data control field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns false.</para>
+        </returns>
+        <param name="sortingEnabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates whether the control supports the sorting of columns of data.</param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data control that owns the <see cref="T:System.Web.UI.WebControls.DataControlField" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -366,13 +583,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="cell">To be added.</param>
-        <param name="cellType">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Types derived from <see cref="T:System.Web.UI.WebControls.DataControlField" /> implement the <see cref="M:System.Web.UI.WebControls.DataControlField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method to add text and controls to a <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object that belongs to a data control that uses tables to display a user interface (UI). These data controls create the complete table structure row by row when their respective CreateChildControls methods are called. The <see cref="M:System.Web.UI.WebControls.DataControlField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method is called by the InitializeRow method of data controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" />. </para>
+          <para>Call this method when you are writing a custom data-bound control that uses <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects to initialize the cells of the table structure with data or controls. Implement this method when you are writing a class derived from <see cref="T:System.Web.UI.WebControls.DataControlField" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds text or controls to a cell's controls collection.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> that contains the text or controls of the <see cref="T:System.Web.UI.WebControls.DataControlField" />.</param>
+        <param name="cellType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlCellType" /> values.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values, specifying the state of the row that contains the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" />.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row that the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> is contained in.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -390,10 +618,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data-bound control is in insert mode when the state of the current display row is <see cref="F:System.Web.UI.WebControls.DataControlRowState.Insert" />.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control checks the value of this property before it renders a set of fields. If the <see cref="P:System.Web.UI.WebControls.DataControlField.InsertVisible" /> property is false, the <see cref="P:System.Web.UI.Control.Visible" /> property of the <see cref="T:System.Web.UI.WebControls.DetailsViewRow" /> object is set to false.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlField.InsertVisible" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object is visible when its parent data-bound control is in insert mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -406,10 +642,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -433,10 +672,16 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" /> property governs the appearance of any text data displayed by a type derived from <see cref="T:System.Web.UI.WebControls.DataControlField" />. For example, when you bind a <see cref="T:System.Web.UI.WebControls.BoundField" /> control to text data, you can use the <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" /> property to alter the appearance of the text that is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style of any text-based content displayed by a data control field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -452,10 +697,18 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code. However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>This method restores view-state information for the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object from a previous page request that was saved by the <see cref="M:System.Web.UI.WebControls.DataControlField.SaveViewState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the data source view's previously saved view state.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the <see cref="T:System.Web.UI.WebControls.DataControlField" /> state to restore.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -469,9 +722,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.OnFieldChanged" /> method raises an event signaling that the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object's state has changed. Changes to the following properties cause this event to be raised: <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" />, <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" />, <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" />, <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" />, <see cref="P:System.Web.UI.WebControls.DataControlField.SortExpression" />, and <see cref="P:System.Web.UI.WebControls.DataControlField.Visible" />. Derived type properties also raise this event when state changes occur. Web server controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> typically call the DataBind method in response to a field change event.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.OnFieldChanged" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the FieldChanged event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -485,10 +746,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. </para>
+          <para>When view state is saved, a string is returned to the client as a variable that is stored in an HTML hidden element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's <see cref="P:System.Web.UI.Control.ViewState" /> property. For more information, see <format type="text/html"><a href="19d2a6ed-9a77-4c7c-a7f5-74dd4b6c3818">View State Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes made to the <see cref="T:System.Web.UI.WebControls.DataControlField" /> view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.DataControlField" /> view state. If there is no view state associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -506,10 +778,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" /> property to specify whether the header item is displayed in a <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the header item of a data control field is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -527,10 +805,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.OnFieldChanged" /> method is called to raise a state change event when the <see cref="P:System.Web.UI.WebControls.DataControlField.SortExpression" /> property is set.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlField.SortExpression" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a sort expression that is used by a data source control to sort data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -561,9 +846,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -580,8 +868,11 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the data control field's previously saved view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -595,9 +886,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes made to the <see cref="T:System.Web.UI.WebControls.DataControlField" /> view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the saved view state values for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -611,8 +908,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object to track changes to its view state so they can be stored in the control's <see cref="P:System.Web.UI.WebControls.DataControlField.ViewState" /> property and persisted across requests for the same page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -623,10 +923,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is implemented to return the value of the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> property, if the property is set. Otherwise, this method simply returns a string that represents the type of the data control field (for example, "BoundField").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents this <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Web.UI.WebControls.DataControlField" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -640,9 +949,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object to track changes to its view state so they can be stored in the control's <see cref="P:System.Web.UI.WebControls.DataControlField.ViewState" /> property and persisted across requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -656,9 +968,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlField.ValidateSupportsCallback" /> method is a helper method used to determine whether the controls contained in a <see cref="T:System.Web.UI.WebControls.DataControlField" /> object support callbacks. The base implementation of this method has been implemented to throw a <see cref="T:System.NotSupportedException" /> exception to indicate that callbacks are not supported.</para>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, signals that the controls contained by a field support callbacks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -671,10 +992,18 @@
         <ReturnType>System.Web.UI.StateBag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data control field's view state is the accumulation of all its property values. To preserve these values across HTTP requests, ASP.NET server controls use this property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class, to store the property values. The values are then passed as a variable to an HTML hidden input element when subsequent requests are processed. For more information about saving server control view state, see <format type="text/html"><a href="19d2a6ed-9a77-4c7c-a7f5-74dd4b6c3818">View State Overview</a></format>. </para>
+          <para>View state is enabled for all server controls by default, but there are circumstances when you will want to disable it. For more information, see <format type="text/html"><a href="f882bf1b-a009-4312-ac06-74370ffabc0b">Performance Overview</a></format>. </para>
+          <para>For more information about dictionaries and how to use them, see <format type="text/html"><a href="60cc581f-1db5-445b-ba04-a173396bf872">Grouping Data in Collections</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of state information that allows you to save and restore the view state of a <see cref="T:System.Web.UI.WebControls.DataControlField" /> object across multiple requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -692,10 +1021,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataControlField.Visible" /> property to show or hide <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects in a data-bound control.</para>
+          <para>If the the <see cref="P:System.Web.UI.WebControls.DataControlField.Visible" /> property is false, the data values are not displayed and do not make a round-trip to the client. If you want to round-trip the data for a field that is not visible, add the field name to the DataKeyNames property of the data-bound control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a data control field is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

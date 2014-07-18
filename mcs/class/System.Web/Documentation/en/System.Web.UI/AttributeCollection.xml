@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AttributeCollection" FullName="System.Web.UI.AttributeCollection">
   <TypeSignature Language="C#" Value="public sealed class AttributeCollection" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Individual items in the collection return a <see cref="T:System.String" /> object as their value. If there are no attribute items in the collection, the collection returns null.</para>
+      <para>Attributes on an HTML server control are programmatically available through the <see cref="P:System.Web.UI.HtmlControls.HtmlControl.Attributes" /> property, which is inherited by all HTML server controls. ASP.NET exposes attributes of HTML server controls as properties of those controls.</para>
+      <para>You can add attributes to a Web server control through the <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> property, which is inherited by all Web server controls. The attributes in the attributes collection for a Web server control do not necessarily correspond to the control's strongly typed properties for that control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides object-model access to all attributes declared in the opening tag of an ASP.NET server control element. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +34,13 @@
         <Parameter Name="bag" Type="System.Web.UI.StateBag" />
       </Parameters>
       <Docs>
-        <param name="bag">To be added: an object of type 'StateBag'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.AttributeCollection" /> class.</para>
+        </summary>
+        <param name="bag">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains the attribute keys and their values from the opening tag of the server control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,10 +58,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the string in the <paramref name="value" /> parameter contains an ampersand (&amp;), the character is automatically encoded. The resulting HTML representation is "&amp;amp;".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an attribute to a server control's <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute name. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +86,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'HtmlTextWriter'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method copies all the server control's attributes to an <see cref="T:System.Web.UI.HtmlTextWriter" /> object so that they can be rendered by the next call to the <see cref="M:System.Web.UI.HtmlTextWriter.RenderBeginTag(System.String)" /> method.</para>
+          <para>For controls that are contained in other controls such as <see cref="T:System.Web.UI.WebControls.Calendar" /> and <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, you can potentially improve performance by rendering the contained controls directly. Rendering directly can be faster than rendering through the container control because container controls require that you copy all the child control attributes to the container control and render them after they are copied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds attributes from the <see cref="T:System.Web.UI.AttributeCollection" /> class to the <see cref="T:System.Web.UI.HtmlTextWriter" /> object that is responsible for rendering the attributes as markup.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> instance that writes the attribute to the opening tag of an ASP.NET server control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,8 +111,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all attributes from a server control's <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +129,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of attributes in the <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +148,15 @@
         <ReturnType>System.Web.UI.CssStyleCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CssStyleCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any style declared for a particular HTML server control is added to the <see cref="T:System.Web.UI.CssStyleCollection" /> object when the containing ASP.NET Web page is parsed. You can use this property to add, remove, and iterate through the styles declared for the server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of styles for the ASP.NET server control to which the current <see cref="T:System.Web.UI.AttributeCollection" /> object belongs.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,9 +178,32 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the compared objects to be equal, they must meet the following criteria:</para>
+          <list type="bullet">
+            <item>
+              <para>The object that is contained in the <paramref name="o" /> parameter must be an <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+            </item>
+            <item>
+              <para>Both collections must contain the same number of items.</para>
+            </item>
+            <item>
+              <para>The key value of each entry in both collections must match.</para>
+              <block subset="none" type="note">
+                <para>This method is primarily used by control developers.</para>
+              </block>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current instance of the <see cref="T:System.Web.UI.AttributeCollection" /> object is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object that is contained in the <paramref name="o" /> parameter is equal to the current instance of <see cref="T:System.Web.UI.AttributeCollection" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -154,9 +218,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.AttributeCollection.GetHashCode" /> method to determine the hash code for this <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -187,9 +260,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ICollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains all the keys that are in the <see cref="T:System.Web.UI.AttributeCollection" /> of an ASP.NET server control, whether you have added them programmatically with the <see cref="M:System.Web.UI.AttributeCollection.Add(System.String,System.String)" /> method, or declaratively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of keys to all attributes in the server control's <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +285,16 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.UI.AttributeCollection" /> object does not contain an attribute that has the specified <paramref name="key" />, the collection remains unchanged. No exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an attribute from a server control's <see cref="T:System.Web.UI.AttributeCollection" /> object.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -225,9 +311,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'HtmlTextWriter'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the collection of attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for the control to which the collection belongs.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> instance that writes the attribute collection to the current output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

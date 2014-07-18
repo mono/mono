@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodePropertyReferenceExpression" FullName="System.CodeDom.CodePropertyReferenceExpression">
   <TypeSignature Language="C#" Value="public class CodePropertyReferenceExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodePropertyReferenceExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodePropertyReferenceExpression" /> can be used to represent a reference to the value of a property.</para>
+      <para>The <see cref="P:System.CodeDom.CodePropertyReferenceExpression.TargetObject" /> property specifies the object that contains the property to reference. The <see cref="P:System.CodeDom.CodePropertyReferenceExpression.PropertyName" /> property specifies the name of the property to reference.</para>
+      <para>This object does not have a property to indicate whether the reference is used in a get or set. If the property reference occurs on the left, assigned to, side of an assignment statement, then it is a set.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to the value of a property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +49,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodePropertyReferenceExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +71,15 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added: an object of type 'CodeExpression'</param>
-        <param name="propertyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodePropertyReferenceExpression" /> class using the specified target object and property name.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the object that contains the property to reference. </param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to reference. </param>
       </Docs>
     </Member>
     <Member MemberName="PropertyName">
@@ -79,9 +97,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the property to reference.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetObject">
@@ -99,9 +120,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains the property to reference.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

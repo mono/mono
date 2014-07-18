@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConfigMapPath" FullName="System.Web.Configuration.IConfigMapPath">
   <TypeSignature Language="C#" Value="public interface IConfigMapPath" />
   <AssemblyInfo>
@@ -6,8 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Configuration.IConfigMapPath" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the mapping between configuration-file virtual and physical paths. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetAppPathForPath">
@@ -24,11 +32,23 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="siteID">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Configuration.IConfigMapPath.GetAppPathForPath(System.String,System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual-directory name associated with a specific site.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="siteID" /> must be unique. No two sites share the same id. The <paramref name="siteID" /> distinguishes sites that have the same name.</para>
+        </returns>
+        <param name="siteID">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the site.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL associated with the site.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultSiteNameAndID">
@@ -62,9 +82,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Configuration.IConfigMapPath.GetMachineConfigFilename" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the machine-configuration file name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The machine-configuration file name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPathConfigFilename">
@@ -102,9 +132,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Configuration.IConfigMapPath.GetRootWebConfigFilename" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the configuration file at the Web root.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the configuration file at the Web root.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MapPath">
@@ -121,11 +161,23 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="siteID">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Configuration.IConfigMapPath.MapPath(System.String,System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical directory path based on the site ID and URL associated with the site.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical directory path.</para>
+        </returns>
+        <param name="siteID">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the site.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL associated with the site.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveSiteArgument">

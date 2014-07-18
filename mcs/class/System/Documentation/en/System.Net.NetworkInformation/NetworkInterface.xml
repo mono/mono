@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetworkInterface" FullName="System.Net.NetworkInformation.NetworkInterface">
   <TypeSignature Language="C#" Value="public abstract class NetworkInterface" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit NetworkInterface extends System.Object" />
@@ -11,9 +12,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class encapsulates data for network interfaces, also known as adapters, on the local computer. You do not create instances of this class; the <see cref="M:System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces" /> method returns an array that contains one instance of this class for each network interface on the local computer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides configuration and statistical information for a network interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +33,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be called only by classes that derive from the <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -43,10 +56,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The description is human-readable text that typically describes the interface vendor, type (for example, Ethernet), brand, and model.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAllNetworkInterfaces">
@@ -62,10 +81,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The network interfaces on a computer provide network connectivity. Network interfaces are also known as network adapters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns objects that describe the network interfaces on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> array that contains objects that describe the available network interfaces, or an empty array if no interfaces are detected.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPProperties">
@@ -81,10 +109,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that the information in the object returned by this method reflects the interfaces as of the time the array is created. This information is not updated dynamically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that describes the configuration of this network interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPInterfaceProperties" /> object that describes this network interface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPv4Statistics">
@@ -100,10 +137,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IPv4 statistics for this <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv4InterfaceStatistics" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIsNetworkAvailable">
@@ -124,10 +167,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A network connection is considered to be available if any network interface is marked "up" and is not a loopback or tunnel interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether any network connection is available.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a network connection is available; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPhysicalAddress">
@@ -143,10 +195,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by this method contains an address that is appropriate to the media used to transport data at the data link layer. For example, on an Ethernet network, this method returns the Ethernet hardware address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Media Access Control (MAC) or physical address for this adapter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PhysicalAddress" /> object that contains the physical address.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -161,10 +222,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identifier of the network adapter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReceiveOnly">
@@ -179,10 +243,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the network interface is set to only receive data packets.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoopbackInterfaceIndex">
@@ -202,10 +269,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the loopback interface is usually 1, but you cannot rely on this. Use the <see cref="P:System.Net.NetworkInformation.NetworkInterface.LoopbackInterfaceIndex" /> property to get the correct value.</para>
+          <para>A network interface may have different interface indexes for the IPv4 and IPv6 loopback interface. The <see cref="P:System.Net.NetworkInformation.NetworkInterface.LoopbackInterfaceIndex" /> property only returns the IPv4 loopback interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the IPv4 loopback interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -220,10 +294,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the network adapter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NetworkInterfaceType">
@@ -238,10 +315,54 @@
         <ReturnType>System.Net.NetworkInformation.NetworkInterfaceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface types are described in detail in the <see cref="T:System.Net.NetworkInformation.NetworkInterfaceType" /> enumeration documentation. </para>
+          <para>This property only returns a subset of the possible values defined in the <see cref="T:System.Net.NetworkInformation.NetworkInterfaceType" /> enumeration. The possible values include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Ethernet" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Fddi" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Loopback" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Ppp" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Slip" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.TokenRing" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Unknown" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interface type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OperationalStatus">
@@ -256,10 +377,16 @@
         <ReturnType>System.Net.NetworkInformation.OperationalStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operational status values are described in detail in the <see cref="T:System.Net.NetworkInformation.OperationalStatus" /> enumeration documentation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current operational state of the network connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Speed">
@@ -274,10 +401,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property is reported by the network interface. It is not computed dynamically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the speed of the network interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Supports">
@@ -295,11 +428,18 @@
         <Parameter Name="networkInterfaceComponent" Type="System.Net.NetworkInformation.NetworkInterfaceComponent" />
       </Parameters>
       <Docs>
-        <param name="networkInterfaceComponent">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the interface supports the specified protocol.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified protocol is supported; otherwise, false.</para>
+        </returns>
+        <param name="networkInterfaceComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.NetworkInterfaceComponent" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportsMulticast">
@@ -314,10 +454,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multicasting is the act of sending a data packet to multiple destinations simultaneously.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the network interface is enabled to receive multicast packets.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

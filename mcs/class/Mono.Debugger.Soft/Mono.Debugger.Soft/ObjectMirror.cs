@@ -8,6 +8,22 @@ using System.Threading.Tasks;
 
 namespace Mono.Debugger.Soft
 {
+	public class InvokeResult {
+		public Value Result { get; set; }
+		//
+		// The value of the receiver after the call for calls to valuetype methods or null.
+		// Only set when using the InvokeOptions.ReturnOutThis flag.
+		// Since protocol version 2.35
+		//
+		public Value OutThis { get; set; }
+		//
+		// The value of the arguments after the call
+		// Only set when using the InvokeOptions.ReturnOutArgs flag.
+		// Since protocol version 2.35
+		//
+		public Value[] OutArgs { get; set; }
+	}
+
 	public class ObjectMirror : Value {
 		TypeMirror type;
 		AppDomainMirror domain;
@@ -74,9 +90,11 @@ namespace Mono.Debugger.Soft
 			try {
 				return vm.DecodeValues (vm.conn.Object_GetValues (id, ids));
 			} catch (CommandException ex) {
-				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID)
+				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID) {
+					if (fields.Count == 1)
+						throw new ArgumentException (string.Format ("The field '{0}' is not valid for this type.", fields[0].Name));
 					throw new ArgumentException ("One of the fields is not valid for this type.", "fields");
-				else
+				} else
 					throw;
 			}
 		}
@@ -147,6 +165,10 @@ namespace Mono.Debugger.Soft
 			return EndInvokeMethodInternal (asyncResult);
 		}
 
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+		}
+
 #if NET_4_5
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<Value> ();
@@ -154,6 +176,21 @@ namespace Mono.Debugger.Soft
 					{
 						try {
 							tcs.SetResult (EndInvokeMethod (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<InvokeResult> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethodInternalWithResult (iar));
 						} catch (OperationCanceledException) {
 							tcs.TrySetCanceled ();
 						} catch (Exception ex) {
@@ -221,6 +258,14 @@ namespace Mono.Debugger.Soft
 				get; set;
 			}
 
+			public ValueImpl OutThis {
+				get; set;
+			}
+
+			public ValueImpl[] OutArgs {
+				get; set;
+			}
+
 			public ValueImpl Exception {
 				get; set;
 			}
@@ -258,16 +303,20 @@ namespace Mono.Debugger.Soft
 				f |= InvokeFlags.DISABLE_BREAKPOINTS;
 			if ((options & InvokeOptions.SingleThreaded) != 0)
 				f |= InvokeFlags.SINGLE_THREADED;
+			if ((options & InvokeOptions.ReturnOutThis) != 0)
+				f |= InvokeFlags.OUT_THIS;
+			if ((options & InvokeOptions.ReturnOutArgs) != 0)
+				f |= InvokeFlags.OUT_ARGS;
 
 			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback };
-
+			thread.InvalidateFrames ();
 			r.ID = vm.conn.VM_BeginInvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, InvokeCB, r);
 
 			return r;
 		}
 
 		// This is called when the result of an invoke is received
-		static void InvokeCB (ValueImpl v, ValueImpl exc, ErrorCode error, object state) {
+		static void InvokeCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ValueImpl[] out_args, ErrorCode error, object state) {
 			InvokeAsyncResult r = (InvokeAsyncResult)state;
 
 			if (error != 0) {
@@ -277,6 +326,9 @@ namespace Mono.Debugger.Soft
 				r.Exception = exc;
 			}
 
+			r.OutThis = out_this;
+			r.OutArgs = out_args;
+
 			r.IsCompleted = true;
 			((ManualResetEvent)r.AsyncWaitHandle).Set ();
 
@@ -284,7 +336,7 @@ namespace Mono.Debugger.Soft
 				r.Callback.BeginInvoke (r, null, null);
 		}
 
-	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
+	    internal static InvokeResult EndInvokeMethodInternalWithResult (IAsyncResult asyncResult) {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
@@ -299,16 +351,28 @@ namespace Mono.Debugger.Soft
 				} catch (CommandException ex) {
 					if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
 						throw new ArgumentException ("Incorrect number or types of arguments", "arguments");
-					else
-						throw;
+
+					throw;
 				}
 				throw new NotImplementedException ();
 			} else {
 				if (r.Exception != null)
 					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
-				else
-					return r.VM.DecodeValue (r.Value);
+
+				Value out_this = null;
+				if (r.OutThis != null)
+					out_this = r.VM.DecodeValue (r.OutThis);
+				Value[] out_args = null;
+				if (r.OutArgs != null)
+					out_args = r.VM.DecodeValues (r.OutArgs);
+
+				return new InvokeResult () { Result = r.VM.DecodeValue (r.Value), OutThis = out_this, OutArgs = out_args };
 			}
+		}
+
+ 	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
+			InvokeResult res = EndInvokeMethodInternalWithResult (asyncResult);
+			return res.Result;
 		}
 
 	    internal static void EndInvokeMultipleInternal (IAsyncResult asyncResult) {
@@ -368,13 +432,14 @@ namespace Mono.Debugger.Soft
 			var args = new List<ValueImpl[]> ();
 			for (int i = 0; i < methods.Length; ++i)
 				args.Add (vm.EncodeValues (arguments [i]));
+			thread.InvalidateFrames ();
 			r.ID = vm.conn.VM_BeginInvokeMethods (thread.Id, mids, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), args, f, InvokeMultipleCB, r);
 
 			return r;
 		}
 
 		// This is called when the result of an invoke is received
-		static void InvokeMultipleCB (ValueImpl v, ValueImpl exc, ErrorCode error, object state) {
+		static void InvokeMultipleCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ValueImpl[] out_args, ErrorCode error, object state) {
 			var r = (InvokeAsyncResult)state;
 
 			Interlocked.Decrement (ref r.NumPending);

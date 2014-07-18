@@ -315,12 +315,14 @@ namespace System.Numerics {
 					word = (uint)sub;
 					borrow = (uint)(sub >> 32) & 0x1u;
 
-					data [data.Length - 1] = ~word & store_mask;
+					if ((~word & store_mask) == 0)
+						data = Resize (data, data.Length - 1);
+					else
+						data [data.Length - 1] = ~word & store_mask;
 				}
 				if (borrow != 0) //FIXME I believe this can't happen, can someone write a test for it?
 					throw new Exception ("non zero final carry");
 			}
-
 		}
 
 		public bool IsEven {

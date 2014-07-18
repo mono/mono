@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PlayRecordCallback" FullName="System.Drawing.Imaging.PlayRecordCallback">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void PlayRecordCallback(EmfPlusRecordType recordType, int flags, int dataSize, IntPtr recordData);" />
   <AssemblyInfo>
@@ -16,8 +17,11 @@
     <param name="flags">To be added.</param>
     <param name="dataSize">To be added.</param>
     <param name="recordData">To be added.</param>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate is not used. For an example of enumerating the records of a metafile, see <see cref="M:System.Drawing.Graphics.EnumerateMetafile(System.Drawing.Imaging.Metafile,System.Drawing.Point,System.Drawing.Graphics.EnumerateMetafileProc)" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

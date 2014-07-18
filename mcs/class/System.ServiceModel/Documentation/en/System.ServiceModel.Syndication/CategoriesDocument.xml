@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CategoriesDocument" FullName="System.ServiceModel.Syndication.CategoriesDocument">
   <TypeSignature Language="C#" Value="public abstract class CategoriesDocument" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CategoriesDocument extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A categories document describes the categories allowed within a collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a categories document.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AttributeExtensions">
@@ -25,9 +32,15 @@
         <ReturnType>System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute extension is a valid XML attribute that is not specified in either the Atom 1.0 or RSS 2.0 specifications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of attribute extensions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseUri">
@@ -41,9 +54,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base URI of the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -60,10 +76,19 @@
         <Parameter Name="categories" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationCategory&gt;" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.
+</para>
+        </returns>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instances used to initialize the new <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance. </param>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -80,10 +105,19 @@
         <Parameter Name="linkToCategoriesDocument" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="linkToCategoriesDocument">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> initializing it with the specified <see cref="T:System.Uri" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.
+</para>
+        </returns>
+        <param name="linkToCategoriesDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the categories document.</param>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -102,12 +136,26 @@
         <Parameter Name="scheme" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <param name="isFixed">To be added.</param>
-        <param name="scheme">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="isFixed" /> parameter is set to true, the categories contained within the categories document are immutable. If the <paramref name="isFixed" /> parameter is set to true, additional categories can be added to the categories document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.
+</para>
+        </returns>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories.</param>
+        <param name="isFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether a user can add a category to the categories document.</param>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheme of the categories document.</param>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">
@@ -121,9 +169,12 @@
         <ReturnType>System.ServiceModel.Syndication.SyndicationElementExtensionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element extensions for the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetFormatter">
@@ -138,9 +189,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.ServiceModel.Syndication.AtomPub10CategoriesDocumentFormatter" /> instance initialized with the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> on which this method is called.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.CategoriesDocumentFormatter" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -154,9 +213,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the language of the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -173,10 +235,19 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" />.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -193,9 +264,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> to a <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -215,13 +290,25 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -239,11 +326,21 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -261,10 +358,15 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -282,10 +384,15 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extension to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when writing.</param>
       </Docs>
     </Member>
   </Members>

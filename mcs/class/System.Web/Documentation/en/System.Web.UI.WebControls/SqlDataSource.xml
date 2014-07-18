@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataSource" FullName="System.Web.UI.WebControls.SqlDataSource">
   <TypeSignature Language="C#" Value="public class SqlDataSource : System.Web.UI.DataSourceControl" />
   <AssemblyInfo>
@@ -26,9 +27,654 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#data_connections">Data Connections</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#performing_data_operations">Performing Data Operations</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#data_provider">Data Provider</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#caching">Caching</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#additional_features">Additional Features</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#data_source_view">Data Source View</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> data source control represents data in an SQL relational database to data-bound controls. You can use the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control in conjunction with a data-bound control to retrieve data from a relational database and to display, edit, and sort data on a Web page with little or no code.</para>
+      <format type="text/html">
+        <a href="#data_connections" />
+      </format>
+      <format type="text/html">
+        <h2>Data Connections</h2>
+      </format>
+      <para>To connect to a database, you must set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConnectionString" /> property to a valid connection string. The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> can support any SQL relational database that can be connected to using an ADO.NET provider, such as the SqlClient, OleDb, Odbc, or OracleClient provider. For information about how to secure connection strings, see <format type="text/html"><a href="942f6dcb-d278-4bec-8403-60eede9bcd62">How To: Secure Connection Strings when Using Data Source Controls</a></format>.</para>
+      <para>To retrieve data from an underlying database, set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property with an SQL query. If the database that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> is associated with supports stored procedures, you can set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property to the name of a stored procedure. The SQL query that you specify can also be a parameterized query. You can add <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that are associated with a parameterized query to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection. For more information about parameterized SQL queries and their syntax, see <format type="text/html"><a href="88622d04-2989-484e-93fe-594cd98dcf5f">Using Parameters with Data Source Controls</a></format>.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control retrieves data whenever the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is called. This method provides programmatic access to the method that is specified by <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" /> property. The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is automatically called by controls that are bound to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> when their <see cref="M:System.Web.UI.WebControls.BaseDataBoundControl.DataBind" /> method is called. If you set the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSourceID" /> property of a data-bound control, the control automatically binds to data from the data source, as required. Setting the DataSourceID property is the recommended method for binding an <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control to a data-bound control. Alternatively, you can use the DataSource property, but then you must explicitly call the <see cref="M:System.Web.UI.WebControls.BaseDataBoundControl.DataBind" /> method of the data-bound control. Some examples of data-bound controls that can use <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> are <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, <see cref="T:System.Web.UI.WebControls.DataList" />, and <see cref="T:System.Web.UI.WebControls.DropDownList" />. You can call the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method programmatically at any time to retrieve data from the underlying database.</para>
+      <para>In declarative and programmatic ASP.NET scenarios, you can set the <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataSourceID" /> property of the data-bound control to the ID of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. You can also assign an instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class to the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property of the data-bound control. For more information about binding data-bound control to data source controls, see <format type="text/html"><a href="a5ff235e-397f-4bbe-9bfe-2720b6e7ab9d">ASP.NET Data Access Overview</a></format>.</para>
+      <format type="text/html">
+        <a href="#performing_data_operations" />
+      </format>
+      <format type="text/html">
+        <h2>Performing Data Operations</h2>
+      </format>
+      <para>Depending on the capabilities of the underlying database product and the configuration of the instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, you can perform data operations, such as updates, inserts, and deletes. To perform these data operations, set the appropriate command text and any associated parameters for the operation that you want to perform. For example, for an update operation, set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property to an SQL string or the name of a stored procedure and add any required parameters to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> collection. The update is performed when the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method is called, either explicitly by your code or automatically by a data-bound control. The same general pattern is followed for <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> and <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" /> operations.</para>
+      <para>The SQL queries and commands that you use in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" />, <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" />, <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" />, and <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> properties can be parameterized. This means that the query or command can use placeholders instead of literal values and bind the placeholders to application or user-defined variables. You can bind parameters in SQL queries to Session variables, values that are passed on the query string for a Web Forms page, the property values of other server controls, and more. For more information about how to use parameters in SQL queries with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />, see <format type="text/html"><a href="88622d04-2989-484e-93fe-594cd98dcf5f">Using Parameters with Data Source Controls</a></format> and <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+      <block subset="none" type="note">
+        <para>By default, if one of the parameters is null when you execute a Select command, no data will be returned and no exception will be thrown. You can change this behavior by setting the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CancelSelectOnNullParameter" /> property to false.</para>
+      </block>
+      <format type="text/html">
+        <a href="#data_provider" />
+      </format>
+      <format type="text/html">
+        <h2>Data Provider</h2>
+      </format>
+      <para>By default, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control works with the .NET Framework Data Provider for SQL Server, but <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> is not Microsoft SQL Server–specific. You can connect the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control with any database product for which there is a managed ADO.NET provider. When used with the <see cref="N:System.Data.OleDb" /> provider, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> can work with any OLE DB-compliant database. When used with the <see cref="N:System.Data.Odbc" /> provider, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> can be used with any ODBC driver and database, including IBM DB2, MySQL, and PostgreSQL. When used with the <see cref="N:System.Data.OracleClient" /> provider, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> can work with Oracle 8.1.7 databases and later. The list of allowable providers is registered in the DbProviderFactories section of the configuration file, either in the Machine.config or Web.config file. For more information, see <format type="text/html"><a href="44623286-ff5a-4148-8a3c-85c56ed545eb">Selecting Data using the SqlDataSource Control</a></format>.</para>
+      <format type="text/html">
+        <a href="#caching" />
+      </format>
+      <format type="text/html">
+        <h2>Caching</h2>
+      </format>
+      <para>If you display data on your page using a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, you can increase the performance of the page by using the data caching capabilities of the data source control. Caching reduces the processing load on the database servers at the expense of memory on the Web server; in most cases, this is a good trade-off. The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> automatically caches data when the <see cref="P:System.Web.UI.WebControls.SqlDataSource.EnableCaching" /> property is set to true and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> property is set to the number of seconds that the cache stores data before the cache entry is discarded. You can also specify a <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> and an optional <see cref="P:System.Web.UI.WebControls.SqlDataSource.SqlCacheDependency" /> value.</para>
+      <format type="text/html">
+        <a href="#additional_features" />
+      </format>
+      <format type="text/html">
+        <h2>Additional Features</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> provides additional capabilities, as listed in the following table. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Capability</para>
+            </term>
+            <description>
+              <para>Requirements</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Caching</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.EnableCaching" /> property to true, and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> properties according to the caching behavior you want for your cached data.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Deleting</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property to an SQL statement used to delete data. This statement is typically parameterized.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Filtering</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value. Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property to a filtering expression used to filter the data when the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is called.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Inserting</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> property to an SQL statement used to insert data. This statement is typically parameterized.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Paging</para>
+          </term>
+          <description>
+            <para>Not currently supported by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />, however some data-bound controls, such as <see cref="T:System.Web.UI.WebControls.GridView" />, support paging when you set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Selecting</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property to an SQL statement used to retrieve data.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Sorting</para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property to <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" />.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Updating </para>
+          </term>
+          <description>
+            <para>Set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property to an SQL statement used to update data. This statement is typically parameterized.</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#data_source_view" />
+      </format>
+      <format type="text/html">
+        <h2>Data Source View</h2>
+      </format>
+      <para>As with all data source controls, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is associated with a data source view class. The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control has only one associated <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" />, and it is always named Table. </para>
+      <para>There is no visual rendering of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control; it is implemented as a control so that you can create it declaratively and, optionally, to allow it to participate in state management. As a result, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> does not support visual features, such as the ones that are provided by the <see cref="P:System.Web.UI.DataSourceControl.EnableTheming" /> or <see cref="P:System.Web.UI.DataSourceControl.SkinID" /> property.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:SqlDataSource
+    CacheDuration="string|<codeFeaturedElement>Infinite</codeFeaturedElement>"
+    CacheExpirationPolicy="<codeFeaturedElement>Absolute</codeFeaturedElement>|Sliding"
+    CacheKeyDependency="string"
+    CancelSelectOnNullParameter="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ConflictDetection="<codeFeaturedElement>OverwriteChanges</codeFeaturedElement>|CompareAllValues"
+    ConnectionString="string"
+    DataSourceMode="DataReader|<codeFeaturedElement>DataSet</codeFeaturedElement>"
+    DeleteCommand="string"
+    DeleteCommandType="<codeFeaturedElement>Text</codeFeaturedElement>|StoredProcedure"
+    EnableCaching="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    EnableTheming="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    FilterExpression="string"
+    ID="string"
+    InsertCommand="string"
+    InsertCommandType="<codeFeaturedElement>Text</codeFeaturedElement>|StoredProcedure"
+    OldValuesParameterFormatString="string"
+    OnDataBinding="DataBinding event handler"
+    OnDeleted="Deleted event handler"
+    OnDeleting="Deleting event handler"
+    OnDisposed="Disposed event handler"
+    OnFiltering="Filtering event handler"
+    OnInit="Init event handler"
+    OnInserted="Inserted event handler"
+    OnInserting="Inserting event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnSelected="Selected event handler"
+    OnSelecting="Selecting event handler"
+    OnUnload="Unload event handler"
+    OnUpdated="Updated event handler"
+    OnUpdating="Updating event handler"
+    ProviderName="string|System.Data.Odbc|System.Data.OleDb|
+        System.Data.OracleClient|System.Data.SqlClient|
+        Microsoft.SqlServerCe.Client"
+    runat="server"
+    SelectCommand="string"
+    SelectCommandType="<codeFeaturedElement>Text</codeFeaturedElement>|StoredProcedure"
+    SkinID="string"
+    SortParameterName="string"
+    SqlCacheDependency="string"
+    UpdateCommand="string"
+    UpdateCommandType="<codeFeaturedElement>Text</codeFeaturedElement>|StoredProcedure"
+    Visible="True|<codeFeaturedElement>False</codeFeaturedElement>"
+&gt;
+        &lt;DeleteParameters&gt;
+                &lt;asp:ControlParameter
+                    ControlID="string"
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:CookieParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    CookieName="string"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:FormParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    FormField="string"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:Parameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:ProfileParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:QueryStringParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    QueryStringField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:SessionParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    SessionField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+        &lt;/DeleteParameters&gt;
+        &lt;FilterParameters&gt;
+                &lt;asp:ControlParameter
+                    ControlID="string"
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:CookieParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    CookieName="string"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:FormParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    FormField="string"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:Parameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:ProfileParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:QueryStringParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    QueryStringField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:SessionParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    SessionField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+        &lt;/FilterParameters&gt;
+        &lt;InsertParameters&gt;
+                &lt;asp:ControlParameter
+                    ControlID="string"
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:CookieParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    CookieName="string"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:FormParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    FormField="string"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:Parameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:ProfileParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:QueryStringParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    QueryStringField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:SessionParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    SessionField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+        &lt;/InsertParameters&gt;
+        &lt;SelectParameters&gt;
+                &lt;asp:ControlParameter
+                    ControlID="string"
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:CookieParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    CookieName="string"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:FormParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    FormField="string"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:Parameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:ProfileParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:QueryStringParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    QueryStringField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:SessionParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    SessionField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+        &lt;/SelectParameters&gt;
+        &lt;UpdateParameters&gt;
+                &lt;asp:ControlParameter
+                    ControlID="string"
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:CookieParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    CookieName="string"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:FormParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    FormField="string"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:Parameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:ProfileParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    PropertyName="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:QueryStringParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    QueryStringField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+                &lt;asp:SessionParameter
+                    ConvertEmptyStringToNull="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    DefaultValue="string"
+                    Direction="<codeFeaturedElement>Input</codeFeaturedElement>|Output|InputOutput|ReturnValue"
+                    Name="string"
+                    SessionField="string"
+                    Size="integer"
+                    Type="<codeFeaturedElement>Empty</codeFeaturedElement>|Object|DBNull|Boolean|Char|SByte|
+                        Byte|Int16|UInt16|Int32|UInt32|Int64|UInt64|
+                        Single|Double|Decimal|DateTime|String"
+                /&gt;
+        &lt;/UpdateParameters&gt;
+&lt;/asp:SqlDataSource&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an SQL database to data-bound controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,9 +682,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,11 +701,20 @@
         <Parameter Name="selectCommand" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <param name="selectCommand">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because different database products use different varieties of SQL, the syntax for <paramref name="selectCommand" /> depends on the current ADO.NET provider being used, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. If the SQL string is a parameterized query or command, the placeholder of the parameter also depends on the ADO.NET provider being used. For example, if the provider is the <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the placeholder of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or the <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> value can be an SQL string or the name of a stored procedure, if the data source supports stored procedures.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class with the specified connection string and Select command.</para>
+        </summary>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string used to connect to the underlying database. </param>
+        <param name="selectCommand">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SQL query used to retrieve data from the underlying database. If the SQL query is a parameterized SQL string, you might need to add <see cref="T:System.Web.UI.WebControls.Parameter" /> objects to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,12 +729,22 @@
         <Parameter Name="selectCommand" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <param name="connectionString">To be added.</param>
-        <param name="selectCommand">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because different database products use different varieties of SQL, the syntax of <paramref name="selectCommand" /> depends on the current ADO.NET provider being used, which is identified by the <paramref name="providerName" /> parameter. If the SQL string is a parameterized query or command, the placeholder of the parameter also depends on the ADO.NET provider being used. For example, if the provider is <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the placeholder of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or the <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property can be an SQL string or the name of a stored procedure, if the data source supports stored procedures.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class with the specified connection string and Select command.</para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data provider that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> uses. If no provider is set, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> uses the ADO.NET provider for Microsoft SQL Server, by default. </param>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string used to connect to the underlying database. </param>
+        <param name="selectCommand">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SQL query used to retrieve data from the underlying database. If the SQL query is a parameterized SQL string, you might need to add <see cref="T:System.Web.UI.WebControls.Parameter" /> objects to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +762,22 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports data caching. While data is cached, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the cache rather than from the underlying database. When the cache expires, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the underlying database, and then caches the data again.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control automatically caches data when the <see cref="P:System.Web.UI.WebControls.SqlDataSource.EnableCaching" /> property is set to true and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> property is set to a value greater than 0, which indicates the number of seconds that the cache stores data before the cache entry is discarded. A value of 0 indicates an infinitely long cache.</para>
+          <para>The behavior of the cache is determined by a combination of the duration and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> property. If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> property is set to the <see cref="F:System.Web.UI.DataSourceCacheExpiry.Absolute" /> value, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> caches data on the first data retrieval operation, holds it in memory for, at most, the amount of time that is specified by <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> property. The data might be released before the duration time, if the memory is required. The cache is then refreshed during the next operation. If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> property is set to the <see cref="F:System.Web.UI.DataSourceCacheExpiry.Sliding" /> value, the data source control caches data on the first data retrieval operation, but resets the time window that it holds the cache for each subsequent operation. The cache expires, if there is no activity for a time that is equal to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> value since the last <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can cache data only when it is in <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> mode. A <see cref="T:System.NotSupportedException" /> exception is thrown by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method, if the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataReader" /> value and caching is also enabled.</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval to the data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the length of time, in seconds, that the data source control caches data that is retrieved by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,10 +795,21 @@
         <ReturnType>System.Web.UI.DataSourceCacheExpiry</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports data caching. While data is cached, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the cache rather than from the underlying database. When the cache expires, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the underlying database, and then caches the data again.</para>
+          <para>The behavior of the cache is determined by a combination of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> settings. If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> property is set to the <see cref="F:System.Web.UI.DataSourceCacheExpiry.Absolute" /> value, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> caches data on the first data retrieval operation, holds it in memory for the amount of time that is specified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> property, and then discards it after the time has lapsed. The cache is then refreshed during the next operation. If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> property is set to the <see cref="F:System.Web.UI.DataSourceCacheExpiry.Sliding" /> value, the data source control caches data on the first data retrieval operation, but resets the time window that it holds the cache for each subsequent operation. The cache expires, if there is no activity for a time that is equal to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> value since the last <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can cache data only when in the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> mode. A <see cref="T:System.NotSupportedException" /> exception is thrown by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method, if the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataReader" /> value and caching is also enabled.</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval to the data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cache expiration behavior that, when combined with the duration, describes the behavior of the cache that the data source control uses.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,10 +827,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports data caching. While data is cached, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the cache rather than from the underlying database. When the cache expires, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the underlying database, and then caches the data again.</para>
+          <para>You can set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheKeyDependency" /> property to create a dependency between all cache entries that are created by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control and the key. You can programmatically expire all the cache entries at any time by expiring the key.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can cache data only when in the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> mode. A <see cref="T:System.NotSupportedException" /> exception is thrown by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method, if the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataReader" /> value and caching is also enabled.</para>
+          <para>A unique cache entry is created for every combination of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" />, <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConnectionString" />, and <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> properties. Multiple <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> controls can use the same cache entries in scenarios where the controls load the same data from the same underlying database.</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval to the data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a user-defined key dependency that is linked to all data cache objects that are created by the data source control. All cache objects are explicitly expired when the key is expired.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,10 +860,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CancelSelectOnNullParameter" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a data retrieval operation is canceled when any parameter that is contained in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection evaluates to null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -178,10 +887,18 @@
         <ReturnType>System.Web.UI.ConflictOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property determines whether parameters for old and new values are applied to the Update method. For example, if the command that is specified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property returns a <see cref="T:System.Data.DataTable" /> object with the columns Name and Number and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.OverwriteChanges" /> value, parameters are created for Name and Number for the Update method. If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, parameters are created for Name, Number, original_Name, and original_Number. (The exact name of the parameters for the original values depends on the <see cref="P:System.Web.UI.WebControls.SqlDataSource.OldValuesParameterFormatString" /> property.) The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control then determines if the Update method that is specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property has parameters that match. </para>
+          <para>Concurrency control is a technique that data stores use to control how data is read and changed in the store when multiple clients are accessing and manipulating the same data. For example, one client reads data and presents it to a user, while another client reads the same data, and presents it to a different user. If both users update the data and submit it to the data storage, some unexpected result might occur, because both clients might update different values for the same data. This is considered a conflict. By setting the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, your Update method can then compare the old and new values to the original data source to detect conflicts and handle them, as necessary.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.ConflictDetection" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value indicating how the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs updates and deletes when data in a row in the underlying database changes during the time of the operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,10 +919,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control can be used with a variety of ADO.NET providers and the syntax of the connection string that is used to connect to an underlying data source is specific to the provider.</para>
+          <para>When you configure a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, you set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property to the type of database (the default is <see cref="N:System.Data.SqlClient" />), and you set the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConnectionString" /> property to a connection string that includes information that is required in order to connect to the database. The contents of a connection string differ depending on what type of database the data source control is accessing. For example, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control requires a server name, database (catalog) name, and information about how to authenticate the user when connecting to a SQL Server. For information about the contents of connection strings, see the <see cref="P:System.Data.SqlClient.SqlConnection.ConnectionString" /> property for the <see cref="T:System.Data.SqlClient.SqlConnection" /> class, <see cref="P:System.Data.OracleClient.OracleConnection.ConnectionString" /> property for the <see cref="T:System.Data.OracleClient.OracleConnection" /> class, <see cref="P:System.Data.OleDb.OleDbConnection.ConnectionString" /> property for the <see cref="T:System.Data.OleDb.OleDbConnection" /> class, or the <see cref="P:System.Data.Odbc.OdbcConnection.ConnectionString" /> property for the <see cref="T:System.Data.Odbc.OdbcConnection" /> class.</para>
+          <para>If you change the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConnectionString" /> property, the <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event is raised, causing any controls that are bound to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control to rebind.</para>
+          <block subset="none" type="note">
+            <para>For information about storing a connection string, see <format type="text/html"><a href="942f6dcb-d278-4bec-8403-60eede9bcd62">How To: Secure Connection Strings when Using Data Source Controls</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ADO.NET provider–specific connection string that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to connect to an underlying database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,11 +949,21 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class can override the <see cref="M:System.Web.UI.WebControls.SqlDataSource.CreateDataSourceView(System.String)" /> method to return strongly typed data source view objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a data source view object that is associated with the data source control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />.</para>
+        </returns>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data source view. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -243,10 +981,20 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data retrieval mode identifies how a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control retrieves data from the underlying database.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value, data is loaded into a <see cref="T:System.Data.DataSet" /> object and stored in memory on the server. This enables scenarios where user interface controls, such as <see cref="T:System.Web.UI.WebControls.GridView" />, offer sorting, filtering, and paging capabilities.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataReader" /> value, data is retrieved by a <see cref="T:System.Data.IDataReader" /> object, which is a forward-only, read-only cursor. The specific type of the <see cref="T:System.Data.IDataReader" /> object depends on the NET data provider that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> uses, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. By default, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses the provider for Microsoft SQL Server, the <see cref="N:System.Data.SqlClient" />, and the data reader is a <see cref="T:System.Data.SqlClient.SqlDataReader" /> object.</para>
+          <para>If you change the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property, the <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event is raised, causing any controls that are bound to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> to rebind.</para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data retrieval mode that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to fetch data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,10 +1008,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before the delete operation is performed, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnDeleting(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> event. You can handle this event to examine the values of the parameters and to perform any preprocessing before a delete operation.</para>
+          <para>After the operation completes, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnDeleted(System.Web.UI.WebControls.SqlDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleted" /> event. You can handle this event to examine any return values and error codes and to perform any post-processing.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> method is provided for programmatic access to the Delete method. If the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is associated with a data-bound control, the data-bound control automatically calls the Delete method.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> method delegates to the <see cref="Overload:System.Web.UI.WebControls.SqlDataSourceView.Delete" /> method of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. To perform the operation, the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> builds a <see cref="T:System.Data.Common.DbCommand" /> object using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> text and any associated <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> values, and then executes the <see cref="T:System.Data.Common.DbCommand" /> against the underlying database. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a delete operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows deleted from the underlying database.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -281,10 +1041,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> represents an SQL query or the name of a stored procedure, and is used by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> method.</para>
+          <para>Because different database products use different varieties of SQL, the syntax of the SQL string depends on the current ADO.NET provider being used, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. If the SQL string is a parameterized query or command, the syntax of the parameter also depends on the ADO.NET provider being used. For example, if the provider is the <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the syntax of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property can be an SQL string or the name of a stored procedure, if the database supports stored procedures.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteCommand" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>For security purposes, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property is not stored in view state. Because it is possible to decode the contents of view state on the client, storing sensitive information about the database structure in view state could result in an information disclosure vulnerability.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL string that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to delete data from the underlying database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -302,10 +1074,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommandType" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteCommandType" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the text in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property is an SQL statement or the name of a stored procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -318,9 +1096,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleted" /> event to examine the values of output parameters after a delete operation has completed. The output parameters are available from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a delete operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -347,10 +1132,25 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property contains a parameterized SQL query, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> collection contains any <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that correspond to the parameter placeholders in the SQL string.</para>
+          <block subset="none" type="note">
+            <para>Make sure that no <see cref="T:System.Web.UI.WebControls.BoundField" /> controls in the data-bound control that you bind to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control have names that match any parameter names in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> collection. Parameters that have the same name as bound fields are excluded from the SQL command, and a "parameter was not supplied" error might result.</para>
+          </block>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, the parameters are created for both the old and new values of the data. The parameters for the old values are named according to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.OldValuesParameterFormatString" /> property.</para>
+          <para>Depending on the ADO.NET provider, the order of the parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> collection might be important. The <see cref="N:System.Data.OleDb" /> and <see cref="N:System.Data.Odbc" /> providers associate the parameters in the collection according to the order in which the parameters appear in the parameterized SQL query. The <see cref="N:System.Data.SqlClient" /> provider, which is the default ADO.NET provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, associates the parameters in the collection by matching the name of the parameter with the placeholder in the SQL query. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using the SqlDataSource and AccessDataSource Controls with Parameters</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteParameters" /> property retrieves the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteParameters" /> property that is contained by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> property from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -363,9 +1163,17 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs the delete operation.</para>
+          <para>The connection to the underlying data source is not yet open when the event handler delegate is called. Therefore, you cannot cancel the operation directly by calling the <see cref="M:System.Data.Common.DbCommand.Cancel" /> method on the <see cref="T:System.Data.Common.DbCommand" /> object that is exposed by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> object. You can, however, cancel the database operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> object to true.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a delete operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -383,10 +1191,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports data caching. While data is cached, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the cache rather than from the underlying database. When the cache expires, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method retrieves data from the underlying database, and then caches the data again.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control automatically caches data when the <see cref="P:System.Web.UI.WebControls.SqlDataSource.EnableCaching" /> property is set to true and the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> property is set to a value greater than 0, which indicates the number of seconds that the cache stores data before retrieving a fresh set.</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval to the data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control has data caching enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -404,10 +1222,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property value is a format string expression (a string that is processed by the <see cref="M:System.String.Format" /> method) that uses the values in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> collection for any substitution parameters included in the string. The filter expression syntax is the same syntax that is accepted by the <see cref="P:System.Data.DataView.RowFilter" /> property, because the filter expression is applied to the <see cref="P:System.Data.DataView.RowFilter" /> property of the <see cref="T:System.Data.DataView" /> object that is returned from executing the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method. For more information, see <see cref="P:System.Data.DataColumn.Expression" />.</para>
+          <para>If you add parameters to the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection, you can also include format string placeholders (for example, "{0}") in the expression to substitute for parameter values. The placeholders are replaced according to the index of the parameter in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection. If an object in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection is null, the object will be replaced by an empty string.</para>
+          <para>You can include parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property. If the parameter is a string or character type, enclose the parameter in single quotation marks. Quotation marks are not required, if the parameter is a numeric type. The <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection contains the parameters that are evaluated for the placeholders that are found in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports filtering data only when in the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> mode.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.FilterExpression" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a filtering expression that is applied when the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -420,9 +1248,17 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceFilteringEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to perform validation operations on filter parameter values before the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs a filter operation. You can cancel the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceFilteringEventArgs" /> object to true. The event is raised only if the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property is set.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event delegates to the <see cref="E:System.Web.UI.WebControls.SqlDataSourceView.Filtering" /> event of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a filter operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -449,10 +1285,20 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection are associated with any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property. The parameter placeholders that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property are matched by order to parameter objects in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> collection when the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is called.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> property retrieves the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.FilterParameters" /> property that is contained by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of parameters that are associated with any parameter placeholders that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -466,10 +1312,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.Common.DbProviderFactory" /> property is used by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control to create the correct ADO.NET connection, command, and parameter objects when interacting with a database.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Data.Common.DbProviderFactory" /> object that is associated with the ADO.NET provider that is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbProviderFactory" /> that represents the identified ADO.NET provider; otherwise, and instance of the <see cref="N:System.Data.SqlClient" />, if no provider is set.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -485,11 +1340,21 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports only one data source view. As with all data source view objects, the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the data source control defines its capabilities, performs all work that is necessary to retrieve data from the underlying database, and performs operations, such as sorting, inserting, deleting, and updating.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named data source view that is associated with the data source control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> named "Table" that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />.</para>
+        </returns>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the view to retrieve. Because the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> supports only one view, <paramref name="viewName" /> is ignored. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -503,10 +1368,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports only one view on its underlying data, named "Table". The <see cref="M:System.Web.UI.WebControls.SqlDataSource.GetViewNames" /> method returns a single-element collection of this one view name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of names representing the list of view objects that are associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> that contains the names of the views associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -520,10 +1394,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before the insert operation is performed, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnInserting(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" /> event. You can handle this event to examine the values of the parameters and to perform any preprocessing before the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" /> operation. To perform an insert operation, the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object builds an <see cref="T:System.Data.Common.DbCommand" /> object using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> text and any associated <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertParameters" /> properties, and then executes the <see cref="T:System.Data.Common.DbCommand" /> object against the underlying database. </para>
+          <para>After the operation completes, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnInserted(System.Web.UI.WebControls.SqlDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserted" /> event. You can handle this event to examine any return values and error codes and to perform any post-processing.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" /> method is provided for programmatic access to the Insert method. If the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control is associated with a data-bound control, the data-bound control automatically calls the Insert method.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" /> method delegates to the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.Insert(System.Collections.IDictionary)" /> method of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an insert operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows inserted into the underlying database.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -541,10 +1430,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> represents either an SQL query or the name of a stored procedure, and is used by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" /> method.</para>
+          <para>Because different database products use different varieties of SQL, the syntax of the SQL string depends on the current ADO.NET provider being used, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. If the SQL string is a parameterized query or command, the placeholder of the parameter also depends on the ADO.NET provider being used. For example, if the provider is the <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the placeholder of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> can be an SQL string or the name of a stored procedure, if the data source supports stored procedures.</para>
+          <para>This property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>For security purposes, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> property is not stored is view state. Because it is possible to decode the contents of view state on the client, storing sensitive information about the database structure in view state could result in an information disclosure vulnerability.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL string that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to insert data into the underlying database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -562,10 +1466,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommandType" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommandType" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the text in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> property is an SQL statement or the name of a stored procedure. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -578,9 +1488,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserted" /> event to examine the values of output parameters after an insert operation has completed. The output parameters are available from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an insert operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -593,9 +1510,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs the insert operation. The connection to the underlying data source is not yet open when the event handler delegate is called. Therefore, you cannot cancel the operation directly by calling the <see cref="M:System.Data.Common.DbCommand.Cancel" /> method on the <see cref="T:System.Data.Common.DbCommand" /> object that is exposed by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> property. You can, however, cancel the database operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> object to true.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an insert operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -622,10 +1546,21 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertParameters" /> property retrieves the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertParameters" /> property that is contained by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> property contains a parameterized SQL query, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertParameters" /> collection contains any <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that correspond to the parameter placeholders in the SQL string.</para>
+          <para>Depending on the ADO.NET provider, the order of the parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertParameters" /> collection might be important. The <see cref="N:System.Data.OleDb" /> and <see cref="N:System.Data.Odbc" /> providers associate the parameters in the collection according to the order that the parameters appear in the parameterized SQL query. The <see cref="N:System.Data.SqlClient" /> provider, which is the default ADO.NET provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, associates the parameters in the collection by matching the name of the parameter with a placeholder alias in the SQL query. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" /> property from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -641,10 +1576,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.LoadViewState(System.Object)" /> method is used to load the previously saved view state of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the state of the properties in the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control that need to be persisted.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the state of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -662,10 +1604,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.OldValuesParameterFormatString" /> format string is applied only to primary keys, such as those that are identified by the DataKeyNames property of the associated data-bound control, or in delete and update scenarios where the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value and a set of <paramref name="oldValues" /> are passed to the corresponding data method. In this case, the format string is applied to each parameter name in the <paramref name="oldValues" /> collection.</para>
+          <para>Two common scenarios where you might change the <see cref="P:System.Web.UI.WebControls.SqlDataSource.OldValuesParameterFormatString" /> property are as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>To differentiate between old and new values in updates. When the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value, parameters for both the original and new values are added to the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateParameters" /> collection. Without the formatting string, two parameters with the same name would be created for each data field. By changing the name of the original value parameter, you can compare the data to the original data source to detect conflicts and compare key values.</para>
+            </item>
+            <item>
+              <para>Some visual designers implement a particular naming scheme for original values and keys.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a format string to apply to the names of any parameters that are passed to the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> or <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -684,9 +1641,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event handler that is added by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> object updates the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> values. If the values are updated, the <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event is raised, causing any controls that are bound to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control to rebind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="E:System.Web.UI.Page.LoadComplete" /> event handler to the <see cref="T:System.Web.UI.Page" /> control that contains the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="ProviderName">
@@ -704,10 +1668,33 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework includes the following data providers: </para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="N:System.Data.SqlClient" /> provider is the default .NET Framework Data Provider for SQL Server. </para>
+            </item>
+            <item>
+              <para>The <see cref="N:System.Data.OleDb" /> provider is the .NET Framework Data Provider for OLE DB.</para>
+            </item>
+            <item>
+              <para>The <see cref="N:System.Data.Odbc" /> provider is the .NET Framework Data Provider for ODBC.</para>
+            </item>
+            <item>
+              <para>The <see cref="N:System.Data.OracleClient" /> provider is the .NET Framework Data Provider for Oracle. </para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property is never set to the name of an unmanaged ADO.NET provider, such as MSDAORA. For more information, see <format type="text/html"><a href="44623286-ff5a-4148-8a3c-85c56ed545eb">Selecting Data using the SqlDataSource Control</a></format>.</para>
+          <para>If you change the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property, the <see cref="E:System.Web.UI.IDataSource.DataSourceChanged" /> event is raised, causing any controls that are bound to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> to rebind.</para>
+          <para>A list of available providers is specified in the DbProviderFactories subsection of the system.data section of the Machine.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the .NET Framework data provider that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to connect to an underlying data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -721,10 +1708,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current view state of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the saved state of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -741,10 +1734,31 @@
       </Parameters>
       <Docs>
         <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method is automatically called during the <see cref="E:System.Web.UI.Control.PreRender" /> phase of the page life cycle. It is called by data-bound controls that have been attached to a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control through their <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataSourceID" /> property.</para>
+          <para>The <see cref="Overload:System.Web.UI.WebControls.SqlDataSourceView.Select" /> method returns a <see cref="T:System.Data.DataView" /> object if the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value. The <see cref="Overload:System.Web.UI.WebControls.SqlDataSourceView.Select" /> method returns a <see cref="T:System.Data.IDataReader" /> object if the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataReader" /> value. Close the <see cref="T:System.Data.IDataReader" /> object when you have finished reading the data.</para>
+          <para>Before the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation is performed, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnSelecting(System.Web.UI.WebControls.SqlDataSourceSelectingEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selecting" /> event. You can handle this event to examine the values of the parameters and to perform any processing before the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation. </para>
+          <para>After the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation completes, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnSelected(System.Web.UI.WebControls.SqlDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selected" /> event. You can handle this event to examine any return values and error codes and to perform any post-processing.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> and caching is enabled, the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> object retrieves data from and saves data to the cache during the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation. The cache is created, discarded, or refreshed based on the caching behavior that is specified by the combination of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> properties.</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval of data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> and a <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterExpression" /> property has been specified, the filter expression is evaluated with any supplied <see cref="P:System.Web.UI.WebControls.SqlDataSource.FilterParameters" /> properties and the resulting filter is applied to the list of data during the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method delegates to the <see cref="Overload:System.Web.UI.WebControls.SqlDataSourceView.Select" /> method of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. To perform a data retrieval operation, the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> builds a <see cref="T:System.Data.Common.DbCommand" /> object by using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> text and any associated <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> values, and then executes the <see cref="T:System.Data.Common.DbCommand" /> against the underlying database.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the underlying database by using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -762,10 +1776,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property represents an SQL query or the name of a stored procedure, and is used by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve data from a SQL Server database. If you use an asterisk (*) in the Select command to select all columns, and if you use automatic code generation to perform update or delete operations, make sure that no columns have spaces in their names.</para>
+          <para>Because different database products use different varieties of SQL, the syntax of the SQL string depends on the current ADO.NET provider being used, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. If the SQL string is a parameterized query or command, the placeholder of the parameter also depends on the ADO.NET provider being used. For example, if the provider is the <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the placeholder of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property can be an SQL string or the name of a stored procedure, if the data source supports stored procedures.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>For security purposes, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property is not stored is view state. Because it is possible to decode the contents of view state on the client, storing sensitive information about the database structure in view state could result in an information disclosure vulnerability.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL string that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to retrieve data from the underlying database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -783,10 +1812,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommandType" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommandType" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the text in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property is an SQL query or the name of a stored procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -799,9 +1834,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selected" /> event to examine the values of output parameters after a data retrieval operation has completed. The output parameters are available from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a data retrieval operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -814,9 +1856,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceSelectingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selecting" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs the select operation. The select arguments are available from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceSelectingEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a data retrieval operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -843,10 +1892,21 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property contains a parameterized SQL query, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection contains any <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that correspond to the parameter placeholders in the SQL string.</para>
+          <para>Depending on the ADO.NET provider, the order of the parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> collection might be important. The <see cref="N:System.Data.OleDb" /> and <see cref="N:System.Data.Odbc" /> providers associate the parameters in the collection according to the order that the parameters appear in the parameterized SQL query. The <see cref="N:System.Data.SqlClient" /> provider, which is the default ADO.NET provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, associates the parameters in the collection by matching the name of the parameter with a placeholder alias in the SQL query. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> property retrieves the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> property that is contained by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selecting" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> property from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -864,10 +1924,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SortParameterName" /> property is evaluated only when the SQL command that is contained by the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> property is the name of a stored procedure. In this case, if the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SortParameterName" /> property is set, it contains the name of a parameter that is used to sort the results of the stored procedure. </para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.ParameterPrefix" /> property is set, it is prepended to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SortParameterName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a stored procedure parameter that is used to sort retrieved data when data retrieval is performed using a stored procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -885,10 +1952,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control supports an optional expiration policy based on the <see cref="T:System.Web.Caching.SqlCacheDependency" /> object for the data cache (the service must be configured for the database server).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.SqlCacheDependency" /> string identifies databases and tables according to the same format that is used by the @ Page directive, where the first part of the string is a connection string to a Microsoft SQL Server database, followed by a colon delimiter, and finally the name of the database table (for example, "connectionstring1:table1"). If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SqlCacheDependency" /> property depends on more than one table, the connection string-and-table name pairs are separated by semicolons (for example, "connectionstring1:table1";connectionstring2:table2").</para>
+          <block subset="none" type="note">
+            <para>When you are using client impersonation under Microsoft Windows authentication, the data is cached when the first user accesses the data. If another user requests the same data, the data is retrieved from the cache. The data is not retrieved by making another call to the database to verify the user's access to the data. If you expect more than one user to access the data, and you want each retrieval to the data to be verified by the security configurations for the database, do not use caching.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a semicolon-delimited string that indicates which databases and tables to use for the Microsoft SQL Server cache dependency.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -902,9 +1979,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.TrackViewState" /> method is overridden to mark the starting point to begin tracking and saving changes to the control as part of the view state for the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracks view state changes to the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control so that the changes can be stored in the <see cref="T:System.Web.UI.StateBag" /> object for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -918,10 +2001,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method is automatically called by the <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" /> controls during postback if the data has been changed. For data that has been changed in other controls, the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method can be explicitly called on postback during the <see cref="E:System.Windows.Forms.Form.Load" /> event.</para>
+          <para>Before the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> operation is performed, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnUpdating(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" /> event. You can handle this event to examine the values of the parameters and to perform any preprocessing before an <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> operation. </para>
+          <para>After the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> operation completes, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnUpdated(System.Web.UI.WebControls.SqlDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updated" /> event. You can handle this event to examine any return values and error codes and to perform any post-processing.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method delegates to the <see cref="Overload:System.Web.UI.WebControls.SqlDataSourceView.Update" /> method of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. To perform an update operation, the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> builds a <see cref="T:System.Data.Common.DbCommand" /> object using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> text and any associated <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> properties, and then executes the <see cref="T:System.Data.Common.DbCommand" /> object against the underlying database.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs an update operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows updated in the underlying database.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -939,10 +2037,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> represents an SQL query or the name of a stored procedure, and is used by the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> method.</para>
+          <para>Because different database products use different varieties of SQL, the syntax of the SQL string depends on the current ADO.NET provider being used, which is identified by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ProviderName" /> property. If the SQL string is a parameterized query or command, the placeholder of the parameter also depends on the ADO.NET provider being used. For example, if the provider is the <see cref="N:System.Data.SqlClient" />, which is the default provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> class, the placeholder of the parameter is '@parameterName'. However, if the provider is set to the <see cref="N:System.Data.Odbc" /> or <see cref="N:System.Data.OleDb" />, the placeholder of the parameter is '?'. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using Parameters with the SqlDataSource Control</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property can be an SQL string or the name of a stored procedure, if the data source supports stored procedures.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>For security purposes, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property is not stored is view state. Because it is possible to decode the contents of view state on the client, storing sensitive information about the database structure in view state could result in an information disclosure vulnerability.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL string that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control uses to update data in the underlying database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -960,10 +2073,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommandType" /> property delegates to the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommandType" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the text in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property is an SQL statement or the name of a stored procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -976,9 +2095,16 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceStatusEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updated" /> event to examine the values of output parameters after an update operation has completed. The output parameters are available from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventArgs" /> object that is associated with the event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an update operation has completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1005,10 +2131,22 @@
         <ReturnType>System.Web.UI.WebControls.ParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property contains a parameterized SQL query, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> collection contains any <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that correspond to the parameter placeholders in the SQL string.</para>
+          <para>Parameter names might be affected by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.OldValuesParameterFormatString" /> property, specifically if the name identifies a primary key, such as a key specified using the DataKeyNames property of the data-bound control, or in delete and update scenarios where the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property is set to the <see cref="F:System.Web.UI.ConflictOptions.CompareAllValues" /> value and a set of <paramref name="oldValues" /> are passed to the corresponding data method. In this case, the format string is applied to each parameter name in the <paramref name="oldValues" /> collection.</para>
+          <para>The order of the parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> collection might be important, depending on the ADO.NET provider. The <see cref="N:System.Data.OleDb" /> and <see cref="N:System.Data.Odbc" /> providers associate the parameters in the collection according to the order that the parameters appear in the parameterized SQL query. The <see cref="N:System.Data.SqlClient" /> provider, which is the default ADO.NET provider for the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control, associates the parameters in the collection by matching the name of the parameter with a placeholder alias in the SQL query. For more information about parameterized SQL queries and commands, see <format type="text/html"><a href="403ff44a-dd0b-484d-968e-dcd1dcd4c295">Using the SqlDataSource and AccessDataSource Controls with Parameters</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateParameters" /> property retrieves the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateParameters" /> property that is contained by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> object that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Filtering" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters collection that contains the parameters that are used by the <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" /> property from the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> control that is associated with the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1021,9 +2159,19 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" /> event to perform additional initialization operations that are specific to your application, to validate the values of parameters, or to change the parameter values before the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control performs the update operation. The connection to the underlying data source is not yet open when the event handler delegate is called. Therefore, you cannot directly cancel the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" /> database operation by calling the <see cref="M:System.Data.Common.DbCommand.Cancel" /> method on the <see cref="T:System.Data.Common.DbCommand" /> object that is exposed by the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> object. You can, however, cancel the database operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> to true.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Values are inserted into parameters without validation, which is a potential security threat. Use the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" /> event to validate parameter values before executing the query. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an update operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

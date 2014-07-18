@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompiledBindableTemplateBuilder" FullName="System.Web.UI.CompiledBindableTemplateBuilder">
   <TypeSignature Language="C#" Value="public sealed class CompiledBindableTemplateBuilder : System.Web.UI.IBindableTemplate" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET uses the <see cref="T:System.Web.UI.CompiledBindableTemplateBuilder" /> class whenever it parses declarative two-way data-binding within the templated content of an ASP.NET control such as <see cref="T:System.Web.UI.WebControls.FormView" />. It is not meant to be used directly in your code.</para>
+      <para>For more information about ASP.NET data binding, expressions, and syntax, see <format type="text/html"><a href="ab7b2846-975b-4057-a948-45527497c742">Data Binding</a></format> and <format type="text/html"><a href="14cdd57d-0f82-4667-b503-73e1a96f136a">Data-Binding Expression Syntax</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the default implementation of an <see cref="T:System.Web.UI.IBindableTemplate" /> object, which ASP.NET uses whenever it parses two-way data-binding within the templated content of an ASP.NET control such as <see cref="T:System.Web.UI.WebControls.FormView" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,11 +34,16 @@
         <Parameter Name="extractTemplateValuesMethod" Type="System.Web.UI.ExtractTemplateValuesMethod" />
       </Parameters>
       <Docs>
-        <param name="buildTemplateMethod">To be added.</param>
-        <param name="extractTemplateValuesMethod">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.CompiledBindableTemplateBuilder" /> class.</para>
+        </summary>
+        <param name="buildTemplateMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate used to handle the <see cref="M:System.Web.UI.CompiledBindableTemplateBuilder.InstantiateIn(System.Web.UI.Control)" /> method call.</param>
+        <param name="extractTemplateValuesMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate used to handle the <see cref="M:System.Web.UI.CompiledBindableTemplateBuilder.ExtractValues(System.Web.UI.Control)" /> method call.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,11 +59,21 @@
         <Parameter Name="container" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.CompiledBindableTemplateBuilder.ExtractValues(System.Web.UI.Control)" /> method is the <see cref="T:System.Web.UI.CompiledBindableTemplateBuilder" /> class's implementation of the <see cref="M:System.Web.UI.IBindableTemplate.ExtractValues(System.Web.UI.Control)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a set of name/value pairs for values bound using two-way ASP.NET data-binding syntax within the templated content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> of name/value pairs. The name represents the name of the data item field specified as the first parameter to bind within templated content. The value is the current value of a property value bound using two-way ASP.NET data-binding syntax.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> from which to extract name/value pairs, which are passed by the data-bound control to an associated data source control in two-way data-binding scenarios.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +89,17 @@
         <Parameter Name="container" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.CompiledBindableTemplateBuilder.InstantiateIn(System.Web.UI.Control)" /> method is the <see cref="T:System.Web.UI.CompiledBindableTemplateBuilder" /> class's implementation of the <see cref="M:System.Web.UI.ITemplate.InstantiateIn(System.Web.UI.Control)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the <see cref="T:System.Web.UI.Control" /> object that child controls and templates belong to. These child controls are in turn defined within an inline template.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to contain the controls that are created from the inline template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

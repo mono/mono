@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataRecord" FullName="System.Data.IDataRecord">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDataRecord" />
   <AssemblyInfo>
@@ -10,8 +11,301 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IDataReader" /> and <see cref="T:System.Data.IDataRecord" /> interfaces enable an inheriting class to implement a DataReader class. This provides a way of reading one or more forward-only streams of result sets. For more information about DataReader classes, see <format type="text/html"><a href="97afc121-fb8b-465b-bab3-6d844420badb">Retrieving Data Using the DataReader</a></format>. </para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IDataRecord" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IDataRecord" />. Typically, you do this by obtaining a DataReader through the ExecuteReader method of the Command object.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IDataRecord" /> must implement all inherited members, and typically define additional members to add provider-specific functionality.</para>
+      <para>Providers implementing a DataReader are required to expose data in common language runtime (CLR) types. Type coercion is defined for some types not included in the CLR. These values may be accessed as alternative types that comply with CLR types. As an example, the following table lists suggested mappings from OLE DB data types to CLR types, with alternative types in parentheses.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>OLE DB type </para>
+            </term>
+            <description>
+              <para>CLR type </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>DBTYPE_BOOL </para>
+          </term>
+          <description>
+            <para>Int16 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_BSTR </para>
+          </term>
+          <description>
+            <para>string </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_BYTES </para>
+          </term>
+          <description>
+            <para>byte[] </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_CY </para>
+          </term>
+          <description>
+            <para>Decimal </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_DATE </para>
+          </term>
+          <description>
+            <para>DateTime </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_DBDATE </para>
+          </term>
+          <description>
+            <para>DateTime </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_DBTIME </para>
+          </term>
+          <description>
+            <para>DateTime </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_DBTIMESTAMP </para>
+          </term>
+          <description>
+            <para>DateTime </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_DECIMAL </para>
+          </term>
+          <description>
+            <para>Decimal </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_EMPTY </para>
+          </term>
+          <description>
+            <para>null </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_ERROR </para>
+          </term>
+          <description>
+            <para>ExternalException </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_FILETIME </para>
+          </term>
+          <description>
+            <para>DateTime </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_GUID </para>
+          </term>
+          <description>
+            <para>Guid </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_HCHAPTER </para>
+          </term>
+          <description>
+            <para>not supported </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_I1 </para>
+          </term>
+          <description>
+            <para>SByte </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_I2 </para>
+          </term>
+          <description>
+            <para>Int16 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_I4 </para>
+          </term>
+          <description>
+            <para>Int32 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_I8 </para>
+          </term>
+          <description>
+            <para>Int64 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_IDISPATCH </para>
+          </term>
+          <description>
+            <para>object </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_IUNKNOWN </para>
+          </term>
+          <description>
+            <para>object </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_NULL </para>
+          </term>
+          <description>
+            <para>DBNull.Value </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_NUMERIC </para>
+          </term>
+          <description>
+            <para>Decimal </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_PROPVARIANT </para>
+          </term>
+          <description>
+            <para>object </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_R4 </para>
+          </term>
+          <description>
+            <para>Single </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_R8 </para>
+          </term>
+          <description>
+            <para>Double </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_STR </para>
+          </term>
+          <description>
+            <para>string </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_UDT </para>
+          </term>
+          <description>
+            <para>not supported </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_UI1 </para>
+          </term>
+          <description>
+            <para>byte (Int16) </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_UI2 </para>
+          </term>
+          <description>
+            <para>UInt16 (Int32) </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_UI4 </para>
+          </term>
+          <description>
+            <para>UInt32 (Int64) </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_UI8 </para>
+          </term>
+          <description>
+            <para>UInt64 (Decimal) </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_VARIANT </para>
+          </term>
+          <description>
+            <para>object </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_VARNUMERIC </para>
+          </term>
+          <description>
+            <para>not supported </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DBTYPE_WSTR </para>
+          </term>
+          <description>
+            <para>string </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the column values within each row for a DataReader, and is implemented by .NET Framework data providers that access relational databases.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FieldCount">
@@ -21,9 +315,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After executing a query that does not return rows (for example, using the <see cref="M:System.Data.IDbCommand.ExecuteNonQuery" /> method), <see cref="P:System.Data.IDataRecord.FieldCount" /> returns -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns in the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,10 +340,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed. Therefore, the data retrieved must already be a Boolean; otherwise an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a Boolean.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,10 +370,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the 8-bit unsigned integer value of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit unsigned integer value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,14 +401,31 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <param name="fieldOffset">To be added: an object of type 'long'</param>
-        <param name="buffer">To be added: an object of type 'byte []'</param>
-        <param name="bufferoffset">To be added.</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.IDataRecord.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the number of available bytes in the field. Frequently this is the exact length of the field. However, the number returned may be less than the true length of the field if GetBytes has already been used to obtain bytes from the field.</para>
+          <para>If you pass a buffer that is null, <see cref="M:System.Data.IDataRecord.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the length of the row in bytes.</para>
+          <para>No conversions are performed; therefore the data retrieved must already be a byte array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of bytes from the specified column offset into the buffer as an array, starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="fieldOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferoffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index for <paramref name="buffer" /> to start the read operation. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,10 +442,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the character value of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,14 +473,31 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <param name="fieldoffset">To be added.</param>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="bufferoffset">To be added.</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.IDataRecord.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the number of available characters in the field. Frequently this is the exact length of the field. However, the number returned may be less than the exact length of the field if GetChars has already been used to obtain characters from the field.</para>
+          <para>If you pass a buffer that is null, GetChars returns the length of the field in characters.</para>
+          <para>No conversions are performed; therefore the data retrieved must already be a character array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of characters from the specified column offset into the buffer as an array, starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="fieldoffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the row from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferoffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index for <paramref name="buffer" /> to start the read operation. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,10 +514,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDataReader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Data.IDataReader" /> for the specified column ordinal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.IDataReader" /> for the specified column ordinal.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,10 +541,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data type information can differ from the type information returned by GetFieldType, especially where the underlying data types do not map one for one to the runtime types supported by the language. (for example, DataTypeName may be "integer", while Type.Name may be "Int32".) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data type information for the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data type information for the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -196,10 +571,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date and time data value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time data value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,10 +598,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fixed-position numeric value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixed-position numeric value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -236,10 +625,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the double-precision floating point number of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The double-precision floating point number of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,10 +652,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information can be used to increase performance by indicating the strongly-typed accessor to call. (for example, using GetInt32 is roughly ten times faster than using GetValue.) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> information corresponding to the type of <see cref="T:System.Object" /> that would be returned from <see cref="M:System.Data.IDataRecord.GetValue(System.Int32)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> information corresponding to the type of <see cref="T:System.Object" /> that would be returned from <see cref="M:System.Data.IDataRecord.GetValue(System.Int32)" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,10 +682,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the single-precision floating point number of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single-precision floating point number of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,10 +709,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Guid'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the GUID value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GUID value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,10 +736,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the 16-bit signed integer value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit signed integer value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,10 +763,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the 32-bit signed integer value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit signed integer value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -356,10 +790,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the 64-bit signed integer value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit signed integer value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,10 +817,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name for the field to find.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the field or the empty string (""), if there is no value to return.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -396,10 +844,21 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetOrdinal performs a case-sensitive lookup first. If it fails, a second case-insensitive search is made. GetOrdinal is kana-width insensitive. If the index of the named field is not found, an IndexOutOfRangeException is thrown. </para>
+          <para>Because ordinal-based lookups are more efficient than named lookups, it is inefficient to call GetOrdinal within a loop. Save time by calling GetOrdinal one time and assigning the results to an integer variable for use within the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return the index of the named field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the named field.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -416,10 +875,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value of the specified field.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -436,10 +902,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return the value of the specified field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> which will contain the field value upon return.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -456,10 +929,21 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most applications, the <see cref="M:System.Data.IDataRecord.GetValues(System.Object[])" /> method provides an efficient means for retrieving all columns, instead of retrieving each column individually.</para>
+          <para>You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns that are contained in the resulting row. Only the amount of data the <see cref="T:System.Object" /> array holds is copied to the array. You can also pass an <see cref="T:System.Object" /> array whose length is more than the number of columns that are contained in the resulting row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates an array of objects with the column values of the current record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> to copy the attribute fields into. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -476,10 +960,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to see if there are null column values before calling the typed get methods (for example, <see cref="M:System.Data.SqlClient.SqlDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.SqlClient.SqlDataReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return whether the specified field is set to null.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified field is set to null; otherwise, false.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

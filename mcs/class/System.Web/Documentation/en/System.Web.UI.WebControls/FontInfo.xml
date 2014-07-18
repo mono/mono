@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FontInfo" FullName="System.Web.UI.WebControls.FontInfo">
   <TypeSignature Language="C#" Value="public sealed class FontInfo" Maintainer="auto" />
   <AssemblyInfo>
@@ -18,8 +19,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class to encapsulate the font properties of text. You can specify the font name and font size. You can also specify whether the style of the font is bold, italic, overlined, strikethrough, or underlined.</para>
+      <para>This class is commonly used in a property for a class that requires font information, such as the <see cref="P:System.Web.UI.WebControls.WebControl.Font" /> property of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class.</para>
+      <block subset="none" type="note">
+        <para>This class does not have a public constructor. A new instance of the class cannot be created directly.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the font properties of text. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Bold">
@@ -30,9 +41,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Bold" /> property to specify or determine whether the font is bold.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the font is bold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,8 +76,57 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Web.UI.WebControls.FontInfo" /> properties are unset when the <see cref="T:System.Web.UI.WebControls.FontInfo" /> object is created. When a property is first set, the value is added to view state. The <see cref="M:System.Web.UI.WebControls.FontInfo.ClearDefaults" /> method is used to set all the <see cref="T:System.Web.UI.WebControls.FontInfo" /> properties to the unset state and remove any entries in view state. The following properties are reset: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Names" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Name" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Size" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Bold" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Italic" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets all <see cref="T:System.Web.UI.WebControls.FontInfo" /> properties to the unset state and clears the view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -72,9 +139,20 @@
         <Parameter Name="f" Type="System.Web.UI.WebControls.FontInfo" />
       </Parameters>
       <Docs>
-        <param name="f">a <see cref="T:System.Web.UI.WebControls.FontInfo" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontInfo.CopyFrom(System.Web.UI.WebControls.FontInfo)" /> method to duplicate the font properties of the specified <see cref="T:System.Web.UI.WebControls.FontInfo" /> into the instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class that this method is called from.</para>
+          <block subset="none" type="note">
+            <para>All properties in the current instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class will be replaced by the associated property in the <paramref name="f" /> parameter.</para>
+          </block>
+          <para>When a style is registered using <see cref="M:System.Web.UI.IStyleSheet.RegisterStyle(System.Web.UI.WebControls.Style,System.Web.UI.IUrlResolutionService)" />, and then copied using <see cref="M:System.Web.UI.WebControls.Style.CopyFrom(System.Web.UI.WebControls.Style)" />, only the <see cref="P:System.Web.UI.WebControls.Style.CssClass" /> property is copied to the destination, not all the individual properties. Therefore, if you are using <see cref="M:System.Web.UI.WebControls.FontInfo.CopyFrom(System.Web.UI.WebControls.FontInfo)" /> to copy font information from the <see cref="P:System.Web.UI.WebControls.Style.Font" /> property of a <see cref="T:System.Web.UI.WebControls.Style" /> that is registered, you will not get the individual settings of the font from the style. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Duplicates the font properties of the specified <see cref="T:System.Web.UI.WebControls.FontInfo" /> into the instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class that this method is called from.</para>
+        </summary>
+        <param name="f">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontInfo" /> that contains the font properties to duplicate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,9 +167,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Italic" /> property to specify or determine whether the font is italic.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the font is italic.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +201,19 @@
         <Parameter Name="f" Type="System.Web.UI.WebControls.FontInfo" />
       </Parameters>
       <Docs>
-        <param name="f">a <see cref="T:System.Web.UI.WebControls.FontInfo" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontInfo.MergeWith(System.Web.UI.WebControls.FontInfo)" /> method to combine the font properties of the specified <see cref="T:System.Web.UI.WebControls.FontInfo" /> with the instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class that this method is called from.</para>
+          <block subset="none" type="note">
+            <para>This method joins the properties of the two <see cref="T:System.Web.UI.WebControls.FontInfo" /> objects by setting each property that is not set in the current instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class with the value in the corresponding property of the <paramref name="f" /> parameter. Only properties that have not been set will be replaced. If a property in the <paramref name="f" /> parameter is not set, it will not replace the corresponding property in the current instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines the font properties of the specified <see cref="T:System.Web.UI.WebControls.FontInfo" /> with the instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class that this method is called from.</para>
+        </summary>
+        <param name="f">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontInfo" /> that contains the font properties to combine. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +228,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property to specify or determine the primary font name. The primary font name determines the font that is used to display text in the control associated with the <see cref="T:System.Web.UI.WebControls.FontInfo" />.</para>
+          <block subset="none" type="note">
+            <para>When you set the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property, the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property is automatically updated with the first item in the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property. If you set the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property, the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property is automatically updated with a single element array containing the value of the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the primary font name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -170,9 +274,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property to specify or determine an ordered array of font names for a <see cref="T:System.Web.UI.WebControls.FontInfo" />. The <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property is commonly used to store a list of available font names.</para>
+          <block subset="none" type="note">
+            <para>When you set the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property, the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property is automatically updated with the first item in the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property. If you set the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property, the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property is automatically updated with a single element array containing the value of the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property.</para>
+          </block>
+          <para>To specify the font name for the <see cref="T:System.Web.UI.WebControls.FontInfo" /> using the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> array, set the first element in the array to the font name you want to use. Since the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property is automatically updated when the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property is set, you need to manipulate the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> array to rearrange the order of the items in the array instead of setting the <see cref="P:System.Web.UI.WebControls.FontInfo.Name" /> property directly.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an ordered array of font names.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,9 +316,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" /> property to specify or determine whether the font contains a line above the text.</para>
+          <para>The value of this property is stored in view state.</para>
+          <block subset="none" type="note">
+            <para>The font underline behavior for links generated by the <see cref="T:System.Web.UI.WebControls.LinkButton" />, <see cref="T:System.Web.UI.WebControls.HyperLink" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> controls is affected by setting the <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" /> property of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> for the control. If the <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" /> property is set, regardless of value its value, you must set the <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" /> property explicitly if you want the link to be underlined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the font is overlined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,9 +351,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontInfo.ShouldSerializeNames" /> method to determine whether the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property has changed from its default value. This method is commonly used if you are either creating a designer for the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class or creating your own control incorporating the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property must have at least one entry to be serialized.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Web.UI.WebControls.FontInfo.Names" /> property has changed from its default value; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -243,9 +380,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontUnit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property to specify the size of the font.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font size.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -271,9 +415,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" /> property to specify or determine whether the font contains a line through the text.</para>
+          <para>The value of this property is stored in view state.</para>
+          <block subset="none" type="note">
+            <para>The font underline behavior for links generated by the <see cref="T:System.Web.UI.WebControls.LinkButton" />, <see cref="T:System.Web.UI.WebControls.HyperLink" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> controls is affected by setting the <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" /> property of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> for the control. If the <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" /> property is set, regardless of its value, you must set the <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" /> property explicitly if you want the link to be underlined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the font is strikethrough.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,9 +450,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontInfo.ToString" /> method to create a string that contains the font name and size, separated by a comma, for an instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property is not set, only the font name is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that contains the font name and size for an instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the font name and size for an instance of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -313,9 +479,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" /> property to specify or determine whether the font contains a line under the text.</para>
+          <para>The value of this property is stored in view state.</para>
+          <block subset="none" type="note">
+            <para>The font underline behavior for links generated by the <see cref="T:System.Web.UI.WebControls.LinkButton" />, <see cref="T:System.Web.UI.WebControls.HyperLink" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> controls is affected by setting the <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" /> and the <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" /> properties of the <see cref="T:System.Web.UI.WebControls.FontInfo" /> for the control. If the <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" /> or the <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" /> properties are set, regardless of their value, you must set the <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" /> property explicitly if you want the link to be underlined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the font is underlined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

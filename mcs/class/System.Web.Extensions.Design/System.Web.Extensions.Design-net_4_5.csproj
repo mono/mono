@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -68,9 +69,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -79,25 +84,25 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
-      <Name>System\System-net_4_5-2</Name>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Design\System.Design-net_4_5-1.csproj">
-      <Project>{9A747C88-5D5B-41EA-8435-48EAFCFF3C5B}</Project>
-      <Name>System.Design\System.Design-net_4_5-1</Name>
+    <ProjectReference Include="../System.Design/System.Design-net_4_5.csproj">
+      <Project>{D4E6A482-761B-4B41-8B63-C930CA84D268}</Project>
+      <Name>System.Design-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
+    <ProjectReference Include="../System.Drawing/System.Drawing-net_4_5.csproj">
       <Project>{CB1CB976-AA54-4553-B0E7-05665B199EC4}</Project>
-      <Name>System.Drawing\System.Drawing-net_4_5</Name>
+      <Name>System.Drawing-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

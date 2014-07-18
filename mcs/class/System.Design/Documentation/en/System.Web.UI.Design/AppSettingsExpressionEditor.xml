@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AppSettingsExpressionEditor" FullName="System.Web.UI.Design.AppSettingsExpressionEditor">
   <TypeSignature Language="C#" Value="public class AppSettingsExpressionEditor : System.Web.UI.Design.ExpressionEditor" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> class is derived from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class and provides an implementation for evaluating and associating an application setting reference with a control property at design time. For example, you can bind the value of a control property to the application setting expression AppSettings:mySettingKeyName, which indicates that the control property value is set using the mySettingKeyName value in the appSettings section of the Web configuration file.</para>
+      <para>A visual designer host, such as vsprvslong, uses the <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> class to select an application setting from the appSettings configuration section, and then evaluates the selected expression for design-time rendering.</para>
+      <para>When you browse to the <see cref="P:System.Web.UI.Design.HtmlControlDesigner.Expressions" /> property for a control in the design-time properties grid, the visual designer displays a dialog box to set expressions that provide the run-time value for a control property. You can select the expression type based on a list of expression prefixes. When you select the <ui>AppSettings</ui> expression prefix from the list, the visual designer host uses the associated <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> object to provide design-time editing functionality of appSettings expressions and uses <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> methods to evaluate and convert the expression string based on the syntax for an application setting expression. The visual designer host uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+      <para>The <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> property for an <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> object returns the string AppSettings. The <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class is associated with the expression prefix AppSettings and the <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> implementation.</para>
+      <para>The <see cref="M:System.Web.UI.Design.AppSettingsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method evaluates an input application setting expression string. The <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that is used to enter and edit application setting expressions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and methods for evaluating and editing an application setting expression in a configuration file at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> class is configured by the base class together with the <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> property set to AppSettings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.AppSettingsExpressionEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,14 +57,29 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="parseTimeData">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.AppSettingsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method looks up the application setting that is specified by <paramref name="expression" />, and then returns the value of the application setting.</para>
+          <para>The visual designer uses the <see cref="M:System.Web.UI.Design.AppSettingsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method to evaluate an application setting expression and provide the design-time value for an associated control property. The visual designer calls the <see cref="M:System.Web.UI.Design.AppSettingsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method with the expression string, and uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+          <para>At run time, the page parser uses the <see cref="M:System.Web.Compilation.AppSettingsExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> and <see cref="M:System.Web.Compilation.AppSettingsExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> methods of the corresponding <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> implementation to evaluate an expression and provide the run-time value for an associated control property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an application setting expression string and provides the design-time value for a control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by <paramref name="expression" />, if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An application setting expression string to evaluate. <paramref name="expression" /> does not include the AppSettings expression prefix.</param>
+        <param name="parseTimeData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing additional parsing information for evaluating <paramref name="expression" />.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control property type.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,12 +96,23 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.AppSettingsExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns a simple editor sheet implementation, which uses a single input string to form the expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an expression editor sheet for an application setting expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that defines the application setting expression properties.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression string set for a control property, used to initialize the expression editor sheet. <paramref name="expression" /> does not include the AppSettings expression prefix.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

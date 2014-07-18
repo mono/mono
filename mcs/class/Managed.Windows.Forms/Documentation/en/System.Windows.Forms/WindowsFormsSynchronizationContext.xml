@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsFormsSynchronizationContext" FullName="System.Windows.Forms.WindowsFormsSynchronizationContext">
   <TypeSignature Language="C#" Value="public sealed class WindowsFormsSynchronizationContext : System.Threading.SynchronizationContext, IDisposable" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a synchronization context for the Windows Forms application model. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +29,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoInstall">
@@ -44,9 +51,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.WindowsFormsSynchronizationContext.AutoInstall" /> property determines whether the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> is installed when a control is created, or when a message loop is started.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> is installed when a control is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateCopy">
@@ -60,9 +73,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the synchronization context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the synchronization context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -76,8 +95,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Dispose" /> when you are finished using the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" />. The <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Dispose" /> method leaves the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Dispose" />, you must release all references to the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Dispose" /> before you release your last reference to the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Post">
@@ -94,10 +122,18 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Post(System.Threading.SendOrPostCallback,System.Object)" /> method starts an asynchronous request to post a message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches an asynchronous message to a synchronization context.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.SendOrPostCallback" /> delegate to call.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object passed to the delegate.</param>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -114,10 +150,18 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the destination thread no longer exists or the value of its <see cref="P:System.Threading.Thread.IsAlive" /> property is false, the <see cref="M:System.Windows.Forms.WindowsFormsSynchronizationContext.Send(System.Threading.SendOrPostCallback,System.Object)" /> method raises an <see cref="T:System.ComponentModel.InvalidAsynchronousStateException" />. It is up to the caller to determine what further action to take.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches a synchronous message to a synchronization context</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.SendOrPostCallback" /> delegate to call.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object passed to the delegate.</param>
       </Docs>
     </Member>
     <Member MemberName="Uninstall">
@@ -131,8 +175,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the previously installed <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> is null, the current context is set to null.</para>
+          <para>If the currently installed synchronization context is not a <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" />, this method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uninstalls the currently installed <see cref="T:System.Windows.Forms.WindowsFormsSynchronizationContext" /> and replaces it with the previously installed context.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListBox" FullName="System.Windows.Forms.ListBox">
   <TypeSignature Language="C#" Value="public class ListBox : System.Windows.Forms.ListControl" />
   <AssemblyInfo>
@@ -30,8 +31,206 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ListBox" /> control enables you to display a list of items to the user that the user can select by clicking. A <see cref="T:System.Windows.Forms.ListBox" /> control can provide single or multiple selections using the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property. The <see cref="T:System.Windows.Forms.ListBox" /> also provides the <see cref="P:System.Windows.Forms.ListBox.MultiColumn" /> property to enable the display of items in columns instead of a straight vertical list of items. With this, the control can display more visible items and the user no longer needs to scroll to an item.</para>
+      <para>Typically, Windows handles the task of drawing the items to display in the <see cref="T:System.Windows.Forms.ListBox" />. You can use the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property, and handle the <see cref="E:System.Windows.Forms.ListBox.MeasureItem" /> and <see cref="E:System.Windows.Forms.ListBox.DrawItem" /> events so you can override the automatic drawing that Windows provides and draw the items yourself. You can use owner-drawn <see cref="T:System.Windows.Forms.ListBox" /> controls to display variable-height items, images, or a different color or font for the text of each item in the list. The <see cref="P:System.Windows.Forms.ListBox.HorizontalExtent" /> property, <see cref="M:System.Windows.Forms.ListBox.GetItemHeight(System.Int32)" />, and <see cref="M:System.Windows.Forms.ListBox.GetItemRectangle(System.Int32)" /> also help you draw your own items.</para>
+      <para>In addition to display and selection functionality, the <see cref="T:System.Windows.Forms.ListBox" /> also provides features that enable you to efficiently add items to the <see cref="T:System.Windows.Forms.ListBox" /> and to find text within the items of the list. The <see cref="M:System.Windows.Forms.ListBox.BeginUpdate" /> and <see cref="M:System.Windows.Forms.ListBox.EndUpdate" /> methods enable you to add a large number of items to the <see cref="T:System.Windows.Forms.ListBox" /> without the control being repainted each time an item is added to the list. The <see cref="M:System.Windows.Forms.ListBox.FindString(System.String)" /> and <see cref="M:System.Windows.Forms.ListBox.FindStringExact(System.String)" /> methods enable you to search for an item in the list that contains a specific search string.</para>
+      <para>The <see cref="P:System.Windows.Forms.ListBox.Items" />, <see cref="P:System.Windows.Forms.ListBox.SelectedItems" />, and <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> properties provide access to the three collections that are used by the <see cref="T:System.Windows.Forms.ListBox" />. The following table outlines the three collections used by the <see cref="T:System.Windows.Forms.ListBox" /> and their use within the control.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Collection class </para>
+            </term>
+            <description>
+              <para>Use within the <see cref="T:System.Windows.Forms.ListBox" /> </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> </para>
+          </term>
+          <description>
+            <para>Contains all items contained in the <see cref="T:System.Windows.Forms.ListBox" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Windows.Forms.ListBox.SelectedObjectCollection" /> </para>
+          </term>
+          <description>
+            <para>Contains a collection of the selected items which is a subset of the items contained in the <see cref="T:System.Windows.Forms.ListBox" /> control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Windows.Forms.ListBox.SelectedIndexCollection" /> </para>
+          </term>
+          <description>
+            <para>Contains a collection of the selected indexes, which is a subset of the indexes of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" />. These indexes specify items that are selected. </para>
+          </description>
+        </item>
+      </list>
+      <para>The following three examples show the three indexed collections that the <see cref="T:System.Windows.Forms.ListBox" /> class supports.</para>
+      <para>The following table shows an example of how the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> stores the items of the <see cref="T:System.Windows.Forms.ListBox" /> as well as their selection state within an example <see cref="T:System.Windows.Forms.ListBox" />.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Item </para>
+            </description>
+            <description>
+              <para>Selection state within the ListBox </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>object1 </para>
+          </description>
+          <description>
+            <para>Unselected </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>object2 </para>
+          </description>
+          <description>
+            <para>Selected </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>object3 </para>
+          </description>
+          <description>
+            <para>Unselected </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>object4 </para>
+          </description>
+          <description>
+            <para>Selected </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>object5 </para>
+          </description>
+          <description>
+            <para>Selected </para>
+          </description>
+        </item>
+      </list>
+      <para>Based on the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> shown in the previous table, this table shows how the <see cref="T:System.Windows.Forms.ListBox.SelectedObjectCollection" /> would appear.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Item </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>object2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>object4 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>object5 </para>
+          </description>
+        </item>
+      </list>
+      <para>Based on the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> shown in the previous table, this table shows how the <see cref="T:System.Windows.Forms.ListBox.SelectedIndexCollection" /> would appear.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Index of item </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>3 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>4 </para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Add(System.Object)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class enables you to add items to the <see cref="T:System.Windows.Forms.ListBox" />. The <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Add(System.Object)" /> method can accept any object when adding a member to the <see cref="T:System.Windows.Forms.ListBox" />. When an object is being added to the <see cref="T:System.Windows.Forms.ListBox" />, the control uses the text defined in the <see cref="M:System.Object.ToString" /> method of the object unless a member name within the object is specified in the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property. In addition to adding items using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Add(System.Object)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class you can also add items using the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property of the <see cref="T:System.Windows.Forms.ListControl" /> class.</para>
+      <block subset="none" type="note">
+        <para>If you have a <see cref="T:System.Windows.Forms.ListBox" />, <see cref="T:System.Windows.Forms.ComboBox" />, or <see cref="T:System.Windows.Forms.CheckedListBox" /> on a base Windows form and want to modify the string collections of those controls in a derived Windows form, the string collections of those controls in the base Windows form must be empty. If the string collections are not empty, they become read-only when you derive another Windows form.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows control to display a list of items. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +238,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListBox" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +259,13 @@
         <Parameter Name="value" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is obsolete, and there is no replacement.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of objects.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +287,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.ListBox" /> currently enables selection of list items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackColor">
@@ -93,9 +302,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -117,9 +329,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,8 +359,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListBox.BackgroundImage" /> property of the label changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +391,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image layout for a <see cref="T:System.Windows.Forms.ListBox" /> as defined in the <see cref="T:System.Windows.Forms.ImageLayout" /> enumeration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -190,8 +420,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListBox.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginUpdate">
@@ -202,8 +438,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The preferred way to add multiple items to the <see cref="T:System.Windows.Forms.ListBox" /> is to use the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.AddRange(System.Windows.Forms.ListBox.ObjectCollection)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class (through the <see cref="P:System.Windows.Forms.ListBox.Items" /> property of the <see cref="T:System.Windows.Forms.ListBox" />). This enables you to add an array of items to the list in a single operation. However, if you want to add items one at a time using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Add(System.Object)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class, you can use the <see cref="M:System.Windows.Forms.ListBox.BeginUpdate" /> method to prevent the control from repainting the <see cref="T:System.Windows.Forms.ListBox" /> each time an item is added to the list. Once you have completed the task of adding items to the list, call the <see cref="M:System.Windows.Forms.ListBox.EndUpdate" /> method to enable the <see cref="T:System.Windows.Forms.ListBox" /> to repaint. This way of adding items can prevent flickered drawing of the <see cref="T:System.Windows.Forms.ListBox" /> when a large number of items are being added to the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maintains performance while items are added to the <see cref="T:System.Windows.Forms.ListBox" /> one at a time by preventing the control from drawing until the <see cref="M:System.Windows.Forms.ListBox.EndUpdate" /> method is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -225,9 +467,12 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of border that is drawn around the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,8 +487,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method is equivalent to setting the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property to negative one (-1). You can use this method to quickly unselect all items in the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unselects all items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -265,8 +516,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Windows.Forms.ListBox" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -288,9 +542,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set the value to zero (0), a default width is assigned to each column. If the <see cref="T:System.Windows.Forms.ListBox" /> is a multicolumn <see cref="T:System.Windows.Forms.ListBox" />, this property returns the current width of each column in the list. You can use this property to ensure that each column in a multicolumn <see cref="T:System.Windows.Forms.ListBox" /> can properly display its items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of columns in a multicolumn <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,9 +565,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the item collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> that represents the new item collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -321,9 +587,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the required creation parameters when the control handle is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -348,9 +617,15 @@
         <ReturnType>System.Windows.Forms.ListBox+IntegerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer array contains the tab spaces in ascending order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width of the tabs between the items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultItemHeight">
@@ -361,8 +636,11 @@
       </ReturnValue>
       <MemberValue>13</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default item height for an owner-drawn <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,9 +654,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,8 +673,15 @@
         <ReturnType>System.Windows.Forms.DrawItemEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is used by an owner-drawn <see cref="T:System.Windows.Forms.ListBox" />. The event is only raised when the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to DrawMode.OwnerDrawFixed or DrawMode.OwnerDrawVariable. You can use this event to perform the tasks needed to draw items in the <see cref="T:System.Windows.Forms.ListBox" />. If you have a variable-sized item (when the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to DrawMode.OwnerDrawVariable), before drawing an item, the <see cref="E:System.Windows.Forms.ListBox.MeasureItem" /> event is raised. You can create an event handler for the <see cref="E:System.Windows.Forms.ListBox.MeasureItem" /> event to specify the size for the item that you are going to draw in your event handler for the <see cref="E:System.Windows.Forms.ListBox.DrawItem" /> event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a visual aspect of an owner-drawn <see cref="T:System.Windows.Forms.ListBox" /> changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -415,9 +703,12 @@
         <ReturnType>System.Windows.Forms.DrawMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the drawing mode for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -432,8 +723,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The preferred way to add items to the <see cref="T:System.Windows.Forms.ListBox" /> is to use the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.AddRange(System.Windows.Forms.ListBox.ObjectCollection)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class (through the <see cref="P:System.Windows.Forms.ListBox.Items" /> property of the <see cref="T:System.Windows.Forms.ListBox" />). This enables you to add an array of items to the list at one time. However, if you want to add items one at a time using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Add(System.Object)" /> method of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class, you can use the <see cref="M:System.Windows.Forms.ListBox.BeginUpdate" /> method to prevent the control from repainting the <see cref="T:System.Windows.Forms.ListBox" /> each time an item is added to the list. Once you have completed the task of adding items to the list, call the <see cref="M:System.Windows.Forms.ListBox.EndUpdate" /> method to enable the <see cref="T:System.Windows.Forms.ListBox" /> to repaint. This way of adding items can prevent flickered drawing of the <see cref="T:System.Windows.Forms.ListBox" /> when a large number of items are being added to the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumes painting the <see cref="T:System.Windows.Forms.ListBox" /> control after painting is suspended by the <see cref="M:System.Windows.Forms.ListBox.BeginUpdate" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -450,10 +747,20 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search performed by this method is not case-sensitive. The search looks for words that partially match the specified search string parameter, <paramref name="s" />. You can use this method to search for the first item that matches the specified string. You can then perform tasks such as removing the item that contains the search text by using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Remove(System.Object)" /> method or changing the item's text. Once you have found the specified text, if you want to search for other instances of the text in the <see cref="T:System.Windows.Forms.ListBox" />, you can use the version of the <see cref="M:System.Windows.Forms.ListBox.FindString(System.String)" /> method that provides a parameter for specifying a starting index within the <see cref="T:System.Windows.Forms.ListBox" />. If you want to perform a search for an exact word match instead of a partial match, use the <see cref="M:System.Windows.Forms.ListBox.FindStringExact(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the first item in the <see cref="T:System.Windows.Forms.ListBox" /> that starts with the specified string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first item found; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -471,11 +778,25 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="startIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search performed by this method is not case-sensitive. The search looks for words that partially match the specified search string parameter, <paramref name="s" />. You can use this method to search for the first item that matches the specified string at the specified starting index within the list of items for the <see cref="T:System.Windows.Forms.ListBox" />. You can then perform tasks such as removing the item that contains the search text by using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Remove(System.Object)" /> method or changing the item's text. This method is typically used after a call has been made using the version of this method that does not specify a starting index. Once an initial item has been found in the list, this method is typically used to find further instances of the search text by specifying the index position in the <paramref name="startIndex" /> parameter of the item after the first found instance of the search text. If you want to perform a search for an exact word match instead of a partial match, use the <see cref="M:System.Windows.Forms.ListBox.FindStringExact(System.String)" /> method.</para>
+          <block subset="none" type="note">
+            <para>When the search reaches the bottom of the <see cref="T:System.Windows.Forms.ListBox" />, it continues searching from the top of the <see cref="T:System.Windows.Forms.ListBox" /> back to the item specified by the <paramref name="startIndex" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the first item in the <see cref="T:System.Windows.Forms.ListBox" /> that starts with the specified string. The search starts at a specific starting index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first item found; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to search for. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item before the first item to be searched. Set to negative one (-1) to search from the beginning of the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -492,10 +813,20 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search performed by this method is not case-sensitive. The search looks for an exact match to the words specified in the search string parameter, <paramref name="s" />. You can use this method to search for the first item that matches the specified string. You can then perform tasks such as removing the item that contains the search text by using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Remove(System.Object)" /> method or changing the item's text. Once you have found the specified text, if you want to search for other instances of the text in the <see cref="T:System.Windows.Forms.ListBox" />, you can use the version of the <see cref="M:System.Windows.Forms.ListBox.FindStringExact(System.String)" /> method that provides a parameter for specifying a starting index within the <see cref="T:System.Windows.Forms.ListBox" />. If you want to perform partial word search instead of an exact word match, use the <see cref="M:System.Windows.Forms.ListBox.FindString(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the first item in the <see cref="T:System.Windows.Forms.ListBox" /> that exactly matches the specified string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first item found; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -513,11 +844,25 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="startIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The search performed by this method is not case-sensitive. The search looks for words that exactly match the specified search string parameter, <paramref name="s" />. You can use this method to search for the first item that matches the specified string at the specified starting index within the list of items for the <see cref="T:System.Windows.Forms.ListBox" />. You can then perform tasks such as removing the item that contains the search text using the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.Remove(System.Object)" /> method or change the item's text. This method is typically used after a call has been made using the version of this method that does not specify a starting index. Once an initial item has been found in the list, this method is typically used to find further instances of the search text by specifying the index position in the <paramref name="startIndex" /> parameter of the item after the first found instance of the search text. If you want to perform a partial word search instead of an exact word match, use the <see cref="M:System.Windows.Forms.ListBox.FindString(System.String)" /> method.</para>
+          <block subset="none" type="note">
+            <para>When the search reaches the bottom of the <see cref="T:System.Windows.Forms.ListBox" />, it continues searching from the top of the <see cref="T:System.Windows.Forms.ListBox" /> back to the item specified by the <paramref name="startIndex" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the first item in the <see cref="T:System.Windows.Forms.ListBox" /> that exactly matches the specified string. The search starts at a specific starting index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first item found; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to search for. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item before the first item to be searched. Set to negative one (-1) to search from the beginning of the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -535,9 +880,12 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font of the text displayed by the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForeColor">
@@ -547,9 +895,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -566,10 +917,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is not set to DrawMode.OwnerDrawVariable, the value of the index parameter is ignored because all items in a standard <see cref="T:System.Windows.Forms.ListBox" /> are the same size. You can use this property when you are using an owner-drawn <see cref="T:System.Windows.Forms.ListBox" /> to determine the size of any item within the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the height of an item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height, in pixels, of the specified item.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to return the height for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -586,10 +947,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the item specified in the <paramref name="index" /> parameter is not visible, the rectangle returned by this method will be outside the visible portion of the control. You can use this method to determine the size and position of an item within the list. To get the height of an item, especially a variable-height owner drawn list item, you can use the <see cref="M:System.Windows.Forms.ListBox.GetItemHeight(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the bounding rectangle for an item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the bounding rectangle for the specified item.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of item whose bounding rectangle you want to return. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -616,12 +987,24 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <param name="factor">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ListBox" /> class overrides the <see cref="M:System.Windows.Forms.Control.GetScaledBounds(System.Drawing.Rectangle,System.Drawing.SizeF,System.Windows.Forms.BoundsSpecified)" /> method to ensure that the requested height is scaled rather than the current height.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the bounds within which the <see cref="T:System.Windows.Forms.ListBox" /> is scaled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> representing the bounds within which the control is scaled.</para>
+        </returns>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the area for which to retrieve the display bounds.</param>
+        <param name="factor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height and width of the control's bounds.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the values of <see cref="T:System.Windows.Forms.BoundsSpecified" /> that specifies the bounds of the control to use when defining its size and position.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSelected">
@@ -634,10 +1017,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to quickly determine whether a specified item is selected. This method is useful when a specific operation needs to be performed when a specific item in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" /> is selected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified item is selected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified item is currently selected in the <see cref="T:System.Windows.Forms.ListBox" />; otherwise, false.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item that determines whether it is selected. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -659,9 +1052,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property only reports a useful value if the <see cref="P:System.Windows.Forms.ListBox.HorizontalScrollbar" /> property is set to true. If the width of the <see cref="T:System.Windows.Forms.ListBox" /> is smaller than the value of this property, the horizontal scroll bar horizontally scrolls items in the <see cref="T:System.Windows.Forms.ListBox" />. If the width of the <see cref="T:System.Windows.Forms.ListBox" /> is equal to or greater than this value, the horizontal scroll bar is hidden. The value of this property is not dynamically updated by the <see cref="T:System.Windows.Forms.ListBox" />. This property is useful when the items of the <see cref="T:System.Windows.Forms.ListBox" /> are owner-drawn. For example, if the owner drawn items of the <see cref="T:System.Windows.Forms.ListBox" /> are 200 pixels wide, but the <see cref="T:System.Windows.Forms.ListBox" /> is 60 pixels wide, the <see cref="P:System.Windows.Forms.ListBox.HorizontalExtent" /> property would need to be set to 200 in order to scroll the right edge of the items into the visible region of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width by which the horizontal scroll bar of a <see cref="T:System.Windows.Forms.ListBox" /> can scroll.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -683,9 +1082,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ListBox.HorizontalScrollbar" /> property determines whether the <see cref="T:System.Windows.Forms.ListBox" /> should display a horizontal scroll bar when the width of items within the <see cref="T:System.Windows.Forms.ListBox" /> extend beyond the right edge of the control. When this property is set to true, the scroll bar is automatically displayed based on the width of items in the <see cref="T:System.Windows.Forms.ListBox" />. If the <see cref="T:System.Windows.Forms.ListBox" /> is an owner-drawn <see cref="T:System.Windows.Forms.ListBox" />, in order to properly display a horizontal scroll bar, you must set the <see cref="P:System.Windows.Forms.ListBox.HorizontalExtent" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a horizontal scroll bar is displayed in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -702,10 +1107,20 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="p">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine which item is located at a specific location within the control. You can use this method to determine which item within the list is selected when a user right-clicks the <see cref="T:System.Windows.Forms.ListBox" />. The location of the cursor can be determined and passed to the <paramref name="p" /> parameter of the <see cref="M:System.Windows.Forms.ListBox.IndexFromPoint(System.Drawing.Point)" /> method to determine which item the user right-clicked the mouse over. You can then display a shortcut menu to the user to provide tasks and features based on the specific item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the zero-based index of the item at the specified coordinates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item found at the specified coordinates; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="p">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> object containing the coordinates used to obtain the item index. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -723,11 +1138,22 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine which item that is located at a specific location within the control. You can use this method to determine which item within the list is selected when a user right-clicks the <see cref="T:System.Windows.Forms.ListBox" />. The location of the cursor can be determined and passed to the <paramref name="x" /> and <paramref name="y" /> parameters of the <see cref="M:System.Windows.Forms.ListBox.IndexFromPoint(System.Drawing.Point)" /> method to determine which item the user right-clicked the mouse over. You can then display a shortcut menu to the user to provide tasks and features based on the specific item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the zero-based index of the item at the specified coordinates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item found at the specified coordinates; returns ListBox.NoMatches if no match is found.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the location to search. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the location to search. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -752,9 +1178,23 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the control automatically resizes to ensure that an item is not partially displayed. If you want to maintain the original size of the <see cref="T:System.Windows.Forms.ListBox" /> based on the space requirements of your form, set this property to false. </para>
+          <para>By default, the <see cref="T:System.Windows.Forms.ListBox" /> and the <see cref="T:System.Windows.Forms.CheckedListBox" /> sizes are such that they show only whole items. If you want the <see cref="T:System.Windows.Forms.ListBox" /> or <see cref="T:System.Windows.Forms.CheckedListBox" /> to completely fill a docked area, set <see cref="P:System.Windows.Forms.ListBox.IntegralHeight" /> to false. This causes the control to completely fill the area, but the last item is not fully displayed. </para>
+          <para>If the <see cref="T:System.Windows.Forms.ListBox" /> does not contain any items, this property has no effect.</para>
+          <block subset="none" type="note">
+            <para>The integral height is based on the height of the <see cref="T:System.Windows.Forms.ListBox" />, rather than the client area height. As a result, when the <see cref="P:System.Windows.Forms.ListBox.IntegralHeight" /> property is set true, items can still be partially shown if scroll bars are displayed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to DrawMode.OwnerDrawVariable, this property has no effect.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should resize to avoid showing partial items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -779,9 +1219,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to DrawMode.OwnerDrawFixed, all items have the same height. When the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to DrawMode.OwnerDrawVariable, the <see cref="P:System.Windows.Forms.ListBox.ItemHeight" /> property specifies the height of each item added to the <see cref="T:System.Windows.Forms.ListBox" />. Because each item in an owner-drawn list can have a different height, you can use the <see cref="M:System.Windows.Forms.ListBox.GetItemHeight(System.Int32)" /> method to get the height of a specific item in the <see cref="T:System.Windows.Forms.ListBox" />. If you use the <see cref="P:System.Windows.Forms.ListBox.ItemHeight" /> property on a <see cref="T:System.Windows.Forms.ListBox" /> with items of variable height, this property returns the height of the first item in the control.</para>
+          <para>The maximum height of a <see cref="T:System.Windows.Forms.ListBox" /> item is 255 pixels.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of an item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -809,9 +1256,16 @@
         <ReturnType>System.Windows.Forms.ListBox+ObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to obtain a reference to the list of items that are currently stored in the <see cref="T:System.Windows.Forms.ListBox" />. With this reference, you can add items, remove items, and obtain a count of the items in the collection. For more information about the tasks that can be performed with the item collection, see the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> class reference topics.</para>
+          <para>You can also manipulate the items of a <see cref="T:System.Windows.Forms.ListBox" /> by using the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property. If you use the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property to add items to a <see cref="T:System.Windows.Forms.ListBox" />, you can view the items in the <see cref="T:System.Windows.Forms.ListBox" /> using the <see cref="P:System.Windows.Forms.ListBox.Items" /> property but you cannot add or remove items from the list using the methods of the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the items of the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -825,8 +1279,16 @@
         <ReturnType>System.Windows.Forms.MeasureItemEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can create an event handler for this event to specify the size an item will be made before it is drawn in the <see cref="E:System.Windows.Forms.ListBox.DrawItem" /> event. The event is only raised when the <see cref="P:System.Windows.Forms.ListBox.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.DrawMode.OwnerDrawVariable" />.</para>
+          <para>The maximum valid height of a <see cref="T:System.Windows.Forms.ListBox" /> item is 255 pixels. Setting the <see cref="P:System.Windows.Forms.MeasureItemEventArgs.ItemHeight" /> property of the <see cref="T:System.Windows.Forms.MeasureItemEventArgs" /> to a value greater than 255 when handling this event may yield unexpected results.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an owner-drawn <see cref="T:System.Windows.Forms.ListBox" /> is created and the sizes of the list items are determined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -851,8 +1313,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <see cref="T:System.Windows.Forms.ListBox" /> control with the mouse pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiColumn">
@@ -867,9 +1332,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multicolumn <see cref="T:System.Windows.Forms.ListBox" /> places items into as many columns as are needed to make vertical scrolling unnecessary. The user can use the keyboard to navigate to columns that are not currently visible. Set the <see cref="P:System.Windows.Forms.ListBox.HorizontalScrollbar" /> property to true to display a horizontal scroll bar that enables the user to scroll to columns that are not currently shown in the visible region of the <see cref="T:System.Windows.Forms.ListBox" />. The value of the <see cref="P:System.Windows.Forms.ListBox.ColumnWidth" /> property determines the width of each column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ListBox" /> supports multiple columns.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -884,8 +1355,14 @@
       </ReturnValue>
       <MemberValue>-1</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constant is returned by the <see cref="M:System.Windows.Forms.ListBox.FindString(System.String)" />, <see cref="M:System.Windows.Forms.ListBox.FindStringExact(System.String)" />, and <see cref="M:System.Windows.Forms.ListBox.IndexFromPoint(System.Drawing.Point)" /> methods when no matching values are found in a search.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that no matches are found during a search.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -902,9 +1379,13 @@
         <Parameter Name="e" Type="System.Windows.Forms.UICuesEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.ChangeUICues" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.UICuesEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -921,9 +1402,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.DataSourceChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -940,9 +1425,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.DisplayMemberChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -959,9 +1448,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DrawItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListBox.OnDrawItem(System.Windows.Forms.DrawItemEventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListBox.DrawItem" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DrawItemEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -978,9 +1475,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -997,9 +1498,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies when the window handle has been created so that column width and other characteristics can be set. Inheriting classes should call base.OnHandleCreated.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1016,9 +1521,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overridden to be sure that items are set up and cleared out correctly. Inheriting controls should call base.OnHandleDestroyed.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1035,9 +1544,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.MeasureItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ListBox.OnMeasureItem(System.Windows.Forms.MeasureItemEventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListBox.MeasureItem" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MeasureItemEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1054,9 +1571,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.ParentChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1073,9 +1594,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Resize" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1092,9 +1617,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1111,9 +1640,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1141,9 +1674,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -1164,8 +1703,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ListBox.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -1183,8 +1728,14 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Windows.Forms.ListBox" /> control is painted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1209,9 +1760,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to determine the height that the <see cref="T:System.Windows.Forms.ListBox" /> needs to be sized to, in order to display every available item in the list and to avoid displaying vertical scroll bars. If the amount of items in the <see cref="T:System.Windows.Forms.ListBox" /> is large, sizing the control using the value of the <see cref="P:System.Windows.Forms.ListBox.PreferredHeight" /> property might cause the <see cref="T:System.Windows.Forms.ListBox" /> to be sized outside of the client area of the form or the <see cref="T:System.Windows.Forms.ListBox" /> container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the combined height of all items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1226,8 +1783,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the control to invalidate its client area and immediately redraw itself and any child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1244,9 +1804,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property is set and the property in the data source that is assigned to <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> changes, use the <see cref="M:System.Windows.Forms.ListBox.RefreshItem(System.Int32)" /> method to update the value in the <see cref="T:System.Windows.Forms.ListBox" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the item contained at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the element to refresh.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1264,8 +1831,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes all <see cref="T:System.Windows.Forms.ListBox" /> items and retrieves new strings for them.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetBackColor">
@@ -1279,8 +1849,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.Control.BackColor" /> property to its default value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetForeColor">
@@ -1294,8 +1867,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.Control.ForeColor" /> property to its default value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeft">
@@ -1305,9 +1881,15 @@
         <ReturnType>System.Windows.Forms.RightToLeft</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables your menus to support languages that are written from right to left. When this property is set to true, item text is displayed from right to left instead of the default left to right method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether text displayed by the control is displayed from right to left.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1328,10 +1910,15 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="factor">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales a control's location, size, padding and margin.</para>
+        </summary>
+        <param name="factor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which the height and width of the control will be scaled.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BoundsSpecified" /> value that specifies the bounds of the control to use when defining its size and position.</param>
       </Docs>
     </Member>
     <Member MemberName="ScrollAlwaysVisible">
@@ -1349,9 +1936,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ListBox.ScrollAlwaysVisible" /> property indicates whether a vertical scroll bar is always displayed, even if the number of items in the <see cref="T:System.Windows.Forms.ListBox" /> does not require displaying the vertical scroll bar. By default, a <see cref="T:System.Windows.Forms.ListBox" /> only shows a vertical scroll bar when there are enough items to warrant displaying. For a multicolumn <see cref="T:System.Windows.Forms.ListBox" />, the <see cref="P:System.Windows.Forms.ListBox.ScrollAlwaysVisible" /> property indicates that a horizontal scroll bar is displayed. A vertical scroll bar is never displayed regardless of the value of this property for a multicolumn <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the vertical scroll bar is shown at all times.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1376,9 +1969,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a standard <see cref="T:System.Windows.Forms.ListBox" />, you can use this property to determine the index of the item that is selected in the <see cref="T:System.Windows.Forms.ListBox" />. If the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property of the <see cref="T:System.Windows.Forms.ListBox" /> is set to either SelectionMode.MultiSimple or SelectionMode.MultiExtended (which indicates a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />) and multiple items are selected in the list, this property can return the index to any selected item.</para>
+          <para>To retrieve a collection containing the indexes of all selected items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />, use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> property. If you want to obtain the item that is currently selected in the <see cref="T:System.Windows.Forms.ListBox" />, use the <see cref="P:System.Windows.Forms.ListBox.SelectedItem" /> property. In addition, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedItems" /> property to obtain all the selected items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the zero-based index of the currently selected item in a <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1392,8 +1992,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can create an event handler for this event to determine when the selected index in the <see cref="T:System.Windows.Forms.ListBox" /> has been changed. This can be useful when you need to display information in other controls based on the current selection in the <see cref="T:System.Windows.Forms.ListBox" />. You can use the event handler for this event to load the information in the other controls.</para>
+          <para>If the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property is set to <see cref="F:System.Windows.Forms.SelectionMode.MultiSimple" /> or <see cref="F:System.Windows.Forms.SelectionMode.MultiExtended" />, any change to the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> collection, including removing an item from the selection, will raise this event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property or the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> collection has changed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1415,9 +2023,16 @@
         <ReturnType>System.Windows.Forms.ListBox+SelectedIndexCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />, this property returns a collection containing the indexes to all items that are selected in the <see cref="T:System.Windows.Forms.ListBox" />. For a single-selection <see cref="T:System.Windows.Forms.ListBox" />, this property returns a collection containing a single element containing the index of the only selected item in the <see cref="T:System.Windows.Forms.ListBox" />. For more information about how to manipulate the items of the collection, see <see cref="T:System.Windows.Forms.ListBox.SelectedIndexCollection" />.</para>
+          <para>The <see cref="T:System.Windows.Forms.ListBox" /> class provides a number of ways to reference selected items. Instead of using the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> property to obtain the index position of the currently selected item in a single-selection <see cref="T:System.Windows.Forms.ListBox" />, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property. If you want to obtain the item that is currently selected in the <see cref="T:System.Windows.Forms.ListBox" />, instead of the index position of the item, use the <see cref="P:System.Windows.Forms.ListBox.SelectedItem" /> property. In addition, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedItems" /> property if you want to obtain all the selected items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection that contains the zero-based indexes of all currently selected items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1442,9 +2057,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a standard <see cref="T:System.Windows.Forms.ListBox" />, you can use this property to determine which item is selected in the <see cref="T:System.Windows.Forms.ListBox" />. If the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property of the <see cref="T:System.Windows.Forms.ListBox" /> is set to either SelectionMode.MultiSimple or SelectionMode.MultiExtended (which indicates a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />) and multiple items are selected in the list, this property can return any selected item.</para>
+          <para>To retrieve a collection containing all selected items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />, use the <see cref="P:System.Windows.Forms.ListBox.SelectedItems" /> property. If you want to obtain the index position of the currently selected item in the <see cref="T:System.Windows.Forms.ListBox" />, use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property. In addition, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> property to obtain all the selected indexes in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the currently selected item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1466,9 +2088,16 @@
         <ReturnType>System.Windows.Forms.ListBox+SelectedObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />, this property returns a collection containing all items that are selected in the <see cref="T:System.Windows.Forms.ListBox" />. For a single-selection <see cref="T:System.Windows.Forms.ListBox" />, this property returns a collection containing a single element containing the only selected item in the <see cref="T:System.Windows.Forms.ListBox" />. For more information about how to manipulate the items of the collection, see <see cref="T:System.Windows.Forms.ListBox.SelectedObjectCollection" />.</para>
+          <para>The <see cref="T:System.Windows.Forms.ListBox" /> class provides a number of ways to reference selected items. Instead of using the <see cref="P:System.Windows.Forms.ListBox.SelectedItems" /> property to obtain the currently selected item in a single-selection <see cref="T:System.Windows.Forms.ListBox" />, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedItem" /> property. If you want to obtain the index position of an item that is currently selected in the <see cref="T:System.Windows.Forms.ListBox" />, instead of the item itself, use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property. In addition, you can use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndices" /> property if you want to obtain the index positions of all selected items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection containing the currently selected items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1487,9 +2116,15 @@
         <ReturnType>System.Windows.Forms.SelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property enables you to determine how many items in the <see cref="T:System.Windows.Forms.ListBox" /> a user can select at one time and how the user can make multiple-selections. When the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property is set to SelectionMode.MultiExtended, pressing SHIFT and clicking the mouse or pressing SHIFT and one of the arrow keys (UP ARROW, DOWN ARROW, LEFT ARROW, and RIGHT ARROW) extends the selection from the previously selected item to the current item. Pressing CTRL and clicking the mouse selects or deselects an item in the list. When the property is set to SelectionMode.MultiSimple, a mouse click or pressing the SPACEBAR selects or deselects an item in the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method in which items are selected in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1510,13 +2145,26 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height of the <see cref="T:System.Windows.Forms.ListBox" /> control increases and decreases by a multiple of the <see cref="P:System.Windows.Forms.ListBox.ItemHeight" /> property. If height is a number that is not a multiple of <see cref="P:System.Windows.Forms.ListBox.ItemHeight" />, the height of the <see cref="T:System.Windows.Forms.ListBox" /> will change by the largest multiple that is less than height.  </para>
+          <para>Typically, the parameters that correspond to the bounds not included in the specified parameter are passed in with their current values. For example, the <paramref name="height" />, <paramref name="width" />, or the <paramref name="x" /> or <paramref name="y" /> properties of the <see cref="P:System.Windows.Forms.Control.Location" /> property can be passed in with a reference to the current instance of the control. However, all values passed in are honored and applied to the control. </para>
+          <para>The <paramref name="specified" /> parameter represents the elements of the controls <see cref="P:System.Windows.Forms.Control.Bounds" /> changed by your application. For example, if you change the <see cref="P:System.Windows.Forms.Control.Size" /> of the control, the <paramref name="specified" /> parameter value is <see cref="F:System.Windows.Forms.BoundsSpecified.Size" />. However, if the <see cref="P:System.Windows.Forms.Control.Size" /> is adjusted in response to the <see cref="P:System.Windows.Forms.Control.Dock" /> property being set, the <paramref name="specified" /> parameter value is <see cref="F:System.Windows.Forms.BoundsSpecified.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified bounds of the <see cref="T:System.Windows.Forms.ListBox" /> control.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Left" /> property value of the control.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Top" /> property value of the control.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Width" /> property value of the control.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Height" /> property value of the control.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.BoundsSpecified" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1534,10 +2182,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the object with the specified index in the derived class.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array index of the object.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1554,9 +2207,13 @@
         <Parameter Name="value" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the contents of the <see cref="T:System.Windows.Forms.ListBox" /> and adds the specified items to the control.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of objects to insert into the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1574,10 +2231,18 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to set the selection of items in a multiple-selection <see cref="T:System.Windows.Forms.ListBox" />. To select an item in a single-selection <see cref="T:System.Windows.Forms.ListBox" />, use the <see cref="P:System.Windows.Forms.ListBox.SelectedIndex" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects or clears the selection for the specified item in a <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item in a <see cref="T:System.Windows.Forms.ListBox" /> to select or clear the selection for. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to select the specified item; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1592,8 +2257,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.ListBox.Sort" /> forces the collection to add each item back to itself if the <see cref="P:System.Windows.Forms.ListBox.Sorted" /> property is true. Each item is then inserted into the correct position.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the items in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1612,9 +2284,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ListBox.Sorted" /> property to automatically sort strings alphabetically in a <see cref="T:System.Windows.Forms.ListBox" />. As items are added to a sorted <see cref="T:System.Windows.Forms.ListBox" />, the items are moved to the appropriate location in the sorted list. When adding items to a <see cref="T:System.Windows.Forms.ListBox" />, it is more efficient to sort the items first and then add new items.</para>
+          <para>A <see cref="T:System.Windows.Forms.ListBox" /> with its <see cref="P:System.Windows.Forms.ListBox.Sorted" /> set to true should not be bound to data using the <see cref="P:System.Windows.Forms.ListControl.DataSource" /> property. To display sorted data in a bound <see cref="T:System.Windows.Forms.ListBox" />, you should bind to a data source that supports sorting and have the data source provide the sorting. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the items in the <see cref="T:System.Windows.Forms.ListBox" /> are sorted alphabetically.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1642,9 +2321,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the value of this property is set to a string value, the <see cref="T:System.Windows.Forms.ListBox" /> searches for the item within the <see cref="T:System.Windows.Forms.ListBox" /> that matches the specified text and selects the item. You can also use this property to determine which items are currently selected in the <see cref="T:System.Windows.Forms.ListBox" />. If the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property of the <see cref="T:System.Windows.Forms.ListBox" /> is set to SelectionMode.MultiExtended, this property returns the text of the first selected item. If the <see cref="P:System.Windows.Forms.ListBox.SelectionMode" /> property of the <see cref="T:System.Windows.Forms.ListBox" /> is not set to SelectionMode.None, this property returns the text of the first selected item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or searches for the text of the currently selected item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1666,8 +2351,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ListBox.Text" /> property is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1689,9 +2377,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initially, the item with the index position zero (0) is at the top of the visible region of the <see cref="T:System.Windows.Forms.ListBox" />. If the contents of the <see cref="T:System.Windows.Forms.ListBox" /> have been scrolled, another item might be at the top of the control's display area. You can use this property to obtain the index within the <see cref="T:System.Windows.Forms.ListBox.ObjectCollection" /> for the <see cref="T:System.Windows.Forms.ListBox" /> of the item that is currently positioned at the top of the visible region of the control. You can also use this property to position an item in the list at the top of the visible region of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the first visible item in the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1706,9 +2400,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the <see cref="T:System.Windows.Forms.ListBox" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that states the control type, the count of items in the <see cref="T:System.Windows.Forms.ListBox" /> control, and the Text property of the first item in the <see cref="T:System.Windows.Forms.ListBox" />, if the count is not 0.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1733,9 +2433,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ListBox" /> recognizes and expands tab characters when it draws its strings by using the <see cref="P:System.Windows.Forms.ListBox.CustomTabOffsets" /> integer array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseTabStops">
@@ -1750,9 +2453,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ListBox" /> can recognize and expand tab characters when drawing its strings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

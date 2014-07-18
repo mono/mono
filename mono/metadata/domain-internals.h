@@ -197,8 +197,7 @@ struct _MonoJitInfo {
 	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
-	/* This might contain an id for the unwind info instead of a register mask */
-	guint32     used_regs;
+	guint32     unwind_info;
 	int         code_size;
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
@@ -215,6 +214,8 @@ struct _MonoJitInfo {
 	gboolean    async:1;
 	gboolean    dbg_step_through_inited:1;
 	gboolean    dbg_step_through:1;
+	gboolean    dbg_non_user_code_inited:1;
+	gboolean    dbg_non_user_code:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */

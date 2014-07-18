@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPEndPoint" FullName="System.Net.IPEndPoint" FullNameSP="System_Net_IPEndPoint" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable IPEndPoint extends System.Net.EndPoint" />
   <TypeSignature Language="C#" Value="public class IPEndPoint : System.Net.EndPoint" />
@@ -17,16 +18,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Represents a network endpoint as an Internet Protocol (IP) address and a port number.</para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.Net.IPEndPoint" /> class contains 
- the IP address of a host system and the number of a port to
- access on the host. The <see cref="T:System.Net.IPEndPoint" /> class represents a connection point used by the
-<see cref="T:System.Net.Sockets.Socket" />
-class.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.IPEndPoint" /> class contains the host and local or remote port information needed by an application to connect to a service on a host. By combining the host's IP address and port number of a service, the <see cref="T:System.Net.IPEndPoint" /> class forms a connection point to a service.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a network endpoint as an IP address and a port number.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,17 +44,20 @@ class.</para>
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="port">A <see cref="T:System.Int32" /> containing the port number to use when accessing <paramref name="address" /> . Specify zero to indicate any available port.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
-        </summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="port " />is less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />. </para>
           <para>A negative number was specified for <paramref name="address" />. </para>
         </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IP address of the Internet host. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number associated with the <paramref name="address" />, or 0 to specify any available port. <paramref name="port" /> is in host order.</param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -75,11 +77,6 @@ class.</para>
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="address">A <see cref="T:System.Net.IPAddress" /> instance containing the IP address of the endpoint.</param>
-        <param name="port">The port number to use when accessing <paramref name="address" /> . Specify zero to indicate any available port.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
-        </summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address" /> is <see langword="null" />.</exception>
@@ -87,6 +84,14 @@ class.</para>
           <para>
             <paramref name="port " />is less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />. </para>
         </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" />. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number associated with the <paramref name="address" />, or 0 to specify any available port. <paramref name="port" /> is in host order.</param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -105,14 +110,15 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the IP address of the endpoint.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Net.IPAddress" /> instance containing the IP address of the end
  point.</para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the IP address of the endpoint.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -131,15 +137,16 @@ class.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the Internet Protocol (IP) address family.</para>
-        </summary>
         <value>
           <para>Returns <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" qualify="true" /> .</para>
         </value>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Internet Protocol (IP) address family.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -160,17 +167,6 @@ class.</para>
         <Parameter Name="socketAddress" Type="System.Net.SocketAddress" />
       </Parameters>
       <Docs>
-        <param name="socketAddress">A <see cref="T:System.Net.SocketAddress" /> instance that provides the address information for the new <see cref="T:System.Net.IPEndPoint" /> instance.</param>
-        <summary>
-          <para> Returns a new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
-   information from the specified <see cref="T:System.Net.SocketAddress" />
-   instance.
-   </para>
-        </summary>
-        <returns>
-          <para>A new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
-   information from the specified <see cref="T:System.Net.SocketAddress" /> instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -178,6 +174,16 @@ class.</para>
           </para>
         </remarks>
         <exception cref="T:System.ArgumentException">The <see langword="AddressFamily" /> of the specified <see cref="T:System.Net.SocketAddress" /> is not equal to the <see langword="AddressFamily" /> of the current instance. </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an endpoint from a socket address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.EndPoint" /> instance using the specified socket address.</para>
+        </returns>
+        <param name="socketAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.SocketAddress" /> to use for the endpoint. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -198,12 +204,6 @@ class.</para>
         <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="comparand">The <see langword="Object" /> to compare to the current instance.</param>
-        <summary>
-          <para>Determines whether the current instance and the specified 
- <see cref="T:System.Object" /> represent 
- the same type and value.</para>
-        </summary>
         <returns>
           <para>
             <see langword="true" /> if <paramref name="comparand" /> represents 
@@ -219,6 +219,12 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
  overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Net.IPEndPoint" /> instance.</para>
+        </summary>
+        <param name="comparand">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Net.IPEndPoint" /> instance.</param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -237,21 +243,18 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IPEndPoint.GetHashCode" /> method returns a hash code of the IP endpoint instance. This value can be used as a key in hash tables.</para>
+        </remarks>
         <summary>
-          <para>Generates a hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for a <see cref="T:System.Net.IPEndPoint" /> instance.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
         </returns>
-        <remarks>
-          <para>The algorithm used to generate the hash code is
- unspecified.</para>
-          <para>
-            <block subset="none" type="note">This method
- overrides <see cref="M:System.Object.GetHashCode" />
- .</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -271,13 +274,13 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
       <Parameters />
       <MemberValue>65535</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies the maximum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" />
-property.</para>
-        </summary>
         <remarks>
           <para>This field is read-only. The value of this field is 65535.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the maximum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" /> property. The MaxPort value is set to 0x0000FFFF. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -297,13 +300,13 @@ property.</para>
       <Parameters />
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies the minimum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" />
-property.</para>
-        </summary>
         <remarks>
           <para>This field is read-only. The value of this field is zero.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the minimum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" /> property. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -322,15 +325,16 @@ property.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the port number of the endpoint.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> value that is between <see cref="F:System.Net.IPEndPoint.MinPort" /> and <see cref="F:System.Net.IPEndPoint.MaxPort" />
 inclusive.</para>
         </value>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation was less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the port number of the endpoint.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -348,9 +352,15 @@ inclusive.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes endpoint information into a <see cref="T:System.Net.SocketAddress" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.SocketAddress" /> instance containing the socket address for the endpoint.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -368,19 +378,19 @@ inclusive.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" />
-containing the IP address, in dotted-quad notation, followed by a colon and the port number for the
-specified endpoint, for example, 127.0.0.1:80.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the IP address and port number of the specified endpoint.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the IP address and the port number of the specified endpoint (for example, 192.168.1.2:80).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

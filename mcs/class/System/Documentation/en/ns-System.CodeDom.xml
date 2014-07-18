@@ -1,6 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.CodeDom">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.CodeDom" /> namespace contains classes that can be used to represent the elements and structure of a source code document. The classes in this namespace can be used to model the structure of a source code document that can be output as source code in a supported language using the functionality provided by the <see cref="N:System.CodeDom.Compiler" /> namespace.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about using the CodeDOM to represent and generate source code, see <format type="text/html"><a href="D077A3E8-BD81-4BDF-B6A3-323857EA30FB">Dynamic Source Code Generation and Compilation</a></format>.</para>
+      <para>For a table that lists the CodeDOM elements by type and function, see the <format type="text/html"><a href="C77B8BFD-0A32-4E36-B59A-4F687F32C524">CodeDOM Quick Reference</a></format>.</para>
+    </remarks>
   </Docs>
 </Namespace>

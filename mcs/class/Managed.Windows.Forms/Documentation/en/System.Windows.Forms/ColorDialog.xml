@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColorDialog" FullName="System.Windows.Forms.ColorDialog">
   <TypeSignature Language="C#" Value="public class ColorDialog : System.Windows.Forms.CommonDialog" />
   <AssemblyInfo>
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The inherited member <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> must be invoked to create this specific common dialog box. <see cref="M:System.Windows.Forms.CommonDialog.HookProc(System.IntPtr,System.Int32,System.IntPtr,System.IntPtr)" /> can be overridden to implement specific dialog box hook functionality. Use <see cref="P:System.Windows.Forms.ColorDialog.Color" /> to retrieve the color selected by the user.</para>
+      <para>When you create an instance of <see cref="T:System.Windows.Forms.ColorDialog" />, some of the read/write properties are set to initial values. For a list of these values, see the <see cref="M:System.Windows.Forms.ColorDialog.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a common dialog box that displays available colors along with controls that enable the user to define custom colors.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +32,90 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create an instance of <see cref="T:System.Windows.Forms.ColorDialog" />, the following read/write properties are set to initial values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.AllowFullOpen" /> </para>
+              </term>
+              <description>
+                <para>true </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.AnyColor" /> </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.Color" /> </para>
+              </term>
+              <description>
+                <para>Color.Black </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.CustomColors" /> </para>
+              </term>
+              <description>
+                <para>null </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.FullOpen" /> </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.ShowHelp" /> </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.ColorDialog.SolidColorOnly" /> </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value for any of these properties through a separate call to the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ColorDialog" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +134,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When set to false, the associated button in the dialog box is disabled and the user cannot access the custom colors control in the dialog box.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user can use the dialog box to define custom colors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +161,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the dialog box displays all available colors in the set of basic colors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +180,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color selected by the user in the dialog box at run time, as defined in <see cref="T:System.Drawing.Color" /> structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color selected by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +210,16 @@
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Users can create their own set of custom colors. These colors are contained in an <see cref="T:System.Int32" /> composed of the BGR (blue, green, red) values necessary to create the color. For more information on the structure of this data, see <see cref="T:System.Drawing.Color" />.</para>
+          <para>Custom colors can only be defined if <see cref="P:System.Windows.Forms.ColorDialog.AllowFullOpen" /> is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the set of custom colors shown in the dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,9 +238,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the custom color controls are not visible when the dialog box is first opened. You must click the Custom Colors button to display them.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Windows.Forms.ColorDialog.AllowFullOpen" /> is false, then <see cref="P:System.Windows.Forms.ColorDialog.FullOpen" /> has no effect.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the controls used to create custom colors are visible when the dialog box is opened </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,9 +263,18 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to prevent it from being called from untrusted code; only the immediate caller is required to have <see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" /> permission. If your code can be called from partially trusted code, do not pass user input to <see cref="T:System.Runtime.InteropServices.Marshal" /> class methods without validation. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">Demand vs. LinkDemand</a></format>.</para>
+          </block>
+          <para>This property also uses the <see cref="F:System.Security.Permissions.SecurityAction.InheritanceDemand" /> security attribute; to override this member, the derived class must have the CustomPermission permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the underlying window instance handle (HINSTANCE).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,9 +288,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ColorDialog.Options" /> property corresponds to the flags used to initialize a color dialog box using Win32. Use the properties of the <see cref="T:System.Windows.Forms.ColorDialog" /> class to get and set the options.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets values to initialize the <see cref="T:System.Windows.Forms.ColorDialog" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,8 +311,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets all options to their default values, the last selected color to black, and the custom colors to their default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -215,9 +354,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a Help button appears in the color dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -236,9 +378,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is applicable to systems with 256 or fewer colors. On these types of systems, some colors are composites of others.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the dialog box will restrict users to selecting solid colors only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -253,9 +401,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return string includes the type and the value for the <see cref="P:System.Windows.Forms.ColorDialog.Color" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ColorDialog" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Windows.Forms.ColorDialog" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

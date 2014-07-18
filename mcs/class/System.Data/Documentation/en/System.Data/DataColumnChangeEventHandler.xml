@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataColumnChangeEventHandler" FullName="System.Data.DataColumnChangeEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void DataColumnChangeEventHandler(object sender, DataColumnChangeEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.Data.DataColumnChangeEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, until you remove the delegate. For more information about delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+      <block subset="none" type="note">
+        <para>The declaration of your event handler must have the same parameters as the DataColumnChangeEventHandler delegate declaration.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Data.DataTable.ColumnChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

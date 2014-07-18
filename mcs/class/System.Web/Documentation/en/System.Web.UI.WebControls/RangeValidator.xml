@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RangeValidator" FullName="System.Web.UI.WebControls.RangeValidator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class RangeValidator : System.Web.UI.WebControls.BaseCompareValidator" />
   <AssemblyInfo>
@@ -19,8 +20,86 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.RangeValidator" /> control tests whether the value of an input control is within a specified range.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.RangeValidator" /> control uses four key properties to perform its validation. The <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property contains the input control to validate. The <see cref="P:System.Web.UI.WebControls.RangeValidator.MinimumValue" /> and <see cref="P:System.Web.UI.WebControls.RangeValidator.MaximumValue" /> properties specify the minimum and maximum values of the valid range.</para>
+      <para>The <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property is used to specify the data type of the values to compare. The values to compare are converted to this data type before the validation operation is performed. </para>
+      <block subset="none" type="note">
+        <para>When the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property is set to <see cref="F:System.Web.UI.WebControls.ValidationDataType.Date" /> and the current calendar type is non-Gregorian, the validator performs server-side validation only. The validator client script supports only Gregorian calendars.</para>
+      </block>
+      <para>The following table lists the different data types that can be compared.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Data Type </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>String </para>
+          </term>
+          <description>
+            <para>A string data type. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Integer </para>
+          </term>
+          <description>
+            <para>A 32-bit signed integer data type. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Double </para>
+          </term>
+          <description>
+            <para>A double-precision floating point number data type. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Date </para>
+          </term>
+          <description>
+            <para>A date data type. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Currency </para>
+          </term>
+          <description>
+            <para>A decimal data type that can contain currency symbols. </para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Validation succeeds if the input control is empty. Use a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> control to make the input control a mandatory field.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.RangeValidator" /> control throws an exception if the value specified by the <see cref="P:System.Web.UI.WebControls.RangeValidator.MaximumValue" /> or <see cref="P:System.Web.UI.WebControls.RangeValidator.MinimumValue" /> property cannot be converted to the specified <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" />.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="T:System.Web.UI.WebControls.RangeValidator" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, make sure that the validator control and the control it is associated with are in the same panel. For more information about using the <see cref="T:System.Web.UI.UpdatePanel" /> control for partial-page updates, see <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>For additional information on validation controls, see <see cref="T:System.Web.UI.WebControls.BaseValidator" />.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Checks whether the value of an input control is within a specified range of values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +108,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.RangeValidator" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +129,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the HTML attributes and styles for the control that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +150,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a check of properties to determine any errors made by the developer. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control properties are valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +173,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the content in the input control is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control is valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +196,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.RangeValidator.MaximumValue" /> property to specify the maximum value of the validation range. If the value specified by this property fails to convert to the data type specified by the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you specify ValidationDataType.Date for the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property without programmatically setting the culture for the application, you should use a culture-neutral format, such as YYYY/MM/DD, for the <see cref="P:System.Web.UI.WebControls.RangeValidator.MaximumValue" /> and <see cref="P:System.Web.UI.WebControls.RangeValidator.MinimumValue" /> properties. Otherwise, the date may not be interpreted correctly.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum value of the validation range.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,9 +231,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.RangeValidator.MinimumValue" /> property to specify the minimum value of the validation range. If the value specified by this property fails to convert to the data type specified by the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you specify ValidationDataType.Date for the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.Type" /> property without programmatically setting the culture for the application, you should use a culture-neutral format, such as YYYY/MM/DD, for the <see cref="P:System.Web.UI.WebControls.RangeValidator.MaximumValue" /> and <see cref="P:System.Web.UI.WebControls.RangeValidator.MinimumValue" /> properties. Otherwise, the date may not be interpreted correctly.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum value of the validation range.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

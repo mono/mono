@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INotifyDataErrorInfo" FullName="System.ComponentModel.INotifyDataErrorInfo">
   <TypeSignature Language="C#" Value="public interface INotifyDataErrorInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INotifyDataErrorInfo" />
@@ -7,8 +8,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>Provides an interface for async and sync data validation.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface enables data entity classes to implement custom validation rules and expose validation results asynchronously. This interface also supports custom error objects, multiple errors per property, cross-property errors, and entity-level errors. Cross-property errors are errors that affect multiple properties. You can associate these errors with one or all of the affected properties, or you can treat them as entity-level errors. Entity-level errors are errors that either affect multiple properties or affect the entire entity without affecting a particular property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines members that data entity classes can implement to provide custom synchronous and asynchronous validation support.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ErrorsChanged">
@@ -22,8 +29,14 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.DataErrorsChangedEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Event that is fired when the validation errors change for a property or entire object.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The implementing class should raise this event on the user interface thread whenever the <see cref="M:System.ComponentModel.INotifyDataErrorInfo.GetErrors(System.String)" /> return value changes, even if the return value implements <see cref="T:System.Collections.Specialized.INotifyCollectionChanged" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the validation errors have changed for a property or for the entire entity. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetErrors">
@@ -40,10 +53,21 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="propertyName">The name of property.</param>
-        <summary>Gets a System.Collections.IEnumerable of the errors for the provided property or entire object.</summary>
-        <returns>A System.Collections.IEnumerable of the errors for the provided property or entire object.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns an <see cref="T:System.Collections.IEnumerable" /> that can change as asynchronous validation rules finish processing. This enables the binding engine to automatically update the user interface validation feedback when errors are added, removed, or modified. </para>
+          <para>The return value can change to a different <see cref="T:System.Collections.IEnumerable" />, or it can reuse a previously returned <see cref="T:System.Collections.IEnumerable" /> and change its contents. Any changes to the return value should raise the <see cref="E:System.ComponentModel.INotifyDataErrorInfo.ErrorsChanged" /> event, even if the return value implements <see cref="T:System.Collections.Specialized.INotifyCollectionChanged" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validation errors for a specified property or for the entire entity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The validation errors for the property or entity.</para>
+        </returns>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to retrieve validation errors for; or null or <see cref="F:System.String.Empty" />, to retrieve entity-level errors.</param>
       </Docs>
     </Member>
     <Member MemberName="HasErrors">
@@ -57,9 +81,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets a value indicating whether there are validation errors.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns false if there are no known entity-level or property-level validation errors for the entity at the time it is accessed. However, some validation rules may still be running asynchronously as described for the <see cref="M:System.ComponentModel.INotifyDataErrorInfo.GetErrors(System.String)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the entity has validation errors. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

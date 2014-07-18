@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Capture" FullName="System.Text.RegularExpressions.Capture">
   <TypeSignature Language="C#" Value="public class Capture" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Capture extends System.Object" />
@@ -15,8 +16,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Text.RegularExpressions.Capture" /> object is immutable and has no public constructor. Instances are returned through the <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> object, which is returned by the Match.Captures and <see cref="P:System.Text.RegularExpressions.Group.Captures" /> properties. However, the Match.Captures property provides information about the same match as the <see cref="T:System.Text.RegularExpressions.Match" /> object.</para>
+      <para>If you do not apply a <format type="text/html"><a href="36b81212-6511-49ed-a8f1-ff080415312f">quantifier</a></format> to a capturing group, the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property returns a <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> with a single <see cref="T:System.Text.RegularExpressions.Capture" /> object that provides information about the same capture as the <see cref="T:System.Text.RegularExpressions.Group" /> object. If you do apply a quantifier to a capturing group, the Group.Index, Group.Length, and Group.Value properties provide information only about the last captured group, whereas the <see cref="T:System.Text.RegularExpressions.Capture" /> objects in the <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> provide information about all subexpression captures. The example provides an illustration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the results from a single successful subexpression capture. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Index">
@@ -32,9 +40,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position in the original string where the first character of the captured substring is found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Length">
@@ -50,9 +61,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the captured substring.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -69,9 +83,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ToString is actually an internal call to the <see cref="P:System.Text.RegularExpressions.Capture.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the captured substring from the input string by calling the <see cref="P:System.Text.RegularExpressions.Capture.Value" /> property. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substring that was captured by the match.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -87,9 +110,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a call to the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String)" /> or <see cref="M:System.Text.RegularExpressions.Match.NextMatch" /> method fails to find a match, the value of the returned Match.Value property is <see cref="F:System.String.Empty" />. If the regular expression engine is unable to match a capturing group. the value of the returned Group.Value property is <see cref="F:System.String.Empty" />. See the second example for an illustration. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the captured substring from the input string.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

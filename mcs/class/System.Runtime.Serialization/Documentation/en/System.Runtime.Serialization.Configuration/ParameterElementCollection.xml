@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParameterElementCollection" FullName="System.Runtime.Serialization.Configuration.ParameterElementCollection">
   <TypeSignature Language="C#" Value="public sealed class ParameterElementCollection : System.Configuration.ConfigurationElementCollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ParameterElementCollection extends System.Configuration.ConfigurationElementCollection" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to handle the set of <format type="text/html"><a href="0fb41e2d-64f7-44ab-993e-05892eac6d82">parameter</a></format> elements within the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt;</a></format> element. Specifically, this allows the addition of types to the collection of known types.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the XML elements used to configure serialization by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Configuration.ParameterElementCollection" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -46,9 +56,13 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.ParameterElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element to the collection of parameter elements.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.ParameterElement" /> element to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -63,8 +77,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all members of the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CollectionType">
@@ -78,9 +95,12 @@
         <ReturnType>System.Configuration.ConfigurationElementCollectionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the parameters collection in configuration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -97,10 +117,17 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying whether the named type is found in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element is present; otherwise, false.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to find.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateNewElement">
@@ -170,10 +197,17 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.ParameterElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the position of the specified element in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position of the specified element.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.ParameterElement" /> element to find.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -210,9 +244,13 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.ParameterElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified element from the collection.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.ParameterElement" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -229,9 +267,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element at the specified position.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the element to remove.</param>
       </Docs>
     </Member>
   </Members>

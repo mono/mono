@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDsigC14NTransform" FullName="System.Security.Cryptography.Xml.XmlDsigC14NTransform">
   <TypeSignature Language="C#" Value="public class XmlDsigC14NTransform : System.Security.Cryptography.Xml.Transform" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDsigC14NTransform extends System.Security.Cryptography.Xml.Transform" />
@@ -14,29 +15,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Transformation to canonicalize an XML document (excluding comments).</summary>
     <remarks>
-      <para>This transform represents the REQUIRED Canonical XML transformation detailled in section 6.5.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</para>
-      <para>The following example take an XML file (document.xml) and display it's C14N representation on the console.
-</para>
-      <example>
-        <code lang="C#">
-XmlDocument xml = new XmlDocument ();
-// Whitespaces are very important for XML signature!
-xml.PreserveWhitespace = true;
-xml.Load ("document.xml");
-
-MemoryStream ms = new MemoryStream ();
-xml.Save (ms);
-ms.Position = 0;
-
-XmlDsigC14NTransform t = XmlDsigC14NTransform ();
-t.LoadInput (ms);
-StreamReader sr = new StreamReader ((Stream) t.GetOutput (), Encoding.UTF8);
-Console.Write (sr.ReadToEnd ());
-  </code>
-      </example>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class represents the C14N XML canonicalization transform that describes the canonical form of an XML document.  This transform allows a signer to create a digest (used to create a digital signature) using the canonical form of an XML document.  A recipient can then verify the XML digital signature using the same canonical form of the XML document with the same transform.         </para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class when you need to sign an XML document that does not contain comments.</para>
+      <para>In most cases, a new instance of a canonicalization transform class is not required. To specify a canonicalization transform, pass the Uniform Resource Identifier (URI) that describes the transform to the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethod" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  To acquire a reference to the canonicalization transform, use the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethodObject" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NTransformUrl" /> field and the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationUrl" /> field. </para>
+      <para>You would only need to create a new instance of a canonicalization transform class for manually hashing an XML document or for using your own canonicalization algorithm. </para>
+      <para>For more information about the C14N transform, see Sections 6.5 and 6.6.1 of the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/. The canonicalization algorithm is defined in the W3C Canonical XML specification, which is available at www.w3.org/TR/xml-c14n.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the C14N XML canonicalization transform for a digital signature as defined by the World Wide Web Consortium (W3C), without comments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -51,8 +42,11 @@ Console.Write (sr.ReadToEnd ());
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,9 +63,13 @@ Console.Write (sr.ReadToEnd ());
         <Parameter Name="includeComments" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includeComments">a <see cref="T:System.Boolean" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class with comments, if specified.</para>
+        </summary>
+        <param name="includeComments">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include comments; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDigestedOutput">
@@ -94,10 +92,17 @@ Console.Write (sr.ReadToEnd ());
         <Parameter Name="hash" Type="System.Security.Cryptography.HashAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="hash">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the digest associated with an <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digest associated with an <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </returns>
+        <param name="hash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.HashAlgorithm" /> object used to create a digest.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInnerXml">
@@ -114,9 +119,15 @@ Console.Write (sr.ReadToEnd ());
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlNodeList" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an XML representation of the parameters of an <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object that are suitable to be included as subelements of an XMLDSIG &lt;Transform&gt; element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list of the XML nodes that represent the transform-specific content needed to describe the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object in an XMLDSIG &lt;Transform&gt; element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOutput">
@@ -133,9 +144,18 @@ Console.Write (sr.ReadToEnd ());
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the returned object must be <see cref="T:System.IO.Stream" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the output of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOutput">
@@ -154,10 +174,20 @@ Console.Write (sr.ReadToEnd ());
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">a <see cref="T:System.Type" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the returned object must be <see cref="T:System.IO.Stream" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the output of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object of type <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object of type <see cref="T:System.IO.Stream" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the output to return. <see cref="T:System.IO.Stream" /> is the only valid type for this parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="InputTypes">
@@ -174,9 +204,15 @@ Console.Write (sr.ReadToEnd ());
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Type[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The valid input types to <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> are <see cref="T:System.IO.Stream" />, <see cref="T:System.Xml.XmlDocument" />, and <see cref="T:System.Xml.XmlNodeList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of types that are valid inputs to the <see cref="M:System.Security.Cryptography.Xml.XmlDsigC14NTransform.LoadInput(System.Object)" /> method of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadInnerXml">
@@ -195,9 +231,16 @@ Console.Write (sr.ReadToEnd ());
         <Parameter Name="nodeList" Type="System.Xml.XmlNodeList" />
       </Parameters>
       <Docs>
-        <param name="nodeList">a <see cref="T:System.Xml.XmlNodeList" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported because the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object has no inner XML elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the specified <see cref="T:System.Xml.XmlNodeList" /> object as transform-specific content of a &lt;Transform&gt; element; this method is not supported because this element has no inner XML elements.</para>
+        </summary>
+        <param name="nodeList">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNodeList" /> object to load into the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="LoadInput">
@@ -216,9 +259,16 @@ Console.Write (sr.ReadToEnd ());
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the input object must be one of the types in the <see cref="P:System.Security.Cryptography.Xml.XmlDsigC14NTransform.InputTypes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified input into the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to load into the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputTypes">
@@ -235,9 +285,16 @@ Console.Write (sr.ReadToEnd ());
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Type[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.Stream" /> is the only valid output type for <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of types that are possible outputs from the <see cref="M:System.Security.Cryptography.Xml.XmlDsigC14NTransform.GetOutput" /> methods of the current <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

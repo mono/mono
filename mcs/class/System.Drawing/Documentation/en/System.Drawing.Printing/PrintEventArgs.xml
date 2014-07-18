@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrintEventArgs" FullName="System.Drawing.Printing.PrintEventArgs">
   <TypeSignature Language="C#" Value="public class PrintEventArgs : System.ComponentModel.CancelEventArgs" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> and <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PrintEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +51,15 @@
         <ReturnType>System.Drawing.Printing.PrintAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Printing.PrintEventArgs.PrintAction" /> does not reliably indicate the type of print operation occurring, and returns <see cref="F:System.Drawing.Printing.PrintAction.PrintToFile" /> in all cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="F:System.Drawing.Printing.PrintAction.PrintToFile" /> in all cases.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

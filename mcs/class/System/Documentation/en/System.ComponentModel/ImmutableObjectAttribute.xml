@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImmutableObjectAttribute" FullName="System.ComponentModel.ImmutableObjectAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ImmutableObjectAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ImmutableObjectAttribute extends System.Attribute" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute is typically used in the <ui>Properties</ui> window to determine whether to render an expandable object as read-only. As such, this property is used only at design time.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that an object has no subproperties capable of being edited. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +46,16 @@
         <Parameter Name="immutable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="immutable">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute is typically used in the <ui>Properties</ui> window to determine whether to render an expandable object as read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ImmutableObjectAttribute" /> class.</para>
+        </summary>
+        <param name="immutable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the object is immutable; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -57,8 +72,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defaults to <see cref="F:System.ComponentModel.ImmutableObjectAttribute.No" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default value for <see cref="T:System.ComponentModel.ImmutableObjectAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -97,9 +118,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.ImmutableObjectAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Immutable">
@@ -115,9 +142,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute is typically used in the <ui>Properties</ui> window to determine whether to render an expandable object as read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the object is immutable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -134,9 +167,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the value of this instance is the default value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the default attribute for the class; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="No">
@@ -153,8 +192,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is the default setting for this attribute.</para>
+          <para>This attribute is typically used in the <ui>Properties</ui> window to determine whether to render an expandable object as read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that an object has at least one editable subproperty. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Yes">
@@ -171,8 +217,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute is typically used in the <ui>Properties</ui> window to determine whether to render an expandable object as read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that an object has no subproperties that can be edited. This static field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System.Configuration\AppSettingsSectionTest.cs" />
     <Compile Include="System.Configuration\CallbackValidatorTest.cs" />
     <Compile Include="System.Configuration\CommaDelimitedStringCollectionConverterTest.cs" />
     <Compile Include="System.Configuration\CommaDelimitedStringCollectionTest.cs" />

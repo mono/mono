@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IFilterResolutionService" FullName="System.Web.UI.IFilterResolutionService">
   <TypeSignature Language="C#" Value="public interface IFilterResolutionService" />
   <AssemblyInfo>
@@ -6,9 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page developers and control authors do not use the <see cref="T:System.Web.UI.IFilterResolutionService" /> interface. The <see cref="T:System.Web.UI.IFilterResolutionService" /> interface is implemented by designer developers to provide device filter-related services when parsing and persisting controls in the designer environment.</para>
+      <para>The <see cref="T:System.Web.UI.IFilterResolutionService" /> interface is used when a designer developer needs to support the editing of filtered properties. </para>
+      <para>The <see cref="T:System.Web.UI.IFilterResolutionService" /> interface is specific to controls' use of device filters in a designer environment. When controls are parsed or persisted in the designer environment outside the context of a browser request, the <see cref="T:System.Web.UI.IFilterResolutionService" /> interface provides a way to determine whether the current control is affected by a named filter and whether a named filter is part of a specific device-filter hierarchy. </para>
+      <para>The <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> class implements the <see cref="T:System.Web.UI.IFilterResolutionService" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that designer developers can use to evaluate device filters by name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompareFilters">
@@ -22,12 +32,20 @@
         <Parameter Name="filter2" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filter1">To be added.</param>
-        <param name="filter2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether a parent-child relationship exists between two specified device filters. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if the device filter identified by <paramref name="filter1" /> is a parent of the filter identified by <paramref name="filter2" />, -1 if the device filter identified by <paramref name="filter2" /> is a parent of the filter identified by <paramref name="filter1" />, and 0 if there is no parent-child relationship between the two filters.</para>
+        </returns>
+        <param name="filter1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A device filter name.</param>
+        <param name="filter2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A device filter name</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,11 +61,21 @@
         <Parameter Name="filterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.IFilterResolutionService.EvaluateFilter(System.String)" /> method determines whether a named device filter is a type of filter supported by the <see cref="T:System.Web.UI.IFilterResolutionService" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified filter is a type of the current filter object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified filter is a type applicable to the current filter object; otherwise, false.</para>
+        </returns>
+        <param name="filterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a device filter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

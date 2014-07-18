@@ -1,6 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.ComponentModel">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.ComponentModel" /> namespace provides classes that are used to implement the run-time and design-time behavior of components and controls. This namespace includes the base classes and interfaces for implementing attributes and type converters, binding to data sources, and licensing components.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace divide into the following categories: </para>
+      <list type="bullet">
+        <item>
+          <para>Core component classes. See the <see cref="T:System.ComponentModel.Component" />, <see cref="T:System.ComponentModel.IComponent" />, <see cref="T:System.ComponentModel.Container" />, and <see cref="T:System.ComponentModel.IContainer" /> classes.</para>
+        </item>
+        <item>
+          <para>Component licensing. See the <see cref="T:System.ComponentModel.License" />, <see cref="T:System.ComponentModel.LicenseManager" />, <see cref="T:System.ComponentModel.LicenseProvider" />, and <see cref="T:System.ComponentModel.LicenseProviderAttribute" /> classes.</para>
+        </item>
+        <item>
+          <para>Attributes. See the <see cref="T:System.Attribute" /> class.</para>
+        </item>
+        <item>
+          <para>Descriptors and persistence. See the <see cref="T:System.ComponentModel.TypeDescriptor" />, <see cref="T:System.ComponentModel.EventDescriptor" />, and <see cref="T:System.ComponentModel.PropertyDescriptor" /> classes.</para>
+        </item>
+        <item>
+          <para>Type converters. See the <see cref="T:System.ComponentModel.TypeConverter" /> class.</para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

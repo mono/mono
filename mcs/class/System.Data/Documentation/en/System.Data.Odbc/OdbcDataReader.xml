@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcDataReader" FullName="System.Data.Odbc.OdbcDataReader">
   <TypeSignature Language="C#" Value="public sealed class OdbcDataReader : System.Data.Common.DbDataReader" />
   <AssemblyInfo>
@@ -11,8 +12,18 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create an <see cref="T:System.Data.Odbc.OdbcDataReader" />, you must call the <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> method of the <see cref="T:System.Data.Odbc.OdbcCommand" /> object, instead of directly using a constructor.</para>
+      <para>While the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is being used, the associated <see cref="T:System.Data.Odbc.OdbcConnection" /> is busy serving the <see cref="T:System.Data.Odbc.OdbcDataReader" />, and no other operations can be performed on the <see cref="T:System.Data.Odbc.OdbcConnection" /> other than closing it. This is the case until the <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> method of the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is called. For example, you cannot retrieve output parameters until after you call <see cref="M:System.Data.Odbc.OdbcDataReader.Close" />.</para>
+      <para>Changes made to a result set by another process or thread while data is being read may be visible to the user of the <see cref="T:System.Data.Odbc.OdbcDataReader" />. However, the precise behavior is both driver and timing dependent.</para>
+      <para>
+        <see cref="P:System.Data.Odbc.OdbcDataReader.IsClosed" /> and <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is closed. Sometimes, you must call <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> before you can call <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way of reading a forward-only stream of data rows from a data source. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -23,8 +34,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must explicitly call the <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> method when you are finished using the <see cref="T:System.Data.Odbc.OdbcDataReader" /> to use the associated <see cref="T:System.Data.Odbc.OdbcConnection" /> for any other purpose.</para>
+          <block subset="none" type="note">
+            <para>Do not call Close or Dispose on a Connection, a DataReader, or any other managed object in the Finalize method of your class. In a finalizer, you should only release unmanaged resources that your class owns directly. If your class does not own any unmanaged resources, do not include a Finalize method in your class definition. For more information, see <format type="text/html"><a href="22B6CB97-0C80-4EEB-A2CF-5ED7655E37F9">Garbage Collection</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.Data.Odbc.OdbcDataReader" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,9 +58,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outermost table has a depth of zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the depth of nesting for the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,9 +99,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Includes hidden fields. Use <see cref="P:System.Data.Common.DbDataReader.VisibleFieldCount" /> to exclude hidden fields.</para>
+          <para>After you execute a query that does not return rows, <see cref="P:System.Data.Odbc.OdbcDataReader.FieldCount" /> returns 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns in the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,10 +140,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a Boolean.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean that is the value of the column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,10 +171,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a byte.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a byte.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,14 +206,34 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <param name="dataIndex">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.Odbc.OdbcDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the number of available bytes in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if <see cref="M:System.Data.Odbc.OdbcDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> has already been used to obtain bytes from the field. This may be the case, for example, if the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>If you pass a buffer that is a null value, <see cref="M:System.Data.Odbc.OdbcDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the length of the field in bytes.</para>
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <block subset="none" type="note">
+            <para>No exception will be thrown if the value of <paramref name="bufferIndex" /> is outside the array. No data will be read and the method will return 0.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of bytes from the specified column offset into the buffer as an array, starting at the particular buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field where the read operation is to start. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,10 +250,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a character.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,14 +285,34 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <param name="dataIndex">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.Odbc.OdbcDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the number of available characters in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if <see cref="M:System.Data.Odbc.OdbcDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> has already been used to obtain characters from the field. This may be the case, for example, if the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>If you pass a buffer that is a null value, <see cref="M:System.Data.Odbc.OdbcDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the length of the field in characters.</para>
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <block subset="none" type="note">
+            <para>No exception will be thrown if the value of <paramref name="bufferIndex" /> is outside the array. No data will be read and the method will return 0.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of characters from the specified column offset into the buffer as an array, starting at the particular buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the row where the read operation is to start. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy data. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,10 +354,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the source data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the source data type.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -268,11 +381,18 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -289,10 +409,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -309,10 +440,23 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+          <para>
+            <see cref="M:System.Data.Odbc.OdbcDataReader.GetDecimal(System.Int32)" /> has a maximum precision of 28. Attempting to retrieve decimal data with a larger precision will cause an exception. One solution would be to change the query to cast the decimal type to either a smaller datatype or convert to string or binary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Decimal" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a <see cref="T:System.Decimal" /> object.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -329,10 +473,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a double-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a double-precision floating-point number.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -347,10 +502,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although you can use this method to retrieve an explicit enumerator, in languages that support a foreach construct, it is simpler to use the looping construct directly in order to iterate through the rows in the data reader.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -366,10 +530,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -386,10 +557,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported then the method call will fail.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a single-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a single-precision floating-point number.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -406,10 +588,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a globally unique identifier (GUID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a GUID.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -426,10 +619,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 16-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a 16-bit signed integer.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -446,10 +650,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a 32-bit signed integer.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -466,10 +681,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a 64-bit signed integer.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -486,10 +712,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that is the name of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -506,10 +739,24 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.Odbc.OdbcDataReader.GetOrdinal(System.String)" /> performs a case-sensitive lookup first. If it fails, a second case-insensitive search is made. The method throws an IndexOutOfRange exception if the zero-based column ordinal is not found.</para>
+          <para>
+            <see cref="M:System.Data.Odbc.OdbcDataReader.GetOrdinal(System.String)" /> is kana-width insensitive.</para>
+          <para>Because ordinal-based lookups are more efficient than named lookups, it is inefficient to call <see cref="M:System.Data.Odbc.OdbcDataReader.GetOrdinal(System.String)" /> within a loop. Instead, call <see cref="M:System.Data.Odbc.OdbcDataReader.GetOrdinal(System.String)" /> one time and then assign the results to an integer variable for use within the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column ordinal, given the name of the column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based column ordinal.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -524,9 +771,186 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.Odbc.OdbcDataReader.GetSchemaTable" /> method returns metadata about each column in the following order: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DataReader column </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ColumnName </para>
+              </term>
+              <description>
+                <para>The name of the column; this might not be unique. If the column name cannot be determined, a null value is returned. This name always reflects the most recent naming of the column in the current view or command text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnOrdinal </para>
+              </term>
+              <description>
+                <para>The zero-based ordinal of the column. This column cannot contain a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnSize </para>
+              </term>
+              <description>
+                <para>The maximum possible length of a value in the column. For columns that use a fixed-length data type, this is the size of the data type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericPrecision </para>
+              </term>
+              <description>
+                <para>If <see cref="T:System.Data.DbType" /> is a numeric data type, this is the maximum precision of the column. The precision depends on the definition of the column. If <see cref="T:System.Data.DbType" /> is not a numeric data type, do not use the data in this column. If the underlying ODBC driver returns a precision value for a non-numeric data type, this value is used in the schema table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericScale </para>
+              </term>
+              <description>
+                <para>If <see cref="T:System.Data.DbType" /> is <see cref="F:System.Data.DbType.Decimal" />, the number of digits to the right of the decimal point. Otherwise, this is a null value. If the underlying ODBC driver returns a precision value for a non-numeric data type, this value is used in the schema table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataType </para>
+              </term>
+              <description>
+                <para>Maps to the common language runtime type of <see cref="T:System.Data.DbType" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProviderType </para>
+              </term>
+              <description>
+                <para>The underlying driver type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsLong </para>
+              </term>
+              <description>
+                <para>true if the column contains a Binary Long Object (BLOB) that contains very long data. The definition of very long data is driver-specific. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AllowDBNull </para>
+              </term>
+              <description>
+                <para>true if the consumer can set the column to a null value or if the driver cannot determine whether the consumer can set the column to a null value. Otherwise, false. A column may contain null values, even if it cannot be set to a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsReadOnly </para>
+              </term>
+              <description>
+                <para>true if the column cannot be modified; otherwise false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsRowVersion </para>
+              </term>
+              <description>
+                <para>Set if the column contains a persistent row identifier that cannot be written to, and has no meaningful value except to identity the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsUnique </para>
+              </term>
+              <description>
+                <para>true: No two rows in the base table (the table returned in BaseTableName) can have the same value in this column. IsUnique is guaranteed to be true if the column represents a key by itself or if there is a constraint of type UNIQUE that applies only to this column. </para>
+                <para>false: The column can contain duplicate values in the base table. The default for this column is false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsKey </para>
+              </term>
+              <description>
+                <para>true: The column is one of a set of columns in the rowset that, taken together, uniquely identify the row. The set of columns with IsKey set to true must uniquely identify a row in the rowset. There is no requirement that this set of columns is a minimal set of columns. This set of columns may be generated from a base table primary key, a unique constraint, or a unique index. </para>
+                <para>false: The column is not required to uniquely identify the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsAutoIncrement </para>
+              </term>
+              <description>
+                <para>true if the column assigns values to new rows in fixed increments; otherwise false. The default for this column is false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseSchemaName </para>
+              </term>
+              <description>
+                <para>The name of the schema in the data source that contains the column. NULL if the base catalog name cannot be determined. The default for this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseCatalogName </para>
+              </term>
+              <description>
+                <para>The name of the catalog in the data store that contains the column. NULL if the base catalog name cannot be determined. The default for this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseTableName </para>
+              </term>
+              <description>
+                <para>The name of the table or view in the data store that contains the column. A null value if the base table name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseColumnName </para>
+              </term>
+              <description>
+                <para>The name of the column in the data store. This might be different from the column name returned in the ColumnName column if an alias was used. A null value if the base column name cannot be determined or if the rowset column is derived, but not identical to, a column in the data store. The default for this column is a null value. </para>
+              </description>
+            </item>
+          </list>
+          <para>A row is returned for every column in the results set.</para>
+          <para>The .NET Framework Data Provider for ODBC assumes that metadata information is available from an ODBC driver after one of SQLPrepare, SQLExecute, or SQLExecuteDirect functions are called. For "SchemaOnly" command behavior to work correctly, SQLPrepare must return the required metadata information. Not all ODBC drivers support this function or return metadata information. In these cases, part or all of the information in the SchemaTable will be missing. After calling SQLPrepare, The data provider calls the ODBC SQLColAttribute function to find the metadata information related to each column in the query results (for example, IsLong, IsUnique, AllowDBNull, BaseTableName, BaseColumnName). If the underlying driver does not return some of this information, the corresponding values in the SchemaTable will not be set correctly.</para>
+          <para>The .NET Framework Data Provider for ODBC also calls SQLPrimaryKeys to retrieve the key information for every table. If the underlying ODBC driver does not support this function, the data provider calls SQLStatistics and chooses one of the unique indexes as the primary key for the table. This may not always give the results that you want.</para>
+          <para>
+            <see cref="T:System.Data.Odbc.OdbcCommandBuilder" /> needs the correct identification of the primary keys of the table in order to work correctly. If the BaseTableName is not returned for every column in the query results, the .NET Framework Data Provider for ODBC tries to parse the SQL statement to find the table names involved in the query. This works with UPDATE, INSERT, DELETE and simple SELECT statements, but not with stored procedures or SELECT statements based on joins. If some or all the schema information is missing from this table, the <see cref="T:System.Data.Odbc.OdbcCommandBuilder" /> will not work correctly, because it has insufficient schema information to automatically generate the correct INSERT, UPDATE, or DELETE statements.</para>
+          <para>To make sure that metadata columns return the correct information, you must call <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> with the behavior parameter set to KeyInfo. Otherwise, some of the columns in the schema table may return default, null, or incorrect data.</para>
+          <para>When you use ODBC.NET to Oracle via the ODBC driver, aliased key columns are not recognized as keys. This affects the IsKey and IsUnique columns in the schema table of the OdbcDataReader. It also affects the OdbcCommandBuilder's ability to generate updating logic. Consider not using an alias for a primary key column.</para>
+          <block subset="none" type="note">
+            <para>The Microsoft Jet ODBC driver always returns unique index and primary key columns as nullable regardless of whether they are nullable or not. The driver also does not return primary key information; it only returns a list of unique indexes and their columns, including primary key columns, without differentiating among them.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see cref="T:System.Data.Odbc.OdbcDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that describes the column metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -543,10 +967,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conversions are performed based on the underlying capabilities of the ODBC driver. If the conversion is not supported, the method call fails.</para>
+          <para>Call <see cref="M:System.Data.Odbc.OdbcDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a <see cref="T:System.String" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -563,10 +998,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.TimeSpan" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a <see cref="T:System.TimeSpan" /> object.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -583,10 +1025,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the column at the specified ordinal in its native format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value to return.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -603,10 +1055,22 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most applications, the <see cref="M:System.Data.Odbc.OdbcDataReader.GetValues" /> method provides an efficient means for retrieving all columns, instead of retrieving each column individually.</para>
+          <para>You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns that are contained in the resulting row. Only the amount of data the <see cref="T:System.Object" /> array holds is copied to the array. You can also pass an <see cref="T:System.Object" /> array whose length is more than the number of columns that are contained in the resulting row.</para>
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates an array of objects with the column values of the current row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> into which to copy the attribute columns. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -620,9 +1084,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.Odbc.OdbcDataReader" /> contains one or more rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -636,9 +1103,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.Odbc.OdbcDataReader.IsClosed" /> and <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -655,10 +1129,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid raising an error, call this method to look for null column values before calling the typed Get methods (for example, <see cref="M:System.Data.Odbc.OdbcDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.Odbc.OdbcDataReader.GetChar(System.Int32)" />, and so on).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the column contains nonexistent or missing values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified column value is equivalent to <see cref="T:System.DBNull" />; otherwise false.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -713,9 +1197,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to process multiple results that can be generated by executing batch SQL statements.</para>
+          <para>By default, the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is positioned on the first result.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.Odbc.OdbcDataReader" /> to the next result when reading the results of batch SQL statements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more result sets; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -730,9 +1224,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default position of the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is before the first record. Therefore, you must call <see cref="M:System.Data.Odbc.OdbcDataReader.Read" /> to start accessing any data.</para>
+          <para>While the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is being used, the associated <see cref="T:System.Data.Odbc.OdbcConnection" /> is busy serving it until you call <see cref="M:System.Data.Odbc.OdbcDataReader.Close" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.Odbc.OdbcDataReader" /> to the next record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more rows; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -746,9 +1250,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" /> property is not set until all rows are read and you close the <see cref="T:System.Data.Odbc.OdbcDataReader" />.</para>
+          <para>The value of this property is cumulative. For example, if two records are inserted in batch mode, the value of <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" /> will be 2.</para>
+          <para>
+            <see cref="P:System.Data.Odbc.OdbcDataReader.IsClosed" /> and <see cref="P:System.Data.Odbc.OdbcDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

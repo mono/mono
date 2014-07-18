@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GroupBoxRenderer" FullName="System.Windows.Forms.GroupBoxRenderer">
   <TypeSignature Language="C#" Value="public sealed class GroupBoxRenderer" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.GroupBoxRenderer" /> class provides a set of static methods that can be used to render a group box control. Rendering a control refers to drawing the user interface of a control. To draw a group box, use one of the <see cref="Overload:System.Windows.Forms.GroupBoxRenderer.DrawGroupBox" /> methods. These methods provide a variety of text drawing options. </para>
+      <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, <see cref="Overload:System.Windows.Forms.GroupBoxRenderer.DrawGroupBox" /> will draw the group box with the current visual style. Otherwise, <see cref="Overload:System.Windows.Forms.GroupBoxRenderer.DrawGroupBox" /> will draw the group box with the classic Windows style. This is useful if you are drawing a custom control that should automatically match the current visual style setting of the operating system.</para>
+      <para>This class wraps the functionality of a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> that is set to one of the elements exposed by the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Button.GroupBox" /> class. For more information, see <format type="text/html"><a href="a5b178ba-610e-46c4-a6c0-509c0886a744">Rendering Controls with Visual Styles</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods used to render a group box control with or without visual styles. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DrawGroupBox">
@@ -26,12 +35,21 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, this method will draw the group box with the current visual style. Otherwise, this method will draw the group box with the classic Windows style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a group box control in the specified state and bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the group box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the group box.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,14 +69,25 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="groupBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, this method will draw the group box with the current visual style. Otherwise, this method will draw the group box with the classic Windows style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a group box control in the specified state and bounds, with the specified text and font.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the group box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the group box.</param>
+        <param name="groupBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw with the group box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,15 +108,27 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="groupBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="textColor">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, this method will draw the group box with the current visual style. Otherwise, this method will draw the group box with the classic Windows style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a group box control in the specified state and bounds, with the specified text, font, and color.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the group box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the group box.</param>
+        <param name="groupBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw with the group box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="textColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,15 +149,27 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="groupBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, this method will draw the group box with the current visual style. Otherwise, this method will draw the group box with the classic Windows style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a group box control in the specified state and bounds, with the specified text, font, and text formatting.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the group box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the group box.</param>
+        <param name="groupBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw with the group box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,16 +191,29 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="groupBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="textColor">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If visual styles are enabled in the operating system and visual styles are applied to the current application, this method will draw the group box with the current visual style. Otherwise, this method will draw the group box with the classic Windows style.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a group box control in the specified state and bounds, with the specified text, font, color, and text formatting.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the group box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the group box.</param>
+        <param name="groupBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw with the group box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="textColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to <paramref name="groupBoxText" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,12 +231,18 @@
         <Parameter Name="childControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="childControl">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background of a control's parent in the specified area.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the background of the parent of <paramref name="childControl" />.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> in which to draw the parent control's background. This rectangle should be inside the child control’s bounds.</param>
+        <param name="childControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control whose parent's background will be drawn.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -186,11 +258,18 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the background of the group box has any semitransparent or alpha-blended pieces.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the background of the group box has semitransparent or alpha-blended pieces; otherwise, false.</para>
+        </returns>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.GroupBoxState" /> values that specifies the visual state of the group box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -203,10 +282,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Windows.Forms.GroupBoxRenderer.RenderMatchingApplicationState" /> is true, the <see cref="T:System.Windows.Forms.GroupBoxRenderer" /> uses the setting from <see cref="P:System.Windows.Forms.Application.RenderWithVisualStyles" /> to determine the rendering style. If <see cref="P:System.Windows.Forms.GroupBoxRenderer.RenderMatchingApplicationState" /> is false, the renderer will always render using visual styles.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the renderer uses the application state to determine rendering style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

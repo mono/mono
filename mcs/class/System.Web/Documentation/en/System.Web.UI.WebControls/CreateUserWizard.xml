@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CreateUserWizard" FullName="System.Web.UI.WebControls.CreateUserWizard">
   <TypeSignature Language="C#" Value="public class CreateUserWizard : System.Web.UI.WebControls.Wizard" />
   <AssemblyInfo>
@@ -14,9 +15,498 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#creating_a_user">Creating a User</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#styles_and_templates">Styles and Templates</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#validation_grouping">Validation Grouping</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#formatting_using_layout_templates">Formatting Using Layout Templates</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control provides the user interface for the <see cref="T:System.Web.Security.MembershipProvider" /> object that communicates with your Web site's user data store to create new user accounts in the data store. The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> relies on the <see cref="T:System.Web.Security.MembershipProvider" /> to create the user and disable them if necessary.</para>
+      <block subset="none" type="note">
+        <para>If you are not familiar with ASP.NET login controls, you might find it helpful to read <format type="text/html"><a href="ac032230-6469-4b03-b68d-03ef2643a24d">ASP.NET Login Controls Overview</a></format> before continuing. For a list of other topics related to login controls and membership, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using Membership</a></format>.</para>
+      </block>
+      <para>By default, the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control will accept a user name and password from the Web site visitor. Based on the requirements of the site's <see cref="T:System.Web.Security.MembershipProvider" /> object, the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control will optionally accept an e-mail address, represented by the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> property, and a password recovery confirmation question and answer, represented by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Question" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Answer" />. For a table showing all required and optional controls for <see cref="T:System.Web.UI.WebControls.CreateUserWizard" />, see <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" />.</para>
+      <block subset="none" type="note">
+        <para>If <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" /> is set to true and the <see cref="P:System.Web.Security.Membership.PasswordStrengthRegularExpression" /> property is set in the application's Web.config file, you could potentially generate a password that does not pass the regular expression strength test. In this case, creating a user raises an error that indicates an invalid password.</para>
+      </block>
+      <format type="text/html">
+        <a href="#creating_a_user" />
+      </format>
+      <format type="text/html">
+        <h2>Creating a User</h2>
+      </format>
+      <para>When a user is created with the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" />, the control interacts with the current <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> to accomplish the following tasks in order.</para>
+      <list type="ordered">
+        <item>
+          <para>Create a password if <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" /> is set to true.</para>
+        </item>
+        <item>
+          <para>Create the user in the data store that the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> represents.</para>
+        </item>
+        <item>
+          <para>Disable the user in the store if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisableCreatedUser" /> property is set to true.</para>
+        </item>
+      </list>
+      <para>You can extend the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control to accept additional information by adding additional fields, or by adding additional steps before or after the provided templates in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteStep" /> properties.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizardStep" /> step is the first step within the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, and is a required step. By default, the <see cref="P:System.Web.UI.WebControls.CreateUserWizardStep.AllowReturn" /> property is set to false to keep the user from returning to the <see cref="T:System.Web.UI.WebControls.CreateUserWizardStep" /> step and accidentally attempting to create another user account with the same credentials. If <see cref="P:System.Web.UI.Control.EnableViewState" /> is set to false, the <see cref="P:System.Web.UI.WebControls.CreateUserWizardStep.AllowReturn" /> property is not maintained in view state and you must include logic in your application to maintain the <see cref="P:System.Web.UI.WebControls.CreateUserWizardStep.AllowReturn" /> value.</para>
+      </block>
+      <para>
+        <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control properties represented by text boxes, such as <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UserName" />, are accessible during all phases of the page life cycle. The control will pick up any changes made by the end user by means of the <see cref="E:System.Web.UI.WebControls.TextBox.TextChanged" /> event raised by the text boxes. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control can optionally send e-mail messages to new users if you have configured an SMTP mail server to send e-mail. For more information, see the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> property.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control uses Internet e-mail services to send login information to users. There are inherent security risks with sending passwords in e-mail. You should determine whether these security risks are acceptable to your site.</para>
+      </block>
+      <format type="text/html">
+        <a href="#styles_and_templates" />
+      </format>
+      <format type="text/html">
+        <h2>Styles and Templates</h2>
+      </format>
+      <para>When the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control is not customized with templates, the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" /> property of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control applies to the first text box in the control and the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property, which is applied to all text boxes of the control. If the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control is customized with templates, then the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" /> property and the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property are ignored. In this case, directly set the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" /> property and the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property of each template child control.</para>
+      <para>
+        <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control properties represented by text boxes, such as <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UserName" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Password" />, are accessible during all phases of the page life cycle. The control will pick up any changes made by the end user by means of the <see cref="E:System.Web.UI.WebControls.TextBox.TextChanged" /> event raised by the text boxes.</para>
+      <block subset="none" type="note">
+        <para>Setting the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" />, <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" />, or <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property recreates the child controls of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, and their control state is lost in the process. To avoid this situation, explicitly maintain the control state of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control's child controls, or avoid putting controls inside of templates.</para>
+      </block>
+      <para>The following table lists the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control style properties and explains which UI element each style property affects. For a list of which properties each style applies to, see the documentation for the individual style properties.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Style property </para>
+            </term>
+            <description>
+              <para>UI element affected </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> </para>
+          </term>
+          <description>
+            <para>
+              <ui>Continue</ui> button. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> </para>
+          </term>
+          <description>
+            <para>
+              <ui>Create User</ui> button. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" />
+            </para>
+          </term>
+          <description>
+            <para>Links to other pages. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> </para>
+          </term>
+          <description>
+            <para>Instructional text on the page that tells users how to use the control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> </para>
+          </term>
+          <description>
+            <para>Labels for all input fields, such as text boxes. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> </para>
+          </term>
+          <description>
+            <para>Text entry input fields. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> </para>
+          </term>
+          <description>
+            <para>Title text for each view. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> </para>
+          </term>
+          <description>
+            <para>Text displayed to the user when the password recovery or reset attempt is successful. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" />
+            </para>
+          </term>
+          <description>
+            <para>Error messages when the membership provider fails to create a new user account.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The text that describes password requirements.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" />
+            </para>
+          </term>
+          <description>
+            <para>Error messages associated with validation.</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#validation_grouping" />
+      </format>
+      <format type="text/html">
+        <h2>Validation Grouping</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control uses a validation group so that other fields on the same page as the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control can be validated separately. By default, the <see cref="P:System.Web.UI.Control.ID" /> property of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control is used as the name of the validation group. For example, a <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control with the ID "CreateUserWizard1" will use a validation group name of "CreateUserWizard1". If you want to set the validation group that the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control is part of, you must template the control and change the validation group name.</para>
+      <para>Note that the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> class inherits from the <see cref="T:System.Web.UI.WebControls.Wizard" /> class, which does not support special Microsoft Internet Explorer rendering for non-standard or quirks mode. The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> does not attempt to optimize rendering for non-standard Internet Explorer mode. To get the best Internet Explorer rendering using the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, use the XHTML doc type, which is added by default in Visual Web Developer and Visual Studio.</para>
+      <format type="text/html">
+        <a href="#formatting_using_layout_templates" />
+      </format>
+      <format type="text/html">
+        <h2>Formatting Using Layout Templates</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control lets you specify the layout of the control without requiring you to use an HTML table element. Instead, you can use a LayoutTemplate element to specify the layout. In the layout template, you create placeholder controls to indicate where items should be dynamically inserted into the control. (This is similar to how the template model for the <see cref="T:System.Web.UI.WebControls.ListView" /> control works.) For more information, see the <see cref="P:System.Web.UI.WebControls.Wizard.LayoutTemplate" /> property.</para>
+      <format type="text/html">
+        <a href="#Accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:CreateUserWizard
+    AccessKey="string"
+    ActiveStepIndex="integer"
+    Answer="string"
+    AnswerLabelText="string"
+    AnswerRequiredErrorMessage="string"
+    AutoGeneratePassword="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CancelButtonImageUrl="uri"
+    CancelButtonText="string"
+    CancelButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    CancelDestinationPageUrl="uri"
+    CellPadding="integer"
+    CellSpacing="integer"
+    CompleteSuccessText="string"
+    ConfirmPasswordCompareErrorMessage="string"
+    ConfirmPasswordLabelText="string"
+    ConfirmPasswordRequiredErrorMessage="string"
+    ContinueButtonImageUrl="uri"
+    ContinueButtonText="string"
+    ContinueButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    ContinueDestinationPageUrl="uri"
+    CreateUserButtonImageUrl="uri"
+    CreateUserButtonText="string"
+    CreateUserButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    CssClass="string"
+    DisableCreatedUser="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    DisplayCancelButton="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    DisplaySideBar="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    DuplicateEmailErrorMessage="string"
+    DuplicateUserNameErrorMessage="string"
+    EditProfileIconUrl="uri"
+    EditProfileText="string"
+    EditProfileUrl="uri"
+    Email="string"
+    EmailLabelText="string"
+    EmailRegularExpression="string"
+    EmailRegularExpressionErrorMessage="string"
+    EmailRequiredErrorMessage="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    FinishCompleteButtonImageUrl="uri"
+    FinishCompleteButtonText="string"
+    FinishCompleteButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    FinishDestinationPageUrl="uri"
+    FinishPreviousButtonImageUrl="uri"
+    FinishPreviousButtonText="string"
+    FinishPreviousButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    HeaderText="string"
+    Height="size"
+    HelpPageIconUrl="uri"
+    HelpPageText="string"
+    HelpPageUrl="uri"
+    ID="string"
+    InstructionText="string"
+    InvalidAnswerErrorMessage="string"
+    InvalidEmailErrorMessage="string"
+    InvalidPasswordErrorMessage="string"
+    InvalidQuestionErrorMessage="string"
+    LoginCreatedUser="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    MailDefinition-BodyFileName="uri"
+    MailDefinition-CC="string"
+    MailDefinition-From="string"
+    MailDefinition-IsBodyHtml="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    MailDefinition-Priority="<codeFeaturedElement>Normal</codeFeaturedElement>|Low|High"
+    MailDefinition-Subject="string"
+    MembershipProvider="string"
+    OnActiveStepChanged="ActiveStepChanged event handler"
+    OnCancelButtonClick="CancelButtonClick event handler"
+    OnContinueButtonClick="ContinueButtonClick event handler"
+    OnCreatedUser="CreatedUser event handler"
+    OnCreateUserError="CreateUserError event handler"
+    OnCreatingUser="CreatingUser event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnFinishButtonClick="FinishButtonClick event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnNextButtonClick="NextButtonClick event handler"
+    OnPreRender="PreRender event handler"
+    OnPreviousButtonClick="PreviousButtonClick event handler"
+    OnSendingMail="SendingMail event handler"
+    OnSendMailError="SendMailError event handler"
+    OnSideBarButtonClick="SideBarButtonClick event handler"
+    OnUnload="Unload event handler"
+    PasswordHintText="string"
+    PasswordLabelText="string"
+    PasswordRegularExpression="string"
+    PasswordRegularExpressionErrorMessage="string"
+    PasswordRequiredErrorMessage="string"
+    Question="string"
+    QuestionLabelText="string"
+    QuestionRequiredErrorMessage="string"
+    RequireEmail="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    runat="server"
+    SkinID="string"
+    SkipLinkText="string"
+    StartNextButtonImageUrl="uri"
+    StartNextButtonText="string"
+    StartNextButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    StepNextButtonImageUrl="uri"
+    StepNextButtonText="string"
+    StepNextButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    StepPreviousButtonImageUrl="uri"
+    StepPreviousButtonText="string"
+    StepPreviousButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    UnknownErrorMessage="string"
+    UserName="string"
+    UserNameLabelText="string"
+    UserNameRequiredErrorMessage="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+        &lt;CancelButtonStyle/&gt;
+        &lt;CompleteSuccessTextStyle/&gt;
+        &lt;ContinueButtonStyle/&gt;
+        &lt;CreateUserButtonStyle/&gt;
+        &lt;ErrorMessageStyle/&gt;
+        &lt;FinishCompleteButtonStyle/&gt;
+        &lt;FinishNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/FinishNavigationTemplate&gt;
+        &lt;FinishPreviousButtonStyle/&gt;
+        &lt;HeaderStyle/&gt;
+        &lt;HeaderTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/HeaderTemplate&gt;
+        &lt;HyperLinkStyle/&gt;
+        &lt;InstructionTextStyle/&gt;
+        &lt;LabelStyle/&gt;
+        &lt;MailDefinition
+            BodyFileName="uri"
+            CC="string"
+            From="string"
+            IsBodyHtml="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Priority="<codeFeaturedElement>Normal</codeFeaturedElement>|Low|High"
+            Subject="string"
+&gt;
+                &lt;EmbeddedObjects&gt;
+                        &lt;asp:EmbeddedMailObject
+                            Name="string"
+                            Path="uri"
+                        /&gt;
+                &lt;/EmbeddedObjects&gt;
+        &lt;/MailDefinition&gt;
+        &lt;NavigationButtonStyle/&gt;
+        &lt;NavigationStyle/&gt;
+        &lt;PasswordHintStyle/&gt;
+        &lt;SideBarButtonStyle/&gt;
+        &lt;SideBarStyle/&gt;
+        &lt;SideBarTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/SideBarTemplate&gt;
+        &lt;StartNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/StartNavigationTemplate&gt;
+        &lt;StartNextButtonStyle/&gt;
+        &lt;StepNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/StepNavigationTemplate&gt;
+        &lt;StepNextButtonStyle/&gt;
+        &lt;StepPreviousButtonStyle/&gt;
+        &lt;StepStyle/&gt;
+        &lt;TextBoxStyle/&gt;
+        &lt;TitleTextStyle/&gt;
+        &lt;ValidatorTextStyle/&gt;
+        &lt;WizardSteps&gt;
+                &lt;asp:TemplatedWizardStep
+                    AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ContentTemplateContainer="string"
+                    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ID="string"
+                    OnActivate="Activate event handler"
+                    OnDataBinding="DataBinding event handler"
+                    OnDeactivate="Deactivate event handler"
+                    OnDisposed="Disposed event handler"
+                    OnInit="Init event handler"
+                    OnLoad="Load event handler"
+                    OnPreRender="PreRender event handler"
+                    OnUnload="Unload event handler"
+                    runat="server"
+                    SkinID="string"
+                    StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                    Title="string"
+                    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+&gt;
+                        &lt;ContentTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/ContentTemplate&gt;
+                        &lt;CustomNavigationTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/CustomNavigationTemplate&gt;
+                &lt;/asp:TemplatedWizardStep&gt;
+                &lt;asp:WizardStep
+                    AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ID="string"
+                    OnActivate="Activate event handler"
+                    OnDataBinding="DataBinding event handler"
+                    OnDeactivate="Deactivate event handler"
+                    OnDisposed="Disposed event handler"
+                    OnInit="Init event handler"
+                    OnLoad="Load event handler"
+                    OnPreRender="PreRender event handler"
+                    OnUnload="Unload event handler"
+                    runat="server"
+                    SkinID="string"
+                    StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                    Title="string"
+                    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                /&gt;
+        &lt;/WizardSteps&gt;
+&lt;/asp:CreateUserWizard&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a user interface for creating new Web site user accounts.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +514,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +532,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ActiveStepIndex" /> property provides the zero-based index of the step that is currently displayed in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. You can programmatically set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ActiveStepIndex" /> property to dynamically display a step to the user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the step that is currently displayed to the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +562,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property will determine whether the question and answer text boxes are displayed at run time.</para>
+          <para>If an answer is required by the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property, then the answer text box will appear on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control has a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> object associated with it. </para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the end user's answer to the password recovery confirmation question.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +592,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the label that identifies the password confirmation answer text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +619,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message shown when the user does not enter an answer to the password confirmation question.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,10 +646,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" /> property makes it possible to create user accounts without entering a password for them. For example, this functionality is useful when an administrator creates a new user's account and then gives a password to the user.</para>
+          <block subset="none" type="note">
+            <para>You cannot create users using the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> if <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" /> is set to true and the <see cref="P:System.Web.Security.Membership.PasswordStrengthRegularExpression" /> property is set in the application's Web.config. An error message indicating an invalid password will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether or not to automatically generate a password for the new user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +671,16 @@
         <ReturnType>System.Web.UI.WebControls.CompleteWizardStep</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteStep" /> property defines the final step for creating a user account. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> object that <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteStep" /> returns. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the final user account creation step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -163,10 +698,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessText" /> property to change the message that is displayed when a user account is successfully created.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed when a Web site user account is created successfully.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -179,10 +721,62 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> defines the appearance of the text displayed when a Web site user account is created successfully in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, CompleteSuccessTextStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, CompleteSuccessTextStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> property defines the appearance of the text displayed when a Web site user account is created successfully, after the user has clicked the <ui>Continue</ui> button on the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> step.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteSuccessTextStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of the text displayed when a Web site user account is created successfully. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -195,10 +789,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPassword" /> property contains the second password (the confirmation password) entered by the user. By default, a <see cref="T:System.Web.UI.WebControls.CompareValidator" /> object is provided for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Password" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPassword" /> text box values. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control also has a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> associated with it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the second password entered by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -216,10 +816,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message shown when the user enters two different passwords in the password and confirm password text boxes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -237,10 +843,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets text of the label for the second password text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,10 +870,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when the user leaves the confirm password text box empty.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -274,9 +892,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonClick" /> event is raised when the <ui>Continue</ui> button on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonClick" /> event to provide additional processing when the <ui>Continue</ui> button is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <ui>Continue</ui> button in the final user account creation step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -289,9 +914,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonCommandName" /> field represents the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> value of the <ui>Continue</ui> button on the final step for creating a user account. </para>
+          <para>To assign continue functionality to any <see cref="T:System.Web.UI.WebControls.Button" /> control contained in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, set the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property of the button to the string that is contained in the <see cref="F:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonCommandName" /> field. </para>
+          <para>The <ui>Continue</ui> button appears on the template for the final step for creating a user account, which is represented by the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteStep" /> property. Clicking the <ui>Continue</ui> button redirects the user to the URL that is stored in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueDestinationPageUrl" /> property. To add custom functionality to the <ui>Continue</ui> button, create an event handler for the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonClick" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> value of the <ui>Continue</ui> button on the final step for creating a user account. The <see cref="F:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonCommandName" /> field is read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -304,10 +937,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonType" /> property is set to <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />, use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonImageUrl" /> property to specify the image to display for the <ui>Continue</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of an image used for the <ui>Continue</ui> button on the final user account creation step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -320,10 +959,62 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property determines the appearance of the <ui>Continue</ui> button in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, but you can override these settings using the  <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> property. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, ContinueButtonStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, ContinueButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> property override the corresponding settings in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of the <ui>Continue</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -341,10 +1032,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonText" /> property contains the text displayed for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control's <ui>Continue</ui> button. Depending on the value of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image, or as the text of a link. The following table lists <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonType" /> property values and their respective effects on the <ui>Continue</ui> button's text caption.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption displayed on the <ui>Continue</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -357,10 +1081,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button rendered as the <ui>Continue</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -378,10 +1105,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueDestinationPageUrl" /> property contains the URL of the Web page that the user will see after successfully completing registration on your site. By setting the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueDestinationPageUrl" /> property, you can control the first page that newly registered users see.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ContinueDestinationPageUrl" /> property is <see cref="F:System.String.Empty" /> and the user clicks the <ui>Continue</ui> button, the page is refreshed and any values on the form are cleared.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the page that the user will see after clicking the <ui>Continue</ui> button on the success page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -398,8 +1133,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the ASP.NET page framework to notify this control to create any child controls that it contains in preparation for posting back or rendering.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateControlHierarchy">
@@ -425,9 +1163,17 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatedUser" /> event is raised after the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property creates the new Web site user account. If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LoginCreatedUser" /> property is true, the user is logged on to the Web site after the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatedUser" /> event.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatedUser" /> event to set Web site values, such as personalization values, before the user is logged on to the site for the first time.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the membership provider has created the new Web site user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -440,10 +1186,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonType" /> property is set to <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />, use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonImageUrl" /> property to specify the image to display for the <ui>Create User</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of an image displayed for the <ui>Create User</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -456,10 +1208,62 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> property defines the appearance of the <ui>Create User</ui> button in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CreateUserButtonStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, CreateUserButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> property override the corresponding settings in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of the <ui>Create User</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -477,10 +1281,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonText" /> property contains the text displayed for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control's <ui>Create User</ui> button. Depending on the value of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image, or as the text of a link. The following table lists <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserButtonType" /> property values and their respective effects on the <ui>Create User</ui> button's text caption.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption displayed on the <ui>Create User</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -493,10 +1330,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button rendered as the <ui>Create User</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -509,9 +1349,17 @@
         <ReturnType>System.Web.UI.WebControls.CreateUserErrorEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreateUserError" /> event is raised on the server when the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property fails to create the specified user account. </para>
+          <para>The error handler is passed a <see cref="T:System.Web.Security.MembershipCreateStatus" /> object that contains the details of the failure from the membership provider. For a list of the possible error conditions, see <see cref="T:System.Web.Security.MembershipCreateStatus" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the membership provider cannot create the specified user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -524,10 +1372,133 @@
         <ReturnType>System.Web.UI.WebControls.CreateUserWizardStep</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> property defines the account creation step of a <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizardStep" /> object that <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> returns.</para>
+          <para>The following table lists the required and optional controls that are supported when using templated content for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>ID or command name </para>
+                </term>
+                <description>
+                  <para>Control type </para>
+                </description>
+                <description>
+                  <para>Required/optional </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>UserName </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control.</para>
+              </description>
+              <description>
+                <para>Required </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Password </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control.</para>
+              </description>
+              <description>
+                <para>Required if <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AutoGeneratePassword" /> is set to false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Email </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control.</para>
+              </description>
+              <description>
+                <para>Required if <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> is true. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ConfirmPassword </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control. </para>
+              </description>
+              <description>
+                <para>No requirements </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Question </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control. </para>
+              </description>
+              <description>
+                <para>Optional unless required by membership. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Answer </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.IEditableTextControl" />, including <see cref="T:System.Web.UI.WebControls.TextBox" />, or a custom or third-party control. </para>
+              </description>
+              <description>
+                <para>Optional unless required by membership. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ErrorMessage </para>
+              </term>
+              <description>
+                <para>Any control that implements <see cref="T:System.Web.UI.ITextControl" />. </para>
+              </description>
+              <description>
+                <para>Optional </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CreateUser </para>
+              </term>
+              <description>
+                <para>Any control that causes event bubbling </para>
+              </description>
+              <description>
+                <para>Optional </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Cancel </para>
+              </term>
+              <description>
+                <para>Any </para>
+              </description>
+              <description>
+                <para>Optional </para>
+              </description>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property is set to true and you are using templated content, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> control is required; the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control throws an exception if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> control is not found or is of the wrong type. If <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> is set to false, no exception is thrown if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> control is not found. If the control is of the wrong type, it is ignored. </para>
+          <para>Similarly, if a membership provider requires a question and answer (determined by the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.QuestionAndAnswerRequired" /> property), the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Question" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Answer" /> controls are required and the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> throws an exception if they are not found or are of the wrong type. If they are not required by the membership provider, no exception is thrown if they are not found, and if they are of the wrong type they are ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the template for the user account creation step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -540,9 +1511,17 @@
         <ReturnType>System.Web.UI.WebControls.LoginCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatingUser" /> event is raised prior to calling the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> method on the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatingUser" /> event to establish defaults or modify the information entered by the user before passing the information to the membership provider.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the membership provider is called to create the new Web site user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -560,10 +1539,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisableCreatedUser" /> property determines if the newly created user account will be marked as disabled in the membership data store. When user accounts are marked as disabled, the accounts are not allowed to log on to the Web site. For example, if your Web site allows new users to request an account, but requires administrative approval before allowing access, set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisableCreatedUser" /> property to true to disable newly created accounts until an administrator approves the account.</para>
+          <para>When <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisableCreatedUser" /> is true, you should set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LoginCreatedUser" /> property to false so that the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> does not attempt to log on the new user.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the new user should be allowed to log on to the Web site.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -576,10 +1563,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to display the sidebar area of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -597,10 +1587,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when the user enters an e-mail address that is already in use in the membership provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -618,10 +1614,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when the user enters a user name that is already in use in the membership provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -634,10 +1636,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of an image to display next to the link to the user profile editing page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -655,10 +1660,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption for the link to the user profile editing page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -671,10 +1682,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the user profile editing page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -687,10 +1701,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an e-mail address is required by the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property, then the e-mail address text box appears on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control has a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> object associated with it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the e-mail address entered by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -708,10 +1728,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the label for the e-mail text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -724,10 +1750,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRegularExpression" /> property to specify a regular expression that validates the e-mail address entered by the user to confirm that it matches a specific pattern. A common use is to make sure that the user has entered a complete e-mail address, such as <userInputLocalizable>user@contoso.com</userInputLocalizable>. The regular expression is used in addition to any restrictions placed on the e-mail address by the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property. If the membership provider rejects the e-mail address for any reason, the text contained in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidEmailErrorMessage" /> property is displayed.</para>
+          <para>The address is only compared to the regular expression if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property is set to true.</para>
+          <para>If the e-mail address does not pass the regular expression, the text contained in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRegularExpressionErrorMessage" /> property is displayed to the user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a regular expression used to validate the provided e-mail address.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -740,10 +1774,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRegularExpressionErrorMessage" /> property to inform the user that the e-mail address entered did not pass the site's criteria for e-mail addresses. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when the entered e-mail address does not pass the site's criteria for e-mail addresses.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -761,10 +1801,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message shown to the user when an e-mail address is not entered in the e-mail text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -777,10 +1823,99 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> property to change the appearance of error messages that are displayed when the membership provider fails to create a new user account. By default, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> is set to display the following messages in red:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DuplicateEmailErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DuplicateUserNameErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidAnswerErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidEmailErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidQuestionErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidPasswordErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UnknownErrorMessage" />
+              </para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, ErrorMessageStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, ErrorMessageStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings that are applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ErrorMessageStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of style properties that define the appearance of error messages.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -794,10 +1929,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets design-time data for a control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -810,10 +1951,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of an image to display next to the link to the Help page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -831,10 +1975,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption for the link to the Help page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -847,10 +1997,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the Help page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -863,10 +2016,62 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> property gets a reference to a <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that you use to change the appearance of hyperlinks in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, HyperLinkStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, HyperLinkStyle.ForeColor).</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.HyperLinkStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of properties that define the appearance of hyperlinks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -884,10 +2089,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionText" /> property contains instructions for users creating a new user account. This text is displayed in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, following the title.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionText" /> property is set to an empty string (""), no instruction text is displayed to the user.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets instructions for creating a new user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -900,10 +2113,62 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> property defines the appearance of instruction text in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, InstructionTextStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, InstructionTextStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> property defines the appearance of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionText" /> property.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InstructionTextStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of instruction text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -921,10 +2186,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.Membership" /> class membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property can support a question and answer for retrieving or resetting the user's password. The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidAnswerErrorMessage" /> property is displayed when the answer entered by the user does not meet the requirements for the answer set by the membership provider. The actual requirements for the answer are determined by the membership provider, and might be different for different providers.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the message displayed when the password retrieval answer is not valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -942,10 +2214,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.Membership" /> class membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property can restrict the e-mail addresses that it will accept. The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidEmailErrorMessage" /> property is displayed when the e-mail address entered by the user does not meet the requirements for the e-mail address set by the membership provider. The actual requirements for the e-mail address are determined by the membership provider, and might be different for different providers.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the message displayed when the entered e-mail address is not valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -963,10 +2242,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.Membership" /> class membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property can restrict the passwords that it will accept. The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidPasswordErrorMessage" /> property is displayed when the password entered by the user does not meet the requirements for a password set by the membership provider. The actual requirements for the password are determined by the membership provider, and might be different for different providers.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the message displayed when the password entered is not valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -984,10 +2270,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.Membership" /> class membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property can restrict the password retrieval questions that it will accept. The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidQuestionErrorMessage" /> property is displayed when the question entered by the user does not meet the requirements for the question set by the membership provider. The actual requirements for the question are determined by the membership provider, and might be different for different providers.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the message displayed when the password retrieval question entered is not valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1000,10 +2293,94 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> property defines the appearance of labels in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, LabelStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, LabelStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> property defines the appearance of the following properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailLabelText" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UserNameLabelText" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordLabelText" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPasswordLabelText" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.QuestionLabelText" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AnswerLabelText" />
+              </para>
+            </item>
+          </list>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LabelStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of labels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1020,9 +2397,12 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores view-state information from a previous page request that was saved by the SaveViewState method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1040,10 +2420,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LoginCreatedUser" /> property can be set to false if you want to create a user account but not authenticate the account after it is created. This might be useful if you are an administrator creating user accounts, for example, or if there is a waiting period before users can access the Web site.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LoginCreatedUser" /> property is set to true, the user will be created and logged in at the end of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> step. If you want the user to be logged in after all the steps have been completed, you can set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisableCreatedUser" /> property to false until all of the steps of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control are completed.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to log in the new user after creating the user account.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1064,9 +2454,52 @@
         <ReturnType>System.Web.UI.WebControls.MailDefinition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> property returns a reference to a group of properties that you use to define the format and content of the e-mail message that is sent to new users. Common settings include the subject line and the sender's return address. For a complete list of properties, see the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object it returns. You can set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class (for example, MailDefinition-Subject). You can also set the properties programmatically in the form Property.SubProperty (for example, MailDefinition.Subject).</para>
+          <para>An e-mail message is sent to new users only if <see cref="T:System.Web.UI.WebControls.MailDefinition" /> is not null and if <see cref="P:System.Web.Mail.MailMessage.Body" /> is not empty or null. In that case, the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendingMail" /> event is raised and an attempt is made to send the e-mail message. The <see cref="P:System.Web.UI.WebControls.MailDefinition.From" /> property must be set to an e-mail address. Otherwise, an <see cref="T:System.Web.HttpException" /> exception is thrown.</para>
+          <para>When the e-mail message is created from the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object, it will make the substitutions listed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Substitution text</para>
+                </term>
+                <description>
+                  <para>Replaced with</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>&lt;%UserName%&gt;</para>
+              </term>
+              <description>
+                <para>The user name of the newly created user account.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&lt;%Password%&gt;</para>
+              </term>
+              <description>
+                <para>The password for the newly created user account.</para>
+              </description>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Web.UI.WebControls.MailDefinition.IsBodyHtml" /> property of the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object is true, the contents of the mail message will be HTML encoded to guard against cross-site scripting security vulnerabilities for the message recipient.</para>
+          <para>You can use the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendingMail(System.Web.UI.WebControls.MailMessageEventArgs)" /> method to modify the <see cref="T:System.Web.Mail.MailMessage" /> created by the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+          <block subset="none" type="note">
+            <para>It is not possible to guarantee that a user will receive or view an e-mail message. To verify that a user has received a notification by e-mail, consider providing a confirmation link in the e-mail message that enables the user to confirm that the notification was received.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the characteristics of the e-mail message sent to new users.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MembershipProvider">
@@ -1081,10 +2514,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property contains the name of the defined <see cref="T:System.Web.Security.MembershipProvider" /> class membership provider that is used to store the user information. You can store membership information for users in different data stores by changing the value of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property. When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property is set to <see cref="F:System.String.Empty" />, the default membership provider defined in the Web.config file is used.</para>
+          <para>Membership providers are defined in the Web.config file in the &lt;membership&gt; section.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the membership provider called to create user accounts.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1101,12 +2542,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the event for the server control is passed up the page's UI server control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" /> None</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" /> None</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1122,10 +2571,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonClick" /> event is raised when the user clicks the <ui>Continue</ui> button on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnContinueButtonClick(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.ContinueButtonClick" /> event when the user clicks the <ui>Continue</ui> button on the final user account creation step.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1141,10 +2599,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatedUser(System.EventArgs)" /> method is called after the Web site user account is created by the membership provider. If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.LoginCreatedUser" /> property is true, the user is logged in after the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatedUser(System.EventArgs)" /> method is called.</para>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatedUser(System.EventArgs)" /> method to set Web site values, such as personalization properties, before the user is logged in for the first time.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatedUser(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatedUser" /> event after the membership provider creates the user account.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1160,10 +2628,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.CreateUserErrorEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreateUserError(System.Web.UI.WebControls.CreateUserErrorEventArgs)" /> method is called when the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property returns an error message from creating the specified user account. The <see cref="P:System.Web.UI.WebControls.CreateUserErrorEventArgs.CreateUserError" /> property of the <see cref="T:System.Web.UI.WebControls.CreateUserErrorEventArgs" /> object passed as the <paramref name="e" /> parameter contains a <see cref="T:System.Web.Security.MembershipCreateStatus" /> object that contains the details of the error.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreateUserError(System.Web.UI.WebControls.CreateUserErrorEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreateUserError" /> event when there is a problem creating the specified user account.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.CreateUserErrorEventArgs" /> with the data for the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1179,10 +2656,20 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.LoginCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatingUser(System.Web.UI.WebControls.LoginCancelEventArgs)" /> method to do any processing required before sending the new user information to the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> method of the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property. For example, you might set the user name field to all lowercase letters, or compare the e-mail address to a list of restricted addresses before allowing creation of the user account.</para>
+          <para>If you need to cancel the request to create the new user account, set the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> object passed as the <paramref name="e" /> parameter to true.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnCreatingUser(System.Web.UI.WebControls.LoginCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatingUser" /> event prior to calling the membership provider to create the new user account.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1199,9 +2686,12 @@
       </Parameters>
       <Docs>
         <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event when the user clicks the <ui>Next</ui> button in one of the Create User wizard steps.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1235,10 +2725,20 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.MailMessageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendingMail(System.Web.UI.WebControls.MailMessageEventArgs)" /> method to modify the e-mail message sent to new users. The <see cref="P:System.Web.UI.WebControls.MailMessageEventArgs.Message" /> property of the <see cref="T:System.Web.UI.WebControls.MailMessageEventArgs" /> object passed as the <paramref name="e" /> parameter contains the <see cref="T:System.Web.Mail.MailMessage" /> object that will be sent to the new user. Modify the properties of the <see cref="T:System.Web.Mail.MailMessage" /> object to modify the e-mail message.</para>
+          <para>E-mail messages are only created when the <see cref="P:System.Web.UI.WebControls.MailDefinition.BodyFileName" /> property of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> object specified by the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> property points to a valid file name.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendingMail(System.Web.UI.WebControls.MailMessageEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendingMail" /> event before an e-mail message is sent to a new user.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.MailMessageEventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1254,10 +2754,21 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.SendMailErrorEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendMailError(System.Web.UI.WebControls.SendMailErrorEventArgs)" /> method is called when the SMTP mail system raises an exception while attempting to send e-mail to the new user. </para>
+          <para>Examine the <see cref="P:System.Web.UI.WebControls.SendMailErrorEventArgs.Exception" /> property of the <see cref="T:System.Web.UI.WebControls.SendMailErrorEventArgs" /> object passed as the <paramref name="e" /> parameter to determine the actual cause of the exception. The most common problem is a configuration error in the &lt;smtpMail&gt; section of the Web.config file.</para>
+          <para>You must set the <see cref="P:System.Web.UI.WebControls.SendMailErrorEventArgs.Handled" /> property of the <see cref="T:System.Web.UI.WebControls.SendMailErrorEventArgs" /> object passed as the <paramref name="e" /> parameter to signal that the exception that caused the <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendMailError(System.Web.UI.WebControls.SendMailErrorEventArgs)" /> method to be called has been taken care of, otherwise the exception is re-thrown.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CreateUserWizard.OnSendMailError(System.Web.UI.WebControls.SendMailErrorEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendMailError" /> event when e-mail cannot be sent to the new user.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SendMailErrorEventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1270,10 +2781,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Password" /> property contains the password entered by the user. By default, a <see cref="T:System.Web.UI.WebControls.CompareValidator" /> object is provided for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Password" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPassword" /> text box values. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control also has a <see cref="T:System.Web.UI.MobileControls.RequiredFieldValidator" /> object associated with it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the password entered by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1286,10 +2803,62 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> property defines the appearance of the text that describes password requirements in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, PasswordHintStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, PasswordHintStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> property defines the appearance of the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintText" /> property.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of the text that describes password requirements.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1307,10 +2876,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintText" /> property to provide guidelines and requirements for the user on how to create a password. For example, you could set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordHintText" /> property to "Your password must be at least six characters long." You can then use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRegularExpression" /> property to validate that the user entered a password that conforms to the guidelines.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that describes password requirements.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1328,10 +2904,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the label for the password text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1344,10 +2926,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRegularExpression" /> property to define the requirements for passwords used to validate users on your Web site. A common use is to make sure that a user has included symbols other than letters in a password to make it harder for attackers to guess a password. The regular expression is used in addition to any restrictions placed on the password by the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property. If the membership provider rejects the password for any reason, the text contained in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.InvalidPasswordErrorMessage" /> property is displayed.</para>
+          <para>If the password entered does not pass the regular expression, the error message contained in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRegularExpressionErrorMessage" /> property is displayed to the user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a regular expression used to validate the provided password.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1360,10 +2949,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRegularExpressionErrorMessage" /> property to inform the user that the password entered did not conform to the site's password requirements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message shown when the password entered does not conform to the site's password requirements.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1381,10 +2976,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the error message shown when the user does not enter a password.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1405,10 +3006,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property will determine whether the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Question" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Answer" /> text boxes are displayed at run time. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control has a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> associated with it. </para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the password recovery confirmation question entered by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1424,9 +3033,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.QuestionAndAnswerRequired" /> property returns a value from the membership provider set in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property specifying whether the user is required to enter a password confirmation question and answer.</para>
+          <para>If a Membership provider requires a question and answer, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Question" /> and <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Answer" /> controls are required and the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> throws an exception if they are not found or of the wrong type. If they are not required by the Membership provider, no exception is thrown if they are not found, and if they are of the wrong type they are ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user is required to enter a password confirmation question and answer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QuestionLabelText">
@@ -1441,10 +3057,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the label for the question text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1462,10 +3084,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message that is displayed when the user does not enter a password confirmation question.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1483,10 +3111,21 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property is true, the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> will display a text box and an associated label for the user to enter an e-mail address. If the user does not enter an e-mail address, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRequiredErrorMessage" /> property will display an error message.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property is set to true and you are using templated content, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> control is required and the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> throws an exception if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> control is not found or is of the wrong type. If <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> is set to false, no exception is thrown if the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Email" /> is not found. If it is of the wrong type, it is ignored. </para>
+          <block subset="none" type="note">
+            <para>If the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property requires a unique e-mail address for new users, you must set the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.RequireEmail" /> property to true so that the UI for entering an e-mail address is displayed. Otherwise, the user will see the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRequiredErrorMessage" /> but have no way to enter an e-mail address.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an e-mail address is required for the Web site user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1500,10 +3139,13 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the state of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1516,9 +3158,17 @@
         <ReturnType>System.Web.UI.WebControls.MailMessageEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> class will send an e-mail message confirming that a new Web site account has been created when the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MailDefinition" /> property defines an e-mail message to send. </para>
+          <para>Because the e-mail message only has automatic replacement fields for the user name and password fields, you can use the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendingMail" /> event to modify the e-mail message before it is sent to the new user.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the user is sent an e-mail confirmation that an account has been created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1531,9 +3181,17 @@
         <ReturnType>System.Web.UI.WebControls.SendMailErrorEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendMailError" /> event is raised when there is a problem using the SMTP mail provider to send e-mail to the e-mail address provided by the new user. The most common reason to raise this event is when the &lt;smtpMail&gt; section of the Web.config file is incorrect.</para>
+          <para>The default <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendMailError" /> event handler does not catch or handle the SMTP error from the e-mail system. Your <see cref="E:System.Web.UI.WebControls.CreateUserWizard.SendMailError" /> event handler must set the <see cref="P:System.Web.UI.WebControls.SendMailErrorEventArgs.Handled" /> property of the <see cref="T:System.Web.UI.WebControls.SendMailErrorEventArgs" /> object to true in order to stop the error from appearing to the Web site user.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when there is an SMTP error sending e-mail to the new user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1565,10 +3223,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.SkipLinkText" /> property to specify the alternate text for a hidden-image read by screen readers that will provide the ability to skip the sidebar area's content. The text that you specify provides assistive technology devices with a description of the hidden image that can be used to make the control more accessible.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisplaySideBar" /> property is set to false (the default), the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.SkipLinkText" /> property does not create a hidden image with alternate text. The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.SkipLinkText" /> property works only when the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.DisplaySideBar" /> property is true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used to render alternate text that notifies screen readers to skip the sidebar area's content.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1581,10 +3248,84 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> property defines the appearance of text box controls in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, TextBoxStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, TextBoxStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> property defines the appearance of the following text box controls:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UserName" /> text box field</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Password" /> text box field</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPassword" /> text box field</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Question" /> text box field</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.Answer" /> text box field</para>
+            </item>
+          </list>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TextBoxStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of text box controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1597,10 +3338,62 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> property defines the appearance of titles in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. This property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class (for example, TitleTextStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, TitleTextStyle.ForeColor).</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> property defines the appearance of the title on the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CreateUserStep" /> step and the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.CompleteStep" /> step.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> property override the corresponding settings in properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.TitleTextStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of titles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1614,9 +3407,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the starting point to begin tracking changes to the control as part of the control viewstate.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1634,10 +3430,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when an error returned by the membership provider is not defined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1650,10 +3452,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a user name is required by the membership provider specified in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.MembershipProvider" /> property, then the user name text box will appear on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Each text box displayed on the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control has a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> object associated with it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user name entered by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1671,10 +3479,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the label for the user name text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1692,10 +3506,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error message displayed when the user name text box is left blank.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1708,10 +3528,104 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> property to change the appearance of messages that are displayed for input validation errors. By default, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> is set to display the following messages in red:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.QuestionRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.AnswerRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ConfirmPasswordRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.PasswordRegularExpressionErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.UserNameRequiredErrorMessage" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.CreateUserWizard.EmailRegularExpressionErrorMessage" />
+              </para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where Subproperty represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, ValidatorTextStyle-ForeColor). You can set the property programmatically in the form Property.Subproperty (for example, ValidatorTextStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Any settings applied in the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.ValidatorTextStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the <see cref="T:System.Web.UI.WebControls.Style" /> object that allows you to set the appearance of the validation error messages.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1729,10 +3643,16 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserWizard.WizardSteps" /> property returns a collection of <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that make up the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. You can use the <see cref="P:System.Web.UI.WebControls.CreateUserWizard.WizardSteps" /> collection to programmatically access the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects contained in the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. Use the <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Add(System.Web.UI.WebControls.WizardStepBase)" />, <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Remove(System.Web.UI.WebControls.WizardStepBase)" />, <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Clear" />, and <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Insert(System.Int32,System.Web.UI.WebControls.WizardStepBase)" /> methods to programmatically manipulate the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection containing all the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects defined for the control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

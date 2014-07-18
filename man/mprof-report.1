@@ -211,6 +211,15 @@ The following commands are available:
 .IP \[bu] 2
 \f[I]heapshot\f[]: perform a heapshot as soon as possible
 .RE
+.IP \[bu] 2
+\f[I]counters\f[]: sample counters values every 1 second. This allow
+a really lightweight way to have insight in some of the runtime key
+metrics. Counters displayed in non verbose mode are : Methods from AOT,
+Methods JITted using mono JIT, Methods JITted using LLVM, Total time
+spent JITting (sec), User Time, System Time, Total Time, Working Set,
+Private Bytes, Virtual Bytes, Page Faults and CPU Load Average (1min,
+5min and 15min).
+.RE
 .SS Analyzing the profile data
 .PP
 Currently there is a command line program (\f[I]mprof-report\f[])
@@ -284,6 +293,16 @@ where \f[I]MODE\f[] can be:
 .IP \[bu] 2
 \f[I]bytes\f[]: the total number of bytes used by objects of the
 given type
+.PP
+To change the sort order of counters, use the option:
+.PP
+\f[B]--counters-sort=MODE\f[]
+.PP
+where \f[I]MODE\f[] can be:
+.IP \[bu] 2
+\f[I]time\f[]: sort values by time then category
+.IP \[bu] 2
+\f[I]category\f[]: sort values by category then time
 .SS Selecting what data to report
 .PP
 The profiler by default collects data about many runtime subsystems
@@ -319,6 +338,8 @@ version
 \f[I]thread\f[]: thread information
 .IP \[bu] 2
 \f[I]heapshot\f[]: live heap usage at heap shots
+.IP \[bu] 2
+\f[I]counters\f[]: counters samples
 .PP
 It is possible to limit some of the data displayed to a timeframe
 of the program execution with the option:

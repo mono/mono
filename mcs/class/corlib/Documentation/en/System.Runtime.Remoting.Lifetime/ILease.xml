@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ILease" FullName="System.Runtime.Remoting.Lifetime.ILease">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ILease" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ILease" />
@@ -16,8 +17,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Distributed garbage collection controls when server applications can be deleted. Traditionally, distributed garbage collection uses reference counts and pinging for control. This works well when there are a few clients per object, but does not work well when there are thousands of clients per each object. The lifetime service can assume the function of a traditional distributed garbage collector, and scales well when the number of clients increases.</para>
+      <para>The lifetime service associates a lease with each remotely activated object. When the lease expires, the object is removed. A lease can specify that an object has an infinite lifetime.</para>
+      <para>Each <see cref="T:System.AppDomain" /> contains a lease manager that administers the leases in the domain. The lease manager periodically examines the leases for time expiration. If a lease has expired, it can either be canceled by removing its reference to the lease, or renewed by invoking one or more of the lease's sponsors.</para>
+      <para>A lease contains properties that determine its policies, and methods that renew the lease time. The lease exposes the <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> interface.</para>
+      <para>For an example showing how to use the <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> interface see <format type="text/html"><a href="334a30e5-33cb-4f0f-a38a-ed4abc5560fa">Lifetimes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a lifetime lease object that is used by the remoting lifetime service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CurrentLeaseTime">
@@ -33,9 +44,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TimeSpan'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of time remaining on the lease.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentState">
@@ -51,9 +65,12 @@
         <ReturnType>System.Runtime.Remoting.Lifetime.LeaseState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LeaseState'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Runtime.Remoting.Lifetime.LeaseState" /> of the lease.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitialLeaseTime">
@@ -69,9 +86,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.InitialLeaseTime" /> property is set to <see cref="F:System.TimeSpan.Zero" />, then the lease will never time out and the object associated with it will have an infinite lifetime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initial time for the lease.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Register">
@@ -90,9 +113,16 @@
         <Parameter Name="obj" Type="System.Runtime.Remoting.Lifetime.ISponsor" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'ISponsor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a sponsor is registered with the current method, the lease is not renewed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a sponsor for the lease without renewing the lease.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The callback object of the sponsor. </param>
       </Docs>
     </Member>
     <Member MemberName="Register">
@@ -112,10 +142,15 @@
         <Parameter Name="renewalTime" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'ISponsor'</param>
-        <param name="renewalTime">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a sponsor for the lease, and renews it by the specified <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The callback object of the sponsor. </param>
+        <param name="renewalTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to renew the lease by. </param>
       </Docs>
     </Member>
     <Member MemberName="Renew">
@@ -134,10 +169,20 @@
         <Parameter Name="renewalTime" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="renewalTime">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The lease time is set to the maximum of the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> or the current time plus the renewal time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renews a lease for the specified time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new expiration time of the lease.</para>
+        </returns>
+        <param name="renewalTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to renew the lease by. </param>
       </Docs>
     </Member>
     <Member MemberName="RenewOnCallTime">
@@ -153,9 +198,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you make a call to a remote object, the lifetime service adds the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.RenewOnCallTime" /> to the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> only if the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> has dropped below the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.RenewOnCallTime" />. Sequential calls therefore do not increase the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> without bound. Instead, immediately after any call, the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> is guaranteed to be the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.RenewOnCallTime" /> or longer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time by which a call to the remote object renews the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SponsorshipTimeout">
@@ -171,9 +222,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.SponsorshipTimeout" /> is <see cref="F:System.TimeSpan.Zero" />, then this lease will not take sponsors.</para>
+          <para>If a sponsor does not respond to a call to renew a lease within the time-out period, it is assumed to be dead and is removed from the list of sponsors for the current lease.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time to wait for a sponsor to return with a lease renewal time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unregister">
@@ -192,9 +250,17 @@
         <Parameter Name="obj" Type="System.Runtime.Remoting.Lifetime.ISponsor" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'ISponsor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a sponsor from the sponsor list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this method is called, the lease state changes to expired and the object is collected by the garbage collector.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lease sponsor to unregister. </param>
       </Docs>
     </Member>
   </Members>

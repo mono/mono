@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UrlMembershipCondition" FullName="System.Security.Policy.UrlMembershipCondition">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UrlMembershipCondition : System.Security.Policy.IConstantMembershipCondition, System.Security.Policy.IMembershipCondition" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit UrlMembershipCondition extends System.Object implements class System.Security.ISecurityEncodable, class System.Security.ISecurityPolicyEncodable, class System.Security.Policy.IConstantMembershipCondition, class System.Security.Policy.IMembershipCondition" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file. For example, http://www.fourthcoffee.com/process/grind.htm is a complete URL.</para>
+      <para>URLs can be matched exactly or by a wildcard in the final position. For example, http://www.fourthcoffee.com/process/* is a wildcard URL.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines whether an assembly belongs to a code group by testing its URL. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +52,17 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file, for example: http://www.fourthcoffee.com/process/grind.htm.</para>
+          <para>URLs can be matched exactly or by a wildcard in the final position, for example: http://www.fourthcoffee.com/process/*.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.UrlMembershipCondition" /> class with the URL that determines membership.</para>
+        </summary>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL for which to test. </param>
       </Docs>
     </Member>
     <Member MemberName="Check">
@@ -65,10 +81,20 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This membership condition tests only the <see cref="T:System.Security.Policy.Url" /> evidence object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified evidence satisfies the membership condition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified evidence satisfies the membership condition; otherwise, false.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set against which to make the test. </param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -85,9 +111,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMembershipCondition'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an equivalent copy of the membership condition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the current membership condition.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -106,10 +138,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the URL from the specified object is equivalent to the URL contained in the current <see cref="T:System.Security.Policy.UrlMembershipCondition" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the URL from the specified object is equivalent to the URL contained in the current <see cref="T:System.Security.Policy.UrlMembershipCondition" />; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.Security.Policy.UrlMembershipCondition" />. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -128,9 +167,13 @@
         <Parameter Name="e" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a specified state from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -150,10 +193,15 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a specified state from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level context, used to resolve named permission set references. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -170,9 +218,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for the current membership condition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current membership condition.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -189,9 +243,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a string representation of the membership condition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the state of the membership condition.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -208,9 +268,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -229,10 +295,17 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state with the specified <see cref="T:System.Security.Policy.PolicyLevel" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level context for resolving named permission set references. </param>
       </Docs>
     </Member>
     <Member MemberName="Url">
@@ -248,9 +321,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file. For example, http://www.fourthcoffee.com/process/grind.htm is a complete URL.</para>
+          <para>URLs can be matched exactly or by a wildcard in the final position. For example, http://www.fourthcoffee.com/process/* is a wildcard URL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL for which the membership condition tests.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

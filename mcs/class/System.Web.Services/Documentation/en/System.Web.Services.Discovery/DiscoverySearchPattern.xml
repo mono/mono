@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoverySearchPattern" FullName="System.Web.Services.Discovery.DiscoverySearchPattern">
   <TypeSignature Language="C#" Value="public abstract class DiscoverySearchPattern" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="P:System.Web.Services.Discovery.DiscoveryDocument.References" /> property to add a discoverable file type to a Web services document. While a discovery document is usually serialized as a file using a .disco extension, you can add multiple files to the <see cref="P:System.Web.Services.Discovery.DiscoveryDocument.References" /> property, and those files can have other extensions, represented by implementations of <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" /> . </para>
+      <para>The <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" />  class and its concrete derived classes are employed by the <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" /> class's <see cref="M:System.Web.Services.Discovery.DiscoveryRequestHandler.ProcessRequest(System.Web.HttpContext)" /> method, which handles an HTTP request for a discovery document. Normally, none of these classes need to be used directly by a developer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Establishes an interface for file extension search patterns for discoverable file types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +52,21 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DiscoveryReference'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class derived from <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" /> implements the <see cref="M:System.Web.Services.Discovery.DiscoverySearchPattern.GetDiscoveryReference(System.String)" /> method by returning its associated concrete class derived from <see cref="T:System.Web.Services.Discovery.DiscoveryReference" />. </para>
+          <para>For example, the <see cref="T:System.Web.Services.Discovery.ContractSearchPattern" /> class returns a <see cref="T:System.Web.Services.Discovery.ContractReference" /> instance that contains the location of an .asmx Web service file and the corresponding dynamically generated Web Services Description Language (WSDL) document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> object for a given file name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file name.</para>
+        </returns>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a discovery file or a file that appears in a dynamically generated discovery document. For example, an .asmx or .xsd file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +80,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The pattern typically specifies a file name extension, for example, .disco or .asmx.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name pattern to use as a search target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

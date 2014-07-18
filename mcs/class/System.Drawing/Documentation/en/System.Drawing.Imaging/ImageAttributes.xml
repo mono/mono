@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageAttributes" FullName="System.Drawing.Imaging.ImageAttributes">
   <TypeSignature Language="C#" Value="public sealed class ImageAttributes : ICloneable, IDisposable" Maintainer="auto" />
   <AssemblyInfo>
@@ -20,8 +21,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains several color-adjustment settings, including color-adjustment matrices, grayscale-adjustment matrices, gamma-correction values, color-map tables, and color-threshold values. During rendering, colors can be corrected, darkened, lightened, and removed. To apply such manipulations, initialize an <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object and pass the path of that <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object (along with the path of an <see cref="T:System.Drawing.Image" />) to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about how bitmap and metafile colors are manipulated during rendering. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,8 +56,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify one color-remap table for the default category, a different color-remap table for the bitmap category, and still a different color-remap table for the brush category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the brush category, the default settings apply to the brush category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a default remap table that converts red to green, and you specify a default gamma value of 1.8. If you call the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetBrushRemapTable(System.Drawing.Imaging.ColorMap[])" /> method, the default remap table (red to green) and the default gamma value (1.8) will not apply to brushes. If you later call the <see cref="M:System.Drawing.Imaging.ImageAttributes.ClearBrushRemapTable" /> method, the brush category will not revert to the default remap table; rather, the brush category will have no remap table. Similarly, the brush category will not revert to the default gamma value; rather, the brush category will have no gamma value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the brush color-remap table of this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,8 +84,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify one color key for the default category, a different color key for the bitmap category, and still a different color key for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color key (transparency range) for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -80,9 +109,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify one color key for the default category, a different color key for the bitmap category, and still a different color key for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a default color key that makes any color with a red component from 200 through 255 transparent, and you specify a default gamma value of 1.8. If you set the color key of the pen category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetColorKey" /> method, the default color key and the default gamma value will not apply to pens. If you later clear the pen color key by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearColorKey" /> method, the pen category will not revert to the default color key; rather, the pen category will have no color key. Similarly, the pen category will not revert to the default gamma value; rather, the pen category will have no gamma value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color key (transparency range) for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color key is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,8 +139,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-adjustment matrix for the default category, a different color-adjustment matrix for the bitmap category, and still a different color-adjustment matrix for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, then the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color-adjustment matrix for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +168,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-adjustment matrix for the default category, a different color-adjustment matrix for the bitmap category, and still a different color-adjustment matrix for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, then the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a color-adjustment matrix and a gamma value for the default category. If you set a color-adjustment matrix for the pen category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetColorMatrix" /> method, the default color-adjustment matrix will not apply to pens. If you later clear the pen color-adjustment matrix by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearColorMatrix" /> method, the pen category will not revert to the default adjustment matrix; rather, the pen category will have no adjustment matrix. Similarly, the pen category will not revert to the default gamma value; rather, the pen category will have no gamma value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color-adjustment matrix for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color-adjustment matrix is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,8 +198,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables gamma correction for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -150,9 +223,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, then the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a gamma value and a color-adjustment matrix for the default category. If you set the gamma value for the pen category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetGamma" /> method, the default gamma value will not apply to pens. If you later clear the pen gamma value by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearGamma" /> method, the pen category will not revert to the default gamma value; rather, the pen category will have no gamma value. Similarly, the pen category will not revert to the default color-adjustment matrix; rather, the pen category will have no color-adjustment matrix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables gamma correction for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which gamma correction is disabled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,8 +253,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>You can disable color adjustment for the default category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" /> method. Later, you can reinstate color adjustment for the default category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearNoOp" /> method. The color adjustment then returns to what was in place before the call to <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the NoOp setting for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +278,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>You can disable color adjustment for a certain category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" /> method. Later, you can reinstate color adjustment for that category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearNoOp" /> method. The color adjustment then returns to what was in place before the call to <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the NoOp setting for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the NoOp setting is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,8 +307,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel for the default category and a different output channel for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the CMYK (cyan-magenta-yellow-black) output channel setting for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -220,9 +332,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel for the default category and a different output channel for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify an output channel and an adjustment matrix for the default category. If you set the output channel for the bitmap category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> method, the default output channel will not apply to bitmaps. If you later clear the bitmap output channel by calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.ClearOutputChannel" /> method, the bitmap category will not revert to the default output channel; rather, the bitmap category will have no output channel setting. Similarly, the bitmap category will not revert to the default color-adjustment matrix; rather, the bitmap category will have no color-adjustment matrix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the (cyan-magenta-yellow-black) output channel setting for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel setting is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,8 +362,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel profile for the default category and a different output channel profile for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the output channel color profile setting for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,9 +387,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel profile for the default category and a different output channel profile for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify an output channel profile and an adjustment matrix for the default category. If you set the output channel profile for the bitmap category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> method, the default output channel profile will not apply to bitmaps. If you later clear the bitmap output channel profile by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearOutputChannelColorProfile" /> method, the bitmap category will not revert to the default output channel profile; rather, the bitmap category will have no output channel profile setting. Similarly, the bitmap category will not revert to the default color-adjustment matrix; rather, the bitmap category will have no color-adjustment matrix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the output channel color profile setting for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel profile setting is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,8 +417,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a remap table for the default category, a different remap table for the bitmap category, and still a different remap table for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color-remap table for the default category.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -290,9 +442,22 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a remap table for the default category, a different remap table for the bitmap category, and still a different remap table for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, then the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a remap table and a gamma value for the default category. If you set the remap table for the pen category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetRemapTable" /> method, the default remap table will not apply to pens. If you later clear the pen remap table by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearRemapTable" /> method, the pen category will not revert to the default remap table; rather, the pen category will have no remap table. Similarly, the pen category will not revert to the default gamma value; rather, the pen category will have no gamma value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the color-remap table for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the remap table is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -307,8 +472,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The threshold is a value from 0 through 1 that specifies a cutoff point for each color component. For example, suppose the threshold is set to 0.7, and suppose you are rendering a color whose red, green, and blue components are 230, 50, and 220, respectively. The red component (230) is greater than 0.7x255, so the red component will be changed to 255 (full intensity). The green component (50) is less than 0.7x255, so the green component will be changed to 0. The blue component (220) is greater than 0.7x255, so the blue component will be changed to 255.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a threshold for the default category, a different threshold for the bitmap category, and still a different threshold for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the threshold value for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -325,9 +502,23 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The threshold is a value from 0 through 1 that specifies a cutoff point for each color component. For example, suppose the threshold is set to 0.7, and suppose you are rendering a color whose red, green, and blue components are 230, 50, and 220, respectively. The red component (230) is greater than 0.7x55, so the red component will be changed to 255 (full intensity). The green component (50) is less than 0.7x255, so the green component will be changed to 0. The blue component (220) is greater than 0.7x255, so the blue component will be changed to 255.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a threshold for the default category, a different threshold for the bitmap category, and still a different threshold for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a threshold and a gamma value for the default category. If you set the threshold for the pen category by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetThreshold" /> method, the default threshold will not apply to pens. If you later clear the pen threshold by calling the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearThreshold" /> method, the pen category will not revert to the default threshold; rather, the pen category will have no threshold. Similarly, the pen category will not revert to the default gamma value; rather, the pen category will have no gamma value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the threshold value for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the threshold is cleared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -342,9 +533,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object this class creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -359,8 +556,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Drawing.Imaging.ImageAttributes.Dispose" /> when you are finished using the <see cref="T:System.Drawing.Imaging.ImageAttributes" />. The <see cref="M:System.Drawing.Imaging.ImageAttributes.Dispose" /> method leaves the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> in an unusable state. After calling <see cref="M:System.Drawing.Imaging.ImageAttributes.Dispose" />, you must release all references to the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.Imaging.ImageAttributes.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.Imaging.ImageAttributes" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -394,10 +604,23 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="palette">To be added: an object of type 'ColorPalette'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-remap table for the default category, a different color-remap table for the bitmap category, and still a different color-remap table for the pen category.</para>
+          <para>When you call the <see cref="M:System.Drawing.Imaging.ImageAttributes.GetAdjustedPalette(System.Drawing.Imaging.ColorPalette,System.Drawing.Imaging.ColorAdjustType)" /> method, you can specify the adjustment category that is used to adjust the palette colors. For example, if you pass <see cref="F:System.Drawing.Imaging.ColorAdjustType.Bitmap" /> to the <see cref="M:System.Drawing.Imaging.ImageAttributes.GetAdjustedPalette(System.Drawing.Imaging.ColorPalette,System.Drawing.Imaging.ColorAdjustType)" /> method, the adjustment settings of the bitmap category are used to adjust the palette colors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adjusts the colors in a palette according to the adjustment settings of a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="palette">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.ColorPalette" /> that on input contains the palette to be adjusted, and on output contains the adjusted palette. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category whose adjustment settings will be applied to the palette. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -414,9 +637,22 @@
         <Parameter Name="map" Type="System.Drawing.Imaging.ColorMap[]" />
       </Parameters>
       <Docs>
-        <param name="map">To be added: an object of type 'ColorMap []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A color-remap table is an array of <see cref="T:System.Drawing.Imaging.ColorMap" /> structures. Each <see cref="T:System.Drawing.Imaging.ColorMap" /> structure has two <see cref="T:System.Drawing.Color" /> objects: one that specifies an old color and one that specifies a corresponding new color. During rendering, any color that matches one of the old colors in the remap table is changed to the corresponding new color.</para>
+          <para>Calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetBrushRemapTable(System.Drawing.Imaging.ColorMap[])" /> method has the same effect as passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Brush" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetRemapTable" /> method. The specified remap table applies to items in metafiles that are filled with a brush.</para>
+          <para>This method is intended to be used only with metafiles.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-remap table for the brush category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="map">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Imaging.ColorMap" /> objects. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -434,10 +670,24 @@
         <Parameter Name="colorHigh" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="colorLow">To be added: an object of type 'Drawing.Color'</param>
-        <param name="colorHigh">To be added: an object of type 'Drawing.Color'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sets the high and low color-key values so that a range of colors can be made transparent. Any color that has each of its three components (red, green, blue) between the corresponding components of the high and low color keys is made transparent.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color key for the default category, a different color key for the bitmap category, and still a different color key for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color key for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="colorLow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low color-key value. </param>
+        <param name="colorHigh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high color-key value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -456,11 +706,27 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="colorLow">To be added: an object of type 'Drawing.Color'</param>
-        <param name="colorHigh">To be added: an object of type 'Drawing.Color'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sets the high and low color-key values so that a range of colors can be made transparent. Any color that has each of its three components (red, green, blue) between the corresponding components of the high and low color keys is made transparent.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color key for the default category, a different color key for the bitmap category, and still a different color key for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the color key for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetColorKey" /> method, none of the default adjustment settings will apply to pens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color key (transparency range) for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="colorLow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low color-key value. </param>
+        <param name="colorHigh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high color-key value. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color key is set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -478,10 +744,24 @@
         <Parameter Name="grayMatrix" Type="System.Drawing.Imaging.ColorMatrix" />
       </Parameters>
       <Docs>
-        <param name="newColorMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <param name="grayMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify adjustment matrices for the default category, different adjustment matrices for the bitmap category, and still different adjustment matrices for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>Calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetColorMatrices(System.Drawing.Imaging.ColorMatrix,System.Drawing.Imaging.ColorMatrix)" /> method is equivalent to calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetColorMatrices(System.Drawing.Imaging.ColorMatrix,System.Drawing.Imaging.ColorMatrix,System.Drawing.Imaging.ColorMatrixFlag)" /> method and passing <see cref="F:System.Drawing.Imaging.ColorMatrixFlag.Default" /> for the <paramref name="flags" /> parameter. <see cref="F:System.Drawing.Imaging.ColorMatrixFlag.Default" /> specifies that all colors (including grays) are adjusted by the color-adjustment matrix, not the grayscale-adjustment matrix. Therefore, the grayscale-adjustment matrix passed to this method has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="newColorMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
+        <param name="grayMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The grayscale-adjustment matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -500,11 +780,25 @@
         <Parameter Name="flags" Type="System.Drawing.Imaging.ColorMatrixFlag" />
       </Parameters>
       <Docs>
-        <param name="newColorMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <param name="grayMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <param name="flags">To be added: an object of type 'ColorMatrixFlag'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify adjustment matrices for the default category, different adjustment matrices for the bitmap category, and still different adjustment matrices for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="newColorMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
+        <param name="grayMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The grayscale-adjustment matrix. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorMatrixFlag" /> that specifies the type of image and color that will be affected by the color-adjustment and grayscale-adjustment matrices. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -524,12 +818,28 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="newColorMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <param name="grayMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <param name="mode">To be added: an object of type 'ColorMatrixFlag'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify adjustment matrices for the default category, different adjustment matrices for the bitmap category, and still different adjustment matrices for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the color-adjustment and grayscale-adjustment matrices for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetColorMatrices" /> method, none of the default adjustment settings will apply to pens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="newColorMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
+        <param name="grayMatrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The grayscale-adjustment matrix. </param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorMatrixFlag" /> that specifies the type of image and color that will be affected by the color-adjustment and grayscale-adjustment matrices. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color-adjustment and grayscale-adjustment matrices are set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -547,8 +857,20 @@
       </Parameters>
       <Docs>
         <param name="colorMatrix">To be added: an object of type 'ColorMatrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-adjustment matrix for the default category, a different color-adjustment matrix for the bitmap category, and still a different color-adjustment matrix for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>Calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetColorMatrix(System.Drawing.Imaging.ColorMatrix)" /> method is equivalent to calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetColorMatrix(System.Drawing.Imaging.ColorMatrix,System.Drawing.Imaging.ColorMatrixFlag)" /> method and passing <see cref="F:System.Drawing.Imaging.ColorMatrixFlag.Default" /> for the <paramref name="flags" /> parameter. <see cref="F:System.Drawing.Imaging.ColorMatrixFlag.Default" /> specifies that all colors (including grays) are adjusted by the color-adjustment matrix</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -568,8 +890,19 @@
       <Docs>
         <param name="colorMatrix">To be added.</param>
         <param name="colorMatrixFlag">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-adjustment matrix for the default category, a different color-adjustment matrix for the bitmap category, and still a different color-adjustment matrix for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -591,8 +924,20 @@
         <param name="colorMatrix">To be added.</param>
         <param name="colorMatrixFlag">To be added.</param>
         <param name="colorAdjustType">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color-adjustment matrix for the default category, a different color-adjustment matrix for the bitmap category, and still a different color-adjustment matrix for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the color-adjustment matrix for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetColorMatrix" /> method, none of the default adjustment settings will apply to pens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-adjustment matrix for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -609,9 +954,23 @@
         <Parameter Name="gamma" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="gamma">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typical values for the <paramref name="gamma" /> parameter are from 1.0 to 2.2; however, values from 0.1 to 5.0 could prove useful in some circumstances.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>Gamma values outside the usual range may be useful for old CRT monitors or for monitors that are in unusual lighting conditions, such as industrial environments or window displays.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the gamma value for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="gamma">
+          <attribution license="cc4" from="Microsoft" modified="false" />The gamma correction value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -629,10 +988,25 @@
         <Parameter Name="coloradjust" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="gamma">To be added: an object of type 'float'</param>
         <param name="coloradjust">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typical values for the <paramref name="gamma" /> parameter are from 1.0 to 2.2; however, values from 0.1 to 5.0 could prove useful in some circumstances.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the gamma value for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetGamma" /> method, none of the default adjustment settings will apply to pens.</para>
+          <para>Gamma values outside the usual range may be useful for old CRT monitors or for monitors that are in unusual lighting conditions, such as industrial environments or window displays.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the gamma value for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="gamma">
+          <attribution license="cc4" from="Microsoft" modified="false" />The gamma correction value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -647,8 +1021,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns off color adjustment for the default category. You can call the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearNoOp" /> method to reinstate the color-adjustment settings that were in place before the call to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,9 +1046,20 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a gamma value for the default category, a different gamma value for the bitmap category, and still a different gamma value for the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns off color adjustment for a specified category. You can call the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearNoOp" /> method to reinstate the color-adjustment settings that were in place before the call to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which color correction is turned off. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -684,9 +1076,19 @@
         <Parameter Name="flags" Type="System.Drawing.Imaging.ColorChannelFlag" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'ColorChannelFlag'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> method to convert an image to a CMYK color space and examine the intensities of one of the CMYK color channels. For example, suppose you create an <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object and set its bitmap output channel to <see cref="F:System.Drawing.Imaging.ColorChannelFlag.ColorChannelC" />. If you pass the path of that <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method, the cyan component of each pixel is calculated, and each pixel in the rendered image is a shade of gray that indicates the intensity of its cyan channel. Similarly, you can render images that indicate the intensities of the magenta, yellow, and black channels.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel for the default category and a different output channel for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the CMYK (cyan-magenta-yellow-black) output channel for the default category.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorChannelFlag" /> that specifies the output channel. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -704,10 +1106,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'ColorChannelFlag'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> method to convert an image to a CMYK color space and examine the intensities of one of the CMYK color channels. For example, suppose you create an <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object and set its bitmap output channel to <see cref="F:System.Drawing.Imaging.ColorChannelFlag.ColorChannelC" />. If you pass the path of that <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method, the cyan component of each pixel is calculated, and each pixel in the rendered image is a shade of gray that indicates the intensity of its cyan channel. Similarly, you can render images that indicate the intensities of the magenta, yellow, and black channels.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel for the default category and a different output channel for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the output channel for the bitmap category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Bitmap" /> to the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetOutputChannel(System.Drawing.Imaging.ColorChannelFlag,System.Drawing.Imaging.ColorAdjustType)" /> method, none of the default adjustment settings will apply to bitmaps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the CMYK (cyan-magenta-yellow-black) output channel for a specified category.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorChannelFlag" /> that specifies the output channel. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel is set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -724,9 +1137,40 @@
         <Parameter Name="colorProfileFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="colorProfileFilename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> and <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> methods to convert an image to a CMYK (cyan-magenta-yellow-black) color space and examine the intensities of one of the CMYK color channels. For example, suppose you write code that performs the following steps: </para>
+          <list type="ordered">
+            <item>
+              <para>Create an <see cref="T:System.Drawing.Image" />.</para>
+            </item>
+            <item>
+              <para>Create an <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass <see cref="F:System.Drawing.Imaging.ColorChannelFlag.ColorChannelC" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> method of the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass the path name of a color profile file to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> method of the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass the paths of the <see cref="T:System.Drawing.Image" /> and <see cref="T:System.Drawing.Imaging.ImageAttributes" /> objects to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method.</para>
+            </item>
+          </list>
+          <para>ndptecgdiplus will use the color-profile file to calculate the cyan component of each pixel in the image, and each pixel in the rendered image will be a shade of gray that indicates the intensity of its cyan channel.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel color-profile file for the default category and a different output channel color-profile file for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the output channel color-profile file for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="colorProfileFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path name of a color-profile file. If the color-profile file is in the %SystemRoot%\System32\Spool\Drivers\Color directory, this parameter can be the file name. Otherwise, this parameter must be the fully qualified path name. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -744,10 +1188,43 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="colorProfileFilename">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> and <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> methods to convert an image to a CMYK (cyan-magenta-yellow-black) color space and examine the intensities of one of the CMYK color channels. For example, suppose you write code that performs the following steps: </para>
+          <list type="ordered">
+            <item>
+              <para>Create an <see cref="T:System.Drawing.Image" />.</para>
+            </item>
+            <item>
+              <para>Create an <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass <see cref="F:System.Drawing.Imaging.ColorChannelFlag.ColorChannelC" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannel" /> method of the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass the path name of a color profile file to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> method of the <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
+            </item>
+            <item>
+              <para>Pass the paths of the <see cref="T:System.Drawing.Image" /> and <see cref="T:System.Drawing.Imaging.ImageAttributes" /> objects to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method.</para>
+            </item>
+          </list>
+          <para>ndptecgdiplus will use the color-profile file to calculate the cyan component of each pixel in the image, and each pixel in the rendered image will be a shade of gray that indicates the intensity of its cyan channel.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify an output channel color-profile file for the default category and a different output channel color-profile file for the bitmap category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the bitmap category, the default settings apply to the bitmap category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the output channel color-profile file for the bitmap category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Bitmap" /> to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetOutputChannelColorProfile" /> method, none of the default adjustment settings will apply to bitmaps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the output channel color-profile file for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="colorProfileFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path name of a color-profile file. If the color-profile file is in the %SystemRoot%\System32\Spool\Drivers\Color directory, this parameter can be the file name. Otherwise, this parameter must be the fully qualified path name. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel color-profile file is set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -764,9 +1241,22 @@
         <Parameter Name="map" Type="System.Drawing.Imaging.ColorMap[]" />
       </Parameters>
       <Docs>
-        <param name="map">To be added: an object of type 'ColorMap []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A color-remap table is an array of <see cref="T:System.Drawing.Imaging.ColorMap" /> structures. Each <see cref="T:System.Drawing.Imaging.ColorMap" /> structure has two <see cref="T:System.Drawing.Color" /> objects: one that specifies an old color and one that specifies a corresponding new color. During rendering, any color that matches one of the old colors in the remap table is changed to the corresponding new color.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color remap for the default category, a color-remap table for the bitmap category, and still a different color-remap table for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-remap table for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="map">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of color pairs of type <see cref="T:System.Drawing.Imaging.ColorMap" />. Each color pair contains an existing color (the first value) and the color that it will be mapped to (the second value). </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -784,10 +1274,25 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="map">To be added: an object of type 'ColorMap []'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A color-remap table is an array of <see cref="T:System.Drawing.Imaging.ColorMap" /> structures. Each <see cref="T:System.Drawing.Imaging.ColorMap" /> structure has two <see cref="T:System.Drawing.Color" /> objects: one that specifies an old color and one that specifies a corresponding new color. During rendering, any color that matches one of the old colors in the remap table is changed to the corresponding new color.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a color remap for the default category, a color-remap table for the bitmap category, and still a different color-remap table for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the color-remap table for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetRemapTable(System.Drawing.Imaging.ColorMap[],System.Drawing.Imaging.ColorAdjustType)" /> method, none of the default adjustment settings will apply to pens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the color-remap table for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="map">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of color pairs of type <see cref="T:System.Drawing.Imaging.ColorMap" />. Each color pair contains an existing color (the first value) and the color that it will be mapped to (the second value). </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color-remap table is set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -804,9 +1309,22 @@
         <Parameter Name="threshold" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="threshold">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The threshold is a value from 0 through 1 that specifies a cutoff point for each color component. For example, suppose the threshold is set to 0.7, and suppose you are rendering a color whose red, green, and blue components are 230, 50, and 220, respectively. The red component (230) is greater than 0.7x255, so the red component will be changed to 255 (full intensity). The green component (50) is less than 0.7x255, so the green component will be changed to 0. The blue component (220) is greater than 0.7x255, so the blue component will be changed to 255.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a threshold for the default category, a threshold for the bitmap category, and still a different threshold for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the threshold (transparency range) for the default category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="threshold">
+          <attribution license="cc4" from="Microsoft" modified="false" />A real number that specifies the threshold value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -824,10 +1342,25 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.ColorAdjustType" />
       </Parameters>
       <Docs>
-        <param name="threshold">To be added: an object of type 'float'</param>
-        <param name="type">To be added: an object of type 'ColorAdjustType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The threshold is a value from 0 through 1 that specifies a cutoff point for each color component. For example, suppose the threshold is set to 0.7, and suppose you are rendering a color whose red, green, and blue components are 230, 50, and 220, respectively. The red component (230) is greater than 0.7x255, so the red component will be changed to 255 (full intensity). The green component (50) is less than 0.7x255, so the green component will be changed to 0. The blue component (220) is greater than 0.7x255, so the blue component will be changed to 255.</para>
+          <para>An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object maintains color and grayscale settings for five adjustment categories: default, bitmap, brush, pen, and text. For example, you can specify a threshold for the default category, a threshold for the bitmap category, and still a different threshold for the pen category.</para>
+          <para>The default color-adjustment and grayscale-adjustment settings apply to all categories that do not have adjustment settings of their own. For example, if you never specify any adjustment settings for the pen category, the default settings apply to the pen category.</para>
+          <para>As soon as you specify a color-adjustment or grayscale-adjustment setting for a certain category, the default adjustment settings no longer apply to that category. For example, suppose you specify a collection of adjustment settings for the default category. If you set the threshold for the pen category by passing <see cref="F:System.Drawing.Imaging.ColorAdjustType.Pen" /> to the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetThreshold(System.Single,System.Drawing.Imaging.ColorAdjustType)" /> method, none of the default adjustment settings will apply to pens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the threshold (transparency range) for a specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="threshold">
+          <attribution license="cc4" from="Microsoft" modified="false" />A threshold value from 0.0 to 1.0 that is used as a breakpoint to sort colors that will be mapped to either a maximum or a minimum value. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color threshold is set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -844,9 +1377,20 @@
         <Parameter Name="mode" Type="System.Drawing.Drawing2D.WrapMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'Drawing.Drawing2D.WrapMode'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Drawing.Imaging.ImageAttributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode)" /> method is equivalent to calling <see cref="M:System.Drawing.Imaging.ImageAttributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode,System.Drawing.Color)" /> and passing <see cref="P:System.Drawing.Color.Black" /> for the <paramref name="color" /> parameter. <see cref="P:System.Drawing.Color.Black" /> specifies the color of pixels outside of a rendered image. This color is visible if the mode parameter is set to <see cref="F:System.Drawing.Drawing2D.WrapMode.Clamp" /> and the source rectangle passed to the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method is larger than the image itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the wrap mode that is used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -864,10 +1408,19 @@
         <Parameter Name="color" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'Drawing.Drawing2D.WrapMode'</param>
-        <param name="color">To be added: an object of type 'Drawing.Color'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the wrap mode and color used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
+        <param name="color">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object that specifies the color of pixels outside of a rendered image. This color is visible if the mode parameter is set to <see cref="F:System.Drawing.Drawing2D.WrapMode.Clamp" /> and the source rectangle passed to <see cref="Overload:System.Drawing.Graphics.DrawImage" /> is larger than the image itself. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -886,11 +1439,21 @@
         <Parameter Name="clamp" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'Drawing.Drawing2D.WrapMode'</param>
-        <param name="color">To be added: an object of type 'Drawing.Color'</param>
-        <param name="clamp">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the wrap mode and color used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
+        <param name="color">
+          <attribution license="cc4" from="Microsoft" modified="false" />A color object that specifies the color of pixels outside of a rendered image. This color is visible if the mode parameter is set to <see cref="F:System.Drawing.Drawing2D.WrapMode.Clamp" /> and the source rectangle passed to <see cref="Overload:System.Drawing.Graphics.DrawImage" /> is larger than the image itself. </param>
+        <param name="clamp">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter has no effect. Set it to false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcInfoMessageEventArgs" FullName="System.Data.Odbc.OdbcInfoMessageEventArgs">
   <TypeSignature Language="C#" Value="public sealed class OdbcInfoMessageEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Data.Odbc.OdbcConnection.InfoMessage" /> event contains an <see cref="T:System.Data.Odbc.OdbcErrorCollection" /> collection with warnings sent from the data source.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Data.Odbc.OdbcConnection.InfoMessage" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Errors">
@@ -21,9 +28,12 @@
         <ReturnType>System.Data.Odbc.OdbcErrorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of warnings sent from the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,9 +47,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a wrapper for the <see cref="P:System.Data.Odbc.OdbcError.Message" /> property of the first <see cref="T:System.Data.Odbc.OdbcError" /> in the <see cref="P:System.Data.Odbc.OdbcInfoMessageEventArgs.Errors" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full text of the error sent from the database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,9 +70,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a string representation of the <see cref="E:System.Data.Odbc.OdbcConnection.InfoMessage" /> event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the <see cref="E:System.Data.Odbc.OdbcConnection.InfoMessage" /> event.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

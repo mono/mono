@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyCollection" FullName="System.DirectoryServices.PropertyCollection">
   <TypeSignature Language="C#" Value="public class PropertyCollection : System.Collections.IDictionary, System.Collections.ICollection, System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -106,10 +107,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the all objects in this collection to an array, starting at the specified index in the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.DirectoryServices.PropertyValueCollection" /> objects that receives the elements of this collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> where this method starts copying this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -122,10 +128,17 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="propertyName">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified property is in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to find.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -136,9 +149,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that you can use to iterate through this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> that you can use to iterate through this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -148,9 +167,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Internet Information Services (IIS), and WinNT providers do not currently support <see cref="P:System.DirectoryServices.PropertyCollection.Count" />, so each will throw a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of properties in this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyNames">
@@ -160,9 +185,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When accessing members of the <see cref="P:System.DirectoryServices.PropertyCollection.PropertyNames" /> property, a <see cref="T:System.Runtime.InteropServices.COMException" /> might be thrown due to an error while accessing the underlying interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of the properties in this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Values">
@@ -172,9 +203,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When accessing members of the <see cref="P:System.DirectoryServices.PropertyCollection.Values" /> property, a <see cref="T:System.Runtime.InteropServices.COMException" /> exception might be thrown due to an error while accessing the underlying interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the values of the properties in this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -195,7 +232,10 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.PropertyCollection" /> class contains the properties of a <see cref="T:System.DirectoryServices.DirectoryEntry" />.</para>
+    </summary>
   </Docs>
 </Type>

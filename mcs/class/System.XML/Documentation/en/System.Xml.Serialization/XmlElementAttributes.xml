@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlElementAttributes" FullName="System.Xml.Serialization.XmlElementAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlElementAttributes : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlElementAttributes extends System.Collections.CollectionBase" />
@@ -15,8 +16,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlElementAttributes" /> is returned by the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlElements" /> property of the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class. By using the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> class and the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class, you can override the default way that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> objects used by the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to override the default way it serializes a class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlElementAttributes" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -51,10 +61,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlElementAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlElementAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the newly added item.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to add. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -73,10 +90,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlElementAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlElementAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the collection contains the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to look for. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -96,10 +120,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'XmlElementAttribute[]'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Xml.Serialization.XmlElementAttributes" />, or a portion of it to a one-dimensional array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> array to hold the copied elements. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -118,10 +147,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlElementAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlElementAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the specified <see cref="T:System.Xml.Serialization.XmlElementAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" />.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> whose index is being retrieved.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -141,10 +177,15 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlElementAttribute" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="attribute">To be added: an object of type 'XmlElementAttribute'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> into the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index where the member is inserted. </param>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -185,9 +226,13 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlElementAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlElementAttribute'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified object from the collection.</para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to remove from the collection. </param>
       </Docs>
     </Member>
   </Members>

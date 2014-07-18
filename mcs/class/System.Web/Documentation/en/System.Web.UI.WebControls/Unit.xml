@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Unit" FullName="System.Web.UI.WebControls.Unit">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct Unit" />
   <AssemblyInfo>
@@ -18,8 +19,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.Unit" /> structure represents a length measurement that can be expressed in any HTML-compatible size unit. The <see cref="T:System.Web.UI.WebControls.UnitType" /> enumeration lists the units of measurement that can be represented. The <see cref="T:System.Web.UI.WebControls.Unit" /> is used by properties such as BorderWidth and Height to represent the length or width of the property. For example, you can set the <see cref="P:System.Web.UI.WebControls.WebControl.BorderWidth" /> property of a Web Server control to a <see cref="T:System.Web.UI.WebControls.Unit" /> that represents five pixels.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.Unit" /> class can represent values only between -32768 and 32767.</para>
+      </block>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property to determine the length of the measurement. The unit of measurement is determined using the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property. You can convert other data types to a <see cref="T:System.Web.UI.WebControls.Unit" /> by using the <see cref="M:System.Web.UI.WebControls.Unit.Parse(System.String)" />, <see cref="M:System.Web.UI.WebControls.Unit.Percentage(System.Double)" />, <see cref="M:System.Web.UI.WebControls.Unit.Pixel(System.Int32)" />, and <see cref="M:System.Web.UI.WebControls.Unit.Point(System.Int32)" /> methods.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />, see the <see cref="T:System.Web.UI.WebControls.Unit" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a length measurement.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +42,53 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">The value to be set.</param>
-        <summary>Initializes a Unit structure from a double.</summary>
-        <remarks>The Unit created is of type `UnitType.Pixel', and the value will be truncated.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure using the specified double precision floating point number.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Type" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Value" /> </para>
+              </term>
+              <description>
+                <para>The value specified by <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If <paramref name="value" /> is not between -32768 and 32767, an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure with the specified double precision floating point number.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A double precision floating point number that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" /> in pixels. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +103,53 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure using the specified 32-bit signed integer.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Type" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Value" /> </para>
+              </term>
+              <description>
+                <para>The value specified by <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If <paramref name="value" /> is not between -32768 and 32767, an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure with the specified 32-bit signed integer.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit signed integer that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" /> in pixels. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +164,112 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure using the specified length. The length is specified in two parts, the length's value and the length's unit type. For example, "200Cm" represents a length of 200 centimeters. You can use any valid CSS-compliant unit expression.</para>
+          <para>The following table lists the common unit types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Unit type </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Pixel </para>
+              </term>
+              <description>
+                <para>Length in pixels. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Point </para>
+              </term>
+              <description>
+                <para>Length in points. A point represents 1/72 of an inch. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Inch </para>
+              </term>
+              <description>
+                <para>Length in inches. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Mm </para>
+              </term>
+              <description>
+                <para>Length in millimeters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Cm </para>
+              </term>
+              <description>
+                <para>Length in centimeters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Percentage </para>
+              </term>
+              <description>
+                <para>Length as a percentage of the parent element. </para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Type" />
+                </para>
+              </term>
+              <description>
+                <para>The unit type specified in <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Value" /> </para>
+              </term>
+              <description>
+                <para>The value specified in <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If <paramref name="value" /> is not between -32768 and 32767, an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure with the specified length.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,10 +285,53 @@
         <Parameter Name="type" Type="System.Web.UI.WebControls.UnitType" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'double'</param>
-        <param name="type">To be added: an object of type 'UnitType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure using the specified double precision floating point number and <see cref="T:System.Web.UI.WebControls.UnitType" />.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Type" />
+                </para>
+              </term>
+              <description>
+                <para>The value of <paramref name="type" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Value" /> </para>
+              </term>
+              <description>
+                <para>The value specified by <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If <paramref name="value" /> is not between -32768 and 32767, an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure with the specified double precision floating point number and <see cref="T:System.Web.UI.WebControls.UnitType" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A double precision floating point number that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.UnitType" /> enumeration values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,10 +347,114 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.String" /></param>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure using the specified length and <see cref="T:System.Globalization.CultureInfo" />. The length is specified in two parts, the length's value and the length's unit type. For example, "200Cm" represents a length of 200 centimeters. You can use any valid CSS-compliant unit expression.</para>
+          <para>The following table lists the common unit types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Unit type </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Pixel </para>
+              </term>
+              <description>
+                <para>Length in pixels. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Point </para>
+              </term>
+              <description>
+                <para>Length in points. A point represents 1/72 of an inch. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Inch </para>
+              </term>
+              <description>
+                <para>Length in inches. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Mm </para>
+              </term>
+              <description>
+                <para>Length in millimeters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Cm </para>
+              </term>
+              <description>
+                <para>Length in centimeters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Percentage </para>
+              </term>
+              <description>
+                <para>Length as a percentage of the parent element. </para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Type" />
+                </para>
+              </term>
+              <description>
+                <para>The unit type specified in <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Unit.Value" /> </para>
+              </term>
+              <description>
+                <para>The value specified in <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If <paramref name="value" /> is not between -32768 and 32767, an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Unit" /> structure with the specified length and <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that represents the culture. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,8 +469,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an empty <see cref="T:System.Web.UI.WebControls.Unit" />. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,10 +490,23 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Equals(System.Object)" /> method to compare the <see cref="T:System.Web.UI.WebControls.Unit" /> that this method is called from with the object specified by <paramref name="obj" />. For both objects to be equal, they must have the same values for both the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> and <see cref="P:System.Web.UI.WebControls.Unit.Value" /> properties.</para>
+          <block subset="none" type="note">
+            <para>The object specified by <paramref name="obj" /> must by a <see cref="T:System.Web.UI.WebControls.Unit" /> type object for the comparison to succeed. If the object is null, false is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this <see cref="T:System.Web.UI.WebControls.Unit" /> with the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.Unit" /> that this method is called from is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object for comparison. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -155,9 +521,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for this <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -171,9 +540,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Unit.IsEmpty" /> property to determine whether the <see cref="T:System.Web.UI.WebControls.Unit" /> is empty. The <see cref="T:System.Web.UI.WebControls.Unit" /> is empty if the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property contains an enumeration value of 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.Unit" /> is empty.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -191,11 +566,22 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.Unit" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this operator to compare two <see cref="T:System.Web.UI.WebControls.Unit" /> objects for equality. For both objects to be equal, they must have the same values for both the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> and <see cref="P:System.Web.UI.WebControls.Unit.Value" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Web.UI.WebControls.Unit" /> objects to determine whether they are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.Web.UI.WebControls.Unit" /> objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Unit" /> on the left side of the operator. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Unit" /> on the right side of the operator. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,11 +619,22 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.Unit" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this operator to compare two <see cref="T:System.Web.UI.WebControls.Unit" /> objects for inequality. For the objects to not be equal, they must have different values for the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property or the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Web.UI.WebControls.Unit" /> objects to determine whether they are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.Unit" /> objects are not equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Unit" /> on the left side of the operator. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Unit" /> on the right side of the operator. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,10 +651,23 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Unit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Parse(System.String)" /> static method to convert the string specified by the <paramref name="s" /> parameter to a <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <block subset="none" type="note">
+            <para>The unit of measurement when using this method is <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to a <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> that represents the specified string.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -275,11 +685,25 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Unit" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Parse(System.String)" /> static method to convert the string specified by <paramref name="s" /> to a <see cref="T:System.Web.UI.WebControls.Unit" /> in the culture specified by <paramref name="culture" />.</para>
+          <block subset="none" type="note">
+            <para>The unit of measurement when using this method is <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string and <see cref="T:System.Globalization.CultureInfo" /> to a <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> that represents the specified string.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> object that represents the culture. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,10 +720,23 @@
         <Parameter Name="n" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="n">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Unit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Percentage(System.Double)" /> static method to create a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Percentage" /> that represents the length specified by the <paramref name="n" /> parameter. For example, if you specify 80 for n and use the returned unit to set the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> of a Web server control, the height attribute is set to 80%.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.Unit" /> class can represent values only between -32768 and 32767.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Percentage" /> from the specified double-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Percentage" /> that represents the length specified by the double-precision floating-point number.</para>
+        </returns>
+        <param name="n">
+          <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,10 +753,23 @@
         <Parameter Name="n" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="n">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Unit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Pixel(System.Int32)" /> static method to create a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" /> that represents the length specified by the <paramref name="n" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.Unit" /> class can represent values only between -32768 and 32767.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" /> from the specified 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" /> that represents the length specified by the <paramref name="n" /> parameter.</para>
+        </returns>
+        <param name="n">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit signed integer that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,10 +786,23 @@
         <Parameter Name="n" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="n">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Unit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.Point(System.Int32)" /> static method to create a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> that represents the length specified by the <paramref name="n" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.Unit" /> class can represent values only between -32768 and 32767.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> from the specified 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> of type <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> that represents the length specified by the 32-bit signed integer.</para>
+        </returns>
+        <param name="n">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit signed integer that represents the length of the <see cref="T:System.Web.UI.WebControls.Unit" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -354,9 +817,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a <see cref="T:System.Web.UI.WebControls.Unit" /> to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents this <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -373,10 +842,20 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Unit.ToString" /> method to convert the <see cref="T:System.Web.UI.WebControls.Unit" /> that this method is called from to a string equivalent in the specified culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a <see cref="T:System.Web.UI.WebControls.Unit" /> to a string equivalent in the specified culture.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> represents this <see cref="T:System.Web.UI.WebControls.Unit" /> in the culture specified by <paramref name="culture" />.</para>
+        </returns>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that represents the culture. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -397,9 +876,112 @@
       </Parameters>
       <Docs>
         <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Unit.ToString(System.IFormatProvider)" /> method returns a string representation formatted with a unit <see cref="P:System.Web.UI.WebControls.Unit.Value" /> and an abbreviation representing the unit <see cref="P:System.Web.UI.WebControls.Unit.Type" />. The following table lists <see cref="T:System.Web.UI.WebControls.UnitType" /> values and their corresponding abbreviation.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Unit type </para>
+                </term>
+                <description>
+                  <para>Abbreviation </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Pixel" />  </para>
+              </term>
+              <description>
+                <para>px </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Point" />  </para>
+              </term>
+              <description>
+                <para>pt </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Pica" /> </para>
+              </term>
+              <description>
+                <para>pc</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Inch" />  </para>
+              </term>
+              <description>
+                <para>in </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Mm" />  </para>
+              </term>
+              <description>
+                <para>mm </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Cm" /> </para>
+              </term>
+              <description>
+                <para>cm </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Percentage" />  </para>
+              </term>
+              <description>
+                <para>%</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Em" /> </para>
+              </term>
+              <description>
+                <para>em</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.UnitType.Ex" /> </para>
+              </term>
+              <description>
+                <para>ex</para>
+              </description>
+            </item>
+          </list>
+          <para>Use <paramref name="formatProvider" /> to specify culture-specific information used to format the <see cref="P:System.Web.UI.WebControls.Unit.Value" />. If <paramref name="formatProvider" /> is null, the numeric portion of the string is formatted using a default <see cref="T:System.Globalization.NumberFormatInfo" /> object set for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a <see cref="T:System.Web.UI.WebControls.Unit" /> to a string equivalent using the specified format provider.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representing this <see cref="T:System.Web.UI.WebControls.Unit" /> in the format specified by <paramref name="formatProvider" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -409,9 +991,18 @@
         <ReturnType>System.Web.UI.WebControls.UnitType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'UnitType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property to determine the unit of measurement that the <see cref="T:System.Web.UI.WebControls.Unit" /> represents, such as pixels. The <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property is represented by one of the <see cref="T:System.Web.UI.WebControls.UnitType" /> enumeration values.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Web.UI.WebControls.Unit.IsEmpty" /> property is set to true, the <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> enumeration value is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unit type of the <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -425,9 +1016,15 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'double'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property to determine the length of the <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

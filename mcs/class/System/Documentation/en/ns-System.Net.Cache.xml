@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Net.Cache">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.Cache" /> namespace defines the types and enumerations used to define cache policies for resources obtained using the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.HttpWebRequest" /> classes.</para>
+    </summary>
   </Docs>
 </Namespace>

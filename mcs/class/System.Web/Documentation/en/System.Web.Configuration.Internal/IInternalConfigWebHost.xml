@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IInternalConfigWebHost" FullName="System.Web.Configuration.Internal.IInternalConfigWebHost">
   <TypeSignature Language="C#" Value="public interface IInternalConfigWebHost" />
   <AssemblyInfo>
@@ -11,9 +12,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines interfaces used by internal .NET Framework infrastructure for accessing and manipulating Host configuration files.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetConfigPathFromSiteIDAndVPath">
@@ -27,12 +31,20 @@
         <Parameter Name="vpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="siteID">To be added.</param>
-        <param name="vpath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value representing the path to a configuration file associated with the provided site identifier and application's virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the path to a configuration file.</para>
+        </returns>
+        <param name="siteID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application's site identifier. For more information, see ASP.NET Configuration Overview.</param>
+        <param name="vpath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application's virtual path as a string. For more information, see ASP.NET Web Site Paths.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

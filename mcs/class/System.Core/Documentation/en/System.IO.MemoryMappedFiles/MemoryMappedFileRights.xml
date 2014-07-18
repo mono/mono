@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemoryMappedFileRights" FullName="System.IO.MemoryMappedFiles.MemoryMappedFileRights">
   <TypeSignature Language="C#" Value="public enum MemoryMappedFileRights" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemoryMappedFileRights extends System.Enum" />
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can specify access rights when you use the <see cref="Overload:System.IO.MemoryMappedFiles.MemoryMappedFile.OpenExisting" /> method to open an existing memory-mapped file. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies access rights to a memory-mapped file that is not associated with a file on disk.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AccessSystemSecurity">
@@ -29,7 +36,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to get or set permissions on a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChangePermissions">
@@ -43,7 +53,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the security and audit rules associated with a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyOnWrite">
@@ -57,7 +70,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to read and write to a file with the restriction that write operations will not be seen by other processes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -71,7 +87,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to delete a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Execute">
@@ -85,7 +104,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to run an application file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FullControl">
@@ -99,7 +121,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to exert full control over a file, and to modify access control and audit rules. This value represents the right to do anything with a file and is the combination of all rights in this enumeration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -113,7 +138,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file as read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadExecute">
@@ -127,7 +155,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a folder or file as read-only, and to run application files. This right includes the <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileRights.Read" /> right and the <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileRights.Execute" /> right.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadPermissions">
@@ -141,7 +172,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy access and audit rules from a file. This does not include the right to read data, file system attributes, or extended file system attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadWrite">
@@ -155,7 +189,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file, and the right to add data to a file or remove data from a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadWriteExecute">
@@ -169,7 +206,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file, the right to add data to a file or remove data from a file, and the right to run an application file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TakeOwnership">
@@ -183,7 +223,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the owner of a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -197,7 +240,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to add data to a file or remove data from a file.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

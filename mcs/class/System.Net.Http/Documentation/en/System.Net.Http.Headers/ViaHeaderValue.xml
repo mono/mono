@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViaHeaderValue" FullName="System.Net.Http.Headers.ViaHeaderValue">
   <TypeSignature Language="C#" Value="public class ViaHeaderValue : ICloneable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ViaHeaderValue extends System.Object implements class System.ICloneable" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the value of a Via header.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,10 +34,15 @@
         <Parameter Name="receivedBy" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="protocolVersion">To be added.</param>
-        <param name="receivedBy">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> class.</para>
+        </summary>
+        <param name="protocolVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The protocol version of the received protocol.</param>
+        <param name="receivedBy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host and port that the request or response was received by.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,11 +58,17 @@
         <Parameter Name="protocolName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="protocolVersion">To be added.</param>
-        <param name="receivedBy">To be added.</param>
-        <param name="protocolName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> class.</para>
+        </summary>
+        <param name="protocolVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The protocol version of the received protocol.</param>
+        <param name="receivedBy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host and port that the request or response was received by.</param>
+        <param name="protocolName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The protocol name of the received protocol.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -70,12 +85,19 @@
         <Parameter Name="comment" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="protocolVersion">To be added.</param>
-        <param name="receivedBy">To be added.</param>
-        <param name="protocolName">To be added.</param>
-        <param name="comment">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> class.</para>
+        </summary>
+        <param name="protocolVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The protocol version of the received protocol.</param>
+        <param name="receivedBy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host and port that the request or response was received by.</param>
+        <param name="protocolName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The protocol name of the received protocol.</param>
+        <param name="comment">
+          <attribution license="cc4" from="Microsoft" modified="false" />The comment field used to identify the software of the recipient proxy or gateway.</param>
       </Docs>
     </Member>
     <Member MemberName="Comment">
@@ -89,9 +111,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the comment field used to identify the software of the recipient proxy or gateway.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -108,10 +133,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Net.Http.Headers.ViaHeaderValue" />object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -126,9 +159,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code is a numeric value that is used to identify an object during equality testing. It can also serve as an index for an object in a collection.</para>
+          <para>The <see cref="M:System.Net.Http.Headers.ViaHeaderValue.GetHashCode" /> method is suitable for use in hashing algorithms and data structures such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for an <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Int32" />.</para>
+          <para>Returns a hash code for the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -145,10 +189,18 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string to an <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.Http.Headers.ViaHeaderValue" />.</para>
+          <para>An <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> instance.</para>
+        </returns>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents via header value information.</param>
       </Docs>
     </Member>
     <Member MemberName="ProtocolName">
@@ -162,9 +214,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the protocol name of the received protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProtocolVersion">
@@ -178,9 +233,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the protocol version of the received protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedBy">
@@ -194,9 +252,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Via general-header field must be used by gateways and proxies to indicate the intermediate protocols and recipients between the user agent and the server on requests, and between the origin server and the client on responses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the host and port that the request or response was received by.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -211,9 +275,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new object that is a copy of the current <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Object" />.</para>
+          <para>A copy of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -228,9 +299,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Net.Http.Headers.ViaHeaderValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParse">

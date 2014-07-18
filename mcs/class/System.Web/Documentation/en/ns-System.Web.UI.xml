@@ -1,10 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="" FullName="" FullNameSP="" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.UI" /> namespace provides classes and interfaces that enable you to create ASP.NET server controls and ASP.NET Web pages for the user interface of your ASP.NET Web applications. </para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This namespace includes the <see cref="T:System.Web.UI.Control" /> class, which provides a common set of functionality for all server controls, which includes HTML server controls, Web server controls, and user controls. It also includes the <see cref="T:System.Web.UI.Page" /> class. This class is generated automatically whenever a request is made for an .aspx file in an ASP.NET Web application. You can inherit from both of these classes. </para>
+      <para>The namespace also includes classes that provide the server controls with data-binding functionality, the ability to save the view state of a given control or page, and parsing functionality.</para>
     </remarks>
   </Docs>
 </Namespace>

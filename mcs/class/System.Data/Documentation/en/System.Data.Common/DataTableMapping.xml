@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataTableMapping" FullName="System.Data.Common.DataTableMapping">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DataTableMapping : MarshalByRefObject, ICloneable, System.Data.ITableMapping" />
   <AssemblyInfo>
@@ -25,8 +26,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Data.Common.DataTableMapping" /> provides a master mapping between the data returned from a query against a data source, and a <see cref="T:System.Data.DataTable" />. The <see cref="T:System.Data.Common.DataTableMapping" /> name can be passed in place of the <see cref="T:System.Data.DataTable" /> name to the Fill method of the DataAdapter. For more information, see <format type="text/html"><a href="D023260A-A66A-4C39-B8F4-090CD130E730">Setting Up DataTable and DataColumn Mappings</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a description of a mapped relationship between a source table and a <see cref="T:System.Data.DataTable" />. This class is used by a <see cref="T:System.Data.Common.DataAdapter" /> when populating a <see cref="T:System.Data.DataSet" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DataTableMapping" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,10 +62,15 @@
         <Parameter Name="dataSetTable" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceTable">To be added: an object of type 'string'</param>
-        <param name="dataSetTable">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DataTableMapping" /> class with a source when given a source table name and a <see cref="T:System.Data.DataTable" /> name.</para>
+        </summary>
+        <param name="sourceTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive source table name from a data source. </param>
+        <param name="dataSetTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The table name from a <see cref="T:System.Data.DataSet" /> to map to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,11 +87,17 @@
         <Parameter Name="columnMappings" Type="System.Data.Common.DataColumnMapping[]" />
       </Parameters>
       <Docs>
-        <param name="sourceTable">To be added: an object of type 'string'</param>
-        <param name="dataSetTable">To be added: an object of type 'string'</param>
-        <param name="columnMappings">To be added: an object of type 'DataColumnMapping []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DataTableMapping" /> class when given a source table name, a <see cref="T:System.Data.DataTable" /> name, and an array of <see cref="T:System.Data.Common.DataColumnMapping" /> objects.</para>
+        </summary>
+        <param name="sourceTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive source table name from a data source. </param>
+        <param name="dataSetTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The table name from a <see cref="T:System.Data.DataSet" /> to map to. </param>
+        <param name="columnMappings">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Data.Common.DataColumnMapping" /> objects. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,9 +111,12 @@
         <ReturnType>System.Data.Common.DataColumnMappingCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataColumnMappingCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.Common.DataColumnMappingCollection" /> for the <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +137,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the table name from a <see cref="T:System.Data.DataSet" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,11 +165,59 @@
         <Parameter Name="mappingAction" Type="System.Data.MissingMappingAction" />
       </Parameters>
       <Docs>
-        <param name="sourceColumn">To be added: an object of type 'string'</param>
-        <param name="mappingAction">To be added: an object of type 'Data.MissingMappingAction'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataColumnMapping'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.Common.DataColumnMapping" /> exists, it is returned.</para>
+          <para>If the <see cref="T:System.Data.Common.DataColumnMapping" /> does not exist, for a given <see cref="T:System.Data.MissingMappingAction" />, the following actions occur: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>MissingMappingAction </para>
+                </term>
+                <description>
+                  <para>Action taken </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Passthrough </para>
+              </term>
+              <description>
+                <para>Creates a <see cref="T:System.Data.Common.DataColumnMapping" /> with the specified source column name as both the source column name and the <see cref="T:System.Data.DataSet" /> column name. This <see cref="T:System.Data.Common.DataColumnMapping" /> is not added to the collection. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Error </para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.InvalidOperationException" /> is generated if the specified column mapping is missing. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Ignore </para>
+              </term>
+              <description>
+                <para>Gets a null value. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Data.DataColumn" /> from the specified <see cref="T:System.Data.DataTable" /> using the specified <see cref="T:System.Data.MissingMappingAction" /> value and the name of the <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data column.</para>
+        </returns>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.DataColumn" />. </param>
+        <param name="mappingAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.MissingMappingAction" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,14 +251,25 @@
         <Parameter Name="schemaAction" Type="System.Data.MissingSchemaAction" />
       </Parameters>
       <Docs>
-        <param name="sourceColumn">To be added.</param>
-        <param name="dataType">To be added.</param>
-        <param name="dataTable">To be added.</param>
-        <param name="mappingAction">To be added.</param>
-        <param name="schemaAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataColumn" /> object for a given column name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataColumn" /> object.</para>
+        </returns>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.DataColumn" />. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type for <paramref name="sourceColumn" />.</param>
+        <param name="dataTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The table name from a <see cref="T:System.Data.DataSet" /> to map to. </param>
+        <param name="mappingAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.MissingMappingAction" /> values. </param>
+        <param name="schemaAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.MissingSchemaAction" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDataTableBySchemaAction">
@@ -197,11 +283,22 @@
         <Parameter Name="schemaAction" Type="System.Data.MissingSchemaAction" />
       </Parameters>
       <Docs>
-        <param name="dataSet">To be added: an object of type 'Data.DataSet'</param>
-        <param name="schemaAction">To be added: an object of type 'Data.MissingSchemaAction'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.DataTable" /> does not exist, the specified <see cref="T:System.Data.MissingSchemaAction" /> is taken.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Data.DataTable" /> for the specified <see cref="T:System.Data.DataSet" /> using the specified <see cref="T:System.Data.MissingSchemaAction" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data table.</para>
+        </returns>
+        <param name="dataSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> from which to get the <see cref="T:System.Data.DataTable" />. </param>
+        <param name="schemaAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.MissingSchemaAction" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -222,9 +319,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the case-sensitive source table name from a data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,9 +347,16 @@
         <ReturnType>System.Data.IColumnMappingCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DataTableMapping" /> instance is cast to an <see cref="T:System.Data.ITableMapping" /> interface.</para>
+          <para>For more information, see <see cref="P:System.Data.ITableMapping.ColumnMappings" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the derived <see cref="T:System.Data.Common.DataColumnMappingCollection" /> for the <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -264,9 +371,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DataTableMapping" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+          <para>For more information, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new object that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -277,9 +394,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current <see cref="P:System.Data.Common.DataTableMapping.SourceTable" /> name to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="P:System.Data.Common.DataTableMapping.SourceTable" /> name, as a string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

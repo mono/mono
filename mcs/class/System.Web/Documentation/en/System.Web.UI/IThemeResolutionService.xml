@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IThemeResolutionService" FullName="System.Web.UI.IThemeResolutionService">
   <TypeSignature Language="C#" Value="public interface IThemeResolutionService" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page developers and control authors do not use the <see cref="T:System.Web.UI.IThemeResolutionService" /> interface. The <see cref="T:System.Web.UI.IThemeResolutionService" /> interface is implemented by designer tool developers to supply <see cref="T:System.Web.UI.SkinBuilder" /> control builders in the design environment.</para>
+      <para>The <see cref="T:System.Web.UI.IThemeResolutionService" /> is a container for one or more <see cref="T:System.Web.UI.ThemeProvider" /> objects, which in turn supply the <see cref="T:System.Web.UI.SkinBuilder" /> objects that apply themes and control skins to controls when they are created in a designer. An instance of the <see cref="T:System.Web.UI.IThemeResolutionService" /> class can be accessed from a given <see cref="T:System.Web.UI.ControlBuilder" /> instance using its <see cref="P:System.Web.UI.ControlBuilder.ThemeResolutionService" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that designer tool developers can use to supply a set of <see cref="T:System.Web.UI.ThemeProvider" /> objects, which can be used to apply themes and control skins to controls in a design-time environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetAllThemeProviders">
@@ -19,10 +27,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Array" /> of <see cref="T:System.Web.UI.ThemeProvider" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Array" /> of <see cref="T:System.Web.UI.ThemeProvider" /> objects associated with the current <see cref="T:System.Web.UI.IThemeResolutionService" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,10 +50,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ThemeProvider" /> object that represents the customization theme from a style sheet.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ThemeProvider" /> that represents the page theme that is applied to a control built by the <see cref="T:System.Web.UI.ControlBuilder" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +73,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ThemeProvider" /> object that represents the customization theme on an ASP.NET page. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ThemeProvider" /> that represents the page theme that is applied to a control built by the <see cref="T:System.Web.UI.ControlBuilder" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

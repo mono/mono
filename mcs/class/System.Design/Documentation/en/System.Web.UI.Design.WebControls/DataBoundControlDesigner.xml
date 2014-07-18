@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBoundControlDesigner" FullName="System.Web.UI.Design.WebControls.DataBoundControlDesigner">
   <TypeSignature Language="C#" Value="public class DataBoundControlDesigner : System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner, System.Web.UI.Design.IDataBindingSchemaProvider, System.Web.UI.Design.IDataSourceProvider" />
   <AssemblyInfo>
@@ -16,8 +17,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extend the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> class if you want to create a designer for the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> Web server control or for a class that extends <see cref="T:System.Web.UI.WebControls.DataBoundControl" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for design-time support for controls that derive from <see cref="T:System.Web.UI.WebControls.DataBoundControl" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActionLists">
@@ -42,9 +52,12 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> object for this designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectToDataSource">
@@ -58,9 +71,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disconnects events from the previous data source and connects them to the current data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data-bound control connected to a new data source; false if the data source did not change.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDataSource">
@@ -74,8 +93,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the standard dialog box to create a new data source control, and sets the new data source control's ID to the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSourceID" /> property of the data-bound control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataBind">
@@ -91,9 +113,13 @@
         <Parameter Name="dataBoundControl" Type="System.Web.UI.WebControls.BaseDataBoundControl" />
       </Parameters>
       <Docs>
-        <param name="dataBoundControl">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> object to the data source.</para>
+        </summary>
+        <param name="dataBoundControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> object to bind to the data source.</param>
       </Docs>
     </Member>
     <Member MemberName="DataMember">
@@ -106,9 +132,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the shadowed <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataMember" /> property of the underlying data-bound control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSourceDesigner">
@@ -121,9 +150,12 @@
         <ReturnType>System.Web.UI.Design.IDataSourceDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer of the data source of the underlying data-bound control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignerView">
@@ -136,9 +168,12 @@
         <ReturnType>System.Web.UI.Design.DesignerDataSourceView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> object associated with the data source of this designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisconnectFromDataSource">
@@ -152,8 +187,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disconnects the data-bound control from data source events.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -169,9 +207,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.DataBoundControlDesigner.Dispose(System.Boolean)" /> method unregisters the designer's event handlers from all data source events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> object and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDesignTimeDataSource">
@@ -185,9 +230,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design-time data source from either the associated DataSourceDesigner or the DataSource property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements an <see cref="T:System.Collections.IEnumerable" /> interface referencing the design-time data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSampleDataSource">
@@ -201,9 +252,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets dummy sample data to render the data-bound control on the design surface if sample data cannot be created from the DataSourceDesigner or DataSource properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerable" /> interface containing dummy sample data used to render the data-bound control on the design surface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PreFilterProperties">
@@ -219,9 +276,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Web.UI.Design.WebControls.DataBoundControlDesigner.PreFilterProperties(System.Collections.IDictionary)" /> method to perform any additional actions required when the data source of the underlying data-bound control changes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overridden by the designer to shadow run-time properties of the data-bound control with corresponding properties implemented by the designer.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> object containing the properties to filter.</param>
       </Docs>
     </Member>
     <Member MemberName="SampleRowCount">
@@ -234,9 +298,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows that the data-bound control displays on the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.Design.IDataBindingSchemaProvider.CanRefreshSchema">
@@ -249,9 +316,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> instance is cast to an <see cref="T:System.Web.UI.Design.IDataBindingSchemaProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.Design.IDataBindingSchemaProvider.CanRefreshSchema" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.Design.IDataBindingSchemaProvider.RefreshSchema">
@@ -267,9 +340,16 @@
         <Parameter Name="preferSilent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preferSilent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> instance is cast to an <see cref="T:System.Web.UI.Design.IDataBindingSchemaProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.Design.IDataBindingSchemaProvider.RefreshSchema(System.Boolean)" />. </para>
+        </summary>
+        <param name="preferSilent">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether to suppress any events raised while refreshing the schema.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.Design.IDataBindingSchemaProvider.Schema">
@@ -282,9 +362,15 @@
         <ReturnType>System.Web.UI.Design.IDataSourceViewSchema</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> instance is cast to an <see cref="T:System.Web.UI.Design.IDataBindingSchemaProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.Design.IDataBindingSchemaProvider.Schema" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.Design.IDataSourceProvider.GetResolvedSelectedDataSource">
@@ -298,9 +384,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> instance is cast to an <see cref="T:System.Web.UI.Design.IDataSourceProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.Design.IDataSourceProvider.GetResolvedSelectedDataSource" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The selected data member from the selected data source, if the control allows the user to select an IListSource object (such as a <see cref="T:System.Data.DataSet" /> object) for the data source, and provides a <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataMember" /> property to select a particular list (or <see cref="T:System.Data.DataTable" /> object) within the data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.Design.IDataSourceProvider.GetSelectedDataSource">
@@ -314,9 +409,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebControls.DataBoundControlDesigner" /> instance is cast to an <see cref="T:System.Web.UI.Design.IDataSourceProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.Design.IDataSourceProvider.GetSelectedDataSource" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing an <see cref="T:System.Collections.IEnumerable" /> interface containing the design-time <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property of the associated control, or null if a data source is not found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UseDataSourcePickerActionList">
@@ -329,9 +433,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer should include "Choose a data source" in its action list.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

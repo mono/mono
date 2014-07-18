@@ -52,7 +52,6 @@ namespace System.Net
 		X509Certificate clientCertificate;
 		IPHostEntry host;
 		bool usesProxy;
-		WebConnectionGroup firstGroup;
 		Dictionary<string,WebConnectionGroup> groups;
 		bool sendContinue = true;
 		bool useConnect;
@@ -255,45 +254,25 @@ namespace System.Net
 			 */
 
 			WebConnectionGroup group;
-			if (firstGroup != null && name == firstGroup.Name)
-				return firstGroup;
 			if (groups != null && groups.TryGetValue (name, out group))
 				return group;
 
 			group = new WebConnectionGroup (this, name);
 			group.ConnectionClosed += (s, e) => currentConnections--;
 
-			if (firstGroup == null)
-				firstGroup = group;
-			else {
-				if (groups == null)
-					groups = new Dictionary<string, WebConnectionGroup> ();
-				groups.Add (name, group);
-			}
+			if (groups == null)
+				groups = new Dictionary<string, WebConnectionGroup> ();
+			groups.Add (name, group);
 
 			return group;
 		}
 
 		void RemoveConnectionGroup (WebConnectionGroup group)
 		{
-			if (groups == null || groups.Count == 0) {
-				// No more connection groups left.
-				if (group != firstGroup)
-					throw new InvalidOperationException ();
-				else
-					firstGroup = null;
-				return;
-			}
+			if (groups == null || groups.Count == 0)
+				throw new InvalidOperationException ();
 
-			if (group == firstGroup) {
-				// Steal one entry from the dictionary.
-				var en = groups.GetEnumerator ();
-				en.MoveNext ();
-				firstGroup = en.Current.Value;
-				groups.Remove (en.Current.Key);
-			} else {
-				groups.Remove (group.Name);
-			}
+			groups.Remove (group.Name);
 		}
 
 		internal bool CheckAvailableForRecycling (out DateTime outIdleSince)
@@ -301,10 +280,9 @@ namespace System.Net
 			outIdleSince = DateTime.MinValue;
 
 			TimeSpan idleTimeSpan;
-			WebConnectionGroup singleGroup, singleRemove = null;
 			List<WebConnectionGroup> groupList = null, removeList = null;
 			lock (this) {
-				if (firstGroup == null) {
+				if (groups == null || groups.Count == 0) {
 					idleSince = DateTime.MinValue;
 					return true;
 				}
@@ -320,29 +298,19 @@ namespace System.Net
 				 * 
 				 */
 
-				singleGroup = firstGroup;
-				if (groups != null)
-					groupList = new List<WebConnectionGroup> (groups.Values);
+				groupList = new List<WebConnectionGroup> (groups.Values);
 			}
 
-			if (singleGroup.TryRecycle (idleTimeSpan, ref outIdleSince))
-				singleRemove = singleGroup;
-
-			if (groupList != null) {
-				foreach (var group in groupList) {
-					if (!group.TryRecycle (idleTimeSpan, ref outIdleSince))
-						continue;
-					if (removeList == null)
-						removeList = new List<WebConnectionGroup> ();
-					removeList.Add (group);
-				}
+			foreach (var group in groupList) {
+				if (!group.TryRecycle (idleTimeSpan, ref outIdleSince))
+					continue;
+				if (removeList == null)
+					removeList = new List<WebConnectionGroup> ();
+				removeList.Add (group);
 			}
 
 			lock (this) {
 				idleSince = outIdleSince;
-
-				if (singleRemove != null)
-					RemoveConnectionGroup (singleRemove);
 
 				if (removeList != null) {
 					foreach (var group in removeList)
@@ -352,9 +320,11 @@ namespace System.Net
 				if (groups != null && groups.Count == 0)
 					groups = null;
 
-				if (firstGroup == null) {
-					idleTimer.Dispose ();
-					idleTimer = null;
+				if (groups == null) {
+					if (idleTimer != null) {
+						idleTimer.Dispose ();
+						idleTimer = null;
+					}
 					return true;
 				}
 

@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.XPath" FullName="System.Xml.XPath" FullNameSP="System.Xml.XPath" Maintainer="Mono">
   <Docs>
-    <summary>
-		This namespace contains classes for high-performance tree navigation and evaluation of XPath expressions on Xml documents.
-    </summary>
     <remarks />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Xml.XPath" /> namespace contains the classes that define a cursor model for navigating and editing XML information items as instances of the XQuery 1.0 and XPath 2.0 Data Model.</para>
+    </summary>
   </Docs>
 </Namespace>

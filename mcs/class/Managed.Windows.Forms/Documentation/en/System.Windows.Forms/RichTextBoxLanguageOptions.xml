@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RichTextBoxLanguageOptions" FullName="System.Windows.Forms.RichTextBoxLanguageOptions">
   <TypeSignature Language="C#" Value="public enum RichTextBoxLanguageOptions" />
   <AssemblyInfo>
@@ -13,9 +14,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides <see cref="T:System.Windows.Forms.RichTextBox" /> settings for Input Method Editor (IME) and Asian language support.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AutoFont">
@@ -25,8 +29,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the control automatically changes fonts when the user explicitly changes to a different keyboard layout.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +46,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that font-bound font sizes are scaled from the insertion point size according to a script. For example, Asian fonts are slightly larger than Western fonts. This is the default.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +63,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="T:System.Windows.Forms.RichTextBox" /> control automatically changes the keyboard layout when the user explicitly changes to a different font, or when the user explicitly changes the insertion point to a new location in the text.  </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +80,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the control to dual-font mode. Used for Asian language text. The <see cref="T:System.Windows.Forms.RichTextBox" /> control uses an English font for ASCII text and an Asian font for Asian text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +97,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies how the client is notified during IME composition. A setting of 0 specifies that no EN_CHANGE or EN_SELCHANGE events occur during an undetermined state. Notification is sent when the final string comes in. This is the default. A setting of 1 specifies that EN_CHANGE and EN_SELCHANGE events occur during an undetermined state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +114,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies how the control uses the composition string of an Input Method Editor (IME) if the user cancels it. If this flag is set, the control discards the composition string. If this flag is not set, the control uses the composition string as the result string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,8 +131,11 @@
         <ReturnType>System.Windows.Forms.RichTextBoxLanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that user-interface default fonts be used. This option is turned off by default.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

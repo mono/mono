@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyAgreeKeyChoice" FullName="System.Security.Cryptography.Pkcs.KeyAgreeKeyChoice">
   <TypeSignature Language="C#" Value="public enum KeyAgreeKeyChoice" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed KeyAgreeKeyChoice extends System.Enum" />
@@ -10,9 +11,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Pkcs.KeyAgreeKeyChoice" /> enumeration defines the type of key used in a key agreement protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EphemeralKey">
@@ -27,8 +31,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.KeyAgreeKeyChoice</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key agreement key is ephemeral, existing only for the duration of the key agreement protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StaticKey">
@@ -43,8 +50,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.KeyAgreeKeyChoice</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key agreement key is static, existing for an extended period of time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -59,8 +69,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.KeyAgreeKeyChoice</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key agreement key type is unknown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

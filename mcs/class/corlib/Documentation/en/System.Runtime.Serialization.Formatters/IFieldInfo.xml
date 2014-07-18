@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IFieldInfo" FullName="System.Runtime.Serialization.Formatters.IFieldInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IFieldInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFieldInfo" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows access to field names and field types of objects that support the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FieldNames">
@@ -33,9 +37,16 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a name is null, a default parameter name is used.</para>
+          <para>This property's get and set accessors are protected by a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for the <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SerializationFormatter" /> specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field names of serialized objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FieldTypes">
@@ -51,9 +62,15 @@
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property's get and set accessors are protected by a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for the <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SerializationFormatter" /> specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field types of the serialized objects.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

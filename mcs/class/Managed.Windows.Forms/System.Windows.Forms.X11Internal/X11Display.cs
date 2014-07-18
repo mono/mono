@@ -104,7 +104,7 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			if (display == IntPtr.Zero) {
 				throw new ArgumentNullException("Display",
-							"Could not open display (X-Server required. Check you DISPLAY environment variable)");
+							"Could not open display (X-Server required. Check your DISPLAY environment variable)");
 			}
 
 			this.display = display;

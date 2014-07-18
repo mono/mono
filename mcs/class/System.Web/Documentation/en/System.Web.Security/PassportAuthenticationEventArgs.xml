@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PassportAuthenticationEventArgs" FullName="System.Web.Security.PassportAuthenticationEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PassportAuthenticationEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event argument passed to the <see cref="E:System.Web.Security.PassportAuthenticationModule.Authenticate" /> event by a <see cref="T:System.Web.Security.PassportAuthenticationModule" />. Since there is already an identity at this point, this is useful mainly for attaching a custom <see cref="T:System.Security.Principal.IPrincipal" /> object to the context using the supplied identity. This class is deprecated.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +33,18 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="identity">a <see cref="T:System.Web.Security.PassportIdentity" /></param>
-        <param name="context">a <see cref="T:System.Web.HttpContext" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.PassportAuthenticationEventArgs" /> class. This class is deprecated.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity object </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context for the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +59,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpContext" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> object for the current HTTP request. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +81,15 @@
         <ReturnType>System.Web.Security.PassportIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PassportIdentity'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an authenticated Passport identity. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +104,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Principal.IPrincipal" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Security.Principal.IPrincipal" /> object to be associated with the request. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

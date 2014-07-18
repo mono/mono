@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SortDirection" FullName="System.Web.UI.WebControls.SortDirection">
   <TypeSignature Language="C#" Value="public enum SortDirection" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SortDirection" /> enumeration is used to represent the direction in which items are sorted. It is commonly used by properties (such as the <see cref="P:System.Web.UI.WebControls.GridView.SortDirection" /> property of the <see cref="T:System.Web.UI.WebControls.GridView" /> class) to indicate the order in which items are displayed in a control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the direction in which to sort a list of items.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ascending">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.SortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sort from smallest to largest. For example, from A to Z.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.SortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sort from largest to smallest. For example, from Z to A.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

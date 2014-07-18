@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewTextBoxCell" FullName="System.Windows.Forms.DataGridViewTextBoxCell">
   <TypeSignature Language="C#" Value="public class DataGridViewTextBoxCell : System.Windows.Forms.DataGridViewCell" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> class is a specialized type of <see cref="T:System.Windows.Forms.DataGridViewCell" /> used to display a single string of editable text-based information. The currently selected <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> hosts a <see cref="T:System.Windows.Forms.DataGridViewTextBoxEditingControl" /> control in which the user can edit the cell's value (assuming the <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> property of the <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> is set to false).</para>
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> is the column type specialized to hold cells of this type. By default, the <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.CellTemplate" /> is initialized to a new <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" />. To pattern the cells within a column after an existing <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" />, set the column's <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.CellTemplate" /> property to the cell to use as a pattern.</para>
+      <para>The cell-related properties of the column are wrappers for the similarly-named properties of the template cell. Changing the property values of the template cell will affect only cells based on the template that are added after the change. Changing the cell-related property values of the column, however, will update the template cell and all other cells in the column, and refresh the column display if necessary. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays editable text information in a <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +47,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Windows.Forms.DataGridViewTextBoxCell.Clone" /> method whenever you derive from <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> and add new properties to the derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +93,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the underlying formatted value is always <see cref="T:System.String" /> because a text box only handles text information</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the formatted value associated with the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,12 +194,32 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="initialFormattedValue">To be added.</param>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewTextBoxCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> method initializes the hosted editing control as described in the base <see cref="M:System.Windows.Forms.DataGridViewCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> method. For every invocation, this method also sets the following visual attributes of the editing control:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.TextBoxBase.BorderStyle" /> property is set to <see cref="F:System.Windows.Forms.BorderStyle.None" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.TextBox.Multiline" /> and <see cref="P:System.Windows.Forms.TextBox.AcceptsReturn" /> properties are set to true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.TextBox.Text" /> property is set to the <paramref name="initialFormattedValue" /> parameter.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attaches and initializes the hosted editing control.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row being edited.</param>
+        <param name="initialFormattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value to be displayed in the control.</param>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cell style that is used to determine the appearance of the hosted control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,11 +235,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridView.EditMode" /> property of the <see cref="T:System.Windows.Forms.DataGridView" /> control is set to <see cref="F:System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke" /> or <see cref="F:System.Windows.Forms.DataGridViewEditMode.EditOnKeystrokeOrF2" />, the control uses this method to determine whether a key other than F2 that is pressed by the user while this cell has focus will cause the cell to enter edit mode. </para>
+          <para>This method returns true if the e parameter indicates an ordinary data-entry key (such as a letter, number, punctuation mark, or the SPACE key) unmodified by ALT or CTRL, excluding SHIFT+SPACE, which is used by the control for selection purposes. For more information, see <format type="text/html"><a href="4519b928-bfc8-4e8b-bb9c-b1e76a0ca552">Default Keyboard and Mouse Handling in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if edit mode should be started based on the given key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if edit mode should be started; otherwise, false. </para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that represents the key that was pressed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -205,10 +263,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewTextBoxCell.MaxInputLength" /> property does not affect the length of text entered programmatically through the cell's value or through cell formatting. It affects only what the user can input and edit.</para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewTextBoxColumn.MaxInputLength" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewTextBoxCell.MaxInputLength" /> property of every cell in the column. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters that can be entered into the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,11 +295,19 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnEnter(System.EventArgs)" /> method. It is called in the same circumstances in which an <see cref="E:System.Windows.Forms.Control.Enter" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by <see cref="T:System.Windows.Forms.DataGridView" /> when the selection cursor moves onto a cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row entered by the mouse.</param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the cell was entered as a result of a mouse click; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -251,11 +324,20 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the instance's click state to ensure that leaving then re-entering the cell requires a double click to start edit mode.</para>
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnLeave(System.EventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.Control.Leave" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the <see cref="T:System.Windows.Forms.DataGridView" /> when the mouse leaves a cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row the mouse has left.</param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the cell was left as a result of a mouse click; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,10 +353,19 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.DataGridViewTextBoxCell.OnMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> determines whether the mouse click is part of a double click that starts an edit session.</para>
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnMouseClick(System.Windows.Forms.MouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.Control.MouseClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by <see cref="T:System.Windows.Forms.DataGridView" /> when the mouse leaves a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

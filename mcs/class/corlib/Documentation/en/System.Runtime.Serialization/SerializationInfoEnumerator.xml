@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializationInfoEnumerator" FullName="System.Runtime.Serialization.SerializationInfoEnumerator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SerializationInfoEnumerator : System.Collections.IEnumerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SerializationInfoEnumerator extends System.Object implements class System.Collections.IEnumerator" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The current class is a standard enumerator that parses over the values stored in <see cref="T:System.Runtime.Serialization.SerializationInfo" />. Instead of recording the values, the <see cref="T:System.Runtime.Serialization.SerializationInfoEnumerator" /> keeps pointers to the member variables of the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that created it.</para>
+      <para>This class follows the <see cref="T:System.Collections.IEnumerator" /> mechanism.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a formatter-friendly mechanism for parsing the data in <see cref="T:System.Runtime.Serialization.SerializationInfo" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -40,9 +48,12 @@
         <ReturnType>System.Runtime.Serialization.SerializationEntry</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SerializationEntry'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the item currently being examined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -59,9 +70,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To initialize the enumerator, call <see cref="M:System.Runtime.Serialization.SerializationInfoEnumerator.MoveNext" /> and go through each item until you reach the last element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the enumerator to the next item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a new element is found; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -77,9 +97,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name for the item currently being examined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectType">
@@ -95,9 +118,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the item currently being examined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -114,8 +140,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After calling this method, the <see cref="P:System.Runtime.Serialization.SerializationInfoEnumerator.Current" /> property will contain the first item in the current set of elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the enumerator to the first item.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
@@ -131,9 +163,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current item in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -149,9 +184,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the item currently being examined.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

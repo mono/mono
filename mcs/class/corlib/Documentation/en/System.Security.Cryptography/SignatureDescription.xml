@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SignatureDescription" FullName="System.Security.Cryptography.SignatureDescription">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SignatureDescription" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SignatureDescription extends System.Object" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Utility class to regroup the formatter, deformatter, digest (hash) and key algorithm used for generating (or verifying) a digital signature.</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about the properties of a digital signature.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Construct an empty signature description.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.SignatureDescription" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -53,9 +60,13 @@
         <Parameter Name="el" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="el">To be added: an object of type 'Security.SecurityElement'</param>
-        <summary>Construct an signature description from the specified XML data.</summary>
         <remarks>Invalid data is rejected silently.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.SignatureDescription" /> class from the specified <see cref="T:System.Security.SecurityElement" />.</para>
+        </summary>
+        <param name="el">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.SecurityElement" /> from which to get the algorithms for the signature description. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateDeformatter">
@@ -74,10 +85,17 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'AsymmetricAlgorithm'</param>
-        <summary>Return an AsymmetricDeformatter instance based on the DeformatterAlgorithm property.</summary>
-        <returns>To be added: an object of type 'AsymmetricSignatureDeformatter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Security.Cryptography.AsymmetricSignatureDeformatter" /> instance with the specified key using the <see cref="P:System.Security.Cryptography.SignatureDescription.DeformatterAlgorithm" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Security.Cryptography.AsymmetricSignatureDeformatter" /> instance.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to use in the <see cref="T:System.Security.Cryptography.AsymmetricSignatureDeformatter" />. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateDigest">
@@ -94,9 +112,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'HashAlgorithm'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance using the <see cref="P:System.Security.Cryptography.SignatureDescription.DigestAlgorithm" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFormatter">
@@ -115,10 +139,17 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'AsymmetricAlgorithm'</param>
-        <summary>Return an AsymmetricFormatter instance based on the FormatterAlgorithm property. </summary>
-        <returns>To be added: an object of type 'AsymmetricSignatureFormatter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Security.Cryptography.AsymmetricSignatureFormatter" /> instance with the specified key using the <see cref="P:System.Security.Cryptography.SignatureDescription.FormatterAlgorithm" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Security.Cryptography.AsymmetricSignatureFormatter" /> instance.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to use in the <see cref="T:System.Security.Cryptography.AsymmetricSignatureFormatter" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DeformatterAlgorithm">
@@ -134,9 +165,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The class name used to verify the digital signature.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the deformatter algorithm for the signature description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DigestAlgorithm">
@@ -152,9 +186,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The class name used to hash the data before generating or verifying the digital signature.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the digest algorithm for the signature description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatterAlgorithm">
@@ -170,9 +207,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The class name used to generate the digital signature.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the formatter algorithm for the signature description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyAlgorithm">
@@ -188,9 +228,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The class name representing the assymetric key algorithm used to generate or verify the digital signature.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key algorithm for the signature description.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

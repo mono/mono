@@ -304,9 +304,9 @@ codechunk_cleanup (void)
 void
 mono_code_manager_init (void)
 {
-	mono_counters_register ("Dynamic code allocs", MONO_COUNTER_JIT | MONO_COUNTER_WORD, &dynamic_code_alloc_count);
-	mono_counters_register ("Dynamic code bytes", MONO_COUNTER_JIT | MONO_COUNTER_WORD, &dynamic_code_bytes_count);
-	mono_counters_register ("Dynamic code frees", MONO_COUNTER_JIT | MONO_COUNTER_WORD, &dynamic_code_frees_count);
+	mono_counters_register ("Dynamic code allocs", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_alloc_count);
+	mono_counters_register ("Dynamic code bytes", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_bytes_count);
+	mono_counters_register ("Dynamic code frees", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_frees_count);
 }
 
 void
@@ -487,6 +487,9 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #define BIND_ROOM 4
 #endif
 #if defined(__arm__)
+#define BIND_ROOM 8
+#endif
+#if defined(TARGET_ARM64)
 #define BIND_ROOM 8
 #endif
 

@@ -1,4 +1,4 @@
-/* The version here should match that in configure/configure.in	*/
+/* The version here should match that in configure/configure.ac	*/
 /* Eventually this one may become unnecessary.  For now we need	*/
 /* it to keep the old-style build process working.		*/
 #define GC_TMP_VERSION_MAJOR 6
@@ -14,7 +14,7 @@
      GC_TMP_VERSION_MINOR != GC_VERSION_MINOR || \
      defined(GC_ALPHA_VERSION) != (GC_TMP_ALPHA_VERSION != GC_NOT_ALPHA) || \
      defined(GC_ALPHA_VERSION) && GC_TMP_ALPHA_VERSION != GC_ALPHA_VERSION
-#   error Inconsistent version info.  Check README, version.h, and configure.in.
+#   error Inconsistent version info.  Check README, version.h, and configure.ac.
 # endif
 #else
 # define GC_VERSION_MAJOR GC_TMP_VERSION_MAJOR

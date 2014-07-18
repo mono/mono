@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BaseChannelSinkWithProperties" FullName="System.Runtime.Remoting.Channels.BaseChannelSinkWithProperties">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class BaseChannelSinkWithProperties : System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BaseChannelSinkWithProperties extends System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Channel sinks provide a plug-in point that allows access to the underlying messages that are flowing through the channel as well as the stream that is used by the transport mechanism to send messages to a remote object. Channel sinks are linked together in a chain of channel sink providers, and all channel messages flow through this chain of sinks before the message is serialized and transported.</para>
+      <para>This class makes a link demand and an inheritance demand at the class level. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have infrastructure permission. For details about security demands, see <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">Link Demands</a></format> and <format type="text/html"><a href="28B9ADBB-8F08-4F10-B856-DBF59EB932D9">Inheritance Demands</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base implementation for channel sinks that want to expose a dictionary interface to their properties.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Channel sinks are linked together in a chain of channel sink providers and all channel messages flow through this chain of sinks before the message is serialized and transported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BaseChannelSinkWithProperties" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

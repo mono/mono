@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpServerUtility" FullName="System.Web.HttpServerUtility">
   <TypeSignature Language="C#" Value="public sealed class HttpServerUtility" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The methods and properties of the <see cref="T:System.Web.HttpServerUtility" /> class are exposed through the intrinsic <see cref="P:System.Web.HttpContext.Server" /> object provided by ASP.NET.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides helper methods for processing Web requests.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClearError">
@@ -25,8 +32,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the previous exception.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,10 +53,17 @@
         <Parameter Name="progID" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="progID">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a server instance of a COM object identified by the object's programmatic identifier (ProgID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new object.</para>
+        </returns>
+        <param name="progID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class or type of object to create an instance of.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,10 +80,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a server instance of a COM object identified by the object's type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the object to create.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,10 +107,17 @@
         <Parameter Name="clsid" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="clsid">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a server instance of a COM object identified by the object's class identifier (CLSID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new object.</para>
+        </returns>
+        <param name="clsid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class identifier of the object to create an instance of.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,9 +134,19 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method continues execution of the original page after execution of the new page is completed. The <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method unconditionally transfers execution to another handler.</para>
+          <para>ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method and does not rerun authentication and authorization logic for the new resource. If your application's security policy requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method. <see cref="Overload:System.Web.HttpResponse.Redirect" /> performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both Internet Information Services (IIS) and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the handler for the specified virtual path in the context of the current request. </para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path to execute.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,10 +167,15 @@
         <Parameter Name="preserveForm" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="preserveForm">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the handler for the specified virtual path in the context of the current request and specifies whether to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path to execute. </param>
+        <param name="preserveForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to preserve the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections; false to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</param>
       </Docs>
     </Member>
     <Member MemberName="Execute">
@@ -143,10 +189,21 @@
         <Parameter Name="writer" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="path">a <see cref="T:System.String" /></param>
-        <param name="writer">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter)" /> method continues execution of the original request after execution of the virtual path specified is completed. The <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method unconditionally transfers execution to another handler.</para>
+          <para>ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter)" /> method and does not rerun authentication and authorization logic for the new resource. If your application's security policy requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter)" /> method. <see cref="Overload:System.Web.HttpResponse.Redirect" /> performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both Internet Information Services (IIS) and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the handler for the specified virtual path in the context of the current request. A <see cref="T:System.IO.TextWriter" /> captures output from the executed handler.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path to execute. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to capture the output. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,11 +222,23 @@
         <Parameter Name="preserveForm" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="path">a <see cref="T:System.String" /></param>
-        <param name="writer">a <see cref="T:System.IO.TextWriter" /></param>
-        <param name="preserveForm">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> method continues execution of the original request after execution of the specified virtual path is completed. The <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method unconditionally transfers execution to another handler.</para>
+          <para>ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter,System.Boolean)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter,System.Boolean)" /> method and does not rerun authentication and authorization logic for the new resource. If your application's security policy requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter,System.Boolean)" /> method. <see cref="Overload:System.Web.HttpResponse.Redirect" /> performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both Internet Information Services (IIS) and ASP.NET security policy.</para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Execute(System.String,System.IO.TextWriter,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the handler for the specified virtual path in the context of the current request. A <see cref="T:System.IO.TextWriter" /> captures output from the page and a Boolean parameter specifies whether to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path to execute.</param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to capture the output.</param>
+        <param name="preserveForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to preserve the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections; false to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -190,11 +259,23 @@
         <Parameter Name="preserveForm" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="preserveForm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can write custom HTTP handlers to process specific, predefined types of HTTP requests in any language that is compliant with the Common Language Specification (CLS). Executable code that is defined in the HTTP handler classes instead of  conventional ASP (also known as classic ASP) pages or ASP.NET pages responds to these specific requests. HTTP handlers allow for interacting with the low-level request and response services of a Web server that is running Internet Information Services (IIS), and they provide functionality that is similar to ISAPI extensions but with a simpler programming model.</para>
+          <para>ASP.NET does not verify that the current user is authorized to view the resource that is delivered by the <see cref="M:System.Web.HttpServerUtility.Execute(System.Web.IHttpHandler,System.IO.TextWriter,System.Boolean)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler that is indicated by the <see cref="M:System.Web.HttpServerUtility.Execute(System.Web.IHttpHandler,System.IO.TextWriter,System.Boolean)" /> method and does not rerun authentication and authorization logic for the new resource. If the security policy for your application requires clients to have appropriate authorization to gain access to the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Execute(System.Web.IHttpHandler,System.IO.TextWriter,System.Boolean)" /> method. The <see cref="Overload:System.Web.HttpResponse.Redirect" /> performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both the IIS and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Execute(System.Web.IHttpHandler,System.IO.TextWriter,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the handler for the specified virtual path in the context of the current request. A <see cref="T:System.IO.TextWriter" /> captures output from the executed handler and a Boolean parameter specifies whether to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP handler that implements the <see cref="T:System.Web.IHttpHandler" /> to transfer the current request to.</param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to capture the output.</param>
+        <param name="preserveForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to preserve the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections; false to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</param>
       </Docs>
     </Member>
     <Member MemberName="GetLastError">
@@ -205,9 +286,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the previous exception.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The previous exception that was thrown.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,10 +311,23 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML encoding makes sure that text is displayed correctly in the browser and not interpreted by the browser as HTML. For example, if a text string contains a less than sign (&lt;) or greater than sign (&gt;), the browser would interpret these characters as the opening or closing bracket of an HTML tag. When the characters are HTML encoded, they are converted to the strings &amp;lt; and &amp;gt;, which causes the browser to display the less than sign and greater than sign correctly. <see cref="M:System.Web.HttpServerUtility.HtmlDecode(System.String)" /> decodes text that has been transmitted to the server.</para>
+          <para>This method is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.HtmlDecode" /> method at run time from an ASP.NET application. Internally, this method uses <see cref="Overload:System.Web.HttpUtility.HtmlDecode" /> to decode strings.</para>
+          <para>In the code-behind file for an ASP.NET web page, access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class through the Server property. In a class that is not in a code-behind file, use HttpContext.Current.Server to access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+          <para>Outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class to encode or decode values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes an HTML-encoded string and returns the decoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded text.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML string to decode.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,10 +345,23 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML encoding makes sure that text is displayed correctly in the browser and not interpreted by the browser as HTML. For example, if a text string contains a less than sign (&lt;) or greater than sign (&gt;), the browser would interpret these characters as the opening or closing bracket of an HTML tag. When the characters are HTML encoded, they are converted to the strings &amp;lt; and &amp;gt;, which causes the browser to display the less than sign and greater than sign correctly.</para>
+          <para>
+            <see cref="M:System.Web.HttpServerUtility.HtmlDecode(System.String)" /> decodes text that has been transmitted to the server.</para>
+          <para>
+            <see cref="Overload:System.Web.HttpServerUtility.HtmlDecode" /> is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.HtmlDecode" /> method at run time from an ASP.NET application. Internally, <see cref="Overload:System.Web.HttpServerUtility.HtmlDecode" /> uses <see cref="Overload:System.Web.HttpUtility.HtmlDecode" /> to decode strings.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes an HTML-encoded string and sends the resulting output to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML string to decode.</param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> output stream that contains the decoded string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -265,10 +378,23 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML encoding makes sure that text is displayed correctly in the browser and not interpreted by the browser as HTML. For example, if a text string contains a less than sign (&lt;) or greater than sign (&gt;), the browser would interpret these characters as the opening or closing bracket of an HTML tag. When the characters are HTML encoded, they are converted to the strings &amp;lt; and &amp;gt;, which causes the browser to display the less than sign and greater than sign correctly.</para>
+          <para>This method is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.HtmlEncode" /> method at run time from an ASP.NET application. Internally, this method uses <see cref="Overload:System.Web.HttpUtility.HtmlEncode" /> to encode strings.</para>
+          <para>In the code-behind file for an ASP.NET web page, access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class through the Server property. In a class that is not in a code-behind file, use HttpContext.Current.Server to access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+          <para>Outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class to encode or decode values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML-encodes a string and returns the encoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML-encoded text.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string to encode.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -286,10 +412,21 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML encoding ensures that text will be correctly displayed in the browser, not interpreted by the browser as HTML. For example, if a text string contains a less than sign (&lt;) or greater than sign (&gt;), the browser would interpret these characters as an opening or closing bracket of an HTML tag. The HTML encoding of these two characters is &amp;lt; and &amp;gt;, respectively, which causes the browser to display the less than sign and greater than sign correctly.</para>
+          <para>
+            <see cref="Overload:System.Web.HttpServerUtility.HtmlEncode" /> is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.HtmlEncode" /> method at run time from an ASP.NET application. Internally, <see cref="Overload:System.Web.HttpServerUtility.HtmlEncode" /> uses <see cref="Overload:System.Web.HttpUtility.HtmlEncode" /> to encode strings.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML-encodes a string and sends the resulting output to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode. </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> output stream that contains the encoded string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -303,9 +440,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the server's computer name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -322,10 +462,23 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="path" /> is null, then the <see cref="M:System.Web.HttpServerUtility.MapPath(System.String)" /> method returns the full physical path of the directory that contains the current application.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.HttpServerUtility.MapPath(System.String)" /> method potentially contains sensitive information about the hosting environment. The return value should not be displayed to users.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the physical file path that corresponds to the specified virtual path on the Web server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical file path that corresponds to <paramref name="path" />.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the Web server.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -341,9 +494,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpServerUtility.ScriptTimeout" /> property can be set in the Web.config file by setting the executionTimeout attribute of the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">httpRuntime</a></format> element. Setting the time-out programmatically with the <see cref="P:System.Web.HttpServerUtility.ScriptTimeout" /> property takes precedence over the Web.config setting.</para>
+          <block subset="none" type="note">
+            <para>If you set the debug attribute of the <format type="text/html"><a href="7c319582-074a-4d2a-a787-03b9d4541c12">compilation</a></format> element to true in the Web.config file, the value of <see cref="P:System.Web.HttpServerUtility.ScriptTimeout" /> will be ignored.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the request time-out value in seconds.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -360,9 +522,21 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page transferred to should be another .aspx page. For instance, a transfer to an .asp or .asmx page is not valid. The <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method preserves the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+          <para>
+            <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> calls <see cref="M:System.Web.HttpResponse.End" />, which throws a <see cref="T:System.Threading.ThreadAbortException" /> exception upon completion.</para>
+          <para>ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method and does not rerun authentication and authorization logic for the new resource. If your application's security policy requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method. The <see cref="Overload:System.Web.HttpResponse.Redirect" /> method performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both Internet Information Services (IIS) and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the current request, terminates execution of the current page and starts execution of a new page by using the specified URL path of the page.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path of the new page on the server to execute.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -380,10 +554,24 @@
         <Parameter Name="preserveForm" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <param name="preserveForm">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page transferred to should be another .aspx page. For instance, a transfer to an .asp or .asmx page is not valid.</para>
+          <para>
+            <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> calls <see cref="M:System.Web.HttpResponse.End" />, which throws a <see cref="T:System.Threading.ThreadAbortException" /> exception upon completion.</para>
+          <para>If you set the <paramref name="preserveForm" /> parameter to true, the target page will be able to access the view state of the previous page by using the <see cref="P:System.Web.UI.Page.PreviousPage" /> property.</para>
+          <para>For security purposes, you should keep the enableViewStateMac attribute set to true. ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method and does not rerun authentication and authorization logic for the new resource. If your application's security policy requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method. The <see cref="Overload:System.Web.HttpResponse.Redirect" /> method performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both Internet Information Services (IIS) and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates execution of the current page and starts execution of a new page by using the specified URL path of the page. Specifies whether to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL path of the new page on the server to execute.</param>
+        <param name="preserveForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to preserve the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections; false to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -404,10 +592,22 @@
         <Parameter Name="preserveForm" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <param name="preserveForm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can write custom HTTP handlers to process specific, predefined types of HTTP requests in any language that is compliant with the Common Language Specification (CLS). Executable code that is defined in the HTTP handler classes instead of conventional ASP (also known as classic ASP) pages or ASP.NET pages responds to these specific requests. HTTP handlers allow for interacting with the low-level request and response services of a Web server that is running Internet Information Services (IIS), and they provide functionality that is similar to ISAPI extensions but with a simpler programming model.</para>
+          <para>If you set the <paramref name="preserveForm" /> parameter to true, the target page will be able to access the view state of the previous page by using the <see cref="P:System.Web.UI.Page.PreviousPage" /> property.</para>
+          <para>For security purposes, you should keep the enableViewStateMac attribute set to true. ASP.NET does not verify that the current user is authorized to view the resource delivered by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> method. Although the ASP.NET authorization and authentication logic runs before the original resource handler is called, ASP.NET directly calls the handler indicated by the <see cref="M:System.Web.HttpServerUtility.Transfer(System.Web.IHttpHandler,System.Boolean)" /> method, and does not rerun authentication and authorization logic for the new resource. If the security policy for your application requires clients to have appropriate authorization to access the resource, the application should force reauthorization or provide a custom access-control mechanism.</para>
+          <para>You can force reauthorization by using the <see cref="Overload:System.Web.HttpResponse.Redirect" /> method instead of the <see cref="M:System.Web.HttpServerUtility.Transfer(System.Web.IHttpHandler,System.Boolean)" /> method. The <see cref="Overload:System.Web.HttpResponse.Redirect" /> method performs a client-side redirect in which the browser requests the new resource. Because this redirect is a new request entering the system, it is subjected to all the authentication and authorization logic of both the IIS and ASP.NET security policy. </para>
+          <para>You can verify that the user has permission to view the resource by incorporating a custom authorization method that uses the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method before the application calls the <see cref="M:System.Web.HttpServerUtility.Transfer(System.Web.IHttpHandler,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates execution of the current page and starts execution of a new request by using a custom HTTP handler that implements the <see cref="T:System.Web.IHttpHandler" /> interface and specifies whether to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP handler that implements the <see cref="T:System.Web.IHttpHandler" /> to transfer the current request to.</param>
+        <param name="preserveForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to preserve the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections; false to clear the <see cref="P:System.Web.HttpRequest.QueryString" /> and <see cref="P:System.Web.HttpRequest.Form" /> collections.</param>
       </Docs>
     </Member>
     <Member MemberName="UrlDecode">
@@ -420,10 +620,23 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL encoding ensures that all browsers will correctly transmit text in URL strings. Characters such as a question mark (?), ampersand (&amp;), slash mark (/), and spaces might be truncated or corrupted by some browsers. As a result, these characters must be encoded in &lt;a&gt; tags or in query strings where the strings can be re-sent by a browser in a request string.</para>
+          <para>This method is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.UrlDecode" /> method at run time from an ASP.NET application. Internally, this method uses <see cref="Overload:System.Web.HttpUtility.UrlDecode" /> to decode strings.</para>
+          <para>In the code-behind file for an ASP.NET web page, access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class through the Server property. In a class that is not in a code-behind file, use HttpContext.Current.Server to access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+          <para>Outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class to encode or decode values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL-decodes a string and returns the decoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded text.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string to decode.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -441,10 +654,21 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL encoding ensures that all browsers will correctly transmit text in URL strings. Characters such as a question mark (?), ampersand (&amp;), slash mark (/), and spaces might be truncated or corrupted by some browsers. As a result, these characters must be encoded in &lt;a&gt; tags or in query strings where the strings can be re-sent by a browser in a request string.</para>
+          <para>
+            <see cref="Overload:System.Web.HttpServerUtility.UrlDecode" /> is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.UrlDecode" /> method at run time from an ASP.NET application. Internally, <see cref="Overload:System.Web.HttpServerUtility.UrlDecode" /> uses <see cref="Overload:System.Web.HttpUtility.UrlDecode" /> to decode strings.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes an HTML string received in a URL and sends the resulting output to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML string to decode.</param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> output stream that contains the decoded string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -461,10 +685,23 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL encoding ensures that all browsers will correctly transmit text in URL strings. Characters such as a question mark (?), ampersand (&amp;), slash mark (/), and spaces might be truncated or corrupted by some browsers. As a result, these characters must be encoded in &lt;a&gt; tags or in query strings where the strings can be re-sent by a browser in a request string.</para>
+          <para>This method is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.UrlEncode" /> method at run time from an ASP.NET application. Internally, this method uses <see cref="Overload:System.Web.HttpUtility.UrlEncode" /> to encode strings.</para>
+          <para>In the code-behind file for an ASP.NET web page, access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class through the Server property. In a class that is not in a code-behind file, use HttpContext.Current.Server to access an instance of the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+          <para>Outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class to encode or decode values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL-encodes a string and returns the encoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL-encoded text.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to URL-encode.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -482,10 +719,21 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL encoding ensures that all browsers will correctly transmit text in URL strings. Characters such as a question mark (?), ampersand (&amp;), slash mark (/), and spaces might be truncated or corrupted by some browsers. As a result, these characters must be encoded in &lt;a&gt; tags or in query strings where the strings can be re-sent by a browser in a request string.</para>
+          <para>
+            <see cref="Overload:System.Web.HttpServerUtility.UrlEncode" /> is a convenient way to access the <see cref="Overload:System.Web.HttpUtility.UrlEncode" /> method at run time from an ASP.NET application. Internally, <see cref="Overload:System.Web.HttpServerUtility.UrlEncode" /> uses <see cref="Overload:System.Web.HttpUtility.UrlEncode" /> to encode strings.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>URL-encodes a string and sends the resulting output to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string to encode.</param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> output stream that contains the encoded string.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -502,10 +750,17 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use; intended only for browser compatibility. Use <see cref="M:System.Web.HttpServerUtility.UrlEncode(System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL encoded text.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to URL-encode.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -525,10 +780,21 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpServerUtility.UrlTokenDecode(System.String)" /> method converts a URL string token, which encodes binary data as base 64 digits, to its equivalent byte array representation. Use the <see cref="M:System.Web.HttpServerUtility.UrlTokenDecode(System.String)" /> method to decode tokens transmitted on the URL and encoded by using the <see cref="M:System.Web.HttpServerUtility.UrlTokenEncode(System.Byte[])" />.</para>
+          <para>The <see cref="M:System.Web.HttpServerUtility.UrlTokenDecode(System.String)" /> method will return an empty byte array if the <paramref name="input" /> parameter has a length of less than one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes a URL string token to its equivalent byte array using base 64 digits.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte array containing the decoded URL string token.</para>
+        </returns>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL string token to decode.</param>
       </Docs>
     </Member>
     <Member MemberName="UrlTokenEncode">
@@ -544,10 +810,21 @@
         <Parameter Name="input" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpServerUtility.UrlTokenEncode(System.Byte[])" /> method converts a byte array into an equivalent string representation encoded with base 64 digits. The resulting string token can be transmitted on the URL.</para>
+          <para>The <see cref="M:System.Web.HttpServerUtility.UrlTokenEncode(System.Byte[])" /> will return an empty string if the <paramref name="input" /> parameter has a length of less than one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes a byte array into its equivalent string representation using base 64 digits, which is usable for transmission on the URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string containing the encoded token if the byte array length is greater than one; otherwise, an empty string ("").</para>
+        </returns>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to encode.</param>
       </Docs>
     </Member>
   </Members>

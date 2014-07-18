@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyLoadEventArgs" FullName="System.AssemblyLoadEventArgs" FullNameSP="System_AssemblyLoadEventArgs" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public AssemblyLoadEventArgs extends System.EventArgs" />
   <TypeSignature Language="C#" Value="public class AssemblyLoadEventArgs : EventArgs" />
@@ -21,15 +22,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Provides access to the <see cref="T:System.Reflection.Assembly" /> that was loaded causing a <see cref="F:System.AppDomain.AssemblyLoad" /> event.</para>
-    </summary>
     <remarks>
       <para>
         <block subset="none" type="note">This class provides the loaded assembly via the <see cref="P:System.AssemblyLoadEventArgs.LoadedAssembly" />
 property.</block>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.AppDomain.AssemblyLoad" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -47,14 +49,16 @@ property.</block>
         <Parameter Name="loadedAssembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="loadedAssembly">A <see cref="T:System.Reflection.Assembly" /> representing the loaded assembly.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.AssemblyLoadEventArgs" /> class.</para>
-        </summary>
         <remarks>
           <para>The <see cref="P:System.AssemblyLoadEventArgs.LoadedAssembly" /> property is initialized using 
 <paramref name="loadedAssembly" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AssemblyLoadEventArgs" /> class using the specified <see cref="T:System.Reflection.Assembly" />.</para>
+        </summary>
+        <param name="loadedAssembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance that represents the currently loaded assembly. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -73,21 +77,18 @@ property.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Reflection.Assembly" /> instance that represents the assembly for
- which an <see langword="AssemblyLoad" /> event was raised.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Reflection.Assembly" />
 representing the assembly that has been loaded.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">The value of this
- property is set by the system when it raises a <see cref="F:System.AppDomain.AssemblyLoad" /> event.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is set by the common language runtime when the <see cref="E:System.AppDomain.AssemblyLoad" /> event occurs.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Reflection.Assembly" /> that represents the currently loaded assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

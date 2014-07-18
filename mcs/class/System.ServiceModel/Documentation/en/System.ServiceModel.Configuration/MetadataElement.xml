@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MetadataElement" FullName="System.ServiceModel.Configuration.MetadataElement">
   <TypeSignature Language="C#" Value="public sealed class MetadataElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MetadataElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies how service metadata can be processed. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.MetadataElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadPolicyImportExtensions">
@@ -39,9 +46,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a collection of <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> objects used to import custom policy assertions about bindings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> objects used to import custom policy assertions about bindings.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadWsdlImportExtensions">
@@ -56,9 +69,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a collection of <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> objects used to import custom WSDL information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> objects used to import custom WSDL information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PolicyImporters">
@@ -77,9 +96,15 @@
         <ReturnType>System.ServiceModel.Configuration.PolicyImporterElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A policy importer is used to search custom policy assertions about binding features, as well as attach a custom binding element that implements the features the assertion requires.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of policy importers that specifies the import of custom policy assertions about bindings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -114,9 +139,16 @@
         <ReturnType>System.ServiceModel.Configuration.WsdlImporterElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.WsdlImporter" /> is used to import metadata as well as convert that information into various classes that represent contract and endpoint information.</para>
+          <para>It can selectively import contract and endpoint information and properties that expose any import errors and accept type information relevant to the import and conversion process. It also supports importing binding information and properties that provide access to any policy documents, WSDL documents, WSDL extensions, and XML schema documents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of WSDL importers that imports Web Services Description Language (WSDL) 1.1 metadata with WS-Policy attachments.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

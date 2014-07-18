@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleGroup" FullName="System.Web.UI.WebControls.RoleGroup">
   <TypeSignature Language="C#" Value="public sealed class RoleGroup" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.LoginView" /> control to define a set of content templates that contain the content that is displayed to Web site users based on the role assigned by Web site administrators. The <see cref="T:System.Web.UI.WebControls.RoleGroup" /> class is used by the <see cref="T:System.Web.UI.WebControls.LoginView" /> control to associate a content template with a set of roles.</para>
+      <para>To dynamically assign a template to the role group, set the <see cref="P:System.Web.UI.WebControls.RoleGroup.ContentTemplate" /> property to a reference to an object that implements the <see cref="T:System.Web.UI.ITemplate" /> interface.</para>
+      <para>You must configure role management to use the <see cref="T:System.Web.UI.WebControls.RoleGroup" /> class. For more information, see <format type="text/html"><a href="A0D2F19D-A2A7-496D-88B6-30133F8EA3D6">Understanding Role Management</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Associates a content template in a <see cref="T:System.Web.UI.WebControls.LoginView" /> control with one or more roles defined for the Web site. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.RoleGroup" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.RoleGroup" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,11 +52,22 @@
         <Parameter Name="user" Type="System.Security.Principal.IPrincipal" />
       </Parameters>
       <Docs>
-        <param name="user">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.RoleGroup.ContainsUser(System.Security.Principal.IPrincipal)" /> method returns true if the specified user is a member of any of the roles associated with this role group. Roles are searched in the order they are listed in the <see cref="P:System.Web.UI.WebControls.RoleGroup.Roles" /> property, and searching stops after the first match is found.</para>
+          <para>This method uses the <see cref="M:System.Web.Security.Roles.IsUserInRole(System.String,System.String)" /> method to determine whether a user is a member of a role. You must configure role management to use the <see cref="M:System.Web.UI.WebControls.RoleGroup.ContainsUser(System.Security.Principal.IPrincipal)" /> method. For more information, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding ASP.NET Role Management</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified user is a member of any of the roles in the role group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user is a member of one of the roles associated with this role group; otherwise, false.</para>
+        </returns>
+        <param name="user">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to look for in the role group. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -68,10 +94,16 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RoleGroup.ContentTemplate" /> property contains the content that is displayed to users who are members of this role group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the content template associated with this role group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -89,10 +121,13 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the roles associated with this role group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,10 +141,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.RoleGroup.ToString" /> method returns the contents of the <see cref="P:System.Web.UI.WebControls.RoleGroup.Roles" /> property as a comma-separated list of roles associated with the role group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a comma-separated list of the roles associated with this role group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A comma-separated list of the roles associated with this role group.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

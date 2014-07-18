@@ -874,6 +874,7 @@ expand_items()
     maxitems += 300;
     pitem = (bucket **) REALLOC(pitem, maxitems*sizeof(bucket *));
     if (pitem == 0) no_space();
+    memset(pitem+maxitems-300, 0, 300*sizeof(bucket *));
 }
 
 
@@ -958,6 +959,8 @@ end_rule()
 {
     register int i;
 
+    if (nitems >= maxitems) expand_items();
+
     if (!last_was_action && plhs[nrules]->tag)
     {
 	for (i = nitems - 1; pitem[i]; --i) continue;
@@ -966,7 +969,6 @@ end_rule()
     }					/** bug: could be superclass... **/
 
     last_was_action = 0;
-    if (nitems >= maxitems) expand_items();
     pitem[nitems] = 0;
     ++nitems;
     ++nrules;

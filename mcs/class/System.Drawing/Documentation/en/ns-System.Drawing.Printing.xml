@@ -1,6 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Drawing.Printing">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Drawing.Printing" /> namespace provides print-related services for Windows Forms applications.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, when you print from a Windows Forms application, you create a new instance of the <see cref="T:System.Drawing.Printing.PrintDocument" /> class, set properties, such as <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> and <see cref="P:System.Drawing.Printing.PrintDocument.PrinterSettings" />, that describe how to print, and call the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method to actually print the document. Calling the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event, which should be handled to perform the document layout for printing.</para>
+      <para>Use the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Graphics" /> property of the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> object obtained from the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event to specify the output to print. If you are printing a text file, use <see cref="T:System.IO.StreamReader" /> to read one line at a time from the stream and call the <see cref="M:System.Drawing.Graphics.DrawString(System.String,System.Drawing.Font,System.Drawing.Brush,System.Drawing.PointF)" /> method to draw the line in the graphics object. For more information about this process, see the <see cref="T:System.Drawing.Graphics" /> and <see cref="T:System.IO.StreamReader" /> classes. You can view an example of printing a text document in the <see cref="T:System.Drawing.Printing.PrintDocument" /> class overview topic.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods of the <see cref="T:System.Windows.Forms.TextRenderer" /> class are not supported for printing. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+      </block>
+      <para>When implemented in a derived class, the <see cref="T:System.Drawing.Printing.PrintController" /> controls how a <see cref="T:System.Drawing.Printing.PrintDocument" /> is printed. The <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method invokes the print controller's <see cref="M:System.Drawing.Printing.PrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" />, <see cref="M:System.Drawing.Printing.PrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" />, <see cref="M:System.Drawing.Printing.PrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" />, and <see cref="M:System.Drawing.Printing.PrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> methods, which in turn tell the printer how to print the document. For more information about printing dialog boxes, see <see cref="T:System.Windows.Forms.PrintDialog" /> and <see cref="T:System.Windows.Forms.PageSetupDialog" />.</para>
+      <para>The print-preview process uses a specialized print controller, dialog box, and control. For an example of such a print controller and dialog box, see <see cref="T:System.Drawing.Printing.PreviewPrintController" />, <see cref="T:System.Windows.Forms.PrintPreviewDialog" />, and <see cref="T:System.Windows.Forms.PrintPreviewControl" />.</para>
+      <block subset="none" type="note">
+        <para>Classes within the <see cref="N:System.Drawing.Printing" /> namespace are not supported for use within a Windows service or ASP.NET application or service. Attempting to use these classes from within one of these application types may produce unexpected problems, such as diminished service performance and run-time exceptions.</para>
+      </block>
+      <para>If you want to print from a Windows Presentation Foundation (WPF) application, see the <see cref="N:System.Printing" /> namespace.</para>
+    </remarks>
   </Docs>
 </Namespace>

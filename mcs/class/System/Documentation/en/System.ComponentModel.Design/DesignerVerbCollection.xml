@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerVerbCollection" FullName="System.ComponentModel.Design.DesignerVerbCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DesignerVerbCollection : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DesignerVerbCollection extends System.Collections.CollectionBase" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides a collection that can contain <see cref="T:System.ComponentModel.Design.DesignerVerb" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ComponentModel.Design.DesignerVerb" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +44,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a default empty collection constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +68,13 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" /> class using the specified array of <see cref="T:System.ComponentModel.Design.DesignerVerb" /> objects.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.DesignerVerb" /> array that indicates the verbs to contain within the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -76,10 +93,17 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index in the collection at which the verb was added.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -98,9 +122,13 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified set of designer verbs to the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.Design.DesignerVerb" /> objects to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -119,9 +147,13 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerbCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerbCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified collection of designer verbs to the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" /> to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -140,10 +172,17 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to search for in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -163,10 +202,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'DesignerVerb []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection members to the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> array beginning at the specified destination index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to copy collection members to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination index to begin copying to. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -185,10 +229,17 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified object if it is found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> whose index to get in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -208,10 +259,15 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the collection at which to insert the verb. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to insert in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -250,8 +306,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inheritors can override this method to add behavior for the Clear event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Clear event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnInsert">
@@ -271,10 +333,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inheritors can override this method to add behavior for the Insert event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Insert event.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to insert an item. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="OnRemove">
@@ -294,10 +364,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inheritors can override this method to add behavior for the Remove event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Remove event.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to remove the item. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSet">
@@ -318,11 +396,20 @@
         <Parameter Name="newValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="oldValue">To be added: an object of type 'object'</param>
-        <param name="newValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inheritors can override this method to add behavior for the Set event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Set event.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to set the item. </param>
+        <param name="oldValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old object. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new object. </param>
       </Docs>
     </Member>
     <Member MemberName="OnValidate">
@@ -341,9 +428,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inheritors can override this method to add behavior for the Validate event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Validate event.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate. </param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -362,9 +456,13 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to remove from the collection. </param>
       </Docs>
     </Member>
   </Members>

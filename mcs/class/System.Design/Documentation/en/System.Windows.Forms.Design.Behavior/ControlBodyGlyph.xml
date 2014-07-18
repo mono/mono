@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlBodyGlyph" FullName="System.Windows.Forms.Design.Behavior.ControlBodyGlyph">
   <TypeSignature Language="C#" Value="public class ControlBodyGlyph : System.Windows.Forms.Design.Behavior.ComponentGlyph" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is placed on every control and is sized to the exact bounds of each control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Associates a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> with its control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,12 +33,19 @@
         <Parameter Name="behavior" Type="System.Windows.Forms.Design.Behavior.Behavior" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <param name="cursor">To be added.</param>
-        <param name="relatedComponent">To be added.</param>
-        <param name="behavior">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.ControlBodyGlyph" /> class.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</param>
+        <param name="cursor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> that represents the cursor to display when the mouse pointer is over the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</param>
+        <param name="relatedComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component with which the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated.</param>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> with which the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,12 +61,19 @@
         <Parameter Name="designer" Type="System.Windows.Forms.Design.ControlDesigner" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <param name="cursor">To be added.</param>
-        <param name="relatedComponent">To be added.</param>
-        <param name="designer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.ControlBodyGlyph" /> class.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</param>
+        <param name="cursor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> that represents the cursor to display when the mouse pointer is over the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</param>
+        <param name="relatedComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component with which the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated.</param>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> with which the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated.</param>
       </Docs>
     </Member>
     <Member MemberName="Bounds">
@@ -65,9 +86,12 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounds of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHitTest">
@@ -83,10 +107,17 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="p">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a mouse click at the specified point should be handled by the <see cref="T:System.Windows.Forms.Design.Behavior.ControlBodyGlyph" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Cursor" /> if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated with <paramref name="p" />; otherwise, null.</para>
+        </returns>
+        <param name="p">
+          <attribution license="cc4" from="Microsoft" modified="false" />A point to hit test.</param>
       </Docs>
     </Member>
   </Members>

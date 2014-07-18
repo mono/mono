@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Hosting" FullName="System.Web.Hosting" FullNameSP="System.Web.Hosting" Maintainer="Mono">
   <Docs>
-    <summary>
-    </summary>
     <remarks>
       <para>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Hosting" /> namespace provides the functionality for hosting ASP.NET applications from managed applications outside Microsoft Internet Information Services (IIS).</para>
+    </summary>
   </Docs>
 </Namespace>

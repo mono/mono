@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbTransaction" FullName="System.Data.OleDb.OleDbTransaction">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OleDbTransaction : System.Data.Common.DbTransaction" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The application creates an <see cref="T:System.Data.OleDb.OleDbTransaction" /> object by calling <see cref="M:System.Data.OleDb.OleDbConnection.BeginTransaction" /> on the <see cref="T:System.Data.OleDb.OleDbConnection" /> object. All subsequent operations associated with the transaction (for example, committing or aborting the transaction), are performed on the <see cref="T:System.Data.OleDb.OleDbTransaction" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an SQL transaction to be made at a data source. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Begin">
@@ -26,9 +33,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'OleDbTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new transaction is nested within the current transaction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a nested database transaction.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nested database transaction.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,10 +61,20 @@
         <Parameter Name="isolevel" Type="System.Data.IsolationLevel" />
       </Parameters>
       <Docs>
-        <param name="isolevel">To be added: an object of type 'Data.IsolationLevel'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'OleDbTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new transaction is nested within the current transaction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a nested database transaction and specifies the isolation level to use for the new transaction.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nested database transaction.</para>
+        </returns>
+        <param name="isolevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The isolation level to use for the transaction. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,8 +89,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits the database transaction.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,9 +107,15 @@
         <ReturnType>System.Data.OleDb.OleDbConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OleDbConnection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single application may have multiple database connections, each with zero or more transactions. This property lets you determine the connection object associated with a particular transaction created by <see cref="M:System.Data.OleDb.OleDbConnection.BeginTransaction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.OleDb.OleDbConnection" /> object associated with the transaction, or null if the transaction is no longer valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,9 +177,15 @@
         <ReturnType>System.Data.IsolationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.IsolationLevel'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parallel transactions are not supported. Therefore, the <see cref="T:System.Data.IsolationLevel" /> applies to the whole transaction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Data.IsolationLevel" /> for this transaction.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,8 +200,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transaction can only be rolled back from a pending state (after <see cref="M:System.Data.OleDb.OleDbConnection.BeginTransaction" /> has been called, but before <see cref="M:System.Data.OleDb.OleDbTransaction.Commit" /> is called). The transaction will be rolled back in the event it is disposed before Commit or Rollback is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rolls back a transaction from a pending state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

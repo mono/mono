@@ -276,9 +276,15 @@ endif
 
 # Create monow.exe, linked for the 'windows' subsystem
 if HOST_WIN32
+if SUPPORT_BOEHM
 monow_LDADD = $(mono_boehm_LDADD)
 monow_LDFLAGS = $(mono_boehm_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_boehm_SOURCES)
+else
+monow_LDADD = $(mono_sgen_LDADD)
+monow_LDFLAGS = $(mono_sgen_LDFLAGS) -mwindows
+monow_SOURCES = $(mono_sgen_SOURCES)
+endif
 endif
 
 genmdesc_SOURCES = \
@@ -316,6 +322,12 @@ arm_sources = \
 	mini-arm.h		\
 	exceptions-arm.c	\
 	tramp-arm.c
+
+arm64_sources = \
+	mini-arm64.c		\
+	mini-arm64.h		\
+	exceptions-arm64.c	\
+	tramp-arm64.c
 
 mips_sources = \
 	mini-mips.c		\
@@ -420,7 +432,8 @@ common_sources = \
 	xdebug.c			\
 	mini-llvm.h			\
 	mini-llvm-cpp.h	\
-	alias-analysis.c
+	alias-analysis.c	\
+	mini-cross-helpers.c
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -484,6 +497,12 @@ ARCH_CFLAGS = -I../arch/arm
 arch_sources = $(arm_sources)
 arch_built=cpu-arm.h
 arch_define=__arm__
+endif
+
+if ARM64
+arch_sources = $(arm64_sources)
+arch_built=cpu-arm64.h
+arch_define=__aarch64__
 endif
 
 if SPARC
@@ -614,6 +633,9 @@ cpu-ppc64.h: cpu-ppc64.md genmdesc$(EXEEXT)
 cpu-arm.h: cpu-arm.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) cpu-arm.h arm_cpu_desc $(srcdir)/cpu-arm.md
 
+cpu-arm64.h: cpu-arm64.md genmdesc$(EXEEXT)
+	$(GENMDESC_PRG) cpu-arm64.h arm64_cpu_desc $(srcdir)/cpu-arm64.md
+
 cpu-sparc.h: cpu-sparc.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) cpu-sparc.h sparc_desc $(srcdir)/cpu-sparc.md
 
@@ -718,6 +740,7 @@ EXTRA_DIST = TestDriver.cs ldscript ldscript.mono \
 	$(amd64_sources) cpu-amd64.md 		\
 	$(ppc_sources) cpu-ppc.md cpu-ppc64.md 	\
 	$(arm_sources) cpu-arm.md 		\
+	$(arm64_sources) cpu-arm64.md 		\
 	$(mips_sources) cpu-mips.md 		\
 	$(sparc_sources) cpu-sparc.md 		\
 	$(s390x_sources) cpu-s390x.md 		\

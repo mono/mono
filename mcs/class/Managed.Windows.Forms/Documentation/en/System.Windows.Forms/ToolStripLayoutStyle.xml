@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripLayoutStyle" FullName="System.Windows.Forms.ToolStripLayoutStyle">
   <TypeSignature Language="C#" Value="public enum ToolStripLayoutStyle" />
   <AssemblyInfo>
@@ -8,9 +9,95 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You control <see cref="T:System.Windows.Forms.ToolStrip" /> layout by choosing one of the members of <see cref="T:System.Windows.Forms.ToolStripLayoutStyle" /> with the <see cref="P:System.Windows.Forms.ToolStrip.LayoutStyle" /> property.</para>
+      <format type="text/html">
+        <h2>Stack Layouts</h2>
+      </format>
+      <para>Stacking is the arranging of items beside each other at both ends of the <see cref="T:System.Windows.Forms.ToolStrip" />. The following list describes the stack layouts.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.StackWithOverflow" /> is the default. This setting causes the <see cref="T:System.Windows.Forms.ToolStrip" /> to alter its layout automatically in accordance with the <see cref="P:System.Windows.Forms.ToolStrip.Orientation" /> property to handle dragging and docking scenarios. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow" /> renders the <see cref="T:System.Windows.Forms.ToolStrip" /> items beside each other vertically.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow" /> renders the <see cref="T:System.Windows.Forms.ToolStrip" /> items beside each other horizontally.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Other Features of Stack Layouts</h2>
+      </format>
+      <para>
+        <see cref="P:System.Windows.Forms.ToolStripItem.Alignment" /> determines the end of the <see cref="T:System.Windows.Forms.ToolStrip" /> to which the item is aligned.</para>
+      <para>When items do not fit within the <see cref="T:System.Windows.Forms.ToolStrip" />, an overflow button automatically appears. The <see cref="P:System.Windows.Forms.ToolStripItem.Overflow" /> property setting determines whether an item appears in the overflow area always, as needed, or never. </para>
+      <para>In the <see cref="E:System.Windows.Forms.ToolStrip.LayoutCompleted" /> event, you can inspect the <see cref="P:System.Windows.Forms.ToolStripItem.Placement" /> property to determine whether an item was placed on the main <see cref="T:System.Windows.Forms.ToolStrip" />, the overflow <see cref="T:System.Windows.Forms.ToolStrip" />, or if it is not currently showing at all. The typical reasons why an item is not displayed are that the item did not fit on the main <see cref="T:System.Windows.Forms.ToolStrip" /> and its <see cref="P:System.Windows.Forms.ToolStripItem.Overflow" /> property was set to <see cref="F:System.Windows.Forms.ToolStripItemOverflow.Never" />.</para>
+      <para>Make a <see cref="T:System.Windows.Forms.ToolStrip" /> movable by putting it in a <see cref="T:System.Windows.Forms.ToolStripPanel" /> and setting its <see cref="P:System.Windows.Forms.ToolStrip.GripStyle" /> to <see cref="F:System.Windows.Forms.ToolStripGripStyle.Visible" />.</para>
+      <format type="text/html">
+        <h2>Other Layout Options</h2>
+      </format>
+      <para>The other layout options are <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Flow" /> and <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Table" />.</para>
+      <format type="text/html">
+        <h2>Flow Layout</h2>
+      </format>
+      <para>
+        <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Flow" /> layout is the default for <see cref="T:System.Windows.Forms.ContextMenuStrip" />, <see cref="T:System.Windows.Forms.ToolStripDropDownMenu" />, and <see cref="T:System.Windows.Forms.ToolStripOverflow" />. It is similar to the <see cref="T:System.Windows.Forms.FlowLayoutPanel" />. The features of <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Flow" /> layout are as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>All of the features of <see cref="T:System.Windows.Forms.FlowLayoutPanel" /> are exposed by the <see cref="P:System.Windows.Forms.ToolStrip.LayoutSettings" /> property. You must cast the <see cref="T:System.Windows.Forms.LayoutSettings" /> class to a <see cref="T:System.Windows.Forms.FlowLayoutSettings" /> class.</para>
+        </item>
+        <item>
+          <para>You can use the <see cref="P:System.Windows.Forms.ToolStripItem.Dock" /> and <see cref="P:System.Windows.Forms.ToolStripItem.Anchor" /> properties in code to align the items within the row.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Windows.Forms.ToolStripItem.Alignment" /> property is ignored.</para>
+        </item>
+        <item>
+          <para>In the <see cref="E:System.Windows.Forms.ToolStrip.LayoutCompleted" /> event, you can inspect the <see cref="P:System.Windows.Forms.ToolStripItem.Placement" /> property to determine whether an item was placed on the main <see cref="T:System.Windows.Forms.ToolStrip" /> or did not fit.</para>
+        </item>
+        <item>
+          <para>The grip is not rendered, and therefore a <see cref="T:System.Windows.Forms.ToolStrip" /> in <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Flow" /> layout style in a <see cref="T:System.Windows.Forms.ToolStripPanel" /> cannot be moved.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Windows.Forms.ToolStrip" /> overflow button is not rendered, and <see cref="P:System.Windows.Forms.ToolStripItem.Overflow" /> is ignored.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Table Layout</h2>
+      </format>
+      <para>
+        <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Table" /> layout is the default for <see cref="T:System.Windows.Forms.StatusStrip" />. It is similar to <see cref="T:System.Windows.Forms.TableLayoutPanel" />. The features of <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Table" /> layout are as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>All of the features of <see cref="T:System.Windows.Forms.TableLayoutPanel" /> are exposed by the <see cref="P:System.Windows.Forms.ToolStrip.LayoutSettings" /> property. You must cast the <see cref="T:System.Windows.Forms.LayoutSettings" /> class to a <see cref="T:System.Windows.Forms.TableLayoutSettings" /> class.</para>
+        </item>
+        <item>
+          <para>You can use the <see cref="P:System.Windows.Forms.ToolStripItem.Dock" /> and <see cref="P:System.Windows.Forms.ToolStripItem.Anchor" /> properties in code to align the items within the table cell.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Windows.Forms.ToolStripItem.Alignment" /> property is ignored.</para>
+        </item>
+        <item>
+          <para>In the <see cref="E:System.Windows.Forms.ToolStrip.LayoutCompleted" /> event, you can inspect the <see cref="P:System.Windows.Forms.ToolStripItem.Placement" /> property to determine whether an item was placed on the main <see cref="T:System.Windows.Forms.ToolStrip" /> or did not fit.</para>
+        </item>
+        <item>
+          <para>The grip is not rendered, and therefore a <see cref="T:System.Windows.Forms.ToolStrip" /> in <see cref="F:System.Windows.Forms.ToolStripLayoutStyle.Table" /> layout style in a <see cref="T:System.Windows.Forms.ToolStripPanel" /> cannot be moved.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Windows.Forms.ToolStrip" /> overflow button is not rendered, and <see cref="P:System.Windows.Forms.ToolStripItem.Overflow" /> is ignored.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the possible alignments with which the items of a <see cref="T:System.Windows.Forms.ToolStrip" /> can be displayed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Flow">
@@ -20,8 +107,11 @@
         <ReturnType>System.Windows.Forms.ToolStripLayoutStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that items flow horizontally or vertically as necessary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +124,11 @@
         <ReturnType>System.Windows.Forms.ToolStripLayoutStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that items are laid out horizontally and overflow as necessary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +141,11 @@
         <ReturnType>System.Windows.Forms.ToolStripLayoutStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that items are laid out automatically.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +158,11 @@
         <ReturnType>System.Windows.Forms.ToolStripLayoutStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that items are laid out flush left.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +175,11 @@
         <ReturnType>System.Windows.Forms.ToolStripLayoutStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that items are laid out vertically, are centered within the control, and overflow as necessary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

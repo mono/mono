@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExportDefinition" FullName="System.ComponentModel.Composition.Primitives.ExportDefinition">
   <TypeSignature Language="C#" Value="public class ExportDefinition" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExportDefinition extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the contract that a particular <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object satisfies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived types that call this constructor must override the <see cref="P:System.ComponentModel.Composition.Primitives.ExportDefinition.ContractName" /> property and optionally, the <see cref="P:System.ComponentModel.Composition.Primitives.ExportDefinition.Metadata" /> property. By default, <see cref="P:System.ComponentModel.Composition.Primitives.ExportDefinition.Metadata" /> returns an empty, read-only dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +49,15 @@
         <Parameter Name="metadata" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="metadata">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> class with the specified contract name and metadata.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> object.</param>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata of the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.ExportDefinition.Metadata" /> property to an empty, read-only <see cref="T:System.Collections.Generic.IDictionary`2" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="ContractName">
@@ -56,9 +71,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides of this property should never return null or an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contract name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Metadata">
@@ -72,9 +93,16 @@
         <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides of this property should return a read-only <see cref="T:System.Collections.Generic.IDictionary`2" /> object with a case-sensitive, non-linguistic comparer, such as <see cref="P:System.StringComparer.Ordinal" />, and should never return null.</para>
+          <para>If the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> does not contain metadata, return an empty <see cref="T:System.Collections.Generic.IDictionary`2" /> instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contract metadata.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -89,9 +117,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the export definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the export definition.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.CodeDom.Compiler">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.CodeDom.Compiler" /> namespace contains types for managing the generation and compilation of source code in supported programming languages. Code generators can each produce source code in a particular programming language based on the structure of Code Document Object Model (CodeDOM) source code models consisting of elements provided by the <see cref="N:System.CodeDom" /> namespace.</para>
+    </summary>
   </Docs>
 </Namespace>

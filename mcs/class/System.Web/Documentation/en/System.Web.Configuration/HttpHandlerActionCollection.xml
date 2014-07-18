@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpHandlerActionCollection" FullName="System.Web.Configuration.HttpHandlerActionCollection">
   <TypeSignature Language="C#" Value="public sealed class HttpHandlerActionCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.HttpHandlerActionCollection" /> collection type allows access to the <see cref="T:System.Web.Configuration.HttpHandlerAction" /> elements of the <format type="text/html"><a href="24ca01f3-7141-4fdc-acac-71c0733cf6c2">httpHandlers</a></format> configuration configuration section.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.Configuration.HttpHandlerAction" /> elements. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +31,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.HttpHandlerActionCollection.#ctor" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.HttpHandlerActionCollection" /> class by using the <see cref="P:System.Web.Configuration.HttpHandlersSection.Handlers" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.HttpHandlerActionCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +55,21 @@
         <Parameter Name="httpHandlerAction" Type="System.Web.Configuration.HttpHandlerAction" />
       </Parameters>
       <Docs>
-        <param name="httpHandlerAction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before using this method you must create an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object and initialize it with the proper name and type. After that, you can add the object just created to the collection. </para>
+          <block subset="none" type="note">
+            <para>ASP.NET searches for the handler assembly DLL in the application's private Bin directory first, and then it searches in the system assembly cache.</para>
+          </block>
+          <para>The collection must not already contain an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object with the same <see cref="P:System.Web.Configuration.HttpHandlerAction.Verb" /> and <see cref="P:System.Web.Configuration.HttpHandlerAction.Path" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object to the collection.</para>
+        </summary>
+        <param name="httpHandlerAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,9 +83,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method inserts a clear directive into the appropriate section of the configuration file to clear all references to elements defined in a higher-level configuration file. All elements defined in the appropriate section of the current configuration file are removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all <see cref="T:System.Web.Configuration.HttpHandlerAction" /> objects from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +104,13 @@
         <ReturnType>System.Configuration.ConfigurationElementCollectionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of <see cref="T:System.Web.Configuration.HttpHandlerActionCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,11 +163,21 @@
         <Parameter Name="action" Type="System.Web.Configuration.HttpHandlerAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before using this method, you must identify an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object with the proper name and type. You can then use this object to get its collection index.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection index of the specified <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection index value.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object for which to get the collection index. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -186,10 +229,17 @@
         <Parameter Name="action" Type="System.Web.Configuration.HttpHandlerAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method inserts a remove element into the appropriate section of the configuration file for any element defined in a higher-level configuration file. If the element is defined in the appropriate section of the current configuration file, its entry is removed from the configuration file. The object to remove must exist in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object from the collection.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,11 +256,19 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method inserts a remove element into the appropriate section of the configuration file for any element defined in a higher-level configuration file. If the element is defined in the appropriate section of the current configuration file, its entry is removed from the configuration file. The object to remove must exist in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object with the specified <see cref="P:System.Web.Configuration.HttpHandlerAction.Verb" /> and <see cref="P:System.Web.Configuration.HttpHandlerAction.Path" /> properties from the collection.</para>
+        </summary>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.Configuration.HttpHandlerAction.Verb" /> property value that belongs to the handler to remove.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.Configuration.HttpHandlerAction.Path" /> property value that belongs to the handler to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -226,10 +284,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method inserts a remove element into the appropriate section of the configuration file for any element defined in a higher-level configuration file. If the element is defined in the appropriate section of the current configuration file, its entry is removed from the configuration file. The object to remove must exist in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an <see cref="T:System.Web.Configuration.HttpHandlerAction" /> object at the specified index location from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the object to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

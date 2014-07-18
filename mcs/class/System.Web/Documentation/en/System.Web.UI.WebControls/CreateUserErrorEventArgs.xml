@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CreateUserErrorEventArgs" FullName="System.Web.UI.WebControls.CreateUserErrorEventArgs">
   <TypeSignature Language="C#" Value="public class CreateUserErrorEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreateUserError" /> event is raised when an attempt to create a new user with the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control fails. The <see cref="T:System.Web.UI.WebControls.CreateUserErrorEventArgs" /> class provides the <see cref="P:System.Web.UI.WebControls.CreateUserErrorEventArgs.CreateUserError" /> property to indicate the <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration value that corresponds to the error that occurred.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreateUserError" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +29,12 @@
       </Parameters>
       <Docs>
         <param name="status">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CreateUserErrorEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +47,16 @@
         <ReturnType>System.Web.Security.MembershipCreateStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CreateUserErrorEventArgs.CreateUserError" /> property indicates the <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration value that corresponds to the error that occurred during the <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatingUser" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the result of a <see cref="E:System.Web.UI.WebControls.CreateUserWizard.CreatingUser" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

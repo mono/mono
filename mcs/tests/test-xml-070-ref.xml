@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-070</name>
+    </assembly>
+    <members>
+        <member name="T:I">
+            <summary>
+            Test base <see cref="!:ToString" /></summary>
+        </member>
+        <member name="M:X.Main">
+            <returns>
+                <see cref="T:System.Void" />
+            </returns>
+        </member>
+    </members>
+</doc>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDisposedException" FullName="System.ObjectDisposedException" FullNameSP="System_ObjectDisposedException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable ObjectDisposedException extends System.InvalidOperationException" />
   <TypeSignature Language="C#" Value="public class ObjectDisposedException : InvalidOperationException" />
@@ -21,10 +22,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Represents the error that occurs when an operation is
-      performed on a disposed object.</para>
-    </summary>
     <remarks>
       <para>
         <block subset="none" type="note">For additional information about
@@ -55,6 +52,10 @@ public class ObjectDisposedExceptionTest {
         <para>Caught: Cannot access a closed Stream.</para>
       </c>
     </example>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an operation is performed on a disposed object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -72,24 +73,6 @@ public class ObjectDisposedExceptionTest {
         <Parameter Name="objectName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="objectName">A <see cref="T:System.String" /> containing the name of the disposed object.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.ObjectDisposedException.ObjectName" /> property of the new instance
-   using <paramref name="objectName. " /> The <see cref="P:System.ObjectDisposedException.Message" /> property is initialized to a system-supplied message that describes the
-   error<paramref name=" " />and
-   includes <paramref name="objectname" /> . This message takes into account the
-   current system culture. </para>
-          <para>The <see cref="!:System.ObjectDisposedException.InnerException" /> property of the new instance is
-initialized to <see langword="null" />.</para>
-          <para>
-            <block subset="none" type="note">If <paramref name="objectName" /> is
-<see langword="null" />, the <see cref="P:System.ObjectDisposedException.Message" /> property 
-contains only an error message.</block>
-          </para>
-        </remarks>
         <example>
           <para>The following example displays the error message of a
    <see cref="T:System.ObjectDisposedException" /> instance created
@@ -147,6 +130,18 @@ public class ExampleDisposableObject : IDisposable {
             <para>Object name: "ExampleDisposableObject".</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ObjectDisposedException.Message" /> property is initialized to a system-supplied message that describes the error and includes the <paramref name="objectName" /> parameter. This message takes into account the current system culture.</para>
+          <para>The InnerException property of the new instance is initialized to null.</para>
+          <para>If <paramref name="objectName" /> is null, the Message property contains only an error message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class with a string containing the name of the disposed object.</para>
+        </summary>
+        <param name="objectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name of the disposed object. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -164,10 +159,15 @@ public class ExampleDisposableObject : IDisposable {
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -183,11 +183,19 @@ public class ExampleDisposableObject : IDisposable {
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If <paramref name="innerException" /> is not null, the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -206,21 +214,6 @@ public class ExampleDisposableObject : IDisposable {
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="objectName">A <see cref="T:System.String" /> containing the name of the disposed object.</param>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="message">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.ObjectDisposedException.Message" /> property of the new instance
-   using <paramref name="message" />, and the <see cref="P:System.ObjectDisposedException.ObjectName" /> property using
-<paramref name="objectName" /> . If <paramref name="message" /> is 
-<see langword="null" />, the <see cref="P:System.ObjectDisposedException.Message" /> property is initialized to the system-supplied message 
-   provided by the constructor that takes no arguments.</para>
-          <para>The <see cref="!:System.ObjectDisposedException.InnerException" /> property of the new instance is
-initialized to <see langword="null" />.</para>
-        </remarks>
         <example>
           <para>The following example throws a <see cref="T:System.ObjectDisposedException" /> instance created using this
    constructor.</para>
@@ -280,6 +273,21 @@ public class ExampleDisposableObject : IDisposable {
             <para>Object name: "ExampleDisposableObject".</para>
           </c>
         </example>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The InnerException property of the new instance is initialized to null.</para>
+          <para>If <paramref name="objectName" /> is null, the Message property contains only an error message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ObjectDisposedException" /> class with the specified object name and message.</para>
+        </summary>
+        <param name="objectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the disposed object. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -300,10 +308,15 @@ public class ExampleDisposableObject : IDisposable {
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the parameter name and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
     </Member>
     <Member MemberName="Message">
@@ -321,22 +334,19 @@ public class ExampleDisposableObject : IDisposable {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the message that describes the error.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> that describes
    the error. </para>
         </value>
         <remarks>
-          <para>If the <see cref="P:System.ObjectDisposedException.ObjectName" /> property is not
-<see langword="null" /> 
-, the message includes the name of the object. </para>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">This property overrides <see cref="P:System.Exception.Message" />.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ObjectDisposedException.ObjectName" /> property is not null, the message includes the name of the object.</para>
+          <para>This property overrides <see cref="P:System.Exception.Message" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message that describes the error.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -355,20 +365,17 @@ public class ExampleDisposableObject : IDisposable {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the name of the disposed object.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the name of the disposed object.</para>
         </value>
         <remarks>
-          <para>
-            <block subset="none" type="note">If this property is not <see langword="null" /> or <see cref="F:System.String.Empty" /> , the value of this property is included in the
-   string returned by the <see cref="P:System.ObjectDisposedException.Message" />
-   property. </block>
-          </para>
-          <para> This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the current property is not null or <see cref="F:System.String.Empty" />, the value of this property is included in the string returned by the <see cref="P:System.ObjectDisposedException.Message" /> property.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the disposed object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

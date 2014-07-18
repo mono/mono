@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlInputSubmit" FullName="System.Web.UI.HtmlControls.HtmlInputSubmit">
   <TypeSignature Language="C#" Value="public class HtmlInputSubmit : System.Web.UI.HtmlControls.HtmlInputButton" />
   <AssemblyInfo>
@@ -17,9 +18,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" /> class is derived from the <see cref="T:System.Web.UI.HtmlControls.HtmlInputButton" /> class and is used to create a button control on a Web page that submits a form. The <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" /> control is often used with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputReset" /> control, which resets form controls to their initial values. </para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlInputSubmit.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the HTML &lt;input type= submit&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +35,36 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "submit" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" /> class using default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +77,38 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="type" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputSubmit" /> class using the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input button type. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolLocationHelper" FullName="Microsoft.Build.Utilities.ToolLocationHelper">
   <TypeSignature Language="C#" Value="public static class ToolLocationHelper" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides utility methods for locating dnprdnshort and dnprdnshort SDK files and directories.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetDotNetFrameworkRootRegistryKey">
@@ -24,11 +28,18 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full name of the dnprdnshort root registry key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the full name of the dnprdnshort root registry key.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +55,18 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the value under the <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetDotNetFrameworkRootRegistryKey(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion)" /> that contains the dnprdnshort SDK installation path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the name of the registry key value under the <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetDotNetFrameworkRootRegistryKey(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion)" /> that contains the dnprdnshort SDK installation path.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,11 +82,21 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of the value returned is the string "v2.0".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the prefix of the dnprdnshort folder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the prefix of the dnprdnshort folder.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,11 +112,18 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a fully qualified path to the dnprdnshort root directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the dnprdnshort root directory, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort is not installed.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,12 +140,20 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a fully qualified path to a file in the dnprdnshort directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the specified file, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort is not installed.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the dnprdnshort directory.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,11 +169,18 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified path to the \bin directory of the dnprdnshort SDK.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the \bin directory of the dnprdnshort SDK, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort SDK is not installed.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -147,12 +197,24 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path for the SDK takes in consideration the processor architecture environment information for the calling process, so it might end up being ".../bin/i64", for example.</para>
+          <para>Unlike <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetPathToDotNetFrameworkFile(System.String,Microsoft.Build.Utilities.TargetDotNetFrameworkVersion)" /> and <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetPathToSystemFile(System.String)" /> this method checks for the existence of the file, so that an invalid <paramref name="fileName" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified path to a file in the dnprdnshort SDK.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the \bin directory of the dnprdnshort SDK, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort SDK is not installed.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the dnprdnshort SDK.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,11 +230,21 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This API builds the full path plus filename for a file in the System folder. It doesn't check for the existence of the file prior to returning.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a fully qualified path to a file in the system directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the the file in the system directory.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the System folder.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -185,10 +257,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of the value returned is the string "C:\WinNT\System32".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified path of the system directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

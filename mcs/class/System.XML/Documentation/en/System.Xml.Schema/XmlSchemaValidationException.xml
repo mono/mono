@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaValidationException" FullName="System.Xml.Schema.XmlSchemaValidationException">
   <TypeSignature Language="C#" Value="public class XmlSchemaValidationException : System.Xml.Schema.XmlSchemaException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit XmlSchemaValidationException extends System.Xml.Schema.XmlSchemaException" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exception thrown when XML Schema Definition Language (XSD) schema validation errors and warnings are encountered in an XML document being validated. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +30,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,10 +50,14 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> class with the exception message specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -62,11 +73,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by derived class constructors to initialize state in this type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> class with the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> objects specified.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -82,11 +101,16 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> class with the exception message and original <see cref="T:System.Exception" /> object that caused this exception specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original <see cref="T:System.Exception" /> object that caused this exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -104,13 +128,20 @@
         <Parameter Name="linePosition" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <param name="lineNumber">To be added.</param>
-        <param name="linePosition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> class with the exception message specified, and the original <see cref="T:System.Exception" /> object, line number, and line position of the XML that cause this exception specified.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string description of the error condition.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original <see cref="T:System.Exception" /> object that caused this exception.</param>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line number of the XML that caused this exception.</param>
+        <param name="linePosition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line position of the XML that caused this exception.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -129,11 +160,20 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> object with the given <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> information that contains all the properties of the <see cref="T:System.Xml.Schema.XmlSchemaValidationException" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+        </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.Serialization.StreamingContext" />
+        </param>
       </Docs>
     </Member>
     <Member MemberName="SetSourceObject">
@@ -151,10 +191,17 @@
         <Parameter Name="sourceObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sourceObject">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Exception.Source" /> property instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the XML node that causes the error.</para>
+        </summary>
+        <param name="sourceObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source object.</param>
       </Docs>
     </Member>
     <Member MemberName="SourceObject">
@@ -169,10 +216,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> is thrown during validation of a class that implements the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface such as the <see cref="T:System.Xml.XPath.XPathNavigator" /> or <see cref="T:System.Xml.XmlNode" /> class, the object returned by the <see cref="P:System.Xml.Schema.XmlSchemaValidationException.SourceObject" /> property is an instance of a class that implements the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface.</para>
+          <para>When an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> is thrown during validation by a validating <see cref="T:System.Xml.XmlReader" /> object, the value of the <see cref="P:System.Xml.Schema.XmlSchemaValidationException.SourceObject" /> property is null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML node that caused this <see cref="T:System.Xml.Schema.XmlSchemaValidationException" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

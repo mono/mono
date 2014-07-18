@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildItemGroup" FullName="Microsoft.Build.BuildEngine.BuildItemGroup">
   <TypeSignature Language="C#" Value="public class BuildItemGroup : System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> object can represent an <format type="text/html"><a href="aac894e3-a9f1-4bbc-a796-6ef07001f35b">ItemGroup</a></format> element in the project, or a virtual collection of items, containing the items created after evaluating wildcards in the <unmanagedCodeEntityReference>Include</unmanagedCodeEntityReference> and <unmanagedCodeEntityReference>Exclude</unmanagedCodeEntityReference> attributes of an <unmanagedCodeEntityReference>Item</unmanagedCodeEntityReference> element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +30,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,12 +52,20 @@
         <Parameter Name="itemInclude" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="itemName">To be added.</param>
-        <param name="itemInclude">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> with the specified <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> and <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property values to the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </returns>
+        <param name="itemName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> property value to assign the new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
+        <param name="itemInclude">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property value to assign the new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,13 +83,22 @@
         <Parameter Name="treatItemIncludeAsLiteral" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="itemName">To be added.</param>
-        <param name="itemInclude">To be added.</param>
-        <param name="treatItemIncludeAsLiteral">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> with the specified <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> and <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property values to the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />, allowing you to specify whether the <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property value is treated as a literal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </returns>
+        <param name="itemName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> property value to assign the new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
+        <param name="itemInclude">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property value to assign the new <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
+        <param name="treatItemIncludeAsLiteral">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to treat the <paramref name="itemInclude" /> parameter as a literal value; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,9 +112,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="P:Microsoft.Build.BuildEngine.BuildItemGroup.Condition" /> property value and all <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects from the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,11 +133,23 @@
         <Parameter Name="deepClone" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deepClone">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of a <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> references the same property group as the original. Modifications a shallow copy will be reflected in both copies.</para>
+          <para>A deep copy of a <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> creates a new XML element to reference so that both copies of the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> can be independently modified.</para>
+          <para>If the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> corresponds directly to a <format type="text/html"><a href="aac894e3-a9f1-4bbc-a796-6ef07001f35b">ItemGroup</a></format> element in the project (rather than corresponding to a collection of items created after evaluating wildcards in the <unmanagedCodeEntityReference>Include</unmanagedCodeEntityReference> and <unmanagedCodeEntityReference>Exclude</unmanagedCodeEntityReference> attributes of an <unmanagedCodeEntityReference>Item</unmanagedCodeEntityReference> element), only deep copies are allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a deep or shallow copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </returns>
+        <param name="deepClone">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a deep copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,10 +162,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <unmanagedCodeEntityReference>Condition</unmanagedCodeEntityReference> attribute value of the item group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,10 +181,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the number of <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects in the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +201,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows the caller to use the foreach statement of the C# language (for each in vbprvb) to iterate through the individual <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects in the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumerator that iterates through the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the entire <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +226,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the item group was imported into the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -208,10 +268,14 @@
         <Parameter Name="itemToRemove" Type="Microsoft.Build.BuildEngine.BuildItem" />
       </Parameters>
       <Docs>
-        <param name="itemToRemove">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> from the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </summary>
+        <param name="itemToRemove">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,10 +291,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> at the specified index from the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />. </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> object to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +312,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects in the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> to a new array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> objects copied from the <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

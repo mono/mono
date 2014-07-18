@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionPropertyItem" FullName="System.ComponentModel.Design.DesignerActionPropertyItem">
   <TypeSignature Language="C#" Value="public sealed class DesignerActionPropertyItem : System.ComponentModel.Design.DesignerActionItem" />
   <AssemblyInfo>
@@ -9,8 +10,61 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> class represents individual items in a smart tag panel. Each item is typically associated with a property in a class that is derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class and supplied by the component author. The association is maintained through the name of the property, as stored in the <see cref="P:System.ComponentModel.Design.DesignerActionPropertyItem.MemberName" /> property. </para>
+      <para>Individual panel items are associated together to form a panel by a call to the <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method of the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class.</para>
+      <para>To display the value of the associated property, that property must have a get accessor method; to allow editing, the property must have a set accessor method. The way in which the panel allows direct editing of a property item by the user depends on the supporting type information present for the data type of the associated property. The following table shows the likely scheme.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property type information</para>
+            </term>
+            <description>
+              <para>Property item editing user interface (UI)</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Has an associated type editor (<see cref="T:System.Drawing.Design.UITypeEditor" />)</para>
+          </term>
+          <description>
+            <para>The type editor associated with the underlying property is displayed for editing the property's value.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Has an associated type converter to a known type (<see cref="T:System.ComponentModel.TypeConverter" />)</para>
+          </term>
+          <description>
+            <para>The type editor for the known type is displayed for editing the property's value. For example, a type converter to <see cref="T:System.String" /> will likely display a <see cref="T:System.Windows.Forms.TextBox" />.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Boolean value</para>
+          </term>
+          <description>
+            <para>The item is displayed using a binary UI, such as a check mark. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>None of the above.</para>
+          </term>
+          <description>
+            <para>The item is displayed as a non-editable text string using the data type's <see cref="M:System.Object.ToString" /> method.</para>
+          </description>
+        </item>
+      </list>
+      <para>All fundamental types, such as <see cref="T:System.Boolean" />, and common dnprdnshort data types, such as <see cref="T:System.String" />, supply standard type converters and editors. For more information about type converters, see <format type="text/html"><a href="90373a3f-d8c8-492d-841c-945d62393c56">How to: Implement a Type Converter</a></format> or <format type="text/html"><a href="49253ae6-7657-4810-82ab-1176a6feeada">Generalized Type Conversion</a></format>. For more information about type editors, see <format type="text/html"><a href="ed961fb9-ee02-4666-b511-05f3204bb75c">How to: Implement a UI Type Editor</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a panel item that is associated with a property in a class derived from <see cref="T:System.ComponentModel.Design.DesignerActionList" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +78,19 @@
         <Parameter Name="displayName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="memberName">To be added.</param>
-        <param name="displayName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionPropertyItem.#ctor(System.String,System.String)" /> constructor sets the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Category" /> and <see cref="P:System.ComponentModel.Design.DesignerActionItem.Description" /> properties to null.</para>
+          <para>The <paramref name="memberName" /> parameter refers to the name of the associated property that is a member of the programmer-supplied class derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> class, with the specified property and display names.</para>
+        </summary>
+        <param name="memberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the property associated with this panel item.</param>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The panel text for this item.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,11 +105,22 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="memberName">To be added.</param>
-        <param name="displayName">To be added.</param>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionPropertyItem.#ctor(System.String,System.String,System.String)" /> constructor sets the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Description" /> property to null.</para>
+          <para>For more information about how the <paramref name="category" /> parameter is used to group items on a panel, see the <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method.</para>
+          <para>The <paramref name="memberName" /> parameter refers to the name of the associated property that is a member of the programmer-supplied class derived from <see cref="T:System.ComponentModel.Design.DesignerActionList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> class, with the specified property and category names, and display text.</para>
+        </summary>
+        <param name="memberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the property associated with this panel item.</param>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The panel text for this item.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive <see cref="T:System.String" /> used to group similar items on the panel.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -62,12 +136,23 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="memberName">To be added.</param>
-        <param name="displayName">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="description">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how the <paramref name="category" /> parameter is used to group items on a panel, see the <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method.</para>
+          <para>The <paramref name="memberName" /> parameter refers to the name of the associated property that is a member of the programmer-supplied class derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> class, with the specified property and category names, and display and description text.</para>
+        </summary>
+        <param name="memberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the property associated with this panel item.</param>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The panel text for this item.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive <see cref="T:System.String" /> used to group similar items on the panel.</param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />Supplemental text for this item, used in ToolTips or the status bar.</param>
       </Docs>
     </Member>
     <Member MemberName="MemberName">
@@ -80,9 +165,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.DesignerActionPropertyItem.MemberName" /> property specifies which property—in the class derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class—the item should be bound to. When the programmer interacts with the panel item through the user interface (UI), this associated property will be set.</para>
+          <para>
+            <see cref="P:System.ComponentModel.Design.DesignerActionPropertyItem.MemberName" /> is set in the constructor. Its value is case-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the property that this item is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RelatedComponent">
@@ -95,9 +188,16 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With the <see cref="P:System.ComponentModel.Design.DesignerActionPropertyItem.RelatedComponent" /> property, another component can lend its pull-model panel items to the current list. For example, a user control might aggregate the <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects from one or more of its constituent controls.</para>
+          <para>This property works in conjunction with the <see cref="P:System.ComponentModel.Design.DesignerActionItem.AllowAssociate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a component that contributes its items to the current panel.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

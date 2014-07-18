@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardEndpointElement" FullName="System.ServiceModel.Configuration.StandardEndpointElement">
   <TypeSignature Language="C#" Value="public abstract class StandardEndpointElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract StandardEndpointElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a standard endpoint element for a service application configuration file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Configuration.StandardEndpointElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -42,10 +49,15 @@
         <Parameter Name="channelEndpointElement" Type="System.ServiceModel.Configuration.ChannelEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of a specific service endpoint to the current channel endpoint element.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint that enables clients to find and communicate with the service.</param>
+        <param name="channelEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that defines the physical transfer of messages back and forth between the client and the service.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -63,10 +75,15 @@
         <Parameter Name="serviceEndpointElement" Type="System.ServiceModel.Configuration.ServiceEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <param name="serviceEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of a specific service endpoint to the current service endpoint element.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint that enables clients to find and communicate with the service.</param>
+        <param name="serviceEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that defines how clients find and communicate with the service.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateServiceEndpoint">
@@ -83,10 +100,17 @@
         <Parameter Name="contractDescription" Type="System.ServiceModel.Description.ContractDescription" />
       </Parameters>
       <Docs>
-        <param name="contractDescription">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented in a derived class, creates a service endpoint from message information contained in the specified contract description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service endpoint.</para>
+        </returns>
+        <param name="contractDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information about what is contained in messages being sent from an endpoint.</param>
       </Docs>
     </Member>
     <Member MemberName="EndpointType">
@@ -100,9 +124,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not implemented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeAndValidate">
@@ -119,9 +146,13 @@
         <Parameter Name="channelEndpointElement" Type="System.ServiceModel.Configuration.ChannelEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes and verifies the format of the specified channel endpoint in a service application configuration file.</para>
+        </summary>
+        <param name="channelEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that defines the physical transfer of messages back and forth between the client and the service.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeAndValidate">
@@ -138,9 +169,13 @@
         <Parameter Name="serviceEndpointElement" Type="System.ServiceModel.Configuration.ServiceEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="serviceEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes and verifies the format of the specified service endpoint in a service application configuration file.</para>
+        </summary>
+        <param name="serviceEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that enables clients to find and communicate with the service.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">
@@ -157,9 +192,13 @@
         <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that the specified service endpoint is not null and that its type matches the current endpoint type.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint that enables clients to find and communicate with the service.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -181,9 +220,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the current endpoint element from a list of configuration strings for that element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -201,10 +243,15 @@
         <Parameter Name="channelEndpointElement" Type="System.ServiceModel.Configuration.ChannelEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called from a derived class, loads the service description information from the configuration file and applies it to the runtime being constructed.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint that enables clients to find and communicate with the service.</param>
+        <param name="channelEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that defines the physical transfer of messages back and forth between the client and the service.</param>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -222,10 +269,14 @@
         <Parameter Name="channelEndpointElement" Type="System.ServiceModel.Configuration.ServiceEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
         <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called from a derived class, loads the service description information from the configuration file and applies it to the runtime being constructed.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint that enables clients to find and communicate with the service.</param>
       </Docs>
     </Member>
     <Member MemberName="OnInitializeAndValidate">
@@ -242,9 +293,13 @@
         <Parameter Name="channelEndpointElement" Type="System.ServiceModel.Configuration.ChannelEndpointElement" />
       </Parameters>
       <Docs>
-        <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called from a derived class, initializes and verifies the format of the specified service endpoint in a service application configuration file.</para>
+        </summary>
+        <param name="channelEndpointElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />An endpoint element that defines the physical transfer of messages back and forth between the client and the service.</param>
       </Docs>
     </Member>
     <Member MemberName="OnInitializeAndValidate">
@@ -262,8 +317,11 @@
       </Parameters>
       <Docs>
         <param name="channelEndpointElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called from a derived class, initializes and verifies the format of the specified service endpoint in a service application configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -277,9 +335,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of properties of the current endpoint element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -296,9 +357,13 @@
         <Parameter Name="parentElement" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <param name="parentElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the internal state of the <see cref="T:System.Configuration.Element.ConfigurationElement" /> object, including the locks and the properties collections.</para>
+        </summary>
+        <param name="parentElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The top level of a configuration element that has sub-elements.</param>
       </Docs>
     </Member>
   </Members>

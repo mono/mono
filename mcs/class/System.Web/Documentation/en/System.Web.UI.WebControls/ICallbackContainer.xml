@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICallbackContainer" FullName="System.Web.UI.WebControls.ICallbackContainer">
   <TypeSignature Language="C#" Value="public interface ICallbackContainer" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes that implement the <see cref="T:System.Web.UI.WebControls.ICallbackContainer" /> interface provide controls with a script that will initiate a callback to the server. A callback differs from the more common postback in that the page processing for the callback recreates the page without changing state information held by the page. For more information on creating callbacks, see <format type="text/html"><a href="dfaaa7d4-e1f2-4322-b2f5-796e0419f185">Implementing Client Callbacks Without Postbacks in ASP.NET Web Pages</a></format>.</para>
+      <para>Classes that implement the <see cref="T:System.Web.UI.WebControls.ICallbackContainer" /> interface should also implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface to handle the events raised by controls.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method that enables controls to obtain a callback script.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetCallbackScript">
@@ -23,11 +31,23 @@
       </Parameters>
       <Docs>
         <param name="control">To be added.</param>
-        <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementations of the <see cref="M:System.Web.UI.WebControls.ICallbackContainer.GetCallbackScript(System.Web.UI.WebControls.IButtonControl,System.String)" /> method should return a script that, when run on the client, will initiate a callback to the Web server. </para>
+          <para>The <paramref name="argument" /> parameter is passed to the <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method that handles the callback.</para>
+          <para>For more information on creating callbacks, see <format type="text/html"><a href="dfaaa7d4-e1f2-4322-b2f5-796e0419f185">Implementing Client Callbacks Without Postbacks in ASP.NET Web Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a script for initiating a client callback to a Web server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A script that, when run on a client, will initiate a callback to the Web server.</para>
+        </returns>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments used to build the callback script.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

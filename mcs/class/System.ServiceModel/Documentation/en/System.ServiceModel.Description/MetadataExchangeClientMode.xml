@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MetadataExchangeClientMode" FullName="System.ServiceModel.Description.MetadataExchangeClientMode">
   <TypeSignature Language="C#" Value="public enum MetadataExchangeClientMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MetadataExchangeClientMode extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> with the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> to specify whether metadata is downloaded using an HTTP GET or WS-Transfer Get request.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the exchange mode used to obtain metadata.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="HttpGet">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.Description.MetadataExchangeClientMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTTP GET request is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MetadataExchange">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.Description.MetadataExchangeClientMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A WS-Transfer Get request is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

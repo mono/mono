@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvalidMessageContractException" FullName="System.ServiceModel.InvalidMessageContractException">
   <TypeSignature Language="C#" Value="public class InvalidMessageContractException : SystemException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit InvalidMessageContractException extends System.SystemException" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.InvalidMessageContractException" /> is thrown when custom attribute usage results in the generation of an invalid service description. For example, if a <see cref="T:System.ServiceModel.MessageContractAttribute" /> type has multiple parts with the same name, or a method has multiple parameters with the same name.</para>
+      <para> </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a message contract that is not valid.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.InvalidMessageContractException" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InvalidMessageContractException" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,8 +53,14 @@
       </Parameters>
       <Docs>
         <param name="msg">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.InvalidMessageContractException" /> object using the <paramref name="message" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InvalidMessageContractException" /> class using the specified message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,10 +75,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.InvalidMessageContractException" /> object from the stream on deserialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InvalidMessageContractException" /> class when deserializing from a stream into an object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,8 +103,14 @@
       <Docs>
         <param name="msg">To be added.</param>
         <param name="inner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.InvalidMessageContractException" /> object from the <paramref name="message" /> and <paramref name="innerException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InvalidMessageContractException" /> class that uses the specified message and inner exception.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509IncludeOption" FullName="System.Security.Cryptography.X509Certificates.X509IncludeOption">
   <TypeSignature Language="C#" Value="public enum X509IncludeOption" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509IncludeOption extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration specifies how much of the certificate chain to include in X.509 data. You can choose to include the end certificate only; the whole chain; or the whole chain except the root certificate, which is the default.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how much of the X.509 certificate chain should be included in the X.509 data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EndCertOnly">
@@ -27,8 +34,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509IncludeOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the end certificate is included in the X.509 chain information.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExcludeRoot">
@@ -43,8 +53,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509IncludeOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The entire X.509 chain is included except for the root certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -59,8 +72,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509IncludeOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No X.509 chain information is included.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WholeChain">
@@ -75,8 +91,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509IncludeOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The entire X.509 chain is included.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

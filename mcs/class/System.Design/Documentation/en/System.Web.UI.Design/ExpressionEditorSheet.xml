@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionEditorSheet" FullName="System.Web.UI.Design.ExpressionEditorSheet">
   <TypeSignature Language="C#" Value="public abstract class ExpressionEditorSheet" />
   <AssemblyInfo>
@@ -9,9 +10,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A custom expression editor sheet lets a developer set properties on a custom expression at design-time. Control property values can be set using expression strings; the expression strings are evaluated at run time by an expression builder and at design time by an expression editor.</para>
+      <para>When you browse the <see cref="P:System.Web.UI.Design.HtmlControlDesigner.Expressions" /> property for a control in the design-time properties grid, the visual designer displays a dialog box to set expressions that provide the value for a control property. You can select the expression type based on a list of expression prefixes. When you select an expression prefix from the list, the visual designer uses the associated <see cref="T:System.Web.UI.Design.ExpressionEditor" /> and <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> objects to evaluate and convert the expression string based on the syntax for that type of expression. The visual designer uses expression editor sheet properties to prompt for one or more strings that combine into the custom expression string. </para>
+      <para>Typically, to supply a new expression type at design time, you define a unique expression prefix and provide custom <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementations. Optionally, you can provide a custom <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that defines properties that are used to form the expression. To associate an expression prefix with an expression builder and an expression editor, apply the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute and an <see cref="T:System.Web.Compilation.ExpressionPrefixAttribute" /> attribute to the custom <see cref="T:System.Web.Configuration.ExpressionBuilder" /> class, and then configure the expression prefix for an expression builder in the expressionBuilders element in the Web configuration file.</para>
+      <para>The default implementation of the <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns a basic editor sheet, which uses a single input string to form the expression. Custom expression editors that are derived from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> can override the <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method to return a custom editor sheet implementation. Typically, a custom editor sheet contains multiple properties that are used to build the expression string. The <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.GetExpression" /> method returns the resulting expression string based on the current expression properties.</para>
+      <para>For example, the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class derives from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class and provides an implementation for evaluating and associating a resource string reference with a control property at design time. The <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class is associated with the expression prefix Resources and the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> implementation. The <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns a <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" />, which defines the individual properties that form a resource reference expression.</para>
+      <para>When you inherit from the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> class, you must override the following members: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method to return a custom editor sheet implementation. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.#ctor(System.IServiceProvider)" /> constructor to implement custom initialization actions for your expression editor sheet implementation.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a design-time editor sheet for a custom expression. This class must be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +41,17 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> class is abstract, you cannot create an instance of an <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> directly using the <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.#ctor(System.IServiceProvider)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> class.</para>
+        </summary>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +65,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom expression editor sheet contains design-time settings for multiple expression properties, which are combined to form an expression string. Control property values can be set using expression strings; the expression strings are evaluated at run time by an expression builder.</para>
+          <para>The <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.GetExpression" /> method returns an expression string that is built from the current expression properties. The visual designer allows you to set the expression sheet properties, and then calls the <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.GetExpression" /> method to get the expression string and set the control property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the expression string that is formed by the expression editor sheet property values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The custom expression string for the current property values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +91,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This base implementation always returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression string is valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,10 +123,17 @@
         <ReturnType>System.IServiceProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Design.ExpressionEditorSheet.#ctor(System.IServiceProvider)" /> constructor to set the <see cref="P:System.Web.UI.Design.ExpressionEditorSheet.ServiceProvider" /> implementation for a custom expression editor sheet.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ExpressionEditorSheet.ServiceProvider" /> property can be used to access services that are provided by the designer host. For example, call the <see cref="M:System.IServiceProvider.GetService(System.Type)" /> method with the <see cref="T:System.Web.UI.Design.IWebApplication" /> interface to access project items, documents, or configuration file details that are provided through the visual designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the service provider implementation that is used by the expression editor sheet.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpResponseMessage" FullName="System.Net.Http.HttpResponseMessage">
   <TypeSignature Language="C#" Value="public class HttpResponseMessage : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpResponseMessage extends System.Object implements class System.IDisposable" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A common way to get an <see cref="T:System.Net.Http.HttpResponseMessage" /> is from one of the <see cref="M:System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage)" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a HTTP response message including the status code and data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.HttpResponseMessage" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +52,13 @@
         <Parameter Name="statusCode" Type="System.Net.HttpStatusCode" />
       </Parameters>
       <Docs>
-        <param name="statusCode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.HttpResponseMessage" /> class with a specific <see cref="P:System.Net.Http.HttpResponseMessage.StatusCode" />.</para>
+        </summary>
+        <param name="statusCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The status code of the HTTP response.</param>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -58,9 +72,15 @@
         <ReturnType>System.Net.Http.HttpContent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of an HTTP response message corresponds to the entity body defined in RFC 2616.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the content of a HTTP response message. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -75,8 +95,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources and disposes of unmanaged resources used by the <see cref="T:System.Net.Http.HttpResponseMessage" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -93,9 +116,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Net.Http.HttpResponseMessage" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Http.HttpResponseMessage" /> and optionally disposes of the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to releases only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="EnsureSuccessStatusCode">
@@ -110,9 +140,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode" /> method throws an exception if the HTTP response was unsuccessful. If the <see cref="P:System.Net.Http.HttpResponseMessage.Content" /> is not null, this method will also call <see cref="M:System.Net.Http.HttpResponseMessage.Dispose" /> to free managed and unmanaged resources. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the <see cref="P:System.Net.Http.HttpResponseMessage.IsSuccessStatusCode" /> property for the HTTP response is false.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.Http.HttpResponseMessage" />.</para>
+          <para>The HTTP response message if the call is successful.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -126,9 +166,12 @@
         <ReturnType>System.Net.Http.Headers.HttpResponseHeaders</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of HTTP response headers. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSuccessStatusCode">
@@ -142,9 +185,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates if the HTTP response was successful.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReasonPhrase">
@@ -158,9 +204,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the reason phrase which typically is sent by servers together with the status code. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestMessage">
@@ -174,9 +223,15 @@
         <ReturnType>System.Net.Http.HttpRequestMessage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set to the request message which led to this response message. In the case of a request sent using <see cref="T:System.Net.Http.HttpClient" />, this property will point to the actual request message leading to the final response. Note that this may not be the same message the user provided when sending the request. This is typically the case if the request needs to be resent due to redirects or authentication. This property can be used to determine what URL actually created the response (useful in case of redirects). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the request message which led to this response message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StatusCode">
@@ -190,9 +245,12 @@
         <ReturnType>System.Net.HttpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the status code of the HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -207,9 +265,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+          <para>A string representation of the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -223,9 +288,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP message version. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -8,6 +8,7 @@ Microsoft.Build.Utilities/HostObjectInitializationStatus.cs
 Microsoft.Build.Utilities/Logger.cs
 Microsoft.Build.Utilities/IAsyncOperation.cs
 Microsoft.Build.Utilities/IProcessAsyncOperation.cs
+Microsoft.Build.Utilities/MSBuildErrorParser.cs
 Microsoft.Build.Utilities/ProcessWrapper.cs
 Microsoft.Build.Utilities/ProcessService.cs
 Microsoft.Build.Utilities/TargetDotNetFrameworkVersion.cs

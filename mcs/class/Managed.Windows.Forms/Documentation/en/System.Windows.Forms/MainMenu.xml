@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MainMenu" FullName="System.Windows.Forms.MainMenu">
   <TypeSignature Language="C#" Value="public class MainMenu : System.Windows.Forms.Menu" />
   <AssemblyInfo>
@@ -15,8 +16,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.MainMenu" /> control represents the container for the menu structure of a form. A menu is composed of <see cref="T:System.Windows.Forms.MenuItem" /> objects that represent the individual menu commands in the menu structure. Each <see cref="T:System.Windows.Forms.MenuItem" /> can be a command for your application or a parent menu for other submenu items. To bind the <see cref="T:System.Windows.Forms.MainMenu" /> to the <see cref="T:System.Windows.Forms.Form" /> that will display it, assign the <see cref="T:System.Windows.Forms.MainMenu" /> to the <see cref="P:System.Windows.Forms.Form.Menu" /> property of the <see cref="T:System.Windows.Forms.Form" />.</para>
+      <para>For applications that will have support for multiple languages, you can use the <see cref="P:System.Windows.Forms.MainMenu.RightToLeft" /> property to display the text of the menu from right to left to support languages such as Arabic.</para>
+      <para>You can create different <see cref="T:System.Windows.Forms.MainMenu" /> objects to represent different menu structures for your form. If you want to reuse the menu structure contained in a specific <see cref="T:System.Windows.Forms.MainMenu" />, you can use its <see cref="M:System.Windows.Forms.MainMenu.CloneMenu" /> method to create a copy. Once you have a copy of the menu structure, you can make the appropriate modifications for your new menu structure.</para>
+      <block subset="none" type="note">
+        <para>Cutting and pasting menu items from one form to another in the designer might not work as expected if the form you are pasting into has no menu items defined.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the menu structure of a form. Although <see cref="T:System.Windows.Forms.MenuStrip" /> replaces and adds functionality to the <see cref="T:System.Windows.Forms.MainMenu" /> control of previous versions, <see cref="T:System.Windows.Forms.MainMenu" /> is retained for both backward compatibility and future use if you choose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +36,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the constructor creates a <see cref="T:System.Windows.Forms.MainMenu" /> without any specified <see cref="T:System.Windows.Forms.MenuItem" /> objects. To add menu items to the control use the other version of this constructor that accepts an array of <see cref="T:System.Windows.Forms.MenuItem" /> objects as its parameter or use the <see cref="M:System.Windows.Forms.Menu.MenuItemCollection.Add(System.String)" /> method of the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MainMenu" /> class without any specified menu items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,10 +57,14 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MainMenu" /> class with the specified container. </para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.IContainer" /> representing the container of the <see cref="T:System.Windows.Forms.MainMenu" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,9 +77,16 @@
         <Parameter Name="items" Type="System.Windows.Forms.MenuItem[]" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this constructor to assign an array of <see cref="T:System.Windows.Forms.MenuItem" /> objects to the <see cref="T:System.Windows.Forms.MainMenu" /> at the time of its creation. After the <see cref="T:System.Windows.Forms.MainMenu" /> has been created you can add additional <see cref="T:System.Windows.Forms.MenuItem" /> objects to the <see cref="T:System.Windows.Forms.MainMenu" /> using the <see cref="M:System.Windows.Forms.Menu.MenuItemCollection.Add(System.String)" /> method of the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MainMenu" /> with a specified set of <see cref="T:System.Windows.Forms.MenuItem" /> objects.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Windows.Forms.MenuItem" /> objects that will be added to the <see cref="T:System.Windows.Forms.MainMenu" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,9 +101,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to create a copy of the menu structure stored in a <see cref="T:System.Windows.Forms.MainMenu" />. You can use this method to reuse the menu structure stored in a <see cref="T:System.Windows.Forms.MainMenu" /> as the foundation for a new <see cref="T:System.Windows.Forms.MainMenu" />. For example, if you want to create a menu structure that has the same menu items as an existing <see cref="T:System.Windows.Forms.MainMenu" /> but will also have additional <see cref="T:System.Windows.Forms.MenuItem" /> objects added to it, you can use the <see cref="M:System.Windows.Forms.MainMenu.CloneMenu" /> method to create a copy of the original <see cref="T:System.Windows.Forms.MainMenu" /> and then add the new <see cref="T:System.Windows.Forms.MenuItem" /> objects to the cloned <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Windows.Forms.MainMenu" /> that is a duplicate of the current <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MainMenu" /> that represents the cloned menu.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,8 +129,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the main menu collapses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateMenuHandle">
@@ -122,9 +166,19 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.MainMenu.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:System.Windows.Forms.MainMenu" />. The <see cref="M:System.Windows.Forms.MainMenu.Dispose(System.Boolean)" /> method leaves the <see cref="T:System.Windows.Forms.MainMenu" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.MainMenu.Dispose(System.Boolean)" />, you must release all references to the <see cref="T:System.Windows.Forms.MainMenu" /> so the memory it was occupying can be reclaimed by garbage collection.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.MainMenu.Dispose(System.Boolean)" /> before you release your last reference to the <see cref="T:System.Windows.Forms.MainMenu" />. Otherwise, the resources the <see cref="T:System.Windows.Forms.MainMenu" /> is using will not be freed until garbage collection calls the <see cref="T:System.Windows.Forms.MainMenu" /> object's destructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources, other than memory, used by the <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,9 +193,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to determine if a specific <see cref="T:System.Windows.Forms.MainMenu" /> is parented to a form. The property is typically used when multiple <see cref="T:System.Windows.Forms.MainMenu" /> objects are being used on a form and you need to determine which one is currently being used by a form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.Form" /> that contains this control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Form" /> that is the container for this control. Returns null if the <see cref="T:System.Windows.Forms.MainMenu" /> is not currently hosted on a form.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +224,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MainMenu.OnCollapse(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MainMenu.Collapse" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="RightToLeft">
@@ -181,9 +252,18 @@
         <ReturnType>System.Windows.Forms.RightToLeft</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables your menus to support languages that are written from right to left. When this property is set to RightToLeft.Yes, the menu item text will be displayed from right to left instead of the default left to right method.</para>
+          <block subset="none" type="note">
+            <para>For more information about how enabling right-to-left alignment affects Windows Forms controls, see the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the text displayed by the control is displayed from right to left.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +278,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return string includes the type and the string returned by the <see cref="M:System.Windows.Forms.Form.ToString" /> method if the <see cref="T:System.Windows.Forms.MainMenu" /> is assigned to a form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

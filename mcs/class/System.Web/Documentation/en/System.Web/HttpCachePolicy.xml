@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCachePolicy" FullName="System.Web.HttpCachePolicy">
   <TypeSignature Language="C#" Value="public sealed class HttpCachePolicy" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For background information about HTTP headers and controlling caching, see RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1, available on the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains methods for setting cache-specific HTTP headers and for controlling the ASP.NET page output cache.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddValidationCallback">
@@ -28,10 +35,22 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added: an object of type 'HttpCacheValidateHandler'</param>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpCachePolicy.AddValidationCallback(System.Web.HttpCacheValidateHandler,System.Object)" /> method provides a mechanism to check the response programmatically in the cache before the response is returned to the client by the output cache.</para>
+          <para>Before the response is served from the Web server cache, all registered handlers are queried to ensure resource validity. If any handler sets a flag indicating that the cached response is not valid, the entry is marked as not valid and expelled from the cache. In this case, as well as when any handler indicates that the cached response should be ignored for this request, the request is then handled as if it were a cache miss.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.AddValidationCallback(System.Web.HttpCacheValidateHandler,System.Object)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a validation callback for the current response.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpCacheValidateHandler" /> value. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arbitrary user-supplied data that is passed back to the <see cref="M:System.Web.HttpCachePolicy.AddValidationCallback(System.Web.HttpCacheValidateHandler,System.Object)" /> delegate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +67,18 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="extension">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the browser does not recognize cache control directives or extensions, the browser must ignore the unrecognized terms. For more information, see RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1, available on the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>. </para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.AppendCacheExtension(System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified text to the Cache-Control HTTP header.</para>
+        </summary>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to append to the Cache-Control header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +95,19 @@
         <Parameter Name="allow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="allow">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="T:System.Web.HttpCacheability" /> is set to <see cref="F:System.Web.HttpCacheability.NoCache" /> or <see cref="F:System.Web.HttpCacheability.ServerAndNoCache" /> the Expires HTTP header is by default set to -1; this tells the client not to cache responses in the History folder, so that when you use the back/forward buttons the client requests a new version of the response each time. You can override this behavior by calling the <see cref="M:System.Web.HttpCachePolicy.SetAllowResponseInBrowserHistory(System.Boolean)" /> method with the <paramref name="allow" /> parameter set to true.</para>
+          <para>If <see cref="T:System.Web.HttpCacheability" /> is set to values other than <see cref="F:System.Web.HttpCacheability.NoCache" /> or <see cref="F:System.Web.HttpCacheability.ServerAndNoCache" />, calling the <see cref="M:System.Web.HttpCachePolicy.SetAllowResponseInBrowserHistory(System.Boolean)" /> method with either value for <paramref name="allow" /> has no effect.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetAllowResponseInBrowserHistory(System.Boolean)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes the response is available in the client browser History cache, regardless of the <see cref="T:System.Web.HttpCacheability" /> setting made on the server, when the <paramref name="allow" /> parameter is true.</para>
+        </summary>
+        <param name="allow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to direct the client browser to store responses in the History folder; otherwise false. The default is false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,9 +124,17 @@
         <Parameter Name="cacheability" Type="System.Web.HttpCacheability" />
       </Parameters>
       <Docs>
-        <param name="cacheability">To be added: an object of type 'HttpCacheability'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetCacheability(System.Web.HttpCacheability)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control header to one of the values of <see cref="T:System.Web.HttpCacheability" />.</para>
+        </summary>
+        <param name="cacheability">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpCacheability" /> enumeration value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -106,10 +152,21 @@
         <Parameter Name="field" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="cacheability">To be added: an object of type 'HttpCacheability'</param>
-        <param name="field">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The field name extension is valid only when used with the private or no-cache directives. For more information, see RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1, available on the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>. </para>
+          <para>This method will throw an invalid argument exception if incompatible directives and extensions are combined.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetCacheability(System.Web.HttpCacheability,System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control header to one of the values of <see cref="T:System.Web.HttpCacheability" /> and appends an extension to the directive.</para>
+        </summary>
+        <param name="cacheability">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpCacheability" /> enumeration value to set the header to. </param>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cache control extension to add to the header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,9 +183,18 @@
         <Parameter Name="etag" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="etag">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ETag header is a unique identifier for a specific version of a document. It is used by clients to validate client-cached content to avoid requesting it again. Once an ETag header is set, subsequent attempts to set it fail and an exception is thrown.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetETag(System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the ETag HTTP header to the specified string.</para>
+        </summary>
+        <param name="etag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to use for the ETag header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,8 +209,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpCachePolicy.SetETagFromFileDependencies" /> method sets the ETag header by retrieving the last modified time stamps of all files on which the handler is dependent, combining all file names and time stamps into a single string, then hashing that string into a single digest that is used as the ETag.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetETagFromFileDependencies" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the ETag HTTP header based on the time stamps of the handler's file dependencies.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +235,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will fail if the expiration date violates the principle of restrictiveness.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Expires HTTP header to an absolute date and time.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The absolute <see cref="T:System.DateTime" /> value to set the Expires header to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +261,19 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Last-Modified HTTP header time stamps the document with the DateTime value indicating when the document was last modified.</para>
+          <para>This method will fail if the caching restrictiveness hierarchy is violated.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetLastModified(System.DateTime)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Last-Modified HTTP header to the <see cref="T:System.DateTime" /> value supplied.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="T:System.DateTime" /> value for the Last-Modified header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,8 +288,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetLastModifiedFromFileDependencies" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Last-Modified HTTP header based on the time stamps of the handler's file dependencies.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,8 +314,20 @@
       </Parameters>
       <Docs>
         <param name="date">a <see cref="T:System.TimeSpan" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Max-age is the maximum absolute time a document is allowed to exist before being considered stale.</para>
+          <para>The <see cref="M:System.Web.HttpCachePolicy.SetMaxAge(System.TimeSpan)" /> method does not use sliding expiration and will fail if the expiration date violates the principle of restrictiveness.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetMaxAge(System.TimeSpan)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="M:System.Web.HttpCachePolicy.SetMaxAge(System.TimeSpan)" /> method is called repeatedly, on the second and subsequent calls, the value of the maximum age can only be decreased.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control: max-age HTTP header based on the specified time span.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -232,8 +342,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Explicitly denies caching of the document on the origin-server. Once set, all requests for the document are fully processed. When this method is invoked, caching cannot be re-enabled for the current response.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetNoServerCaching" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops all origin-server caching for the current response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,8 +366,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control: no-store HTTP header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -264,8 +385,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cache-Control: no-transform HTTP header instructs network caching applications not to modify the document.</para>
+          <para>The Cache-Control: no-transform HTTP header prevents downstream proxy servers from changing any header values specified by the Content-Encoding, Content-Range, or Content-Type headers (this includes the entity body). For example, it prevents proxies from converting GIF images to PNG.</para>
+          <para>As with other restrictions on caching, once <see cref="M:System.Web.HttpCachePolicy.SetNoTransforms" /> is called, the Cache-Control: no-transform HTTP header cannot be disabled through the <see cref="T:System.Web.HttpCachePolicy" /> interface.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetNoTransforms" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control: no-transform HTTP header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -285,9 +416,22 @@
         <Parameter Name="omit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="omit">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows you to prevent the output ached from adding a vary:* header to the outgoing response when the cached response varies by parameter. This is useful for clients varying caching by query string because most clients will automatically vary by query string without requiring the vary:* header.</para>
+          <block subset="none" type="note">
+            <para>The use of the vary:* header can disable all client caching.</para>
+          </block>
+          <para>This is a convenience method to affect the <see cref="P:System.Web.HttpCachePolicy.VaryByHeaders" /> property. Passing true to the method directs the <see cref="T:System.Web.HttpCachePolicy" /> to ignore the * value for the <see cref="P:System.Web.HttpCachePolicy.VaryByHeaders" /> property.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetOmitVaryStar(System.Boolean)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the response should contain the vary:* header when varying by parameters.</para>
+        </summary>
+        <param name="omit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to direct the <see cref="T:System.Web.HttpCachePolicy" /> to not use the * value for its <see cref="P:System.Web.HttpCachePolicy.VaryByHeaders" /> property; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="SetProxyMaxAge">
@@ -300,9 +444,18 @@
         <Parameter Name="delta" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="delta">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpCachePolicy.SetProxyMaxAge(System.TimeSpan)" /> method does not use sliding expiration and will fail if the expiration date violates the principle of restrictiveness.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetProxyMaxAge(System.TimeSpan)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control: s-maxage HTTP header based on the specified time span.</para>
+        </summary>
+        <param name="delta">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span used to set the Cache-Control: s-maxage header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -319,9 +472,18 @@
         <Parameter Name="revalidation" Type="System.Web.HttpCacheRevalidation" />
       </Parameters>
       <Docs>
-        <param name="revalidation">To be added: an object of type 'HttpCacheRevalidation'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default, which is equivalent to <see cref="F:System.Web.HttpCacheRevalidation.None" />, is to send neither directive in a header unless explicitly specified by this method.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetRevalidation(System.Web.HttpCacheRevalidation)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the Cache-Control HTTP header to either the must-revalidate or the proxy-revalidate directives based on the supplied enumeration value.</para>
+        </summary>
+        <param name="revalidation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpCacheRevalidation" /> enumeration value to set the Cache-Control header to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -338,9 +500,19 @@
         <Parameter Name="slide" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="slide">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When cache expiration is set to sliding, the Cache-Control HTTP header will be renewed with each response. This expiration mode is identical to the IIS configuration option to add an expiration header to all output set relative to the current time.</para>
+          <para>If you explicitly set sliding expiration to off (false), that setting will be preserved and any attempts to enable sliding expiration will silently fail. This method does not directly map to an HTTP header. It is used by subsequent modules or worker requests to set origin-server cache policy.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetSlidingExpiration(System.Boolean)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets cache expiration to from absolute to sliding.</para>
+        </summary>
+        <param name="slide">
+          <attribution license="cc4" from="Microsoft" modified="false" />true or false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -357,9 +529,19 @@
         <Parameter Name="validUntilExpires" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="validUntilExpires">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpCachePolicy.SetValidUntilExpires(System.Boolean)" /> method is set to true automatically when the high-level &lt;%@ OutputCache … %&gt; page directive is used.</para>
+          <para>This method is provided because some browsers, when refreshing a page view, send HTTP cache invalidation headers to the Web server and evict the page from the cache. When the <paramref name="validUntilExpires" /> parameter is true, ASP.NET ignores cache invalidation headers and the page remains in the cache until it expires.</para>
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetValidUntilExpires(System.Boolean)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the ASP.NET cache should ignore HTTP Cache-Control headers sent by the client that invalidate the cache.</para>
+        </summary>
+        <param name="validUntilExpires">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the cache ignores Cache-Control invalidation headers; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,9 +558,17 @@
         <Parameter Name="custom" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="custom">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.HttpCachePolicy.SetVaryByCustom(System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a custom text string to vary cached output responses by.</para>
+        </summary>
+        <param name="custom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string to vary cached output by. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -395,9 +585,32 @@
         <ReturnType>System.Web.HttpCacheVaryByContentEncodings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property returns a list of Content-Encoding headers that represent compression schemes to vary the output cache by. Caching dynamically compressed responses means that the cost of compression is incurred only one time, during the first request for the resource.</para>
+          <para>The <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property is used with the Accept-Encoding header of a request to determine how to serve cached responses for different content encodings that are dynamically compressed. The Accept-Encoding header lists the encodings that the client can decompress. </para>
+          <para>When you set the cache to vary by content encoding, it lets the response vary indirectly by the value in the Accept-Encoding header. When a request is processed, the Accept-Encoding header is checked and the first acceptable encoding is identified and used to take one of the following actions:</para>
+          <list type="bullet">
+            <item>
+              <para>If a matching encoding is found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list and a cached response exists, the cached response is sent.</para>
+            </item>
+            <item>
+              <para>If a matching encoding is found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list but a cached response does not exist, a response is generated and inserted into the cache.</para>
+            </item>
+            <item>
+              <para>If a matching encoding is not found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list, the cache is searched for a non-encoded response, also referred to as the identity response. If the non-encoded response is found, it is sent. Otherwise, a new non-encoded response is generated, sent, and stored in the cache.</para>
+            </item>
+          </list>
+          <para>For more information about the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property, see "RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1," which is available on the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>. Information about content encodings is in section 14, "Header Field Definitions."</para>
+          <para>You can set the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property by using the VaryByContentEncodings attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive. You can also add a cache profile to the <format type="text/html"><a href="6df16c27-207d-4b52-9a6e-b3a541222b3d">outputCacheProfile</a></format> element in the Web.config file.</para>
+          <para>
+            <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of Content-Encoding headers that will be used to vary the output cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VaryByHeaders">
@@ -407,9 +620,17 @@
         <ReturnType>System.Web.HttpCacheVaryByHeaders</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpCacheVaryByHeaders'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a cached item has several vary headers, a separate version of the requested document is available from the cache for each HTTP header type.</para>
+          <para>
+            <see cref="P:System.Web.HttpCachePolicy.VaryByHeaders" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of all HTTP headers that will be used to vary cache output.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -423,9 +644,17 @@
         <ReturnType>System.Web.HttpCacheVaryByParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpCacheVaryByParams'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A separate version of the requested document is available from the cache for each named parameter in the <see cref="P:System.Web.HttpCachePolicy.VaryByParams" /> collection.</para>
+          <para>
+            <see cref="P:System.Web.HttpCachePolicy.VaryByParams" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of parameters received by an HTTP GET or HTTP POST that affect caching.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventNotificationType" FullName="System.Web.Management.EventNotificationType">
   <TypeSignature Language="C#" Value="public enum EventNotificationType" />
   <AssemblyInfo>
@@ -8,9 +9,37 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Management.EventNotificationType" /> enumeration provides four notification types that specify how the notification should take place. The four notification types are as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="F:System.Web.Management.EventNotificationType.Flush" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Web.Management.EventNotificationType.Regular" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Web.Management.EventNotificationType.Unbuffered" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Web.Management.EventNotificationType.Urgent" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of event notification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Flush">
@@ -20,8 +49,11 @@
         <ReturnType>System.Web.Management.EventNotificationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The notification of an event is triggered by a requested flush.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +66,11 @@
         <ReturnType>System.Web.Management.EventNotificationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The notification of an event is triggered on a regularly scheduled interval.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +83,11 @@
         <ReturnType>System.Web.Management.EventNotificationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every event is treated as if a flush has occurred.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +100,11 @@
         <ReturnType>System.Web.Management.EventNotificationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notification triggered by exceeding the urgent event threshold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

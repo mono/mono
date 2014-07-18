@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IContextPropertyActivator" FullName="System.Runtime.Remoting.Contexts.IContextPropertyActivator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IContextPropertyActivator" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IContextPropertyActivator" />
@@ -16,8 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Contexts.IContextPropertyActivator" /> interface is exposed on all <see cref="T:System.Runtime.Remoting.Contexts.Context" /> properties that are interested in participating in activation and that might have not provided a message sink. Client <see cref="T:System.Runtime.Remoting.Contexts.Context" /> properties send information in the construction message that their counterparts at the remote site could look for during activation.</para>
+      <para>
+        <see cref="T:System.Runtime.Remoting.Contexts.IContextPropertyActivator" /> is also used to collect information from the client and server context property and to deliver information from the server context properties to the client context properties when returning to the client <see cref="T:System.Runtime.Remoting.Contexts.Context" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementing property is interested in participating in activation and might not have provided a message sink.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CollectFromClientContext">
@@ -36,9 +45,16 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The context property can examine and manipulate the contents of the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called on each client context property that has this interface, before the construction request leaves the client.</para>
+        </summary>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>
     </Member>
     <Member MemberName="CollectFromServerContext">
@@ -57,9 +73,16 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionReturnMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The context property can examine and manipulate the contents of the <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called on each server context property that has this interface, before the construction response leaves the server for the client.</para>
+        </summary>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DeliverClientContextToServerContext">
@@ -78,10 +101,20 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is called on each server context property that implements the <see cref="T:System.Runtime.Remoting.Contexts.IContextPropertyActivator" /> interface when a construction request arrives at a server. This allows the context property to examine the contents of each <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called on each client context property that has this interface, when the construction request returns to the client from the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if successful; otherwise, false.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DeliverServerContextToClientContext">
@@ -100,10 +133,20 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionReturnMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The context property can examine the contents of the <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called on each client context property that has this interface, when the construction request returns to the client from the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if successful; otherwise, false.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IsOKToActivate">
@@ -122,10 +165,17 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether it is all right to activate the object type indicated in the <paramref name="msg" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value indicating whether the requested type can be activated.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>
     </Member>
   </Members>

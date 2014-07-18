@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewButtonColumn" FullName="System.Windows.Forms.DataGridViewButtonColumn">
   <TypeSignature Language="C#" Value="public class DataGridViewButtonColumn : System.Windows.Forms.DataGridViewColumn" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" /> class is a specialized type of the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class used to logically host cells that respond to simple user input. A <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" /> has an associated <see cref="T:System.Windows.Forms.DataGridViewButtonCell" /> in every <see cref="T:System.Windows.Forms.DataGridViewRow" /> that intersects it. Each cell supplies a user interface (UI) that is similar to a <see cref="T:System.Windows.Forms.Button" /> control.</para>
+      <para>To display the same button text for every cell, set the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.UseColumnTextForButtonValue" /> property to true and set the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.Text" /> property to the desired button text. </para>
+      <para>The default sort mode for this column type is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" />.</para>
+      <para>To respond to user button clicks, handle the <see cref="E:System.Windows.Forms.DataGridView.CellClick" /> or <see cref="E:System.Windows.Forms.DataGridView.CellContentClick" /> event. In the event handler, you can use the <see cref="P:System.Windows.Forms.DataGridViewCellEventArgs.ColumnIndex" /> property to determine whether the click occurred in the button column. You can use the <see cref="P:System.Windows.Forms.DataGridViewCellEventArgs.RowIndex" /> property to determine whether the click occurred in a button cell and not on the column header. </para>
+      <block subset="none" type="note">
+        <para>When visual styles are enabled, the buttons in a button column are painted using a <see cref="T:System.Windows.Forms.ButtonRenderer" />, and cell styles specified through properties such as <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.DefaultCellStyle" /> have no effect. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Hosts a collection of <see cref="T:System.Windows.Forms.DataGridViewButtonCell" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +32,46 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the column by setting the following properties. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.CellTemplate" /> </para>
+              </term>
+              <description>
+                <para>A new <see cref="T:System.Windows.Forms.DataGridViewButtonCell" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Alignment" /> property of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> object returned by the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.DefaultCellStyle" /> property.</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" /> class to the default state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +84,19 @@
         <ReturnType>System.Windows.Forms.DataGridViewCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor for the <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" /> class initializes this property to a newly created <see cref="T:System.Windows.Forms.DataGridViewButtonCell" />.</para>
+          <block subset="none" type="note">
+            <para>Changing the properties of the cell template will not immediately affect the user interface (UI) of the column's existing cells. These changes are only apparent after the column is regenerated (for example, by sorting the column or through a call to the <see cref="M:System.Windows.Forms.DataGridView.InvalidateColumn(System.Int32)" /> method).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template used to create new cells.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +118,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to duplicate a column of button cells. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +143,19 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> returned by this property has an initial <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Alignment" /> property value of <see cref="F:System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter" />. This value overrides the value specified in the <see cref="P:System.Windows.Forms.DataGridView.DefaultCellStyle" /> property of the <see cref="T:System.Windows.Forms.DataGridView" /> control, but may be overridden by other cell style properties. For more information, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+          <block subset="none" type="note">
+            <para>When visual styles are enabled, the buttons in a button column are painted using a <see cref="T:System.Windows.Forms.ButtonRenderer" /> and cell styles specified through properties such as <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.DefaultCellStyle" /> have no effect. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the column's default cell style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,10 +173,17 @@
         <ReturnType>System.Windows.Forms.FlatStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.FlatStyle" /> property specifies the appearance of the cells in the column. For more information, see the <see cref="T:System.Windows.Forms.FlatStyle" /> enumeration.</para>
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewButtonCell.FlatStyle" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewButtonCell.FlatStyle" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the flat-style appearance of the button cells in the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,10 +201,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.Windows.Forms.DataGridViewButtonCell" /> contained in the column that has as a <see cref="P:System.Windows.Forms.DataGridViewButtonCell.UseColumnTextForButtonValue" /> property value of true displays the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.Text" /> property value on the cell's button.</para>
+          <para>If there is an associated <see cref="T:System.Windows.Forms.DataGridView" /> control, changing this property refreshes the column display.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default text displayed on the button cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -155,10 +246,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> of a button cell is displayed as the text on the button. The <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.UseColumnTextForButtonValue" /> property allows you to either set the button text for each cell, or to use the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.Text" /> property value for all of the button cells. </para>
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewButtonCell.UseColumnTextForButtonValue" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewButtonCell.UseColumnTextForButtonValue" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewButtonColumn.Text" /> property value is displayed as the button text for cells in this column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IIdentityPermissionFactory" FullName="System.Security.Policy.IIdentityPermissionFactory">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IIdentityPermissionFactory" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IIdentityPermissionFactory" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Some types of evidence have a corresponding identity permission that is granted to assemblies with that evidence. This allows other code to make identity demands, so that only code with a specific piece of evidence will pass. For example, you can demand that your callers have a specific strong name; only callers with that strong name will pass the demand. By implementing <see cref="T:System.Security.Policy.IIdentityPermissionFactory" /> for an evidence object, you provide an implementation of <see cref="M:System.Security.Policy.IIdentityPermissionFactory.CreateIdentityPermission(System.Security.Policy.Evidence)" /> that the .NET Framework security system can call to get an identity permission that represents that piece of evidence. During policy resolution, the security system will call that method on all evidence objects that implement <see cref="T:System.Security.Policy.IIdentityPermissionFactory" /> and grant the resulting identity permissions to the appropriate assembly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method that creates a new identity permission.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateIdentityPermission">
@@ -36,10 +43,17 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new identity permission for the specified evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new identity permission.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence from which to create the new identity permission. </param>
       </Docs>
     </Member>
   </Members>

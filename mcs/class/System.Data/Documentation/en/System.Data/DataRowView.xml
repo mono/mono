@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataRowView" FullName="System.Data.DataRowView">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataRowView : System.ComponentModel.ICustomTypeDescriptor, System.ComponentModel.IDataErrorInfo, System.ComponentModel.IEditableObject, System.ComponentModel.INotifyPropertyChanged" />
   <AssemblyInfo>
@@ -26,8 +27,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Whenever data is displayed, such as in a <see cref="T:System.Windows.Forms.DataGrid" /> control, only one version of each row can be displayed. The displayed row is a <see cref="T:System.Data.DataRowView" />.</para>
+      <para>A <see cref="T:System.Data.DataRowView" /> can have one of four different version states: Default, Original, Current, and Proposed.</para>
+      <para>After invoking <see cref="M:System.Data.DataRow.BeginEdit" /> on a <see cref="T:System.Data.DataRow" />, any edited value becomes the Proposed value. Until either <see cref="M:System.Data.DataRowView.CancelEdit" /> or <see cref="M:System.Data.DataRowView.EndEdit" /> is invoked, the row has an Original and a Proposed version. If <see cref="M:System.Data.DataRowView.CancelEdit" /> is invoked, the proposed version is discarded, and the value reverts to Original. If <see cref="M:System.Data.DataRowView.EndEdit" /> is invoked, the <see cref="T:System.Data.DataRowView" /> no longer has a Proposed version; instead, the proposed value becomes the current value. Default values are available only on rows that have columns with default values defined.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a customized view of a <see cref="T:System.Data.DataRow" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginEdit">
@@ -38,8 +47,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Data.DataView.AddNew" /> to add a <see cref="T:System.Data.DataRowView" />.</para>
+          <para>The <see cref="M:System.Data.DataRowView.BeginEdit" /> method is identical to the <see cref="M:System.Data.DataRow.BeginEdit" /> method of the <see cref="T:System.Data.DataRow" />. After calling <see cref="M:System.Data.DataRowView.BeginEdit" />, any changes made to the <see cref="T:System.Data.DataRowView" /> can be rolled back by calling <see cref="M:System.Data.DataRow.CancelEdit" />. Call the <see cref="M:System.Data.DataRowView.BeginEdit" /> method before allowing users to change row values. After values have been changed, you retrieve the new values by setting the <see cref="P:System.Data.DataRowView.RowVersion" /> to DataRowVersion.Proposed. Check the values with a business rule, and roll back the changes if needed by calling <see cref="M:System.Data.DataRowView.CancelEdit" />, or call <see cref="M:System.Data.DataRowView.EndEdit" /> to accept the changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an edit procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,8 +70,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After calling <see cref="M:System.Data.DataRowView.CancelEdit" />, all changes to the row are rolled back. You can also roll back changes by calling <see cref="M:System.Data.DataTable.RejectChanges" /> on the parent <see cref="T:System.Data.DataTable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels an edit procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,10 +94,17 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataView'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" /> with the specified child <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,10 +121,17 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataView'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" /> with the specified child <see cref="T:System.Data.DataRelation" /> name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the <see cref="T:System.Data.DataRelation" /> name. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +145,12 @@
         <ReturnType>System.Data.DataView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataView'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataView" /> to which this row belongs.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,8 +165,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row is not permanently deleted until <see cref="M:System.Data.DataTable.AcceptChanges" /> is invoked on the <see cref="T:System.Data.DataTable" /> that the row belongs to.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Data.DataRowView" /> may be invalid when a DataRow is deleted from the underlying table. When the <see cref="T:System.Data.DataRowView" /> becomes invalid, operations that access values associated with <see cref="T:System.Data.DataRowView," /> such as <see cref="M:System.Data.DataRowView.Delete" />, throw an exception.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,8 +190,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits changes to the underlying <see cref="T:System.Data.DataRow" /> and ends the editing session that was begun with <see cref="M:System.Data.DataRowView.BeginEdit" />.  Use <see cref="M:System.Data.DataRowView.CancelEdit" /> to discard the changes made to the <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -160,10 +211,17 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Data.DataRowView" /> is identical to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="object" /> is a <see cref="T:System.Data.DataRowView" /> and it returns the same row as the current <see cref="T:System.Data.DataRowView" />; otherwise false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to be compared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +236,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code of the <see cref="T:System.Data.DataRow" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code 1, which represents Boolean true if the value of this instance is nonzero; otherwise the integer zero, which represents Boolean false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +258,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row is in edit mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,9 +277,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After you call you call <see cref="M:System.Data.DataView.AddNew" />, <see cref="P:System.Data.DataRowView.IsNew" /> will be true for the returned <see cref="T:System.Data.DataRowView" />. <see cref="P:System.Data.DataRowView.IsNew" /> will be true until either <see cref="M:System.Data.DataRowView.EndEdit" /> is called on the <see cref="T:System.Data.DataRowView" />, or <see cref="M:System.Data.DataView.AddNew" /> is called again. (There is only one new row.)</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a <see cref="T:System.Data.DataRowView" /> is new.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,8 +342,14 @@
         <ReturnType>System.ComponentModel.PropertyChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event fires when the column value associated with the <see cref="T:System.Data.DataRowView" /> changes. This change does not cause the associated index position of the <see cref="T:System.Data.DataRowView" /> to be changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Event that is raised when a <see cref="T:System.Data.DataRowView" /> property is changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Row">
@@ -280,9 +359,12 @@
         <ReturnType>System.Data.DataRow</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataRow'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataRow" /> being viewed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,9 +378,15 @@
         <ReturnType>System.Data.DataRowVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataRowVersion'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataView.RowStateFilter" /> property specifies both <see cref="T:System.Data.DataRowState" /> and <see cref="T:System.Data.DataRowVersion" /> settings. For more information, see <see cref="T:System.Data.DataRowState" />, <see cref="T:System.Data.DataRowVersion" />, and <see cref="T:System.Data.DataViewRowState" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current version description of the <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -317,9 +405,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of custom attributes for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An AttributeCollection containing the attributes for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -334,9 +431,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the class name of this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -351,9 +457,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -368,9 +483,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type converter for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type converter for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -385,9 +509,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default event for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default event for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -402,9 +535,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default property for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default property for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -421,10 +563,20 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="editorBaseType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an editor of the specified type for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -439,9 +591,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the events for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -458,10 +619,20 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the events for this instance of a component with specified attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for this instance of a component.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -476,9 +647,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the properties for this instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -495,10 +675,20 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the properties for this instance of a component with specified attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for this instance of a component.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetPropertyOwner">
@@ -515,10 +705,20 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="pd">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that contains the property described by the specified property descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
+        <param name="pd">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IDataErrorInfo.Error">
@@ -532,9 +732,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.IDataErrorInfo" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a message that describes any validation errors for the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IDataErrorInfo.Item">

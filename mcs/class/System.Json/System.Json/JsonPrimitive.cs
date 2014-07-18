@@ -163,7 +163,16 @@ namespace System.Json
 					return (string) value;
 				throw new NotImplementedException ("GetFormattedString from value type " + value.GetType ());
 			case JsonType.Number:
-				return ((IFormattable) value).ToString ("G", NumberFormatInfo.InvariantInfo);
+				string s;
+				if (value is float || value is double)
+					// Use "round-trip" format
+					s = ((IFormattable) value).ToString ("R", NumberFormatInfo.InvariantInfo);
+				else
+					s = ((IFormattable) value).ToString ("G", NumberFormatInfo.InvariantInfo);
+				if (s == "NaN" || s == "Infinity" || s == "-Infinity")
+					return "\"" + s + "\"";
+				else
+					return s;
 			default:
 				throw new InvalidOperationException ();
 			}

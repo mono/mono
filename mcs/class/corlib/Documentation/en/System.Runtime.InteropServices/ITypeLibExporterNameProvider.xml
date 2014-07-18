@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeLibExporterNameProvider" FullName="System.Runtime.InteropServices.ITypeLibExporterNameProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ITypeLibExporterNameProvider" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeLibExporterNameProvider" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In order to control how types are named when exported to a type library, an object must implement this interface, as well as <see cref="T:System.Runtime.InteropServices.ITypeLibExporterNotifySink" />. You then pass this object as the last parameter to <see cref="M:System.Runtime.InteropServices.TypeLibConverter.ConvertAssemblyToTypeLib(System.Reflection.Assembly,System.String,System.Runtime.InteropServices.TypeLibExporterFlags,System.Runtime.InteropServices.ITypeLibExporterNotifySink)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides control over the casing of names when exported to a type library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetNames">
@@ -40,9 +47,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Names in the array returned from this method must be unique. If a name appears twice in the array of names, even with different casing, the first occurance takes precedence.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of names to control the casing of.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings, where each element contains the name of a type to control casing for.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

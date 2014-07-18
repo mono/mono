@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewAutoSizeRowsMode" FullName="System.Windows.Forms.DataGridViewAutoSizeRowsMode">
   <TypeSignature Language="C#" Value="public enum DataGridViewAutoSizeRowsMode" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control can resize its rows based on the preferred height of each row. The preferred row height is the minimum height required to display the largest cell value in that row. Different size modes let you indicate which cells are used to calculate the new heights (either header cells or nonheader cells) and whether to resize all rows or only the rows that are currently displayed. Resizing a subset of rows is useful to avoid a performance penalty when working with many rows of data.</para>
+      <para>Content-based automatic resizing prevents users from adjusting row heights with the mouse. </para>
+      <para>This enumeration is used by the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.AutoSizeRowsMode" /> property and <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeRows" /> method.</para>
+      <para>For more information about sizing modes, see <format type="text/html"><a href="a5620a9c-0d06-41e3-8934-c25ddb16c9e6">Sizing Options in the Windows Forms DataGridView Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines values for specifying how the heights of rows are adjusted. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllCells">
@@ -20,8 +30,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of all cells in the rows, including header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of all cells in the rows, excluding header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of the row header. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +81,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of all cells in rows currently displayed onscreen, including header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +98,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of all cells in rows currently displayed onscreen, excluding header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +115,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights adjust to fit the contents of the row headers currently displayed onscreen.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +132,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeRowsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row heights do not automatically adjust.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

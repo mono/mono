@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildSettings" FullName="Microsoft.Build.BuildEngine.BuildSettings">
   <TypeSignature Language="C#" Value="public enum BuildSettings" />
   <AssemblyInfo>
@@ -13,9 +14,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the settings for a build. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoNotResetPreviouslyBuiltTargets">
@@ -25,8 +29,11 @@
         <ReturnType>Microsoft.Build.BuildEngine.BuildSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that no important external state has changed and no previously built targets should be rebuilt.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +46,11 @@
         <ReturnType>Microsoft.Build.BuildEngine.BuildSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the build should run normally.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

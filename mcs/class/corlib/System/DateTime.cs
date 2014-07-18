@@ -214,6 +214,10 @@ namespace System
 			"yyyy/MMMM",
 		};
 
+		private static readonly string[] ExoticAndNonStandardFormats = new string[] {
+			"ddMMMyyyy"
+		};
+
 		private enum Which 
 		{
 			Day,
@@ -925,6 +929,9 @@ namespace System
 
 			// Try as a last resort all the patterns
 			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+				return true;
+
+			if (ParseExact (s, ExoticAndNonStandardFormats, dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
 				return true;
 
 			if (!setExceptionOnError)

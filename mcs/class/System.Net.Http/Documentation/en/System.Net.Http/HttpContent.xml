@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpContent" FullName="System.Net.Http.HttpContent">
   <TypeSignature Language="C#" Value="public abstract class HttpContent : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit HttpContent extends System.Object implements class System.IDisposable" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A base class representing an HTTP entity body and content headers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.HttpContent" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyToAsync">
@@ -45,10 +52,21 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written to the stream object passed as the <paramref name="stream" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content into a stream of bytes and copies it to the stream object provided as the <paramref name="stream" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target stream.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyToAsync">
@@ -66,11 +84,23 @@
         <Parameter Name="context" Type="System.Net.TransportContext" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written to the stream object passed as the <paramref name="stream" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content into a stream of bytes and copies it to the stream object provided as the <paramref name="stream" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target stream.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information about the transport (channel binding token, for example). This parameter may be null.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateContentReadStreamAsync">
@@ -93,9 +123,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written to the memory stream.</para>
+          <para>Once the operation completes, the  <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the returned task object contains the memory stream that that represents the HTTP content. The returned stream can then be used to read the content using various stream APIs.</para>
+          <para>The <see cref="M:System.Net.Http.HttpContent.CreateContentReadStreamAsync" />  method buffers the content to a memory stream. Derived classes can override this behavior if there is a better way to retrieve the content as stream. For example, a byte array or a string could use a more efficient method way such as wrapping a read-only <see cref="T:System.IO.MemoryStream" /> around the bytes or string.)</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a memory stream as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -110,8 +152,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources and disposes of the managed resources used by the <see cref="T:System.Net.Http.HttpContent" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -128,9 +173,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Net.Http.HttpContent" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Http.HttpContent" /> and optionally disposes of the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to releases only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -144,9 +196,12 @@
         <ReturnType>System.Net.Http.Headers.HttpContentHeaders</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP content headers as defined in RFC 2616.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadIntoBufferAsync">
@@ -161,9 +216,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" /> object will complete after all of the content has been serialized to the memory buffer.</para>
+          <para>After content is serialized to a memory buffer, calls to one of the  <see cref="M:System.Net.Http.HttpContent.CopyToAsync(System.IO.Stream)" /> methods will copy the content of the memory buffer to the target stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a memory buffer as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadIntoBufferAsync">
@@ -188,10 +254,23 @@
         <Parameter Name="maxBufferSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="maxBufferSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" />  object will complete after all of the content has been serialized to the memory buffer.</para>
+          <para>After content is serialized to a memory buffer, calls to one of the  <see cref="M:System.Net.Http.HttpContent.CopyToAsync(System.IO.Stream)" /> methods will copy the content of the memory buffer to the target stream.</para>
+          <para>If the content exceeds the value  passed in the <paramref name="maxBufferSize" /> parameter , an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a memory buffer as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, of the buffer to use.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadAsByteArrayAsync">
@@ -214,9 +293,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written as a byte array.</para>
+          <para>Once the operation completes, the  <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the returned task object contains the byte array with the HTTP content.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a byte array as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadAsStreamAsync">
@@ -239,9 +329,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the stream that represents content has been read. </para>
+          <para>Once the operation completes, the  <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the returned task object contains the stream that that represents the HTTP content. The returned stream can then be used to read the content using various stream APIs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content and return a stream that represents the content as an asynchronous operation. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadAsStringAsync">
@@ -264,9 +365,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written as a string.</para>
+          <para>Once the operation completes, the  <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the returned task object contains the string with the HTTP content.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a string as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SerializeToStreamAsync">
@@ -284,11 +396,23 @@
         <Parameter Name="context" Type="System.Net.TransportContext" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been serialized to the stream object passed in the <paramref name="stream" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize the HTTP content to a stream as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target stream.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information about the transport (channel binding token, for example). This parameter may be null.</param>
       </Docs>
     </Member>
     <Member MemberName="TryComputeLength">

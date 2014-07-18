@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolDocument" FullName="System.Diagnostics.SymbolStore.ISymbolDocument">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolDocument" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolDocument" />
@@ -16,8 +17,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A document is defined by a URL and a document type GUID. Using the document type GUID and the URL, you can locate the document. You can optionally store document source in the symbol store.</para>
+      <para>This interface also provides access to that source, if present.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the ISymUnmanagedDocument interface, one of the unmanaged symbol store interfaces that provide an alternative way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a document referenced by a symbol store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CheckSumAlgorithmId">
@@ -33,9 +44,12 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the checksum algorithm identifier.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DocumentType">
@@ -51,9 +65,12 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FindClosestLine">
@@ -72,10 +89,17 @@
         <Parameter Name="line" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="line">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the closest line that is a sequence point, given a line in the current document that might or might not be a sequence point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The closest line that is a sequence point.</para>
+        </returns>
+        <param name="line">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified line in the document. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCheckSum">
@@ -92,9 +116,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the checksum.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The checksum.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSourceRange">
@@ -116,13 +146,23 @@
         <Parameter Name="endColumn" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="startLine">To be added: an object of type 'int'</param>
-        <param name="startColumn">To be added: an object of type 'int'</param>
-        <param name="endLine">To be added: an object of type 'int'</param>
-        <param name="endColumn">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the embedded document source for the specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The document source for the specified range.</para>
+        </returns>
+        <param name="startLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting line in the current document. </param>
+        <param name="startColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting column in the current document. </param>
+        <param name="endLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending line in the current document. </param>
+        <param name="endColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending column in the current document. </param>
       </Docs>
     </Member>
     <Member MemberName="HasEmbeddedSource">
@@ -138,9 +178,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the current document is stored in the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -156,9 +199,12 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the language of the current document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LanguageVendor">
@@ -174,9 +220,12 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the language vendor of the current document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceLength">
@@ -192,9 +241,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length, in bytes, of the embedded source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="URL">
@@ -210,9 +262,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL of the current document.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

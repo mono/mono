@@ -68,7 +68,7 @@ libmonogc_static_la_LDFLAGS = -static
 
 EXTRA_DIST += alpha_mach_dep.S mips_sgi_mach_dep.s sparc_mach_dep.S
 
-AM_CFLAGS = @GC_CFLAGS@
+AM_CFLAGS = $(WERROR_CFLAGS) @GC_CFLAGS@
 
 if CPLUSPLUS
 extra_checks = test_cpp

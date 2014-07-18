@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Menu" FullName="System.Windows.Forms.Menu">
   <TypeSignature Language="C#" Value="public abstract class Menu : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -18,8 +19,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is the base class for the <see cref="T:System.Windows.Forms.MainMenu" />, <see cref="T:System.Windows.Forms.MenuItem" />, and <see cref="T:System.Windows.Forms.ContextMenu" /> classes. You cannot create an instance of this class. The menus for an application consist of <see cref="T:System.Windows.Forms.MenuItem" /> objects. These can contain other <see cref="T:System.Windows.Forms.MenuItem" /> objects, representing submenu items. The <see cref="T:System.Windows.Forms.MenuItem" /> objects can be stored in a <see cref="T:System.Windows.Forms.MainMenu" /> for display as an entire menu structure for a form or a <see cref="T:System.Windows.Forms.ContextMenu" /> that is used to display shortcut menus. This class provides functionality that is common for all the menu classes.</para>
+      <para>Unlike many base classes, the <see cref="T:System.Windows.Forms.Menu" /> class uses its derived classes to define many of its properties. If you are using your menu in a multiple-document interface (MDI) application, you can use the <see cref="P:System.Windows.Forms.Menu.MdiListItem" /> property to specify a <see cref="T:System.Windows.Forms.MenuItem" /> that displays a list of open MDI child forms in your application. The <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property contains a list of <see cref="T:System.Windows.Forms.MenuItem" /> objects stored in the menu class. For a <see cref="T:System.Windows.Forms.MainMenu" /> or <see cref="T:System.Windows.Forms.ContextMenu" />, this property contains all the <see cref="T:System.Windows.Forms.MenuItem" /> objects that are displayed. For a <see cref="T:System.Windows.Forms.MenuItem" />, the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property represents the submenu items associated with it.</para>
+      <para>In addition to the properties that are provided for all the derived menu classes, the <see cref="T:System.Windows.Forms.Menu" /> class also provides methods, such as <see cref="M:System.Windows.Forms.Menu.CloneMenu(System.Windows.Forms.Menu)" /> and <see cref="M:System.Windows.Forms.Menu.MergeMenu(System.Windows.Forms.Menu)" />, that enable you to create new menus from existing menus, and also merge two menu structures together.</para>
+      <para>The <see cref="T:System.Windows.Forms.Menu" /> class also defines the nested class <see cref="T:System.Windows.Forms.Menu.MenuItemCollection" />. This class defines the collection of <see cref="T:System.Windows.Forms.MenuItem" /> objects used by the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property. You can use the methods of the <see cref="T:System.Windows.Forms.Menu.MenuItemCollection" /> class to add and remove menu items from a <see cref="T:System.Windows.Forms.MainMenu" />, <see cref="T:System.Windows.Forms.ContextMenu" />, or <see cref="T:System.Windows.Forms.MenuItem" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base functionality for all menus. Although <see cref="T:System.Windows.Forms.ToolStripDropDown" /> and <see cref="T:System.Windows.Forms.ToolStripDropDownMenu" /> replace and add functionality to the <see cref="T:System.Windows.Forms.Menu" /> control of previous versions, <see cref="T:System.Windows.Forms.Menu" /> is retained for both backward compatibility and future use if you choose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +39,16 @@
         <Parameter Name="items" Type="System.Windows.Forms.MenuItem[]" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since <see cref="T:System.Windows.Forms.Menu" /> is an abstract class, only inherited classes can call the Menu constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Menu" /> class.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Windows.Forms.MenuItem" /> containing the objects to add to the menu.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +65,16 @@
         <Parameter Name="menuSrc" Type="System.Windows.Forms.Menu" />
       </Parameters>
       <Docs>
-        <param name="menuSrc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method copies the entire list of <see cref="T:System.Windows.Forms.MenuItem" /> objects (stored in the <see cref="T:System.Windows.Forms.Menu" /> passed in to <paramref name="menuSrc" />) into the current menu. You can use this method in your derived class to clone <see cref="T:System.Windows.Forms.MenuItem" /> objects. They can then be reused by other classes that derive from <see cref="T:System.Windows.Forms.Menu" />, such as <see cref="T:System.Windows.Forms.MainMenu" />, <see cref="T:System.Windows.Forms.ContextMenu" />, and <see cref="T:System.Windows.Forms.MenuItem" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Windows.Forms.Menu" /> that is passed as a parameter to the current <see cref="T:System.Windows.Forms.Menu" />.</para>
+        </summary>
+        <param name="menuSrc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Menu" /> to copy. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +89,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new handle to the <see cref="T:System.Windows.Forms.Menu" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle to the menu if the method succeeds; otherwise, null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,8 +115,17 @@
       </Parameters>
       <Docs>
         <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.Menu.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:System.Windows.Forms.Menu" />. The <see cref="M:System.Windows.Forms.Menu.Dispose(System.Boolean)" /> method leaves the <see cref="T:System.Windows.Forms.Menu" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.Menu.Dispose(System.Boolean)" />, you must release all references to the <see cref="T:System.Windows.Forms.Menu" /> so the memory it was occupying can be reclaimed by garbage collection.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.Menu.Dispose(System.Boolean)" /> before you release your last reference to the <see cref="T:System.Windows.Forms.Menu" />. Otherwise, the resources the <see cref="T:System.Windows.Forms.Menu" /> is using will not be freed until garbage collection calls the <see cref="T:System.Windows.Forms.Menu" /> object's destructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources, other than memory, used by the <see cref="T:System.Windows.Forms.Menu" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,8 +140,11 @@
       </ReturnValue>
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="M:System.Windows.Forms.Menu.FindMenuItem(System.Int32,System.IntPtr)" /> method should search for a handle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -120,11 +162,23 @@
         <Parameter Name="value" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To search for a <see cref="T:System.Windows.Forms.MenuItem" /> using a handle, pass in the <see cref="F:System.Windows.Forms.Menu.FindHandle" /> field as the type, and the handle of the <see cref="T:System.Windows.Forms.MenuItem" /> you want to find as the value. </para>
+          <para>To search for a <see cref="T:System.Windows.Forms.MenuItem" /> using a shortcut, pass in the <see cref="F:System.Windows.Forms.Menu.FindShortcut" /> field as the type, and the Shortcut value for the <see cref="T:System.Windows.Forms.MenuItem" /> you want to find as the value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.MenuItem" /> that contains the value specified. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MenuItem" /> that matches value; otherwise, null.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of item to use to find the <see cref="T:System.Windows.Forms.MenuItem" />.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to use to find the <see cref="T:System.Windows.Forms.MenuItem" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,10 +195,20 @@
         <Parameter Name="mergeOrder" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="mergeOrder">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The merge order of a menu item specifies the relative position that this menu item will assume if the menu structure that the <see cref="T:System.Windows.Forms.MenuItem" /> is contained in is merged with another.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the position at which a menu item should be inserted into the menu.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position at which a menu item should be inserted into the menu.</para>
+        </returns>
+        <param name="mergeOrder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The merge order position for the menu item to be merged.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,8 +223,11 @@
       </ReturnValue>
       <MemberValue>1</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="M:System.Windows.Forms.Menu.FindMenuItem(System.Int32,System.IntPtr)" /> method should search for a shortcut.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,9 +242,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows you to obtain a reference to the <see cref="T:System.Windows.Forms.ContextMenu" /> that this menu is contained in. This property returns null if the menu is not contained in a <see cref="T:System.Windows.Forms.ContextMenu" />. This can occur if the menu is contained in a <see cref="T:System.Windows.Forms.MenuItem" /> or <see cref="T:System.Windows.Forms.MainMenu" />, or if the menu is not contained in any menu. You can use this property to determine whether a menu is currently being used, and also to determine where.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ContextMenu" /> that contains this menu.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ContextMenu" /> that contains this menu. The default is null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -192,9 +268,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method allows you to obtain a reference to the <see cref="T:System.Windows.Forms.MainMenu" /> this menu is currently located in. This property returns null if the menu is not contained in a <see cref="T:System.Windows.Forms.MainMenu" />. This can occur if the menu is contained in a <see cref="T:System.Windows.Forms.MenuItem" /> or <see cref="T:System.Windows.Forms.ContextMenu" />, or if the menu is not contained in any menu. You can use this property to determine whether a menu is currently being used, and also to determine where.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.MainMenu" /> that contains this menu.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MainMenu" /> that contains this menu.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -219,9 +304,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to obtain the handle to the menu to perform special operations to the menu outside of the functionality provided by this class or its derived classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value representing the window handle for the menu.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -243,9 +334,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to determine whether any <see cref="T:System.Windows.Forms.MenuItem" /> objects are assigned to this menu. This is equivalent to checking for null in the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this menu contains any menu items. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -267,9 +364,15 @@
         <ReturnType>System.Windows.Forms.MenuItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine whether a <see cref="T:System.Windows.Forms.MenuItem" /> has been specified to display the list of open child windows in an MDI application. To use a specific <see cref="T:System.Windows.Forms.MenuItem" /> as an MDI list, set the <see cref="P:System.Windows.Forms.MenuItem.MdiList" /> property in the <see cref="T:System.Windows.Forms.MenuItem" /> to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the <see cref="T:System.Windows.Forms.MenuItem" /> that is used to display a list of multiple document interface (MDI) child forms.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,9 +397,15 @@
         <ReturnType>System.Windows.Forms.Menu+MenuItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to obtain a reference to the list of menu items that are currently stored in the menu. For <see cref="T:System.Windows.Forms.MainMenu" /> and <see cref="T:System.Windows.Forms.ContextMenu" /> objects, the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property contains the entire menu structure in the control. For the <see cref="T:System.Windows.Forms.MenuItem" /> class, the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property contains the list of submenu items associated with the <see cref="T:System.Windows.Forms.MenuItem" />. With the reference to the collection of menu items for the menu (provided by this property), you can add and remove menu items, determine the total number of menu items, and clear the list of menu items from the collection. For more information on maintaining the menu item collection for a menu, see the <see cref="T:System.Windows.Forms.Menu.MenuItemCollection" /> documentation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the collection of <see cref="T:System.Windows.Forms.MenuItem" /> objects associated with the menu.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -313,9 +422,19 @@
         <Parameter Name="menuSrc" Type="System.Windows.Forms.Menu" />
       </Parameters>
       <Docs>
-        <param name="menuSrc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method merges <see cref="T:System.Windows.Forms.MenuItem" /> objects from one menu with the current menu. <see cref="T:System.Windows.Forms.MenuItem" /> objects are merged according to the values of the <see cref="P:System.Windows.Forms.MenuItem.MergeType" /> and <see cref="P:System.Windows.Forms.MenuItem.MergeOrder" /> properties.</para>
+          <para>Menu merging is typically done to merge the menus of a Multiple Document Interface (MDI) parent form with those of its active MDI child form. This is performed automatically by the .NET Framework common language runtime. For example, if an MDI parent form contains a set of menus for handling files and your MDI child form also has file-related menu items, the menu sets will automatically merge into a single file menu set when the child form is displayed in the MDI parent form.</para>
+          <para>You can use the <see cref="M:System.Windows.Forms.Menu.MergeMenu(System.Windows.Forms.Menu)" /> method if you are merging two menu structures that are not part of an MDI application. This implementation can be called by the <see cref="T:System.Windows.Forms.MainMenu" /> or <see cref="T:System.Windows.Forms.ContextMenu" /> classes to merge two or more objects that derive from <see cref="T:System.Windows.Forms.Menu" />.</para>
+          <para>To merge two <see cref="T:System.Windows.Forms.MenuItem" /> objects use the <see cref="M:System.Windows.Forms.MenuItem.MergeMenu" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Merges the <see cref="T:System.Windows.Forms.MenuItem" /> objects of one menu with the current menu.</para>
+        </summary>
+        <param name="menuSrc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Menu" /> whose menu items are merged with the menu items of the current menu. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -340,9 +459,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At design time, this property is set to the programmatic identifier of the control. However, this property has no bearing on the control at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Windows.Forms.Menu" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessCmdKey">
@@ -388,10 +513,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets user-defined data associated with the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -405,9 +533,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Menu.ToString" /> method returns a <see cref="T:System.String" /> that includes the type and the number of items in the <see cref="P:System.Windows.Forms.Menu.MenuItems" /> property of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> that represents the <see cref="T:System.Windows.Forms.Menu" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Windows.Forms.Menu" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

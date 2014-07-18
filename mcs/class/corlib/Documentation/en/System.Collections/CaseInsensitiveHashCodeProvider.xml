@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CaseInsensitiveHashCodeProvider" FullName="System.Collections.CaseInsensitiveHashCodeProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CaseInsensitiveHashCodeProvider : System.Collections.IHashCodeProvider" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CaseInsensitiveHashCodeProvider extends System.Object implements class System.Collections.IHashCodeProvider" />
@@ -26,8 +27,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> implements the <see cref="T:System.Collections.IHashCodeProvider" /> interface supporting case-insensitive comparisons on strings, just as <see cref="T:System.Collections.CaseInsensitiveComparer" /> implements the <see cref="T:System.Collections.IComparer" /> interface supporting case-insensitive comparisons on strings.</para>
+      <para>The objects used as keys by a <see cref="T:System.Collections.Hashtable" /> are required to override the <see cref="M:System.Object.GetHashCode" /> method (or the <see cref="T:System.Collections.IHashCodeProvider" /> interface) and the <see cref="M:System.Object.Equals(System.Object)" /> method (or the <see cref="T:System.Collections.IComparer" /> interface). The implementation of both methods or interfaces must handle case sensitivity the same way; otherwise, the <see cref="T:System.Collections.Hashtable" /> might behave incorrectly. For example, when creating a <see cref="T:System.Collections.Hashtable" />, you must use this class with the <see cref="T:System.Collections.CaseInsensitiveComparer" /> class or any case-insensitive <see cref="T:System.Collections.IComparer" /> implementation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supplies a hash code for an object, using a hashing algorithm that ignores the case of strings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +51,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> instance is created using this constructor, the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread is saved. Comparison procedures use the saved culture to determine the casing rules; therefore, hash code comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> class using the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,9 +75,16 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparison procedures use the specified <see cref="T:System.Globalization.CultureInfo" /> to determine the casing rules. Hash code comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> class using the specified <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </summary>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> to use for the new <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -78,9 +100,15 @@
         <ReturnType>System.Collections.CaseInsensitiveHashCodeProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CaseInsensitiveHashCodeProvider'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> instance is created using the parameterless constructor, the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread is saved. Comparison procedures use the saved culture to determine the casing rules; therefore, hash code comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> that is associated with the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread and that is always available.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultInvariant">
@@ -96,9 +124,15 @@
         <ReturnType>System.Collections.CaseInsensitiveHashCodeProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparison procedures use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to determine the casing rules. Hash code comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> that is associated with <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> and that is always available.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -117,10 +151,20 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from this method must not be persisted for two reasons. First, the hash function of a class might be altered to generate a better distribution, thereby rendering any values from the old hash function useless. Second, the default implementation of this class does not guarantee that the same value will be returned by different instances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for the given object, using a hashing algorithm that ignores the case of strings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the given object, using a hashing algorithm that ignores the case of strings.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned. </param>
       </Docs>
     </Member>
   </Members>

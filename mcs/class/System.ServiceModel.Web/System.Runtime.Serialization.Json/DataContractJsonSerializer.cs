@@ -194,6 +194,10 @@ namespace System.Runtime.Serialization.Json
 				return new JsonSerializationReader (this, reader, type, verifyObjectName).ReadRoot ();
 			} catch (SerializationException) {
 				throw;
+			} catch (InvalidDataContractException) {
+				throw;
+			} catch (System.Reflection.TargetInvocationException ex) {
+				throw ex.InnerException;
 			} catch (Exception ex) {
 				throw new SerializationException ("Deserialization has failed", ex);
 			}

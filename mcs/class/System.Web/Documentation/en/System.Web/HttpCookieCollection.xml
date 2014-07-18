@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCookieCollection" FullName="System.Web.HttpCookieCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class HttpCookieCollection : System.Collections.Specialized.NameObjectCollectionBase" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type-safe way to manipulate HTTP cookies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +28,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET includes two intrinsic cookie collections. The collection accessible through <see cref="P:System.Web.HttpRequest.Cookies" /> contains cookies transmitted by the client to the server in the Cookie header. The collection accessible through <see cref="P:System.Web.HttpResponse.Cookies" /> contains cookies generated on the server and transmitted to the client in the Set-Cookie header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpCookieCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +52,17 @@
         <Parameter Name="cookie" Type="System.Web.HttpCookie" />
       </Parameters>
       <Docs>
-        <param name="cookie">To be added: an object of type 'HttpCookie'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any number of cookie collections can exist within an application, but only the collection referenced by the intrinsic <see cref="P:System.Web.HttpResponse.Cookies" /> object is sent to the client.</para>
+          <para>The <see cref="M:System.Web.HttpCookieCollection.Add(System.Web.HttpCookie)" /> method allows duplicate cookies in the cookie collection. Use the <see cref="M:System.Web.HttpCookieCollection.Set(System.Web.HttpCookie)" /> method to ensure the uniqueness of cookies in the cookie collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified cookie to the cookie collection.</para>
+        </summary>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpCookie" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +76,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string array containing all the keys (cookie names) in the cookie collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,8 +96,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all cookies from the cookie collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +119,13 @@
       </Parameters>
       <Docs>
         <param name="array">To be added.</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies members of the cookie collection to an <see cref="T:System.Array" /> beginning at the specified index of the array.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the destination array where copying starts. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,10 +142,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'HttpCookie'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Web.HttpCookie" /> item with the specified index from the cookie collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpCookie" /> specified by <paramref name="index" />.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cookie to return from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,10 +169,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'HttpCookie'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the named cookie does not exist, this method creates a new cookie with that name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the cookie with the specified name from the cookie collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpCookie" /> specified by <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the cookie to retrieve from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,10 +199,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the key (name) of the cookie at the specified numerical index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the cookie specified by <paramref name="index" />.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the key to retrieve from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -214,9 +266,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a cookie with the specified <paramref name="name" /> does not exist in the collection, no exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the cookie with the specified name from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the cookie to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,9 +292,16 @@
         <Parameter Name="cookie" Type="System.Web.HttpCookie" />
       </Parameters>
       <Docs>
-        <param name="cookie">To be added: an object of type 'HttpCookie'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpCookieCollection.Set(System.Web.HttpCookie)" /> method first checks to see if a cookie already exists in the collection and if so updates it. The <see cref="M:System.Web.HttpCookieCollection.Set(System.Web.HttpCookie)" /> method does not allow duplicate cookies in the cookie collection. To add duplicate cookies in the cookie collection, use the <see cref="M:System.Web.HttpCookieCollection.Add(System.Web.HttpCookie)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the value of an existing cookie in a cookie collection.</para>
+        </summary>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpCookie" /> object to update. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

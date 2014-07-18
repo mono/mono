@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskFactory&lt;TResult&gt;" FullName="System.Threading.Tasks.TaskFactory&lt;TResult&gt;">
   <TypeSignature Language="C#" Value="public class TaskFactory&lt;TResult&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TaskFactory`1&lt;TResult&gt; extends System.Object" />
@@ -14,8 +15,15 @@
   <Interfaces />
   <Docs>
     <typeparam name="TResult">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.Tasks.TaskFactory`1" /> class encodes some common <see cref="T:System.Threading.Tasks.Task`1" /> patterns into methods that pick up default settings, which are configurable through its constructors.</para>
+      <para>A default instance of <see cref="T:System.Threading.Tasks.TaskFactory`1" /> is available through the <see cref="P:System.Threading.Tasks.Task`1.Factory" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for creating and scheduling <see cref="T:System.Threading.Tasks.Task`1" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with a default configuration. The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with the default configuration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +56,16 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with a default configuration. The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with the default configuration.</para>
+        </summary>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default cancellation token that will be assigned to tasks created by this <see cref="T:System.Threading.Tasks.TaskFactory" /> unless another cancellation token is explicitly specified when calling the factory methods.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,9 +79,16 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to <paramref name="scheduler" />, unless it's null, in which case the property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheduler to use to schedule any tasks created with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />. A null value indicates that the current <see cref="T:System.Threading.Tasks.TaskScheduler" /> should be used.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,10 +103,18 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="creationOptions">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <paramref name="creationOptions" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <paramref name="continuationOptions" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default options to use when creating tasks with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default options to use when creating continuation tasks with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -95,12 +131,22 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <paramref name="creationOptions" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <paramref name="continuationOptions" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to <paramref name="scheduler" />, unless it's null, in which case the property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default cancellation token that will be assigned to tasks created by this <see cref="T:System.Threading.Tasks.TaskFactory" /> unless another cancellation token is explicitly specified when calling the factory methods.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default options to use when creating tasks with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default options to use when creating continuation tasks with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default scheduler to use to schedule any tasks created with this <see cref="T:System.Threading.Tasks.TaskFactory`1" />. A null value indicates that <see cref="P:System.Threading.Tasks.TaskScheduler.Current" /> should be used.</param>
       </Docs>
     </Member>
     <Member MemberName="CancellationToken">
@@ -114,9 +160,15 @@
         <ReturnType>System.Threading.CancellationToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default cancellation token that will be assigned to all tasks created by this factory unless another cancellation token value is explicitly specified during the call to the task factory methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default cancellation token for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContinuationOptions">
@@ -130,9 +182,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default continuation options for this factory. They will be used to create all continuation tasks unless other options are explicitly specified during calls to this factory's methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> enumeration value for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll">
@@ -570,9 +628,15 @@
         <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default creation options for this factory. They will be used to create all tasks unless other options are explicitly specified during calls to this factory's methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> enumeration value for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -918,9 +982,16 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default scheduler for this factory. It will be used to schedule all tasks unless another scheduler is explicitly specified during calls to this factory's methods.</para>
+          <para>If this property returns null, <see cref="P:System.Threading.Tasks.TaskScheduler.Current" /> will be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the task scheduler for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartNew">

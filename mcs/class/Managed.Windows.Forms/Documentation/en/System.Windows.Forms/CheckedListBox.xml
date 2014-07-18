@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CheckedListBox" FullName="System.Windows.Forms.CheckedListBox">
   <TypeSignature Language="C#" Value="public class CheckedListBox : System.Windows.Forms.ListBox" />
   <AssemblyInfo>
@@ -10,8 +11,211 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This control presents a list of items that the user can navigate by using the keyboard or the scrollbar on the right side of the control. The user can place a check mark by one or more items and the checked items can be navigated with the <see cref="T:System.Windows.Forms.CheckedListBox.CheckedItemCollection" /> and <see cref="T:System.Windows.Forms.CheckedListBox.CheckedIndexCollection" />.</para>
+      <para>To add objects to the list at run time, assign an array of object references with the <see cref="M:System.Windows.Forms.ListBox.ObjectCollection.AddRange(System.Object[])" /> method. The list then displays the default string value for each object. You can add individual items to the list with the <see cref="M:System.Windows.Forms.CheckedListBox.ObjectCollection.Add(System.Object,System.Boolean)" /> method.</para>
+      <para>The <see cref="T:System.Windows.Forms.CheckedListBox" /> object supports three states through the <see cref="T:System.Windows.Forms.CheckState" /> enumeration: <see cref="F:System.Windows.Forms.CheckState.Checked" />, <see cref="F:System.Windows.Forms.CheckState.Indeterminate" />, and <see cref="F:System.Windows.Forms.CheckState.Unchecked" />. You must set the state of <see cref="F:System.Windows.Forms.CheckState.Indeterminate" /> in the code because the user interface for a <see cref="T:System.Windows.Forms.CheckedListBox" /> does not provide a mechanism to do so.</para>
+      <para>If <see cref="P:System.Windows.Forms.ListBox.UseTabStops" /> is true, the <see cref="T:System.Windows.Forms.CheckedListBox" /> will recognize and expand tab characters in an item's text, creating columns. These tab stops are preset and cannot be changed. To use custom tab stops, set <see cref="P:System.Windows.Forms.ListBox.UseTabStops" /> to false, set <see cref="P:System.Windows.Forms.ListBox.UseCustomTabOffsets" /> to true, and add the custom values to the <see cref="P:System.Windows.Forms.ListBox.CustomTabOffsets" /> collection. </para>
+      <block subset="none" type="note">
+        <para>If the <see cref="P:System.Windows.Forms.CheckedListBox.UseCompatibleTextRendering" /> property is false, the <see cref="P:System.Windows.Forms.ListBox.CustomTabOffsets" /> property will be ignored and replaced with standard tab offsets.</para>
+      </block>
+      <para>The <see cref="T:System.Windows.Forms.CheckedListBox" /> class supports the following three indexed collections: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Collection </para>
+            </term>
+            <description>
+              <para>Encapsulating Class </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>All items contained in the <see cref="T:System.Windows.Forms.CheckedListBox" /> control. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Windows.Forms.CheckedListBox.ObjectCollection" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Checked items (including items in an indeterminate state), which is a subset of the items contained in the <see cref="T:System.Windows.Forms.CheckedListBox" /> control. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Windows.Forms.CheckedListBox.CheckedItemCollection" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Checked indexes, which is a subset of the indexes into the items collection. These indexes specify items in a checked or indeterminate state. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Windows.Forms.CheckedListBox.CheckedIndexCollection" /> </para>
+          </description>
+        </item>
+      </list>
+      <para>The following three tables are examples of the three indexed collections that the <see cref="T:System.Windows.Forms.CheckedListBox" /> class supports.</para>
+      <para>The first table provides an example of the indexed collection of items in the control (all items contained in the control).</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Item </para>
+            </description>
+            <description>
+              <para>Check State </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>Object 1 </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Windows.Forms.CheckState.Unchecked" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>Object 2 </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Windows.Forms.CheckState.Checked" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>Object 3 </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Windows.Forms.CheckState.Unchecked" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>Object 4 </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Windows.Forms.CheckState.Indeterminate" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>Object 5 </para>
+          </description>
+          <description>
+            <para>
+              <see cref="F:System.Windows.Forms.CheckState.Checked" /> </para>
+          </description>
+        </item>
+      </list>
+      <para>The second table provides an example of the indexed collection of the checked items.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Item </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>Object 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>Object 4 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>Object 5 </para>
+          </description>
+        </item>
+      </list>
+      <para>The third table provides an example of the indexed collection of indexes of checked items.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Index </para>
+            </term>
+            <description>
+              <para>Index of Item </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>3 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>4 </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a <see cref="T:System.Windows.Forms.ListBox" /> in which a check box is displayed to the left of each item.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +223,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, <see cref="T:System.Windows.Forms.CheckedListBox" /> uses <see cref="M:System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles,System.Boolean)" /> and the ResizeRedraw value of <see cref="T:System.Windows.Forms.ControlStyles" /> to specify that the control is redrawn when resized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.CheckedListBox" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +252,15 @@
         <ReturnType>System.Windows.Forms.CheckedListBox+CheckedIndexCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of checked indexes is a subset of the indexes into the collection of all items in the <see cref="T:System.Windows.Forms.CheckedListBox" /> control. These indexes specify items in a checked or indeterminate state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collection of checked indexes in this <see cref="T:System.Windows.Forms.CheckedListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +282,15 @@
         <ReturnType>System.Windows.Forms.CheckedListBox+CheckedItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection is a subset of the objects in the <see cref="P:System.Windows.Forms.CheckedListBox.Items" /> collection, representing only those items whose <see cref="T:System.Windows.Forms.CheckState" /> is Checked or Indeterminate. The indexes in this collection are in ascending order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collection of checked items in this <see cref="T:System.Windows.Forms.CheckedListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +309,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.CheckedListBox.CheckOnClick" /> indicates whether the check box should be toggled whenever an item is selected. The default behavior is to change the selection on the first click, and then have the user click again to apply the check mark. In some instances, however, you might prefer have the item checked as soon as it is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the check box should be toggled when an item is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,8 +340,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.CheckedListBox.Click" /> event passes an <see cref="T:System.EventArgs" /> to its event handler, so it only indicates that a click has occurred. If you need more specific mouse information (such as the button, number of clicks, wheel rotation, or location), use the <see cref="E:System.Windows.Forms.Control.MouseDown" /> and <see cref="E:System.Windows.Forms.Control.MouseUp" /> events, which pass a <see cref="T:System.Windows.Forms.MouseEventArgs" /> to the event handler. </para>
+          <para>A double-click is determined by the mouse settings of the user's operating system. The user can adjust the amount of time that can pass between clicks during a double-click of a mouse button. The <see cref="E:System.Windows.Forms.CheckedListBox.Click" /> event is raised every time the user double-clicks a control. For example, if you have event-handling methods for the <see cref="E:System.Windows.Forms.CheckedListBox.Click" /> and <see cref="E:System.Windows.Forms.Control.DoubleClick" /> events of a form, the events are raised when the form is double-clicked and both event-handling methods are called. If the user double-clicks a control that does not support the <see cref="E:System.Windows.Forms.Control.DoubleClick" /> event, the <see cref="E:System.Windows.Forms.CheckedListBox.Click" /> event might be raised twice. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <see cref="T:System.Windows.Forms.CheckedListBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,9 +363,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.CheckedListBox.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the .NET Framework.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.CheckedListBox" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -160,9 +408,15 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Control.CreateParams" /> property should not be overridden and used to adjust the properties of your derived control. Properties such as the <see cref="P:System.Windows.Forms.CreateParams.Caption" />, <see cref="P:System.Windows.Forms.CreateParams.Width" />, and <see cref="P:System.Windows.Forms.CreateParams.Height" /> should be set by the corresponding properties in your control such as <see cref="P:System.Windows.Forms.Control.Text" />, <see cref="P:System.Windows.Forms.Control.Width" /> and <see cref="P:System.Windows.Forms.Control.Height" />. The <see cref="T:System.Windows.Forms.CreateParams" /> should only be extended when you are wrapping a standard Windows control class or to set styles not provided by the Windows Forms namespace. For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library at http://msdn.microsoft.com/library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the required creation parameters when the control handle is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +438,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -208,8 +465,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.CheckedListBox.DataSource" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,9 +491,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default the <see cref="T:System.Windows.Forms.CheckedListBox" /> displays the default string for the items it contains. However, the <see cref="T:System.Windows.Forms.CheckedListBox" /> can display diverse types of objects and you may want to change the displayed string by specifying the <see cref="P:System.Windows.Forms.CheckedListBox.DisplayMember" /> property. If the specified property does not exist, or the value of the <see cref="P:System.Windows.Forms.CheckedListBox.DisplayMember" /> property is an empty string (""), the results of the object's <see cref="M:System.Windows.Forms.ListBox.ToString" /> method are displayed instead.</para>
+          <para>If the new value of the <see cref="P:System.Windows.Forms.CheckedListBox.DisplayMember" /> cannot be set, the previous value is maintained.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies a property of the objects contained in the list box whose contents you want to display.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,8 +522,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.CheckedListBox.DisplayMember" /> property changes. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -278,8 +548,15 @@
         <ReturnType>System.Windows.Forms.DrawItemEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is used by an owner-drawn <see cref="T:System.Windows.Forms.CheckedListBox" />. The event is raised only when the <see cref="P:System.Windows.Forms.CheckedListBox.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.DrawMode.OwnerDrawFixed" /> or <see cref="F:System.Windows.Forms.DrawMode.OwnerDrawVariable" />. You can use this event to perform the tasks needed to draw items in the <see cref="T:System.Windows.Forms.CheckedListBox" />. If you have a variable-sized item (that is, <see cref="P:System.Windows.Forms.CheckedListBox.DrawMode" /> is set to <see cref="F:System.Windows.Forms.DrawMode.OwnerDrawVariable" />), the <see cref="E:System.Windows.Forms.CheckedListBox.MeasureItem" /> event is raised before the item is drawn. You can create an event handler for the <see cref="E:System.Windows.Forms.CheckedListBox.MeasureItem" /> event to specify the size for the item that you are going to draw in your event handler for the <see cref="E:System.Windows.Forms.CheckedListBox.DrawItem" /> event.</para>
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a visual aspect of an owner-drawn <see cref="T:System.Windows.Forms.CheckedListBox" /> changes. This event is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -304,9 +581,15 @@
         <ReturnType>System.Windows.Forms.DrawMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the mode for drawing elements of the <see cref="T:System.Windows.Forms.CheckedListBox" />. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -323,10 +606,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.CheckedListBox.GetItemChecked(System.Int32)" /> returns true if the value of <see cref="T:System.Windows.Forms.CheckState" /> is Checked or Indeterminate for the item. To determine the specific state the item is in, use the <see cref="M:System.Windows.Forms.CheckedListBox.GetItemCheckState(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified item is checked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item is checked; otherwise, false.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,10 +637,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.GetItemCheckState(System.Int32)" /> method provides the ability to get the <see cref="T:System.Windows.Forms.CheckState" /> value of an item, given the index. If you never set the check state of an item to Indeterminate, then use the <see cref="M:System.Windows.Forms.CheckedListBox.GetItemChecked(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating the check state of the current item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.CheckState" /> values.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to get the checked value of. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -360,8 +664,14 @@
         <ReturnType>System.Windows.Forms.ItemCheckEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The check state is not updated until after the <see cref="E:System.Windows.Forms.CheckedListBox.ItemCheck" /> event occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the checked state of an item changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -386,9 +696,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This measurement is based on the font height plus a small margin to provide white space around the item.</para>
+          <para>The extenders of characters such as "g" and "y" do not display properly when the font is changed to 9.75-point Arial. To correct this, derive a class from <see cref="T:System.Windows.Forms.CheckedListBox" /> and override <see cref="P:System.Windows.Forms.CheckedListBox.ItemHeight" /> to return base.ItemHeight+2.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height of the item area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -413,9 +730,15 @@
         <ReturnType>System.Windows.Forms.CheckedListBox+ObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.CheckedListBox.Items" /> property enables you to obtain a reference to the list of items that are currently stored in a <see cref="T:System.Windows.Forms.CheckedListBox" /> control. With this reference, you can add items, remove items, and obtain a count of the items in the collection. For more information on the tasks that can be performed with the item collection, see the <see cref="T:System.Windows.Forms.CheckedListBox.ObjectCollection" /> class reference topics.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of items in this <see cref="T:System.Windows.Forms.CheckedListBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -437,8 +760,16 @@
         <ReturnType>System.Windows.Forms.MeasureItemEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can create an event handler for this event to specify the size of an item before it is drawn in the <see cref="E:System.Windows.Forms.CheckedListBox.DrawItem" /> event. The event is raised only when the <see cref="P:System.Windows.Forms.CheckedListBox.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.DrawMode.OwnerDrawVariable" />.</para>
+          <para>The maximum height of a <see cref="T:System.Windows.Forms.ListBox" /> item is 255 pixels.</para>
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an owner-drawn <see cref="T:System.Windows.Forms.ListBox" /> is created and the sizes of the list items are determined. This event is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -463,8 +794,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <see cref="T:System.Windows.Forms.CheckedListBox" /> control with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBackColorChanged">
@@ -496,9 +833,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnClick(System.EventArgs)" /> method selects or clears the check box of the item that is clicked. If the <see cref="P:System.Windows.Forms.CheckedListBox.CheckOnClick" /> property is set to true, the check box is switched from a selected or cleared state the first time the item is clicked. Otherwise, the check box is switched only if the item is already selected.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnClick(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CheckedListBox.Click" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -515,9 +861,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DrawItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnDrawItem(System.Windows.Forms.DrawItemEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CheckedListBox.DrawItem" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DrawItemEventArgs" /> object with the details </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -534,9 +888,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnFontChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -553,9 +915,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnHandleCreated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -572,9 +942,17 @@
         <Parameter Name="ice" Type="System.Windows.Forms.ItemCheckEventArgs" />
       </Parameters>
       <Docs>
-        <param name="ice">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnItemCheck(System.Windows.Forms.ItemCheckEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CheckedListBox.ItemCheck" /> event.</para>
+        </summary>
+        <param name="ice">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.ItemCheckEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -591,9 +969,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyPressEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the spacebar is pressed and the <see cref="P:System.Windows.Forms.CheckedListBox.SelectionMode" /> property is not set to <see cref="F:System.Windows.Forms.SelectionMode.None" />, the <see cref="M:System.Windows.Forms.CheckedListBox.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> method switches the check state of the item currently selected.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that was raised. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -610,9 +997,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.MeasureItemEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnMeasureItem(System.Windows.Forms.MeasureItemEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.CheckedListBox.MeasureItem" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MeasureItemEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -629,9 +1024,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.OnSelectedIndexChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ListBox.SelectedIndexChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -659,9 +1062,16 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls receive default values for <see cref="P:System.Windows.Forms.Control.Padding" /> that are reasonably close to Windows user interface guidelines. Some adjustments might still be necessary for particular applications. </para>
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets padding within the <see cref="T:System.Windows.Forms.CheckedListBox" />. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RefreshItems">
@@ -675,8 +1085,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses all <see cref="T:System.Windows.Forms.CheckedListBox" /> items again and gets new text strings for the items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectionMode">
@@ -686,9 +1099,15 @@
         <ReturnType>System.Windows.Forms.SelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.CheckedListBox.SelectionMode" /> property determines whether one item in the list box can be selected or no items can be selected. For <see cref="T:System.Windows.Forms.CheckedListBox" /> objects, multiple selection is not supported. You can set the mode to one item or no items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying the selection mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -706,10 +1125,18 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a value of true is passed, this method sets the <see cref="T:System.Windows.Forms.CheckState" /> value to Checked. A value of false sets <see cref="T:System.Windows.Forms.CheckState" /> to Unchecked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets <see cref="T:System.Windows.Forms.CheckState" /> for the item at the specified index to Checked.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to set the check state for. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the item as checked; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -727,10 +1154,19 @@
         <Parameter Name="value" Type="System.Windows.Forms.CheckState" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.CheckedListBox.SetItemCheckState(System.Int32,System.Windows.Forms.CheckState)" /> method raises the <see cref="E:System.Windows.Forms.CheckedListBox.ItemCheck" /> event.</para>
+          <para>Items whose <see cref="T:System.Windows.Forms.CheckState" /> is set to Indeterminate appear with a check mark in the check box, but the box is grayed to indicate the indeterminate status of the checked item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the check state of the item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to set the state for. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.CheckState" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -749,9 +1185,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the check boxes have a <see cref="T:System.Windows.Forms.ButtonState" /> of Flat or Normal.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -765,10 +1204,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The UseCompatibleTextRendering property is intended to provide visual compatibility between Windows Forms controls that render text using the <see cref="T:System.Windows.Forms.TextRenderer" /> class and net_v10_short and net_v11_short applications that perform custom text rendering using the <see cref="T:System.Drawing.Graphics" /> class. In most cases, if your application is not being upgraded from net_v10_short or net_v11_short, it is recommended that you leave UseCompatibleTextRendering set to the default value of false.</para>
+          <para>The ndptecgdi based <see cref="T:System.Windows.Forms.TextRenderer" /> class was introduced in the dnprdnlong to improve performance, make text look better, and improve support for international fonts. In earlier versions of the dnprdnshort, the ndptecgdiplus based <see cref="T:System.Drawing.Graphics" /> class was used to perform all text rendering. ndptecgdi calculates character spacing and word wrapping differently from ndptecgdiplus. In a Windows Forms application that uses the <see cref="T:System.Drawing.Graphics" /> class to render text, this could cause the text for controls that use <see cref="T:System.Windows.Forms.TextRenderer" /> to appear different from the other text in the application. To resolve this incompatibility, you can set the UseCompatibleTextRendering property to true for a specific control. To set UseCompatibleTextRendering to true for all supported controls in the application, call the <see cref="M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)" /> method with a parameter of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether to use the <see cref="T:System.Drawing.Graphics" /> class (ndptecgdiplus) or the <see cref="T:System.Windows.Forms.TextRenderer" /> class (ndptecgdi) to render text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -794,9 +1240,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify the contents of the <see cref="P:System.Windows.Forms.CheckedListBox.ValueMember" /> property in cases where you bind data.</para>
+          <para>You can clear the <see cref="P:System.Windows.Forms.CheckedListBox.ValueMember" /> property by setting the property to an empty string ("") or null.</para>
+          <para>Setting a new <see cref="P:System.Windows.Forms.CheckedListBox.ValueMember" /> property raises the <see cref="E:System.Windows.Forms.CheckedListBox.ValueMemberChanged" /> and <see cref="E:System.Windows.Forms.ListControl.SelectedValueChanged" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies the property of the data source from which to draw the value. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -818,8 +1272,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.CheckedListBox.ValueMember" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

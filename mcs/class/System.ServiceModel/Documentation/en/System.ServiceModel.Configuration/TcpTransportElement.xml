@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TcpTransportElement" FullName="System.ServiceModel.Configuration.TcpTransportElement">
   <TypeSignature Language="C#" Value="public sealed class TcpTransportElement : System.ServiceModel.Configuration.ConnectionOrientedTransportElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TcpTransportElement extends System.ServiceModel.Configuration.ConnectionOrientedTransportElement" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This configuration element allows you to create a custom binding that implements the TCP transport protocol.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a configuration element that causes a channel to transfer messages on the TCP transport when it is included in a custom binding. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.TcpTransportElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -41,9 +51,13 @@
         <Parameter Name="bindingElement" Type="System.ServiceModel.Channels.BindingElement" />
       </Parameters>
       <Docs>
-        <param name="bindingElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the settings of the specified <see cref="T:System.ServiceModel.Channels.BindingElement" /> to this configuration element.</para>
+        </summary>
+        <param name="bindingElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingElement" /> whose settings are to be applied to this configuration element.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -57,9 +71,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> object that represents the custom binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionPoolSettings">
@@ -78,9 +95,12 @@
         <ReturnType>System.ServiceModel.Configuration.TcpConnectionPoolSettingsElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a configuration element that specifies additional connection settings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -97,9 +117,13 @@
         <Parameter Name="from" Type="System.ServiceModel.Configuration.ServiceModelExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the settings from the specified configuration element to this configuration element.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration element whose settings are to be copied to this configuration element section.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultBindingElement">
@@ -157,9 +181,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connections in excess of the limit are queued until a space below the limit becomes available. The <see cref="P:System.ServiceModel.Configuration.TcpConnectionPoolSettingsElement.LeaseTimeout" /> property limits the duration the client waits to be connected before throwing a connection exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of channels that can wait on the listener to be accepted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PortSharingEnabled">
@@ -178,9 +208,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This setting is relevant only to services. Clients are not affected.</para>
+          <para>Using this setting requires enabling the indigo1 TCP Port Sharing Service by changing its Startup Type to Manual or Automatic.</para>
+          <para>crabout the TCP Listener and how to start it, see <see cref="T:System.Net.Sockets.TcpListener" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether TCP port sharing is enabled for this connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -215,9 +253,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables Teredo for the underlying TCP socket. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=96651">Teredo Overview</see>.</para>
+          <para>This property is only applicable on wxpsp2 and ws2003. wv has a machine-wide configuration option for Teredo, so when running wv, this property is ignored. Teredo requires that the client and service machines both have the Microsoft IPv6 stack installed and correctly configured for Teredo usage. For more information about configuring Teredo, see <see cref="http://go.microsoft.com/fwlink/?LinkId=96651">Teredo Overview</see>. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=96652">Windows Server 2003 Technology Centers</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether Teredo (a technology for addressing clients that are behind firewalls) is enabled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

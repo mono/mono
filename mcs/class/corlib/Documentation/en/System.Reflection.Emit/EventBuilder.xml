@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventBuilder" FullName="System.Reflection.Emit.EventBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class EventBuilder : System.Runtime.InteropServices._EventBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit EventBuilder extends System.Object implements class System.Runtime.InteropServices._EventBuilder" />
@@ -29,8 +30,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An EventBuilder is always associated with a TypeBuilder. The TypeBuilder.DefineEvent method will return a new EventBuilder to a client.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines events for a class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddOtherMethod">
@@ -49,9 +56,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds one of the "other" methods associated with this event. "Other" methods are methods other than the "on" and "raise" methods associated with an event. This function can be called many times to add as many "other" methods.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the other method. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEventToken">
@@ -68,9 +79,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token for this event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the EventToken for this event.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetAddOnMethod">
@@ -89,9 +106,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method used to subscribe to this event.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the method used to subscribe to this event. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -110,9 +131,13 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class to describe the custom attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -137,10 +162,18 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the metadata specification in the ECMA Partition II documentation for details on how to format <paramref name="binaryAttribute" />. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="SetRaiseMethod">
@@ -159,9 +192,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method used to raise this event.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the method used to raise this event. </param>
       </Docs>
     </Member>
     <Member MemberName="SetRemoveOnMethod">
@@ -180,9 +217,13 @@
         <Parameter Name="mdBuilder" Type="System.Reflection.Emit.MethodBuilder" />
       </Parameters>
       <Docs>
-        <param name="mdBuilder">To be added: an object of type 'MethodBuilder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the method used to unsubscribe to this event.</para>
+        </summary>
+        <param name="mdBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A MethodBuilder object that represents the method used to unsubscribe to this event. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._EventBuilder.GetIDsOfNames">
@@ -232,11 +273,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._EventBuilder.GetTypeInfoCount">

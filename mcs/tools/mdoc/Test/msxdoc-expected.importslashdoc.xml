@@ -162,6 +162,7 @@ class Example {
             </remarks>
             <exception cref="T:System.Exception">To be added; from:
           <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
+            <exception cref="Whatever">text!</exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})">
             <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>

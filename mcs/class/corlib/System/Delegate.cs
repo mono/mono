@@ -5,12 +5,11 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +40,10 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	/* Contains the rarely used fields of Delegate */
-	class DelegateData {
+	sealed class DelegateData
+	{
+		public static readonly DelegateData ClosedDelegateForStaticMethod = new DelegateData ();
+
 		public Type target_type;
 		public string method_name;
 	}
@@ -230,6 +232,8 @@ namespace System
 					return null;
 
 			bool argsMatch;
+			DelegateData delegate_data = null;
+
 			if (target != null) {
 				if (!method.IsStatic) {
 					argsMatch = arg_type_match_this (target.GetType (), method.DeclaringType, true);
@@ -238,7 +242,9 @@ namespace System
 				} else {
 					argsMatch = arg_type_match (target.GetType (), args [0].ParameterType);
 					for (int i = 1; i < args.Length; i++)
-						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);					
+						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);
+
+					delegate_data =	DelegateData.ClosedDelegateForStaticMethod;
 				}
 			} else {
 				if (!method.IsStatic) {
@@ -259,6 +265,8 @@ namespace System
 						argsMatch = !(args [0].ParameterType.IsValueType || args [0].ParameterType.IsByRef) && allowClosed;
 						for (int i = 0; i < delargs.Length; i++)
 							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i + 1].ParameterType);
+
+						delegate_data =	DelegateData.ClosedDelegateForStaticMethod;
 					} else {
 						argsMatch = true;
 						for (int i = 0; i < args.Length; i++)
@@ -276,6 +284,8 @@ namespace System
 			Delegate d = CreateDelegate_internal (type, target, method, throwOnBindFailure);
 			if (d != null)
 				d.original_method_info = method;
+			if (delegate_data != null)
+				d.data = delegate_data;
 			return d;
 		}
 
@@ -408,20 +418,31 @@ namespace System
 				method_info = m_target.GetType ().GetMethod (data.method_name, mtypes);
 			}
 
-			if (Method.IsStatic && (args != null ? args.Length : 0) == Method.GetParametersCount () - 1) {
+			var target = m_target;
+			if (Method.IsStatic) {
+				//
 				// The delegate is bound to m_target
-				if (args != null) {
-					object[] newArgs = new object [args.Length + 1];
-					args.CopyTo (newArgs, 1);
-					newArgs [0] = m_target;
-					args = newArgs;
-				} else {
-					args = new object [] { m_target };
+				//
+				if (data == DelegateData.ClosedDelegateForStaticMethod) {
+					if (args == null) {
+						args = new [] { target };
+					} else {
+						Array.Resize (ref args, args.Length + 1);
+						Array.Copy (args, 0, args, 1, args.Length - 1);
+						args [0] = target;
+					}
+
+					target = null;
 				}
-				return Method.Invoke (null, args);
+			} else {
+				if (m_target == null && args != null && args.Length > 0) {
+					target = args [0];
+					Array.Copy (args, 1, args, 0, args.Length - 1);
+					Array.Resize (ref args, args.Length - 1);
+				}
 			}
 
-			return Method.Invoke (m_target, args);
+			return Method.Invoke (target, args);
 		}
 
 		public virtual object Clone ()

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewComboBoxEditingControl" FullName="System.Windows.Forms.DataGridViewComboBoxEditingControl">
   <TypeSignature Language="C#" Value="public class DataGridViewComboBoxEditingControl : System.Windows.Forms.ComboBox, System.Windows.Forms.IDataGridViewEditingControl" />
   <AssemblyInfo>
@@ -21,9 +22,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> class is a specialized type of <see cref="T:System.Windows.Forms.ComboBox" /> that implements the <see cref="T:System.Windows.Forms.IDataGridViewEditingControl" /> interface, allowing it to be hosted in a <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> when the cell is in edit mode. When a <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is in edit mode, you can retrieve the <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> through the <see cref="P:System.Windows.Forms.DataGridView.EditingControl" /> property of the <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.EditingControlShowing" /> event to perform custom initialization of the editing control when a cell enters edit mode. To customize the display characteristics of the control, set the properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.CellStyle" /> property rather than setting the properties of the control returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.Control" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the hosted combo box control in a <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +39,16 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default constructor sets the <see cref="P:System.Windows.Forms.Control.TabStop" /> property to false. </para>
+          <para>Application code typically will not explicitly create instances of the <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> class, because this is performed automatically when the containing <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -49,10 +64,17 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Control.Font" />, <see cref="P:System.Windows.Forms.Control.BackColor" />, and <see cref="P:System.Windows.Forms.Control.ForeColor" /> properties of the control align with the corresponding properties of the <paramref name="dataGridViewCellStyle" /> parameter value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the control's user interface (UI) to be consistent with the specified cell style.</para>
+        </summary>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to use as a pattern for the UI.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,10 +87,16 @@
         <ReturnType>System.Windows.Forms.DataGridView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is automatically set when a <see cref="T:System.Windows.Forms.DataGridViewComboBoxColumn" /> or <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is created within a <see cref="T:System.Windows.Forms.DataGridView" /> or added to a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.DataGridView" /> that contains the combo box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +109,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ComboBox.Text" /> property contains the actual data contained in the control. This data is the string shown in the text box portion of the control. In contrast, the <see cref="M:System.Windows.Forms.DataGridViewComboBoxEditingControl.GetEditingControlFormattedValue(System.Windows.Forms.DataGridViewDataErrorContexts)" /> method returns the formatted representation of this string. Because a combo box uses plain text strings, these two properties are essentially the same.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the formatted representation of the current value of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +131,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row index of the column headers row is -1.</para>
+          <para>The row index of a shared row is also -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the owning cell's parent row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +154,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewComboBoxEditingControl.EditingControlValueChanged" /> property is set to true to specify that the owning cell's value has changed, and the cell may need to be updated to reflect this change. The owning cell or table will reset this property to false after it has updated itself.</para>
+          <para>When the control is initialized, this property is set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the current value of the control has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,12 +181,24 @@
         <Parameter Name="dataGridViewWantsInputKey" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <param name="dataGridViewWantsInputKey">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control calls this method to determine whether to handle an input key or let the editing control handle it.</para>
+          <para>This method returns true if <paramref name="keyData" /> includes the <see cref="F:System.Windows.Forms.Keys.Up" /> or <see cref="F:System.Windows.Forms.Keys.Down" /> values or if the drop-down list is displayed and <paramref name="keyData" /> includes the <see cref="F:System.Windows.Forms.Keys.Escape" /> or <see cref="F:System.Windows.Forms.Keys.Enter" /> values. This method also returns true if <paramref name="dataGridViewWantsInputKey" /> is false. Otherwise, this method returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is a regular input key that the editing control should process or a special key that the <see cref="T:System.Windows.Forms.DataGridView" /> should process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key that should be handled by the editing control; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key that was pressed.</param>
+        <param name="dataGridViewWantsInputKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the <see cref="T:System.Windows.Forms.DataGridView" /> control can process the key; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,10 +211,13 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cursor used during editing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,11 +233,18 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the formatted value of the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the formatted version of the cell contents.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> values that specifies the data error context.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -209,10 +279,14 @@
         <Parameter Name="selectAll" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="selectAll">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares the currently selected cell for editing.</para>
+        </summary>
+        <param name="selectAll">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to select all of the cell's content; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -225,10 +299,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the cell contents need to be repositioned whenever the value changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

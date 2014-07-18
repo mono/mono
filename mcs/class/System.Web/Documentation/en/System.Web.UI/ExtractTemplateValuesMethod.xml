@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtractTemplateValuesMethod" FullName="System.Web.UI.ExtractTemplateValuesMethod">
   <TypeSignature Language="C#" Value="public delegate System.Collections.Specialized.IOrderedDictionary ExtractTemplateValuesMethod(Control control);" />
   <AssemblyInfo>
@@ -15,9 +16,16 @@
   </ReturnValue>
   <Docs>
     <param name="control">To be added.</param>
-    <summary>To be added.</summary>
     <value>To be added.</value>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ExtractTemplateValuesMethod" /> delegate is used by ASP.NET and is not meant to be used directly from your code. </para>
+      <para>This delegate is used by the <see cref="T:System.Web.UI.CompiledBindableTemplateBuilder" /> class, which is the default implementation of the <see cref="T:System.Web.UI.IBindableTemplate" /> interface that ASP.NET generates when the ASP.NET parser encounters two-way data-binding within templated content. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a delegate with which ASP.NET extracts a set of name/value pairs from an <see cref="T:System.Web.UI.IBindableTemplate" /> object at run time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
 </Type>

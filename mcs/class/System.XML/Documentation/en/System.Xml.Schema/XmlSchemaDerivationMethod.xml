@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaDerivationMethod" FullName="System.Xml.Schema.XmlSchemaDerivationMethod">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSchemaDerivationMethod" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSchemaDerivationMethod extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides different methods for preventing derivation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -41,8 +45,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>#all. Refers to all derivation methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -64,8 +71,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override default derivation method to allow any derivation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Extension">
@@ -87,8 +97,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refers to derivations by Extension.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="List">
@@ -110,8 +123,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refers to derivations by List.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -133,8 +149,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Accepts the default derivation method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Restriction">
@@ -156,8 +175,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refers to derivations by Restriction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Substitution">
@@ -179,8 +201,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refers to derivations by Substitution.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Union">
@@ -202,8 +227,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refers to derivations by Union.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

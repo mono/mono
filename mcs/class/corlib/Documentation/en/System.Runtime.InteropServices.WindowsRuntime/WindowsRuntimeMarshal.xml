@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsRuntimeMarshal" FullName="System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMarshal">
   <TypeSignature Language="C#" Value="public static class WindowsRuntimeMarshal" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit WindowsRuntimeMarshal extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides helper methods for marshaling data between the .NET Framework and the wrt.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddEventHandler&lt;T&gt;">
@@ -55,9 +59,13 @@
         <Parameter Name="ptr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="ptr">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees the specified wrt <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see>. </para>
+        </summary>
+        <param name="ptr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address of the <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see> to free.</param>
       </Docs>
     </Member>
     <Member MemberName="GetActivationFactory">
@@ -74,10 +82,20 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In addition to the exceptions in the Exceptions section, any <unmanagedCodeEntityReference>HRESULT</unmanagedCodeEntityReference> other than <unmanagedCodeEntityReference>S_OK</unmanagedCodeEntityReference> that is returned by the underlying factory method will be marshaled as an exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that implements the activation factory interface for the specified wrt type. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the activation factory interface. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The wrt type to get the activation factory interface for. </param>
       </Docs>
     </Member>
     <Member MemberName="PtrToStringHString">
@@ -94,10 +112,17 @@
         <Parameter Name="ptr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="ptr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a managed string that contains a copy of the specified wrt <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see>. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A managed string that contains a copy of the <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see> if <paramref name="ptr" /> is not <see cref="F:System.IntPtr.Zero" />; otherwise, <see cref="F:System.String.Empty" />. </para>
+        </returns>
+        <param name="ptr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An unmanaged pointer to the <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see> to copy. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAllEventHandlers">
@@ -114,9 +139,13 @@
         <Parameter Name="removeMethod" Type="System.Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
       </Parameters>
       <Docs>
-        <param name="removeMethod">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the event handlers that can be removed by using the specified method. </para>
+        </summary>
+        <param name="removeMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate that represents the method that removes event handlers from the wrt event. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveEventHandler&lt;T&gt;">
@@ -158,10 +187,20 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMarshal.FreeHString(System.IntPtr)" /> method to release the <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see> when you are done using it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates a wrt <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see> and copies the specified managed string to it. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to the new <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246451">HSTRING</see>, or <see cref="F:System.IntPtr.Zero" /> if <paramref name="s" /> is <see cref="F:System.String.Empty" />. </para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The managed string to copy. </param>
       </Docs>
     </Member>
   </Members>

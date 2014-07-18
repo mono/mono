@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoveryClientProtocol" FullName="System.Web.Services.Discovery.DiscoveryClientProtocol">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DiscoveryClientProtocol : System.Web.Services.Protocols.HttpWebClientProtocol" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XML Web service discovery is the process of locating, or discovering, one or more related documents that describe available XML Web services. It is through XML Web services discovery that XML Web service clients learn about the available XML Web services at a given URL and how to use them. XML Web services discovery works from the premise that you have already obtained the URL to a discovery document, possibly through a directory service, such as http://uddi.microsoft.com, however, you do not have the details about the XML Web services offered. Through XML Web services discovery, you can discover the details about the XML Web services listed in a <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> at a specific URL.</para>
+      <para>An XML Web service client starts XML Web services discovery by supplying a URL to either the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> or <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> methods. Typically, this URL refers to a discovery document, which in turn refers to documents that describe one or more XML Web services, which are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property. At that point, only that document is downloaded and verified to point to valid information about XML Web services. However, the references contained in that document are not verified at this stage. Instead they are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property. To verify that the references are valid, invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> or <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods, which add valid referenced documents to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property. Last, if a client wants to save the discovery results to disk, invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method.</para>
+      <para>If programmatic access to XML Web services discovery is not needed, the winsdklong ships the Web Services Discovery tool (Disco.exe) for discovering XML Web services within a command prompt. For more details, see <format type="text/html"><a href="ACD88078-C581-42BC-94CA-6633E2851979">[&lt;topic://cpgrfwebservicesdiscoverytooldiscoexe&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for programmatically invoking XML Web services discovery.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +52,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.IList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.AdditionalInformation" /> property primarily contains SOAP bindings, represented by the <see cref="T:System.Web.Services.Discovery.SoapBinding" /> class, defined in the discovery document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information in addition to references found in the discovery document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,10 +77,21 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DiscoveryDocument'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> method expects that the supplied URL is a discovery document. If the URL refers to a service description or an XML schema an exception is thrown. To discover an XML schema or a service description invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> method.</para>
+          <para>If the supplied URL points to a valid discovery document, the discovery document at the supplied URL is added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection. Additionally, references within the discovery document are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection, but not verified to point to valid discovery documents. To verify the references, point to valid discovery documents to invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> or <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discovers the supplied URL to determine if it is a discovery document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> containing the results of XML Web services discovery at the supplied URL.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where XML Web services discovery begins. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,10 +108,21 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DiscoveryDocument'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> method discovers whether the supplied URL is a discovery document, service description or XSD schema. If it is known that the URL only refers to a discovery document, the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> method might be invoked.</para>
+          <para>If the supplied URL points to a valid discovery document, XSD schema, or service description, the discovery document at the supplied URL is added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collections. When the supplied URL refers to an XSD schema or Service Description a <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> is created in memory and added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collections. Additionally, references within the discovery document are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection, but not verified to point to valid discovery documents. To verify that references point to valid discovery documents, invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> or <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discovers the supplied URL to determine if it is a discovery document, service description or an XML Schema Definition (XSD) schema.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> containing the results of XML Web services discovery at the supplied URL. If the <paramref name="url" /> parameter refers to a service description or an XSD Schema, a <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> is created in memory for it.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where XML Web services discovery begins. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,9 +136,15 @@
         <ReturnType>System.Web.Services.Discovery.DiscoveryClientDocumentCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DiscoveryClientDocumentCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> collection is populated during invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods. During invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> methods, if the supplied URL is a valid discovery document, that document is added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> collection. During invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods, valid discovery document references in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of discovery documents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +200,15 @@
         <ReturnType>System.Web.Services.Discovery.DiscoveryExceptionDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DiscoveryExceptionDictionary'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Errors" /> collection is populated with exceptions that occurred during invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" />, and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods. The <see cref="T:System.Web.Services.Discovery.DiscoveryExceptionDictionary" /> is cleared on invocation of these methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of exceptions that occurred during invocation of method from this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -183,8 +235,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol" /> object to load any external references.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadAll">
@@ -197,10 +252,21 @@
         <Parameter Name="topLevelFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="topLevelFilename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DiscoveryClientResultCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file containing a map of saved discovery documents can be created by the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method or Disco.exe.</para>
+          <para>The <paramref name="topLevelFilename" /> parameter must include the fully qualified path if the file does not exist in the current directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads in a file containing a map of saved discovery documents populating the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> properties, with discovery documents, XML Schema Definition (XSD) schemas, and service descriptions referenced in the file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryClientResultCollection" /> containing the results found in the file with the map of saved discovery documents. The file format is a <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoveryClientResultsFile" /> class serialized into XML; however, one would typically create the file using only the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method or Disco.exe.</para>
+        </returns>
+        <param name="topLevelFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of file to read in, containing the map of saved discovery documents. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -214,9 +280,15 @@
         <ReturnType>System.Web.Services.Discovery.DiscoveryClientReferenceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DiscoveryClientReferenceCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection is populated during invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" />, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods. During invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> methods, if the supplied URL is a valid discovery document, that document is added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection together with references found in the discovery document. References added during invocations to the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> methods are not necessarily valid discovery documents. During invocations to <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> references within the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection are verified as being valid discovery documents. If they are valid and contain references, they are also added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of references founds in resolved discovery documents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,8 +303,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> resolves all valid references it finds and places them in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property. Both <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> download and verify XSD schemas and service descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property. However, the two methods differ in how they handle discovery documents. <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> resolves all references in discovery documents within the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property; if a discovery document contains references to other discovery documents, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> resolves just those discovery documents. Discovery documents found in those discovery documents nested one level deep are not resolved by <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" />; whereas <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> resolves them all. <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> continues to resolve references in nested discovery documents until there are no more references.</para>
+          <para>Errors occurring during the verification process done by <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> are not thrown at the time of occurrence, but rather collected and added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Errors" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves all references to discovery documents, XML Schema Definition (XSD) schemas, and service descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property, as well as references found in referenced discovery documents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,8 +327,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> resolves all valid references it finds and places them in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property. Both <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> and <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> download and verify XSD schemas and service descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property. However, the two methods differ in how they handle discovery documents. <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> resolves all references in discovery documents within the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property. If a discovery document contains references to other discovery documents, <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> resolves just those discovery documents. Discovery documents found in those discovery documents nested one level deep are not resolved by <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" />; whereas <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> resolve them all. <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> continues to resolve references in nested discovery documents until there are no more references.</para>
+          <para>Errors occurring during the verification process done by <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> are not thrown at the time of occurrence, but rather collected and added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Errors" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves all references to discovery documents, XML Schema Definition (XSD) schemas and service descriptions in <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" />, as well as references found in those discovery documents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,11 +354,23 @@
         <Parameter Name="topLevelFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="directory">To be added: an object of type 'string'</param>
-        <param name="topLevelFilename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DiscoveryClientResultCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file created with the name of the <paramref name="topLevelFilename" /> parameter in the directory specified by the directory parameter contains a map of saved discovery documents, XML Schema Definition (XSD) schemas and service descriptions. This file can be read in using the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ReadAll(System.String)" /> method to populate the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> properties. The format of the file is XML containing an serialized version of the <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoveryClientResultsFile" /> class.</para>
+          <para>If a file exists with the same name as the <paramref name="topLevelFilename" /> parameter in the <paramref name="directory" /> parameter, that file is overwritten by the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method. The <paramref name="topLevelFilename" /> parameter must include the fully qualified path if the file does not exist in the current directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes all discovery documents, XML Schema Definition (XSD) schemas, and Service Descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property to the supplied directory and creates a file in that directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryClientResultCollection" /> containing the results of all files saved.</para>
+        </returns>
+        <param name="directory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The directory in which to save all documents currently in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property. </param>
+        <param name="topLevelFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file to create or overwrite containing a map of all documents saved. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

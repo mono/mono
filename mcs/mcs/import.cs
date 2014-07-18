@@ -434,6 +434,8 @@ namespace Mono.CSharp
 						else
 							mod |= Modifiers.VIRTUAL;
 					}
+				} else if (parameters.HasExtensionMethodType) {
+					mod |= Modifiers.METHOD_EXTENSION;
 				}
 			}
 

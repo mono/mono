@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcCommand" FullName="System.Data.Odbc.OdbcCommand">
   <TypeSignature Language="C#" Value="public sealed class OdbcCommand : System.Data.Common.DbCommand, ICloneable" />
   <AssemblyInfo>
@@ -25,8 +26,55 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.Odbc.OdbcCommand" /> class provides the following methods for executing commands against a data source: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Item </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> </para>
+          </term>
+          <description>
+            <para>Executes commands that return rows. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" /> </para>
+          </term>
+          <description>
+            <para>Executes commands such as SQL INSERT, DELETE, UPDATE, and SET statements. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteScalar" /> </para>
+          </term>
+          <description>
+            <para>Retrieves a single value, for example, an aggregate value, from a database. </para>
+          </description>
+        </item>
+      </list>
+      <para>You can reset the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property and reuse the <see cref="T:System.Data.Odbc.OdbcCommand" /> object. However, you must close the <see cref="T:System.Data.Odbc.OdbcDataReader" /> before you can execute a new or previous command.</para>
+      <para>If execution of the command causes a fatal <see cref="T:System.Data.Odbc.OdbcException" /> such as a SQL Server severity level of 20 or more, <see cref="T:System.Data.Odbc.OdbcConnection" /> may close. However, the user can reopen the connection and continue.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an SQL statement or stored procedure to execute against a data source. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,8 +82,62 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base constructor initializes all fields to their default values. The following table shows initial property values for an instance of <see cref="T:System.Data.Odbc.OdbcCommand" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> </para>
+              </term>
+              <description>
+                <para>empty string ("") </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="!:System.Data.Odbc.OdbcCommand.CommandTimeout" /> </para>
+              </term>
+              <description>
+                <para>30 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> </para>
+              </term>
+              <description>
+                <para>Text </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> </para>
+              </term>
+              <description>
+                <para>null </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcCommand" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,9 +151,13 @@
         <Parameter Name="cmdText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="cmdText">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcCommand" /> class with the text of the query.</para>
+        </summary>
+        <param name="cmdText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the query. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,10 +172,15 @@
         <Parameter Name="connection" Type="System.Data.Odbc.OdbcConnection" />
       </Parameters>
       <Docs>
-        <param name="cmdText">To be added.</param>
-        <param name="connection">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcCommand" /> class with the text of the query and an <see cref="T:System.Data.Odbc.OdbcConnection" /> object.</para>
+        </summary>
+        <param name="cmdText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the query. </param>
+        <param name="connection">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Data.Odbc.OdbcConnection" /> object that represents the connection to a data source. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,11 +196,70 @@
         <Parameter Name="transaction" Type="System.Data.Odbc.OdbcTransaction" />
       </Parameters>
       <Docs>
-        <param name="cmdText">To be added.</param>
-        <param name="connection">To be added.</param>
-        <param name="transaction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of this implementation of the <see cref="T:System.Data.Odbc.OdbcCommand" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Properties </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="cmdText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="!:System.Data.Odbc.OdbcCommand.CommandTimeout" /> </para>
+              </term>
+              <description>
+                <para>30 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> </para>
+              </term>
+              <description>
+                <para>Text </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> </para>
+              </term>
+              <description>
+                <para>A new <see cref="T:System.Data.Odbc.OdbcConnection" /> that is the value for the <paramref name="connection" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <para>You can change the value for any one of these parameters by setting the related property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcCommand" /> class with the text of the query, an <see cref="T:System.Data.Odbc.OdbcConnection" /> object, and the <see cref="P:System.Data.Odbc.OdbcCommand.Transaction" />.</para>
+        </summary>
+        <param name="cmdText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the query. </param>
+        <param name="connection">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Data.Odbc.OdbcConnection" /> object that represents the connection to a data source. </param>
+        <param name="transaction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transaction in which the <see cref="T:System.Data.Odbc.OdbcCommand" /> executes. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,8 +274,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is nothing to cancel, nothing occurs. However, if there is a command in process, and the cancellation try fails, no exception is generated.</para>
+          <para>To cancel a query on one thread, <see cref="M:System.Data.Odbc.OdbcCommand.Cancel" /> must be called from another thread. Because you cannot execute commands asynchronously with <see cref="T:System.Data.Odbc.OdbcCommand" />, to cancel a command from another thread, one thread must be running synchronously. This means that the <see cref="T:System.Data.Odbc.OdbcCommand" /> object must be accessible from both threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to cancel the execution of an <see cref="T:System.Data.Odbc.OdbcCommand" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,9 +307,55 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Data.IDbCommand.CommandType" /> property is set to StoredProcedure, the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property should be set using standard ODBC stored procedure escape sequences. Setting the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> to the name of the stored procedure does not function as it does for other .NET Framework data providers.</para>
+          <para>Many language features, such as outer joins and scalar function calls, are generally implemented by data sources. Even the syntax for these features is generally data source-specific. Therefore, ODBC defines escape sequences that contain standard syntax for the following language features: </para>
+          <list type="bullet">
+            <item>
+              <para>Date, time, timestamp, and datetime interval literals </para>
+            </item>
+            <item>
+              <para>Scalar functions such as numeric, string, and data type conversion functions </para>
+            </item>
+            <item>
+              <para>LIKE predicate escape character </para>
+            </item>
+            <item>
+              <para>Outer joins </para>
+            </item>
+            <item>
+              <para>Procedure calls </para>
+            </item>
+          </list>
+          <para>The escape sequence used by ODBC is as follows: </para>
+          <code>{extension}</code>
+          <para>This escape sequence is recognized and parsed by ODBC drivers. They then replace any escape sequences with data source-specific grammar.</para>
+          <para>A procedure is an executable object stored at the data source. Generally, it is one or more SQL statements that have been precompiled. The escape sequence for calling a procedure is </para>
+          <code>{[?=]call procedure-name[([parameter][,[parameter]]...)]}</code>
+          <para>where <paramref name="procedure-name" /> specifies the name of a procedure and <paramref name="parameter" /> specifies a procedure parameter.</para>
+          <para>The command executes this stored procedure when you call one of the Execute methods (for example, <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> or <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" />).</para>
+          <para>You cannot set the <see cref="P:System.Data.Odbc.OdbcCommand.Connection" />, <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> and <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> properties if the current connection is performing an execute or fetch operation.</para>
+          <para>The ODBC.NET Provider does not support named parameters for passing parameters to an SQL statement or a stored procedure called by an <see cref="T:System.Data.Odbc.OdbcCommand" /> when <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> is set to Text. In this case, the question mark (?) placeholder must be used. For example: </para>
+          <code>SELECT * FROM Customers WHERE CustomerID = ?</code>
+          <para>Therefore, the order in which <see cref="T:System.Data.Odbc.OdbcParameter" /> objects are added to the <see cref="T:System.Data.Odbc.OdbcParameterCollection" /> must directly correspond to the position of the question mark placeholder for the parameter.</para>
+          <para>If a parameter contains a null value, the .NET Framework Data Provider for ODBC still binds that parameter, but uses a default parameter, if one has been defined by using SQL_DEFAULT_PARAM, instead of the null value. For example, the <see cref="T:System.Data.Odbc.OdbcParameterCollection" />: </para>
+          <code>{1, null, 2}</code>
+          <para>passed into the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property: </para>
+          <code>{call sp(?, ?, ?)}</code>
+          <para>causes the .NET Framework Data Provider for ODBC binding the first parameter to the value 1, the third parameter to the value 2, and the second parameter as SQL_DEFAULT_PARAM. However, this behavior is driver-dependent. If the driver does not support this functionality, just do not pass in a value for the parameter. For example, use the <see cref="T:System.Data.Odbc.OdbcParameterCollection" />: </para>
+          <code>{1, 2}</code>
+          <para>and set the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property to the following: </para>
+          <code>{call sp(?, null, ?)}</code>
+          <block subset="none" type="note">
+            <para>If a parameter is omitted, the comma delimiting it from other parameters must still appear. If an input or input/output parameter is omitted, the procedure uses the default value of the parameter. Another way to specify the default value of an input or input/output parameter is to set the value of the length/indicator buffer bound to the parameter to SQL_DEFAULT_PARAM.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL statement or stored procedure to execute against the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +369,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of zero (0) specifies no limit to the wait time, instead of no wait time, and therefore should be avoided.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the wait time before terminating an attempt to execute a command and generating an error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -170,9 +399,22 @@
         <ReturnType>System.Data.CommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> property is set to StoredProcedure, you should set the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property to the full ODBC call syntax. The command then executes this stored procedure when you call one of the Execute methods (for example, <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> or <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" />).</para>
+          <para>The <see cref="P:System.Data.Odbc.OdbcCommand.Connection" />, <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> and <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> properties cannot be set if the current connection is performing an execute or fetch operation.</para>
+          <para>The .NET Framework Data Provider for ODBC does not support passing named parameters to an SQL statement or to a stored procedure called by an <see cref="T:System.Data.Odbc.OdbcCommand" />. In either of these cases, use the question mark (?) placeholder. For example: </para>
+          <code>SELECT * FROM Customers WHERE CustomerID = ?</code>
+          <para>The order in which <see cref="T:System.Data.Odbc.OdbcParameter" /> objects are added to the <see cref="T:System.Data.Odbc.OdbcParameterCollection" /> must directly correspond to the position of the question mark placeholder for the parameter.</para>
+          <block subset="none" type="note">
+            <para>The .NET Framework Data Provider for ODBC does not support the <see cref="T:System.Data.CommandType" /> setting of TableDirect.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates how the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property is interpreted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,10 +428,17 @@
         <ReturnType>System.Data.Odbc.OdbcConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot set the <see cref="P:System.Data.Odbc.OdbcCommand.Connection" />, <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" />, and <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> properties if the current connection is performing an execute or fetch operation.</para>
+          <para>If you set <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> while a transaction is in progress and the <see cref="P:System.Data.Odbc.OdbcCommand.Transaction" /> property is not null, an <see cref="T:System.InvalidOperationException" /> is generated. If you set <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> after the transaction has been committed or rolled back, and the <see cref="P:System.Data.Odbc.OdbcCommand.Transaction" /> property is not null, the <see cref="P:System.Data.Odbc.OdbcCommand.Transaction" /> property is then set to a null value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.Odbc.OdbcConnection" /> used by this instance of the <see cref="T:System.Data.Odbc.OdbcCommand" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,10 +478,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.Odbc.OdbcCommand.CreateParameter" /> method is a strongly-typed version of <see cref="M:System.Data.IDbCommand.CreateParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of an <see cref="T:System.Data.Odbc.OdbcParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.Odbc.OdbcParameter" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -308,9 +566,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the command object should be visible in a customized interface control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,9 +625,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" /> to perform catalog operations (for example, querying the structure of a database or creating database objects such as tables); or to change the data in a database, without using a <see cref="T:System.Data.DataSet" />, by executing UPDATE, INSERT, or DELETE statements.</para>
+          <para>You can also use <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" /> to execute multiple SQL statements if the underlying ODBC driver supports this functionality. In this case, the return value is the number of rows affected by all statements in the command.</para>
+          <para>Although <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteNonQuery" /> returns no rows, any output parameters or return values mapped to parameters are populated with data.</para>
+          <para>For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1. If a rollback occurs, the return value is also -1.</para>
+          <para>When a trigger exists on a table and data is being added or changed in the table, the return value includes the number of rows affected by both the insert or update operation and the number of rows affected by the trigger or triggers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes an SQL statement against the <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> and returns the number of rows affected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -381,10 +655,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should set the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property to the full ODBC call syntax for stored procedures. The command executes this stored procedure when you call <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" />.</para>
+          <para>While the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is used, the associated <see cref="T:System.Data.Odbc.OdbcConnection" /> is busy serving the <see cref="T:System.Data.Odbc.OdbcDataReader" />. While in this state, no other operations can be performed on the <see cref="T:System.Data.Odbc.OdbcConnection" /> other than closing it. This is the case until the <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> method of the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> to the <see cref="P:System.Data.Odbc.OdbcCommand.Connection" /> and builds an <see cref="T:System.Data.Odbc.OdbcDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.Odbc.OdbcDataReader" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -401,11 +685,27 @@
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <param name="behavior">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you expect your SQL statement to return only a single row, specifying SingleRow as the <see cref="T:System.Data.CommandBehavior" /> value may improve application performance.</para>
+          <para>You should set the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> property to the full ODBC call syntax for stored procedures. The command executes this stored procedure when you call <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" />.</para>
+          <para>The <see cref="T:System.Data.Odbc.OdbcDataReader" /> supports a special mode that enables large binary values to be read efficiently. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <block subset="none" type="note">
+            <para>The SequentialAccess value of <see cref="T:System.Data.CommandBehavior" /> is not a limiting setting; it just means that you will have at least sequential access to the <see cref="T:System.Data.Odbc.OdbcDataReader" />. For example, when you use the SQL Server ODBC Driver in SequentialAccess mode, you can still move to the first column of an <see cref="T:System.Data.Odbc.OdbcDataReader" /> row after having read through all the other columns sequentially.</para>
+          </block>
+          <para>While the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is used, the associated <see cref="T:System.Data.Odbc.OdbcConnection" /> is busy serving the <see cref="T:System.Data.Odbc.OdbcDataReader" />. While in this state, no other operations can be performed on the <see cref="T:System.Data.Odbc.OdbcConnection" /> other than closing it. This is the case until you call the <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> method. If the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is created with <see cref="T:System.Data.CommandBehavior" /> set to CloseConnection, closing the <see cref="T:System.Data.Odbc.OdbcDataReader" /> closes the connection automatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the <see cref="P:System.Data.Odbc.OdbcCommand.CommandText" /> to the <see cref="P:System.Data.Odbc.OdbcCommand.Connection" />, and builds an <see cref="T:System.Data.Odbc.OdbcDataReader" /> using one of the CommandBehavior values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.Odbc.OdbcDataReader" /> object.</para>
+        </returns>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the System.Data.CommandBehavior values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -420,9 +720,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteScalar" /> method to retrieve a single value (for example, an aggregate value) from a data source. This requires less code than using the <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> method, and then performing the operations required to generate the single value from the data returned by an <see cref="T:System.Data.Odbc.OdbcDataReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first column of the first row in the result set, or a null reference if the result set is empty.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -441,9 +750,20 @@
         <ReturnType>System.Data.Odbc.OdbcParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Data.Odbc.OdbcCommand.CommandType" /> is set to Text, the .NET Framework Data Provider for ODBC does not support passing named parameters to an SQL statement or to a stored procedure called by an <see cref="T:System.Data.Odbc.OdbcCommand" />. In either of these cases, use the question mark (?) placeholder. For example: </para>
+          <code>SELECT * FROM Customers WHERE CustomerID = ?</code>
+          <para>The order in which <see cref="T:System.Data.Odbc.OdbcParameter" /> objects are added to the <see cref="T:System.Data.Odbc.OdbcParameterCollection" /> must directly correspond to the position of the question mark placeholder for the parameter in the command text. </para>
+          <block subset="none" type="note">
+            <para>If the parameters in the collection do not match the requirements of the query to be executed, an error may result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.Odbc.OdbcParameterCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -458,8 +778,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.Odbc.OdbcCommand.Prepare" /> method calls the ODBC SQLPrepare function. Depending on the capabilities of the underlying ODBC driver and data source, parameter information such as data types may be checked when the statement is prepared, if all parameters have been bound, or when it is executed if not all parameters have been bound. For maximum interoperability, an application should unbind all parameters that applied to a previous SQL statement before preparing a new SQL statement on the same <see cref="T:System.Data.Odbc.OdbcCommand" />. This prevents errors that are caused by previous parameter information being applied to the new SQL statement.</para>
+          <para>If you call an Execute method after you call <see cref="M:System.Data.Odbc.OdbcCommand.Prepare" />, any parameter value that is larger than the value specified by the <see cref="!:System.Data.Odbc.OdbcParameter.Size" /> property is automatically truncated to the original specified size of the parameter, and no truncation errors are returned.</para>
+          <para>Output parameters (whether prepared or not) must have a user-specified data type. If you specify a variable length data type, you must also specify the maximum <see cref="!:System.Data.Odbc.OdbcParameter.Size" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a prepared or compiled version of the command at the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -474,8 +802,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of the <see cref="P:System.Data.Odbc.OdbcCommand.CommandTimeout" /> is 30 seconds.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Data.Odbc.OdbcCommand.CommandTimeout" /> property to the default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -593,9 +927,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Odbc.OdbcCommand" /> instance is cast to an <see cref="T:InterfaceName" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T;System.Object" /> that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Transaction">
@@ -613,10 +956,16 @@
         <ReturnType>System.Data.Odbc.OdbcTransaction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot set the <see cref="P:System.Data.Odbc.OdbcCommand.Transaction" /> property if it is already set to a specific value, and the command is in the process of executing. If you set the transaction property to an <see cref="T:System.Data.Odbc.OdbcTransaction" /> object that is not connected to the same <see cref="T:System.Data.Odbc.OdbcConnection" /> as the <see cref="T:System.Data.Odbc.OdbcCommand" /> object, an exception will be thrown the next time that you try to execute a statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.Odbc.OdbcTransaction" /> within which the <see cref="T:System.Data.Odbc.OdbcCommand" /> executes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -635,9 +984,16 @@
         <ReturnType>System.Data.UpdateRowSource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.Data.UpdateRowSource" /> value is Both unless the command is automatically generated, as with the <see cref="T:System.Data.Odbc.OdbcCommandBuilder" />, in which case the default is None.</para>
+          <para>For more information about how to use the <see cref="P:System.Data.Odbc.OdbcCommand.UpdatedRowSource" /> property, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the Update method should apply command results to the DataRow.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

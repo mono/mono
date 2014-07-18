@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserControl" FullName="System.Web.UI.UserControl">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class UserControl : System.Web.UI.TemplateControl, System.Web.UI.IAttributeAccessor, System.Web.UI.IUserControlDesignerAccessor" />
   <AssemblyInfo>
@@ -43,8 +44,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.UserControl" /> class is associated with files that have .ascx extensions. These files are compiled at run time as <see cref="T:System.Web.UI.UserControl" /> objects and cached in server memory.</para>
+      <para>You can nest user controls by declaring one .ascx file in another including the latter in a Web Forms page.</para>
+      <para>User controls are contained in ASP.NET Web Forms pages, and offer Web developers an easy way to capture commonly used Web UI. They are instantiated and cached in ways similar to <see cref="T:System.Web.UI.Page" /> objects. Unlike pages, however, user controls cannot be called independently. They can only be called from the page or other user control that contains them.</para>
+      <para>Derive from this class if you want to create a user control using the code-behind technique. This is recommended if you are developing Web Forms pages using this technique.</para>
+      <para>For information about creating user controls declaratively, see <format type="text/html"><a href="5e601b3d-bb16-4dbe-9e35-7e92a34565ca">Web Forms User Controls</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an .ascx file, also known as a user control, requested from a server that hosts an ASP.NET Web application. The file must be called from a Web Forms page or a parser error will occur.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -53,8 +64,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not typically create an instance of the <see cref="T:System.Web.UI.UserControl" /> class. To create your own user control, inherit from the <see cref="T:System.Web.UI.UserControl" /> class.</para>
+          <para>To create a new user control on an ASP.NET page programmatically, use the <see cref="M:System.Web.UI.TemplateControl.LoadControl(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.UserControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +87,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpApplicationState" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.Web.HttpContext.Application" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +114,12 @@
         <ReturnType>System.Web.UI.AttributeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'AttributeCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all attribute name and value pairs declared in the user control tag within the .aspx file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,9 +142,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.Caching.Cache" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.UserControl.Cache" /> allows you to store data for later retrieval, and is shared across the application. The data that you store is independent of the current page or user session. Access data through this property to boost page or application performance if creating the data is slow. For more information about using the Cache, see <format type="text/html"><a href="206f977d-7860-4d20-bdd5-c3b3d8479f3d">Caching Application Data</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Caching.Cache" /> object that is associated with the application that contains the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,9 +183,16 @@
         <ReturnType>System.Web.UI.ControlCachePolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.UserControl.CachePolicy" /> property defines the cache parameters for the instance of the <see cref="T:System.Web.UI.UserControl" /> class. The <see cref="P:System.Web.UI.UserControl.CachePolicy" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.ControlCachePolicy" /> object that it returns. </para>
+          <para>The <see cref="P:System.Web.UI.UserControl.CachePolicy" /> property cannot be set declaratively. It must be set programmatically. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of caching parameters for this user control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignerInitialize">
@@ -166,8 +203,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs any initialization steps on the user control that are required by RAD designers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -189,9 +229,13 @@
         <Parameter Name="page" Type="System.Web.UI.Page" />
       </Parameters>
       <Docs>
-        <param name="page">To be added: an object of type 'Page'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.UI.UserControl" /> object that has been created declaratively. Since there are some differences between pages and user controls, this method makes sure that the user control is initialized properly.</para>
+        </summary>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Page" /> object that contains the user control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,9 +254,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user control is being loaded in response to a client postback, or if it is being loaded and accessed for the first time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,9 +284,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code.  However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>You can load a view-state value into a field so that you do not have to retrieve it from the <see cref="P:System.Web.UI.Control.ViewState" /> property later. You can also insert the value into the <see cref="P:System.Web.UI.Control.ViewState" /> property just before calling <see cref="M:System.Web.UI.UserControl.SaveViewState" /> , which is an effective way to make a field persist across round trips to the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the view-state information from a previous user control request that was saved by the <see cref="M:System.Web.UI.UserControl.SaveViewState" /> method.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the user control state to be restored. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,10 +311,20 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>While similar to the <see cref="M:System.Web.UI.Page.MapPath(System.String)" /> method, this method maps the path from the .ascx file's location, not the .aspx file's location. You can use this method to obtain a path to a directory of images or other resources associated with your <see cref="T:System.Web.UI.UserControl" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns a virtual file path, either absolute or relative, to a physical file path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path to the file.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual file path to map. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,9 +341,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When notified by this method, the <see cref="T:System.Web.UI.UserControl" /> must perform any initialization steps that are required to create and set up an instance. This method confirms site information associated with the <see cref="T:System.Web.UI.UserControl" /> instance and ensures that the class is initialized correctly as a <see cref="T:System.Web.UI.UserControl" /> object.</para>
+          <para>In this stage of the user control's lifecycle, the control's view state has yet to be populated. Additionally, you cannot access other server controls when this method is called, regardless of whether it is a child or parent to this control. Other server controls are not certain to be created and ready for access.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,9 +366,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpRequest" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpRequest" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -318,9 +394,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpResponse" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpResponse" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,9 +422,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In general, you do not need to call this method. However, if you store custom information in view state, you can override this method to do so.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any user control view-state changes that have occurred since the last page postback.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the user control's current view state. If there is no view state associated with the control, it returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -360,9 +448,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpServerUtility" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.UserControl.Server" /> object is compatible with ASP pages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpServerUtility" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -385,9 +479,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.SessionState.HttpSessionState" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.SessionState.HttpSessionState" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -416,10 +513,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.UserControl.System.Web.UI.IAttributeAccessor.GetAttribute(System.String)" /> method to get the value of control attributes that are not exposed as properties on the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified user control attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified user control attribute.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to get the value of.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IAttributeAccessor.SetAttribute">
@@ -437,10 +544,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.UserControl.System.Web.UI.IAttributeAccessor.SetAttribute(System.String,System.String)" /> method to set the value of control attributes that are not exposed as properties on the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the specified user control attribute.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to set.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute to set.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IFilterResolutionService.CompareFilters">
@@ -494,9 +609,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that appears between the opening and closing tags of a user control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IUserControlDesignerAccessor.TagName">
@@ -510,9 +628,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the full tag name of the user control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trace">
@@ -523,9 +644,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.TraceContext" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracing tracks and presents the execution details about a Web request. For trace data to be visible in a rendered page, you must enable tracing for that page.</para>
+          <para>By default, page tracing is disabled. To enable tracing for a page, use the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive as follows: &lt;%@ Page trace="true" %&gt; </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.TraceContext" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

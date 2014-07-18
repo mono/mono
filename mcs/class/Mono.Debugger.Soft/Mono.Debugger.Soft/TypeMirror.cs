@@ -192,6 +192,14 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public bool IsNested {
+			get {
+				var masked = (Attributes & TypeAttributes.VisibilityMask);
+
+				return masked >= TypeAttributes.NestedPublic && masked <= TypeAttributes.NestedFamORAssem;
+			}
+		}
+
 		public bool IsNestedAssembly {
 			get {
 				return (Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedAssembly;
@@ -798,6 +806,10 @@ namespace Mono.Debugger.Soft
 			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
 		}
 
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+		}
+
 #if NET_4_5
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<Value> ();
@@ -816,11 +828,22 @@ namespace Mono.Debugger.Soft
 #endif
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);
+			return NewInstance (thread, method, arguments, InvokeOptions.None);
 		}			
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			if (!method.IsConstructor)
+				throw new ArgumentException ("The method must be a constructor.", "method");
+
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
+		}
+
+		// Since protocol version 2.31
+		public Value NewInstance () {
+			return vm.GetObject (vm.conn.Type_CreateInstance (id));
 		}
 
 		// Since protocol version 2.11

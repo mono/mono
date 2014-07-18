@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColorTranslator" FullName="System.Drawing.ColorTranslator">
   <TypeSignature Language="C#" Value="public sealed class ColorTranslator" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Translates colors to and from GDI+ <see cref="T:System.Drawing.Color" /> structures. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FromHtml">
@@ -27,10 +31,20 @@
         <Parameter Name="htmlColor" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="htmlColor">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Color'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method translates a string representation of an HTML color name, such as Blue or Red, to a GDI+ <see cref="T:System.Drawing.Color" /> structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates an HTML color representation to a GDI+ <see cref="T:System.Drawing.Color" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> structure that represents the translated HTML color or <see cref="F:System.Drawing.Color.Empty" /> if <paramref name="htmlColor" /> is null.</para>
+        </returns>
+        <param name="htmlColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the Html color to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,10 +61,17 @@
         <Parameter Name="oleColor" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="oleColor">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates an OLE color value to a GDI+ <see cref="T:System.Drawing.Color" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> structure that represents the translated OLE color.</para>
+        </returns>
+        <param name="oleColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The OLE color to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,10 +88,17 @@
         <Parameter Name="win32Color" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="win32Color">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a Windows color value to a GDI+ <see cref="T:System.Drawing.Color" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> structure that represents the translated Windows color.</para>
+        </returns>
+        <param name="win32Color">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Windows color to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,10 +115,20 @@
         <Parameter Name="c" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="c">To be added: an object of type 'Color'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method translates a <see cref="T:System.Drawing.Color" /> structure to a string representation of an HTML color. This is the commonly used name of a color, such as "Red", "Blue", or "Green", and not string representation of a numeric color value, such as "FF33AA".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the specified <see cref="T:System.Drawing.Color" /> structure to an HTML string color representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents the HTML color.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> structure to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,10 +145,17 @@
         <Parameter Name="c" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="c">To be added: an object of type 'Color'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the specified <see cref="T:System.Drawing.Color" /> structure to an OLE color.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OLE color value.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> structure to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,10 +172,17 @@
         <Parameter Name="c" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="c">To be added: an object of type 'Color'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the specified <see cref="T:System.Drawing.Color" /> structure to a Windows color.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Windows color value.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> structure to translate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

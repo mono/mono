@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityContextSecurityTokenResolver" FullName="System.ServiceModel.Security.Tokens.SecurityContextSecurityTokenResolver">
   <TypeSignature Language="C#" Value="public class SecurityContextSecurityTokenResolver : System.IdentityModel.Selectors.SecurityTokenResolver, System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityContextSecurityTokenResolver extends System.IdentityModel.Selectors.SecurityTokenResolver implements class System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resolves security context tokens.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +36,14 @@
       <Docs>
         <param name="securityContextCacheCapacity">To be added.</param>
         <param name="removeOldestTokensOnCacheFull">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="removeOldestTokensOnCacheFull" /> is false, AddContext throws a <see cref="T:System.ServiceModel.QuotaExceededException" /> if the cache capacity has been reached.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityTokenResolver" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddContext">
@@ -51,8 +61,11 @@
       </Parameters>
       <Docs>
         <param name="token">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a security context security token to the token cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearContexts">
@@ -67,8 +80,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the token cache of content.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAllContexts">
@@ -86,9 +102,15 @@
       </Parameters>
       <Docs>
         <param name="contextId">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of security context security token IDs that match a specified context ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic collection of security context tokens.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetContext">
@@ -108,9 +130,15 @@
       <Docs>
         <param name="contextId">To be added.</param>
         <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context security token ID that matches a specified context ID and generation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching security context token.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RemoveAllContexts">
@@ -128,8 +156,11 @@
       </Parameters>
       <Docs>
         <param name="contextId">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all tokens from the cache that match a given context ID.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveContext">
@@ -149,8 +180,11 @@
       <Docs>
         <param name="contextId">To be added.</param>
         <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the token from the cache that matches a given context ID and generation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveOldestTokensOnCacheFull">
@@ -164,9 +198,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the oldest tokens should be removed when the cache is full. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecurityContextTokenCacheCapacity">
@@ -180,9 +217,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context token cache size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryAddContext">
@@ -200,9 +240,15 @@
       </Parameters>
       <Docs>
         <param name="token">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to add a token to the cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token was added successfully to the cache; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryResolveSecurityKeyCore">
@@ -288,8 +334,11 @@
       <Docs>
         <param name="context">To be added.</param>
         <param name="expirationTime">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the expiration date for a token in the cache.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SmtpPermissionAttribute" FullName="System.Net.Mail.SmtpPermissionAttribute">
   <TypeSignature Language="C#" Value="public sealed class SmtpPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit SmtpPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
@@ -16,9 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Mail.SmtpPermission" /> and <see cref="T:System.Net.Mail.SmtpPermissionAttribute" /> classes control access to SMTP host computers. The <see cref="T:System.Net.Mail.SmtpClient" /> class demands an <see cref="T:System.Net.Mail.SmtpPermission" /> when sending electronic mail to the SMTP host for delivery.</para>
+      <para>The <see cref="T:System.Net.Mail.SmtpAccess" /> enumeration specifies the level of access controlled by an instance of this permission.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls access to Simple Mail Transport Protocol (SMTP) servers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +41,17 @@
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security action defines which callers must have the permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.SmtpPermissionAttribute" /> class. </para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values that specifies the permission behavior.</param>
       </Docs>
     </Member>
     <Member MemberName="Access">
@@ -51,10 +66,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you specify an invalid value when setting this property, the <see cref="M:System.Net.Mail.SmtpPermissionAttribute.CreatePermission" /> method will throw an <see cref="T:System.ArgumentException" /> when called by the system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the level of access to SMTP servers controlled by the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreatePermission">
@@ -70,10 +91,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should only be called by the security system, never by application code.</para>
+          <para>At compile time, attributes are converted into security declarations and stored in Microsoft intermediate language (MSIL) metadata. At run time, the security declarations in metadata are used to create permission objects that map to the state described in the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a permission object that can be stored with the <see cref="T:System.Security.Permissions.SecurityAction" /> in an assembly's metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.Mail.SmtpPermission" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

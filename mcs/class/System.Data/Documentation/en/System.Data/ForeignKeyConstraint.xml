@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ForeignKeyConstraint" FullName="System.Data.ForeignKeyConstraint">
   <TypeSignature Language="C#" Value="public class ForeignKeyConstraint : System.Data.Constraint" Maintainer="auto" />
   <AssemblyInfo>
@@ -21,8 +22,32 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Data.ForeignKeyConstraint" /> restricts the action performed when a value in a column (or columns) is either deleted or updated. Such a constraint is intended to be used with primary key columns. In a parent/child relationship between two tables, deleting a value from the parent table can affect the child rows in one of the following ways.</para>
+      <list type="bullet">
+        <item>
+          <para>The child rows can also be deleted (a cascading action).</para>
+        </item>
+        <item>
+          <para>The values in the child column (or columns) can be set to null values.</para>
+        </item>
+        <item>
+          <para>The values in the child column (or columns) can be set to default values.</para>
+        </item>
+        <item>
+          <para>An exception can be generated.</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.Data.ForeignKeyConstraint" /> objects are contained in the <see cref="T:System.Data.ConstraintCollection" /> of a <see cref="T:System.Data.DataTable" />, which is accessed through the <see cref="P:System.Data.DataTable.Constraints" /> property.</para>
+      <para>Constraints are not enforced unless the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to true.</para>
+      <para>The <see cref="P:System.Data.ForeignKeyConstraint.AcceptRejectRule" /> is enforced whenever a <see cref="T:System.Data.DataTable" /> object's <see cref="M:System.Data.DataTable.AcceptChanges" /> method is invoked.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an action restriction enforced on a set of columns in a primary key/foreign key relationship when a value or row is either deleted or updated.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,10 +59,15 @@
         <Parameter Name="childColumn" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="parentColumn">To be added: an object of type 'DataColumn'</param>
-        <param name="childColumn">To be added: an object of type 'DataColumn'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> class with the specified parent and child <see cref="T:System.Data.DataColumn" /> objects.</para>
+        </summary>
+        <param name="parentColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
+        <param name="childColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,10 +83,15 @@
         <Parameter Name="childColumns" Type="System.Data.DataColumn[]" />
       </Parameters>
       <Docs>
-        <param name="parentColumns">To be added: an object of type 'DataColumn []'</param>
-        <param name="childColumns">To be added: an object of type 'DataColumn []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> class with the specified arrays of parent and child <see cref="T:System.Data.DataColumn" /> objects.</para>
+        </summary>
+        <param name="parentColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of parent <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
+        <param name="childColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of child <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,11 +108,17 @@
         <Parameter Name="childColumn" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="constraintName">To be added: an object of type 'string'</param>
-        <param name="parentColumn">To be added: an object of type 'DataColumn'</param>
-        <param name="childColumn">To be added: an object of type 'DataColumn'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> class with the specified name, parent and child <see cref="T:System.Data.DataColumn" /> objects.</para>
+        </summary>
+        <param name="constraintName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the constraint. </param>
+        <param name="parentColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
+        <param name="childColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,11 +135,17 @@
         <Parameter Name="childColumns" Type="System.Data.DataColumn[]" />
       </Parameters>
       <Docs>
-        <param name="constraintName">To be added: an object of type 'string'</param>
-        <param name="parentColumns">To be added: an object of type 'DataColumn []'</param>
-        <param name="childColumns">To be added: an object of type 'DataColumn []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> class with the specified name, and arrays of parent and child <see cref="T:System.Data.DataColumn" /> objects.</para>
+        </summary>
+        <param name="constraintName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.ForeignKeyConstraint" />. If null or empty string, a default name will be given when added to the constraints collection. </param>
+        <param name="parentColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of parent <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
+        <param name="childColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of child <see cref="T:System.Data.DataColumn" /> in the constraint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,15 +166,25 @@
         <Parameter Name="updateRule" Type="System.Data.Rule" />
       </Parameters>
       <Docs>
-        <param name="constraintName">To be added: an object of type 'string'</param>
-        <param name="parentTableName">To be added: an object of type 'string'</param>
-        <param name="parentColumnNames">To be added: an object of type 'string []'</param>
-        <param name="childColumnNames">To be added: an object of type 'string []'</param>
-        <param name="acceptRejectRule">To be added: an object of type 'AcceptRejectRule'</param>
-        <param name="deleteRule">To be added: an object of type 'Rule'</param>
-        <param name="updateRule">To be added: an object of type 'Rule'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is provided for design time support in the Visual Studio  environment. <see cref="T:System.Data.ForeignKeyConstraint" /> objects created by using this constructor must then be added to the collection via <see cref="M:System.Data.ConstraintCollection.AddRange(System.Data.Constraint[])" />. Tables and columns with the specified names must exist at the time the method is called, or if <see cref="M:System.Data.DataTable.BeginInit" /> has been called prior to calling this constructor, the tables and columns with the specified names must exist at the time that <see cref="M:System.Data.DataTable.EndInit" /> is called.</para>
+        </summary>
+        <param name="constraintName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the constraint. </param>
+        <param name="parentTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parent <see cref="T:System.Data.DataTable" /> that contains parent <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="parentColumnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the names of parent <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="childColumnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the names of child <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="acceptRejectRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.AcceptRejectRule" /> values. Possible values include None, Cascade, and Default. </param>
+        <param name="deleteRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Rule" /> values to use when a row is deleted. The default is Cascade. Possible values include: None, Cascade, SetNull, SetDefault, and Default. </param>
+        <param name="updateRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Rule" /> values to use when a row is updated. The default is Cascade. Possible values include: None, Cascade, SetNull, SetDefault, and Default. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,16 +218,27 @@
         <Parameter Name="updateRule" Type="System.Data.Rule" />
       </Parameters>
       <Docs>
-        <param name="constraintName">To be added.</param>
-        <param name="parentTableName">To be added.</param>
-        <param name="parentTableNamespace">To be added.</param>
-        <param name="parentColumnNames">To be added.</param>
-        <param name="childColumnNames">To be added.</param>
-        <param name="acceptRejectRule">To be added.</param>
-        <param name="deleteRule">To be added.</param>
-        <param name="updateRule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is provided for design time support in the Visual Studio  environment. <see cref="T:System.Data.ForeignKeyConstraint" /> objects created by using this constructor must then be added to the collection via <see cref="M:System.Data.ConstraintCollection.AddRange(System.Data.Constraint[])" />. Tables and columns with the specified names must exist at the time the method is called, or if <see cref="M:System.Data.DataTable.BeginInit" /> has been called prior to calling this constructor, the tables and columns with the specified names must exist at the time that <see cref="M:System.Data.DataTable.EndInit" /> is called.</para>
+        </summary>
+        <param name="constraintName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the constraint. </param>
+        <param name="parentTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parent <see cref="T:System.Data.DataTable" /> that contains parent <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="parentTableNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="P:System.Data.DataTable.Namespace" />. </param>
+        <param name="parentColumnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the names of parent <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="childColumnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the names of child <see cref="T:System.Data.DataColumn" /> objects in the constraint. </param>
+        <param name="acceptRejectRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.AcceptRejectRule" /> values. Possible values include None, Cascade, and Default. </param>
+        <param name="deleteRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Rule" /> values to use when a row is deleted. The default is Cascade. Possible values include: None, Cascade, SetNull, SetDefault, and Default. </param>
+        <param name="updateRule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Rule" /> values to use when a row is updated. The default is Cascade. Possible values include: None, Cascade, SetNull, SetDefault, and Default. </param>
       </Docs>
     </Member>
     <Member MemberName="AcceptRejectRule">
@@ -182,9 +250,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'AcceptRejectRule'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes to a <see cref="T:System.Data.DataRow" /> or <see cref="T:System.Data.DataTable" /> are not final until the AcceptChanges method is invoked. At that point, the <see cref="P:System.Data.ForeignKeyConstraint.AcceptRejectRule" /> determines the course of action on any values that have been changed or deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the action that should take place across this constraint when <see cref="M:System.Data.DataTable.AcceptChanges" /> is invoked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,9 +277,12 @@
         <ReturnType>System.Data.DataColumn[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataColumn []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child columns of this constraint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,9 +303,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Rule'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a row is deleted from a parent table, the <see cref="P:System.Data.ForeignKeyConstraint.DeleteRule" /> determines what will happen in the columns of the child table (or tables). If the rule is set to Cascade, child rows will be deleted.</para>
+          <para>If set to SetNull, a DBnull will be placed in the appropriate columns of the affected rows. Depending on your data source, a null value may or may not be permitted in a column. For example, SQLServer allows multiple null values to be found in a primary key column, even if they are not unique. In a <see cref="T:System.Data.DataTable" />, however, if a <see cref="T:System.Data.DataColumn" /> object's <see cref="P:System.Data.DataColumn.Unique" /> property is set to true, multiple null values are not allowed in primary key columns.</para>
+          <para>If set to SetDefault, the default value for the column is assigned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the action that occurs across this constraint when a row is deleted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,10 +335,17 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Data.ForeignKeyConstraint" /> is identical to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the objects are identical; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which this <see cref="T:System.Data.ForeignKeyConstraint" /> is compared. Two <see cref="T:System.Data.ForeignKeyConstraint" /> are equal if they constrain the same columns. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -268,9 +360,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code of this instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -284,9 +382,12 @@
         <ReturnType>System.Data.DataColumn[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataColumn []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent columns of this constraint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,9 +406,12 @@
         <ReturnType>System.Data.DataTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTable'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent table of this constraint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,9 +430,12 @@
         <ReturnType>System.Data.DataTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTable'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child table of this constraint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -349,9 +456,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Rule'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the action that occurs across this constraint on when a row is updated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

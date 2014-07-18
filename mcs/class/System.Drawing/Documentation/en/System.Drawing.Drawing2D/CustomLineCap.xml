@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomLineCap" FullName="System.Drawing.Drawing2D.CustomLineCap">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CustomLineCap : MarshalByRefObject, ICloneable, IDisposable" />
   <AssemblyInfo>
@@ -20,8 +21,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Line caps are used at the beginnings and ends of lines or curves drawn by GDI+ <see cref="T:System.Drawing.Pen" /> objects. GDI+ supports several predefined cap styles, and also allows users to define their own cap styles. This class is used to create custom cap styles.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a custom user-defined line cap.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +40,20 @@
         <Parameter Name="strokePath" Type="System.Drawing.Drawing2D.GraphicsPath" />
       </Parameters>
       <Docs>
-        <param name="fillPath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="strokePath">To be added: an object of type 'GraphicsPath'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> uses a fill mode of "winding" regardless of the fill mode specified for the operation.</para>
+          <para>The <paramref name="fillPath" /> and <paramref name="strokePath" /> parameters cannot be used at the same time. One parameter must be passed a null value. If neither parameter is passed a null value, <paramref name="fillPath" /> will be ignored. If <paramref name="strokePath" /> is null, <paramref name="fillPath" /> should intercept the negative y-axis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> class with the specified outline and fill.</para>
+        </summary>
+        <param name="fillPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the fill for the custom cap. </param>
+        <param name="strokePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the outline of the custom cap. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,11 +70,22 @@
         <Parameter Name="baseCap" Type="System.Drawing.Drawing2D.LineCap" />
       </Parameters>
       <Docs>
-        <param name="fillPath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="strokePath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="baseCap">To be added: an object of type 'LineCap'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> uses a fill mode of "winding" regardless of the fill mode specified for the operation.</para>
+          <para>The <paramref name="fillPath" /> and <paramref name="strokePath" /> parameters cannot be used at the same time. One parameter must be passed a null value. If neither parameter is passed a null value, <paramref name="fillPath" /> will be ignored. If <paramref name="strokePath" /> is null, <paramref name="fillPath" /> should intercept the negative y-axis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> class from the specified existing <see cref="T:System.Drawing.Drawing2D.LineCap" /> enumeration with the specified outline and fill.</para>
+        </summary>
+        <param name="fillPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the fill for the custom cap. </param>
+        <param name="strokePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the outline of the custom cap. </param>
+        <param name="baseCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line cap from which to create the custom cap. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,12 +103,24 @@
         <Parameter Name="baseInset" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="fillPath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="strokePath">To be added: an object of type 'GraphicsPath'</param>
-        <param name="baseCap">To be added: an object of type 'LineCap'</param>
-        <param name="baseInset">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> uses a fill mode of "winding" regardless of the fill mode specified for the operation.</para>
+          <para>The <paramref name="fillPath" /> and <paramref name="strokePath" /> parameters cannot be used at the same time. One parameter must be passed a null value. If neither parameter is passed a null value, <paramref name="fillPath" /> will be ignored. If <paramref name="strokePath" /> is null, <paramref name="fillPath" /> should intercept the negative y-axis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> class from the specified existing <see cref="T:System.Drawing.Drawing2D.LineCap" /> enumeration with the specified outline, fill, and inset.</para>
+        </summary>
+        <param name="fillPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the fill for the custom cap. </param>
+        <param name="strokePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object that defines the outline of the custom cap. </param>
+        <param name="baseCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line cap from which to create the custom cap. </param>
+        <param name="baseInset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The distance between the cap and the line. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,9 +136,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LineCap'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.Drawing2D.LineCap" /> enumeration on which this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> is based.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +157,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance between the cap and the line.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,9 +177,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> this method creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,8 +200,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.IDisposable.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> object to be reallocated for other purposes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,9 +228,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -183,8 +249,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows an <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> to attempt to free resources and perform other cleanup operations before the <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> is reclaimed by garbage collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -223,10 +292,15 @@
         <Parameter Name="endCap" Type="System.Drawing.Drawing2D.LineCap" />
       </Parameters>
       <Docs>
-        <param name="startCap">To be added: an object of type 'LineCap'</param>
-        <param name="endCap">To be added: an object of type 'LineCap'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the caps used to start and end lines that make up this custom cap.</para>
+        </summary>
+        <param name="startCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.LineCap" /> enumeration used at the beginning of a line within this cap. </param>
+        <param name="endCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.LineCap" /> enumeration used at the end of a line within this cap. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,9 +316,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LineJoin'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies a <see cref="T:System.Drawing.Drawing2D.LineJoin" /> enumeration that is used to join lines and curves that make up the stroked path of this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.Drawing2D.LineJoin" /> enumeration that determines how lines that compose this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> object are joined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -260,9 +340,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the multiple of the pen width by which to multiply the size of the custom cap. For example, if this property equals 1, the custom cap width is 10, the custom cap height is 5, and a line is drawn with a pen with a width of 3, then the cap is drawn 30 units wide and 15 units high. Setting this property to 3 causes the cap to be drawn 90 units wide and 45 units high.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount by which to scale this <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> Class object with respect to the width of the <see cref="T:System.Drawing.Pen" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

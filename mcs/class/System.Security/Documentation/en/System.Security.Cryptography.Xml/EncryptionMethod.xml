@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EncryptionMethod" FullName="System.Security.Cryptography.Xml.EncryptionMethod">
   <TypeSignature Language="C#" Value="public class EncryptionMethod" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EncryptionMethod extends System.Object" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The &lt;EncryptionMethod&gt; tag uses a Uniform Resource Identifier (URI) to identify the encryption algorithm that must be used to decrypt XML data.  The <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class encapsulates the &lt;EncryptionMethod&gt; tag defined by the World Wide Web Consortium XML Encryption specification located at http://www.w3.org/TR/xmlenc-core/. </para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class to identify the encryption algorithm associated with the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element or the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> element.</para>
+      <para>Use one of the URI identifiers defined by the World Wide Web Consortium XML Encryption specification located at http://www.w3.org/TR/xmlenc-core/.  All URI identifiers are accessible as static fields of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.    </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the encryption algorithm used for XML encryption. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class without specifying the Uniform Resource Identifier (URI) of an encryption algorithm.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,9 +59,16 @@
       </Parameters>
       <Docs>
         <param name="strAlgorithm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class using the URI of an encryption algorithm.  </para>
+          <para>Use one of the URI identifiers defined by the World Wide Web Consortium XML Encryption specification located at http://www.w3.org/TR/xmlenc-core/.  All URI identifiers are accessible as static fields of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.    </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class specifying an algorithm Uniform Resource Identifier (URI). </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -62,10 +84,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptionMethod.GetXml" /> method returns a representation of the &lt;EncryptionMethod&gt; element. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.XmlElement" /> object that encapsulates an instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> object that encapsulates an instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="KeyAlgorithm">
@@ -80,10 +111,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.EncryptionMethod.KeyAlgorithm" /> property describes the Uniform Resource Identifier (URI) of the encryption algorithm used to encrypt data associated with either the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element or the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> element.</para>
+          <para>Use one of the URI identifiers defined by the World Wide Web Consortium XML Encryption specification located at http://www.w3.org/TR/xmlenc-core/.  All URI identifiers are accessible as static fields of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.    </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Uniform Resource Identifier (URI) that describes the algorithm to use for XML encryption. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeySize">
@@ -98,10 +136,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.EncryptionMethod.KeySize" /> property describes the key size of the encryption algorithm used to encrypt data associated with either the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element or the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the algorithm key size used for XML encryption. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -119,10 +163,17 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptionMethod.LoadXml(System.Xml.XmlElement)" /> method configures the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> object to match the state of an <see cref="T:System.Xml.XmlElement" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the specified <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> object to match.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlElement" /> object to parse.</param>
       </Docs>
     </Member>
   </Members>

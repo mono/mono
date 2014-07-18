@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolicyStatement" FullName="System.Security.Policy.PolicyStatement">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PolicyStatement : System.Security.ISecurityEncodable, System.Security.ISecurityPolicyEncodable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PolicyStatement extends System.Object implements class System.Security.ISecurityEncodable, class System.Security.ISecurityPolicyEncodable" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Security.Policy.PolicyStatement" /> consists of a set of granted permissions, and possible special attributes for the code group.</para>
+      <para>Policy statements are typically used as the return value of a <see cref="M:System.Security.Policy.PolicyLevel.Resolve(System.Security.Policy.Evidence)" /> operation on a <see cref="T:System.Security.Policy.PolicyLevel" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the statement of a <see cref="T:System.Security.Policy.CodeGroup" /> describing the permissions and other information that apply to code with a particular set of evidence. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +52,13 @@
         <Parameter Name="permSet" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <param name="permSet">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.PolicyStatement" /> class with the specified <see cref="T:System.Security.PermissionSet" />.</para>
+        </summary>
+        <param name="permSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> with which to initialize the new instance. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -64,10 +76,15 @@
         <Parameter Name="attributes" Type="System.Security.Policy.PolicyStatementAttribute" />
       </Parameters>
       <Docs>
-        <param name="permSet">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.PolicyStatement" /> class with the specified <see cref="T:System.Security.PermissionSet" /> and attributes.</para>
+        </summary>
+        <param name="permSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> with which to initialize the new instance. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Security.Policy.PolicyStatementAttribute" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -83,9 +100,12 @@
         <ReturnType>System.Security.Policy.PolicyStatementAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attributes of the policy statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttributeString">
@@ -101,9 +121,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to get a text string of the attributes currently set for the <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the attributes of the policy statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -120,9 +146,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PolicyStatement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an equivalent copy of the current policy statement.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new copy of the <see cref="T:System.Security.Policy.PolicyStatement" /> with <see cref="P:System.Security.Policy.PolicyStatement.PermissionSet" /> and <see cref="P:System.Security.Policy.PolicyStatement.Attributes" /> identical to those of the current <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -145,11 +177,21 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Security.Policy.PolicyStatement" /> object is equal to the current <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Security.Policy.PolicyStatement" /> is equal to the current <see cref="T:System.Security.Policy.PolicyStatement" /> object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.PolicyStatement" /> object to compare with the current <see cref="T:System.Security.Policy.PolicyStatement" />. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -168,9 +210,13 @@
         <Parameter Name="et" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="et">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a given state from an XML encoding.</para>
+        </summary>
+        <param name="et">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -190,10 +236,15 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="et">To be added.</param>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a given state from an XML encoding.</para>
+        </summary>
+        <param name="et">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.PolicyLevel" /> context for lookup of <see cref="T:System.Security.NamedPermissionSet" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -214,10 +265,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for two instances of the same permission might be different, hence a hash code should not be used to compare two <see cref="T:System.Security.Policy.PolicyStatement" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for the <see cref="T:System.Security.Policy.PolicyStatement" /> object that is suitable for use in hashing algorithms and data structures such as a hash table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Security.Policy.PolicyStatement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PermissionSet">
@@ -233,9 +293,12 @@
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Security.PermissionSet" /> of the policy statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -252,9 +315,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -273,10 +342,17 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="level">To be added: an object of type 'PolicyLevel'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.PolicyLevel" /> context for lookup of <see cref="T:System.Security.NamedPermissionSet" /> values. </param>
       </Docs>
     </Member>
   </Members>

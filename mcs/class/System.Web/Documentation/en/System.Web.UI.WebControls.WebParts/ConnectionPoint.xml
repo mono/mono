@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConnectionPoint" FullName="System.Web.UI.WebControls.WebParts.ConnectionPoint">
   <TypeSignature Language="C#" Value="public abstract class ConnectionPoint" />
   <AssemblyInfo>
@@ -9,9 +10,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Every Web Parts connection consists of two server controls sharing data: one control is the consumer, the other is the provider. For a discussion of the essential components of a Web Parts connection, and the connection object itself, see the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> class overview. Every Web Parts connection requires connection points. The provider and the consumer control must each have at least one defined <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> object (each of them can optionally have multiple connection points) that contains the details for how a control can connect to another control and the type of data it can share. In an actual connection, the provider has its own type of connection point object (derived from the base <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class), a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> instance, and the consumer has its own object, a <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> instance. </para>
+      <para>To create a provider connection point, developers must add a callback method to the provider that will return an implemented interface instance to a consumer. They must mark the callback method in the source code with a ConnectionProvider code attribute (see the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute" /> class). Similarly, to create a consumer connection point, developers must add a method to the consumer that receives an interface instance, and they must mark that method with a ConnectionConsumer attribute (see the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute" /> class). </para>
+      <para>When developers create connections on a Web page, they can be created as static or dynamic connections. Static connections are declared in the markup of a Web page. When a static connection is declared, developers can designate which connection points are used for both the consumer and provider by assigning values to the ProviderConnectionPointID and ConsumerConnectionPointID attributes within the &lt;asp:webpartconnection&gt; element tag. This approach is especially useful if there are multiple connection points defined within the consumer and provider controls, because it enables the static connection to identify which connection points to use for the connection. </para>
+      <para>Dynamic connections are created programmatically, either by a developer's code or by users through the user interface (UI) provided by the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionsZone" /> control. To create a connection in code, developers must get an instance of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> object by calling the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.ConnectWebParts(System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ProviderConnectionPoint,System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint)" /> method on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control. Before they can call this method, developers must have references to the consumer and provider server controls and their respective connection point objects. To get references to the connection points for a provider and a consumer control, developers first call the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetProviderConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> and <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetConsumerConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> methods on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control. These methods return the appropriate connection point objects, which in turn can be passed to the method for creating a connection.</para>
+      <para>When the provider's and the consumer's connection point objects both work with the same type of interface, they are compatible and can form a direct connection to share data. If they do not work with the same interface type, a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object must be used to translate the interface instance from the provider into a type that the consumer can work with. </para>
+      <para>The abstract <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class provides the base details of connection points that are shared by both consumer and provider controls. Several properties contain these details. The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.AllowsMultipleConnections" /> property indicates whether a connection point can participate in more than one connection at a time. By default, provider connection points can participate in multiple connections, and consumer connection points cannot. The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ControlType" /> property indicates the type of the server control associated with a connection point. Note that not only <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls can form connections; any server control, whether an ASP.NET control, a custom control, or a user control, can be enabled to participate in connections if placed in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone. The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.DisplayName" /> property provides a friendly name for the connection point that can be displayed in the UI to assist users who are creating connections. The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ID" /> property serves as a string identifier for the connection point object itself. The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> property indicates what type of interface instance the connection point understands. Whether a given connection point provides or consumes an instance of that interface is determined by whether it is a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> or a <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class has one method. The <see cref="M:System.Web.UI.WebControls.WebParts.ConnectionPoint.GetEnabled(System.Web.UI.Control)" /> method returns a Boolean value indicating whether a connection point is currently able to participate in connections. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class also has one public field, <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" />. This field contains a value used to identify the default connection point in a connection. </para>
+      <block subset="none" type="note">
+        <para>The attributes for specifying connection point methods have only one required parameter, <paramref name="displayName" />, so it is possible to create the default connection point attribute without specifying an ID. In such cases, the <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" /> field supplies a base value to use.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class for defining connection point objects that enable the consumer control and the provider control in a Web Parts connection to share data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllowsMultipleConnections">
@@ -21,10 +38,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> objects have their <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.AllowsMultipleConnections" /> property value set to true (by the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute" /> class), because the Web Parts control set by default enables provider connection points to form connections to multiple consumers. </para>
+          <para>In contrast, <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> objects have their <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.AllowsMultipleConnections" /> property value set to false (by the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute" /> class) because the Web Parts control set by default allows consumer connection points to establish a connection to only one provider at a time. </para>
+          <para>You can change the default behavior concerning multiple connections by assigning different values to the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute.AllowsMultipleConnections" /> property (for providers) or the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute.AllowsMultipleConnections" /> property (for consumers) on the two <see cref="T:System.Attribute" /> classes used for connection attributes. If you enable consumer connection points to connect to multiple providers at the same time, your code must deal with any resulting synchronization issues. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a connection point supports multiple simultaneous connections.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +63,17 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ControlType" /> property is often the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> type. However, because any type of user control or server control can participate in connections if it is properly enabled and placed in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone, the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ControlType" /> property can return one of these other server control types as well. </para>
+          <para>When server controls that are not <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls are placed in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone, they are wrapped with a <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> object at run time so they can function as <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls and participate in connections. But when such controls are involved in connections, the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ControlType" /> property value does not return the <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> type; it returns the type of the <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> object's child control, which is the type of the server or user control.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the server control with which a connection point is associated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,9 +86,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a connection point is created, it is possible to specify an ID for the connection point in the source code of a consumer or provider <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, using a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute" /> or a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute" /> attribute. However, when an attribute is added to a connection point in the source code, the <paramref name="ID" /> parameter is optional. If the ID is not specified in the attribute, the <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" /> field provides a string that is used to identify the default connection point.</para>
+          <para>If multiple connection points are defined in a consumer or provider control, it is necessary to specify an ID for each connection point, so that the connection points can be distinguished when creating connections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a string used to identify the default connection point within a collection of connection points associated with a server control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,11 +111,21 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.ConnectionPoint.GetEnabled(System.Web.UI.Control)" /> method in the base <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class always returns true, but derived classes can override the method to return true or false at different times, based on the state of <paramref name="control" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether a connection point can participate in connections. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control can create a connection point to participate in a connection; otherwise, false.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> or other server control that is associated with a connection point.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,10 +138,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a developer declares a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute" /> or a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute" /> attribute on a method in the source code of a control, so that the method can be used as a connection point, it is not required to declare the <paramref name="ID" /> parameter for the connection point attribute. The only required attribute is the <paramref name="displayName" /> parameter. A default ID is assigned to the connection point, using the value from the <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" /> field. </para>
+          <para>If there is only one method in a control being used as a connection point, it is unnecessary to specify an ID for the connection point. If there are multiple methods specified as connection points, you must specify an ID for each one; otherwise, an exception will be thrown. By assigning an ID to each connection point, you also make it possible to specify which connection point to use when you declare connections in Web pages or create them in code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the identifier for a connection point.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,10 +161,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> property indicates what type of interface a connection point uses. This can help to determine whether two controls are compatible and able to form a connection. If the provider connection point's <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> is different from the consumer connection point's <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" />, then the two controls are incompatible (meaning that they cannot be directly connected without a transformer), and a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object must be used to establish a connection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the interface used by a connection point.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

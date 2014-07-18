@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpTransportElement" FullName="System.ServiceModel.Configuration.HttpTransportElement">
   <TypeSignature Language="C#" Value="public class HttpTransportElement : System.ServiceModel.Configuration.TransportElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpTransportElement extends System.ServiceModel.Configuration.TransportElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration element that specifies an HTTP transport for transmitting SOAP messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.HttpTransportElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowCookies">
@@ -43,9 +50,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property when you interact with ASMX Web services that use cookies. In this way, you can be sure that the cookies returned from the server are automatically copied to all future client requests for that service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the client accepts cookies and propagates them on future requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -62,9 +75,13 @@
         <Parameter Name="bindingElement" Type="System.ServiceModel.Channels.BindingElement" />
       </Parameters>
       <Docs>
-        <param name="bindingElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a new configuration for this element.</para>
+        </summary>
+        <param name="bindingElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding element to use for this configuration.</param>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationScheme">
@@ -83,9 +100,15 @@
         <ReturnType>System.Net.AuthenticationSchemes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The authentication scheme can only be set once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the authentication scheme used to authenticate client requests being processed by an HTTP listener.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -99,9 +122,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BypassProxyOnLocal">
@@ -120,9 +146,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local address is one that is on the local LAN or intranet. Always ignores the proxy if the service address begins with http://localhost. You should use the host name rather than localhost if you want clients to go through a proxy when communicating with services on the same machine.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether proxies are ignored for local addresses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -139,9 +171,13 @@
         <Parameter Name="from" Type="System.ServiceModel.Configuration.ServiceModelExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the configuration element from a specified source.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source that contains the element to be copied.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultBindingElement">
@@ -156,9 +192,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new transport binding element from this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DecompressionEnabled">
@@ -177,9 +219,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether data decompression for SOAP messages is enabled for this transport.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExtendedProtectionPolicy">
@@ -198,9 +243,12 @@
         <ReturnType>System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement" /> instance which contains the configuration settings to use for extended protection for a session.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostNameComparisonMode">
@@ -219,9 +267,12 @@
         <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the hostname is used to reach the service when matching on the URI.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">
@@ -238,9 +289,13 @@
         <Parameter Name="bindingElement" Type="System.ServiceModel.Channels.BindingElement" />
       </Parameters>
       <Docs>
-        <param name="bindingElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes this instance using a specified binding element.</para>
+        </summary>
+        <param name="bindingElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding element to use for initialization.</param>
       </Docs>
     </Member>
     <Member MemberName="KeepAliveEnabled">
@@ -259,9 +314,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that indicates whether to make a persistent connection to the internet resource.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferSize">
@@ -283,9 +341,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size of the buffer pool.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -299,9 +360,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAddress">
@@ -320,9 +384,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a URI that contains the address of the proxy to use for HTTP requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAuthenticationScheme">
@@ -341,9 +408,12 @@
         <ReturnType>System.Net.AuthenticationSchemes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the authentication scheme used to authenticate client requests being processed by an HTTP proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Realm">
@@ -365,9 +435,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the authentication realm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferMode">
@@ -386,9 +459,12 @@
         <ReturnType>System.ServiceModel.TransferMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether messages are buffered or streamed or a request or response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsafeConnectionNtlmAuthentication">
@@ -407,9 +483,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If enabled, NTLM authentication is performed once on each TCP connection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether unsafe connection sharing is enabled on the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultWebProxy">
@@ -428,9 +510,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the machine-wide proxy settings are used rather than the user-specific settings.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

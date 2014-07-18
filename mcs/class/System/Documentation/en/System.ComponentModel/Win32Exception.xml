@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Win32Exception" FullName="System.ComponentModel.Win32Exception">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Win32Exception : System.Runtime.InteropServices.ExternalException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Win32Exception extends System.Runtime.InteropServices.ExternalException" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Win32 error codes are translated from their numeric representations into a system message when they are displayed. Use <see cref="P:System.ComponentModel.Win32Exception.NativeErrorCode" /> to access the numeric representation of the error code associated with this exception. For more information about the error codes, see "Win32 Error Codes" in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Throws an exception for a Win32 error code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +44,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detailed description of the error will be determined by the Win32 error message associated with the error.</para>
+          <para>This constructor uses the <see cref="M:System.Runtime.InteropServices.Marshal.GetLastWin32Error" /> method of <see cref="T:System.Runtime.InteropServices.Marshal" /> to get its error code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the last Win32 error that occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +69,16 @@
         <Parameter Name="error" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="error">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detailed description of the error is determined by the Win32 error message associated with the error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the specified error.</para>
+        </summary>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Win32 error code associated with this exception. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -72,9 +93,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the specified detailed description. </para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A detailed description of the error.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -92,10 +117,18 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="error">To be added: an object of type 'int'</param>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detailed description of the error is determined by the Win32 error message associated with the error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the specified error and the specified detailed description.</para>
+        </summary>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Win32 error code associated with this exception. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A detailed description of the error. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -113,10 +146,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the specified context and the serialization information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> associated with this exception. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that represents the context of this exception. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -132,10 +170,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Win32Exception" /> class with the specified detailed description and the specified exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A detailed description of the error.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the inner exception that is the cause of this exception.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -155,10 +198,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the file name and line number at which this <see cref="T:System.ComponentModel.Win32Exception" /> occurred.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination.</param>
       </Docs>
     </Member>
     <Member MemberName="NativeErrorCode">
@@ -174,9 +222,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Win32 error code associated with this exception.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

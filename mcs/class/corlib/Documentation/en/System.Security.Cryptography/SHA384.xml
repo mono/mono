@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SHA384" FullName="System.Security.Cryptography.SHA384">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class SHA384 : System.Security.Cryptography.HashAlgorithm" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SHA384 extends System.Security.Cryptography.HashAlgorithm" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Common base class for all derived SHA384 implementations.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The hash is used as a unique value of fixed size representing a large amount of data. Hashes of two sets of data should match if and only if the corresponding data also matches. Small changes to the data result in large unpredictable changes in the hash.</para>
+      <para>The hash size for the <see cref="T:System.Security.Cryptography.SHA384" /> algorithm is 384 bits.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Computes the <see cref="T:System.Security.Cryptography.SHA384" /> hash for the input data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Called from constructor of derived class.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code create a new instance of a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -54,9 +68,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Creates the default derived class.</summary>
-        <returns>To be added: an object of type 'SHA384'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the default implementation of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -75,10 +95,17 @@
         <Parameter Name="hashName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="hashName">Specifies which derived class to create.</param>
-        <summary>Creates a new derived class.</summary>
-        <returns>To be added: an object of type 'SHA384'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a specified implementation of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA384" /> using the specified implementation.</para>
+        </returns>
+        <param name="hashName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.SHA384" /> to be used. </param>
       </Docs>
     </Member>
   </Members>

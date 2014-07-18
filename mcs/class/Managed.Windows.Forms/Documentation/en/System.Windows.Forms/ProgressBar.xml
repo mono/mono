@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProgressBar" FullName="System.Windows.Forms.ProgressBar">
   <TypeSignature Language="C#" Value="public class ProgressBar : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -24,8 +25,33 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.ProgressBar" /> control visually indicates the progress of a lengthy operation in one of three styles:</para>
+      <list type="bullet">
+        <item>
+          <para>Segmented blocks that increase in steps from left to right.</para>
+        </item>
+        <item>
+          <para>A continuous bar that fills in from left to right.</para>
+        </item>
+        <item>
+          <para>A block that scrolls across a <see cref="T:System.Windows.Forms.ProgressBar" /> in a marquee fashion.</para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Windows.Forms.ProgressBar.Style" /> property determines the style of <see cref="T:System.Windows.Forms.ProgressBar" /> that is displayed. Note that the <see cref="T:System.Windows.Forms.ProgressBar" /> control can only be oriented horizontally. For an example of how to create a vertically oriented <see cref="T:System.Windows.Forms.ProgressBar" />, see the <see cref="T:System.Windows.Forms.ProgressBarRenderer" /> class. The <see cref="T:System.Windows.Forms.ProgressBar" /> control is typically used when an application performs tasks such as copying files or printing documents. Users of an application might consider an application unresponsive if there is no visual cue. By using the <see cref="T:System.Windows.Forms.ProgressBar" /> in your application, you alert the user that the application is performing a lengthy task and that the application is still responding.</para>
+      <para>The <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> and <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> properties define the range of values to represent the progress of a task. The <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property is typically set to a value of 0, and the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property is typically set to a value indicating the completion of a task. For example, to properly display the progress when copying a group of files, the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property could be set to the total number of files to be copied. </para>
+      <para>The <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property represents the progress that the application has made toward completing the operation. The value displayed by the <see cref="T:System.Windows.Forms.ProgressBar" /> only approximates the current value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property. Based on the size of the <see cref="T:System.Windows.Forms.ProgressBar" />, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property determines when to display the next block or increase the size of the bar.</para>
+      <para>There are a number of ways to modify the value displayed by the <see cref="T:System.Windows.Forms.ProgressBar" /> other than changing the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property directly. You can use the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property to specify a specific value to increment the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property by, and then call the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method to increment the value. To vary the increment value, you can use the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method and specify a value with which to increment the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="P:System.Windows.Forms.Control.ForeColor" /> and <see cref="P:System.Windows.Forms.Control.BackColor" /> changes for the <see cref="T:System.Windows.Forms.ProgressBar" /> will not be honored when visual styles are enabled on winxpfamily and above.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows progress bar control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +59,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property is set to 0, the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property is set to 100, and the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property is set to 10.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ProgressBar" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +88,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="P:System.Windows.Forms.Control.AllowDrop" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,9 +158,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImage" /> has no effect on the appearance of the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image for the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,8 +188,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImage" /> has no effect on the appearance of the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +220,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImageLayout" /> property has no effect on the appearance of the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the layout of the background image of the progress bar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -196,8 +249,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImageLayout" /> property has no effect on the appearance of the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CausesValidation">
@@ -215,9 +274,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control, when it receives focus, causes validation to be performed on any controls that require validation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -239,8 +301,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.CausesValidation" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -270,9 +335,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="P:System.Windows.Forms.Control.CreateParams" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -302,9 +370,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,9 +397,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.DoubleBuffered" /> property has no effect on the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should redraw its surface using a secondary buffer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DoubleClick">
@@ -346,8 +423,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control does not raise the <see cref="E:System.Windows.Forms.ProgressBar.DoubleClick" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -369,8 +452,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control cannot receive keyboard focus, so it never raises the <see cref="E:System.Windows.Forms.ProgressBar.Enter" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when focus enters the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,9 +482,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font of text in the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -416,8 +512,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.Font" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -482,9 +581,15 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the input method editor (IME) for the <see cref="T:System.Windows.Forms.ProgressBar" /> </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -506,8 +611,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.ImeMode" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -524,9 +632,17 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method enables you to increment the value of the progress bar by a specific amount. This method of incrementing the progress bar is similar to using the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property with the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method. The <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property specifies the current position of the <see cref="T:System.Windows.Forms.ProgressBar" />. If, after calling the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is greater than the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property. If, after calling the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method with a negative value specified in the <paramref name="value" /> parameter, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is less than the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property.</para>
+          <para>Because a <see cref="T:System.Windows.Forms.ProgressBar" /> object whose style is set to <see cref="F:System.Windows.Forms.ProgressBarStyle.Marquee" /> displays a continuously scrolling bar instead of its <see cref="P:System.Windows.Forms.ProgressBar.Value" />, calling <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> is unnecessary and will raise an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the current position of the progress bar by the specified amount.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to increment the progress bar's current position. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -548,8 +664,14 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control cannot receive keyboard focus, so it never raises the <see cref="E:System.Windows.Forms.ProgressBar.KeyDown" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user presses a key while the control has focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -571,8 +693,14 @@
         <ReturnType>System.Windows.Forms.KeyPressEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control cannot receive keyboard focus, so it never raises the <see cref="E:System.Windows.Forms.ProgressBar.KeyPress" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user presses a key while the control has focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -594,8 +722,14 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control cannot receive keyboard focus, so it never raises the <see cref="E:System.Windows.Forms.ProgressBar.KeyUp" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user releases a key while the control has focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -617,8 +751,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control cannot receive keyboard focus, so it never raises the <see cref="E:System.Windows.Forms.ProgressBar.Leave" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when focus leaves the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -637,10 +777,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A marquee-style progress indicator does not display progress; instead it indicates that an operation is occurring by moving the progress block across the progress bar.</para>
+          <para>Since the marquee animation speed is a time period, setting the value to a higher number results in a slower speed and a lower number results in a faster speed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time period, in milliseconds, that it takes the progress block to scroll across the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -661,9 +808,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the upper limit of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property. When the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property is changed, the <see cref="T:System.Windows.Forms.ProgressBar" /> control is redrawn to reflect the new range of the control. When the value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is equal to the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property, the progress bar is completely filled.</para>
+          <para>You can use this property to specify a value to which the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property must be set (by setting the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property or using the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> or <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> methods) to indicate that an operation is complete. For example, you can set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property to the total number of files in a file copy operation. Each time a file is copied, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property can be increased by 1 until the total number of files is copied. At that point, the progress bar would be completely filled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum value of the range of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -685,9 +839,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the lower limit of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property. When the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property is changed, the <see cref="T:System.Windows.Forms.ProgressBar" /> control is redrawn to reflect the new range of the control. When the value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is equal to the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property, the progress bar is empty. To change the value of the progress bar, use the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property with the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method, use the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method, or set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum value of the range of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -712,8 +872,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ProgressBar" /> control does not raise the <see cref="E:System.Windows.Forms.ProgressBar.MouseDoubleClick" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBackColorChanged">
@@ -729,9 +895,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.OnBackColorChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BackColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnForeColorChanged">
@@ -747,9 +921,21 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.OnForeColorChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.Windows.Forms.Control.ForeColor" /> changes will not be honored when visual styles are enabled and the operating system supports visual styles.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.ForeColorChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnHandleCreated">
@@ -762,9 +948,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.Windows.Forms.Control.OnHandleCreated(System.EventArgs)" /> </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -784,9 +974,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.OnHandleDestroyed(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleDestroyed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftLayoutChanged">
@@ -807,9 +1005,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="P:System.Windows.Forms.ProgressBar.RightToLeftLayout" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -833,9 +1039,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.Padding" /> property will have no effect on the appearance of the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the space between the edges of a <see cref="T:System.Windows.Forms.ProgressBar" /> control and its contents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -856,8 +1068,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ProgressBar.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -875,8 +1093,11 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Windows.Forms.ProgressBar" /> is drawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -891,8 +1112,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method increments the value of the progress bar by the amount specified by the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property. You can use the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property to specify the amount that each completed task in an operation changes the value of the progress bar. For example, if you are copying a group of files, you might want to set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property to 1 and the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property to the total number of files to copy. When each file is copied, you can call the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method to increment the progress bar by the value of the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property. If you want to have more flexible control of the value of the progress bar, you can use the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method or set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property directly.</para>
+          <para>The <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property specifies the current position of the <see cref="T:System.Windows.Forms.ProgressBar" />. If, after calling the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is greater than the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property. If, after calling the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method with a negative value specified in <see cref="P:System.Windows.Forms.ProgressBar.Step" />, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property is less than the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property, the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> property.</para>
+          <para>Because a <see cref="T:System.Windows.Forms.ProgressBar" /> object whose style is set to <see cref="F:System.Windows.Forms.ProgressBarStyle.Marquee" /> displays a continuously scrolling bar instead of its <see cref="P:System.Windows.Forms.ProgressBar.Value" />, calling <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> is unnecessary and will raise an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the current position of the progress bar by the amount of the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -915,8 +1144,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method will reset the <see cref="P:System.Windows.Forms.Control.ForeColor" /> to <see cref="P:System.Drawing.SystemColors.Highlight" /> unless the method is overridden in a derived class. The <see cref="M:System.Windows.Forms.ProgressBar.ResetForeColor" /> method is useful when you create a designer for the control, or you are creating your own control that incorporates the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.Control.ForeColor" /> to its default value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeft">
@@ -983,9 +1218,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ProgressBar.RightToLeftLayout" /> property is useful when creating an application for use with languages that read from right to left. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ProgressBar" /> and any text it contains is displayed from right to left. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -998,8 +1239,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ProgressBar.RightToLeftLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Step">
@@ -1014,9 +1261,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property to specify the amount that each completed task in an operation changes the value of the progress bar. For example, if you are copying a group of files, you might want to set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property to 1 and the value of the <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> property to the total number of files to copy. When each file is copied, you can call the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method to increment the progress bar by the value of the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property. If you want to have more flexible control of the value of the progress bar, you can use the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method or set the value of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount by which a call to the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method increases the current position of the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1041,10 +1294,16 @@
         <ReturnType>System.Windows.Forms.ProgressBarStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the marquee style when you need to indicate progress is being made, without indicating the quantity of progress. The <see cref="F:System.Windows.Forms.ProgressBarStyle.Marquee" /> style is honored only when visual styles are enabled. The <see cref="F:System.Windows.Forms.ProgressBarStyle.Continuous" /> style is honored when visual styles are not enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the manner in which progress should be indicated on the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1065,9 +1324,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="P:System.Windows.Forms.Control.TabStop" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1089,8 +1351,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ProgressBar.TabStop" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1115,9 +1380,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="P:System.Windows.Forms.Control.Text" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1139,8 +1407,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.ProgressBar.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1155,9 +1426,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return string includes the type and the values for the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" />, <see cref="P:System.Windows.Forms.ProgressBar.Maximum" />, and <see cref="P:System.Windows.Forms.ProgressBar.Value" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ProgressBar" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.ProgressBar" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1179,9 +1459,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum and maximum values of the <see cref="P:System.Windows.Forms.ProgressBar.Value" /> property are specified by the <see cref="P:System.Windows.Forms.ProgressBar.Minimum" /> and <see cref="P:System.Windows.Forms.ProgressBar.Maximum" /> properties. This property enables you to increment or decrement the value of the progress bar directly. To perform consistent increases in the value of the <see cref="T:System.Windows.Forms.ProgressBar" /> control you can use the <see cref="P:System.Windows.Forms.ProgressBar.Step" /> property with the <see cref="M:System.Windows.Forms.ProgressBar.PerformStep" /> method. To increase the progress bar value by varying amounts, use the <see cref="M:System.Windows.Forms.ProgressBar.Increment(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current position of the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

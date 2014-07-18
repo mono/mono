@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlAttributeCollection" FullName="System.Xml.XmlAttributeCollection">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class XmlAttributeCollection : System.Xml.XmlNamedNodeMap, System.Collections.ICollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlAttributeCollection extends System.Xml.XmlNamedNodeMap implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
@@ -18,8 +19,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>A typed collection of <see cref="T:System.Xml.XmlAttribute" /> objects.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XmlAttributeCollection extends the <see cref="T:System.Xml.XmlNamedNodeMap" /> class by adding strongly typed helper methods. You can use this class to add, remove, or modify attributes in the collection. XmlAttributeCollection is returned by the <see cref="P:System.Xml.XmlElement.Attributes" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of attributes that can be accessed by name or index.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Append">
@@ -38,10 +45,21 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="node">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="node" /> is added to the end of the collection.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified attribute as the last node in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to append to the collection.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -61,10 +79,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'XmlAttribute[]'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the <see cref="T:System.Xml.XmlAttribute" /> objects from this collection into the given array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that is the destination of the objects copied from this collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the array where copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="InsertAfter">
@@ -84,11 +110,23 @@
         <Parameter Name="refNode" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="newNode">To be added: an object of type 'XmlAttribute'</param>
-        <param name="refNode">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="newNode" /> is inserted into the collection. If <paramref name="refNode" /> is null, <paramref name="newNode" /> is inserted at the beginning of the collection.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified attribute immediately after the specified reference attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to insert into the collection.</para>
+        </returns>
+        <param name="newNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
+        <param name="refNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> that is the reference attribute. <paramref name="newNode" /> is placed after the <paramref name="refNode" />. </param>
       </Docs>
     </Member>
     <Member MemberName="InsertBefore">
@@ -108,11 +146,23 @@
         <Parameter Name="refNode" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="newNode">To be added: an object of type 'XmlAttribute'</param>
-        <param name="refNode">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="newNode" /> is inserted into the collection. If <paramref name="refNode" /> is null, <paramref name="newNode" /> is inserted at the end of the collection.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified attribute immediately before the specified reference attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to insert into the collection.</para>
+        </returns>
+        <param name="newNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
+        <param name="refNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> that is the reference attribute. <paramref name="newNode" /> is placed before the <paramref name="refNode" />. </param>
       </Docs>
     </Member>
     <Member MemberName="ItemOf">
@@ -199,10 +249,21 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="node">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="node" /> is added to the beginning of the collection.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified attribute as the first node in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute added to the collection.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -221,10 +282,20 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="node">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified attribute from the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node removed or null if it is not found in the collection.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAll">
@@ -241,8 +312,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all attributes from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -261,10 +338,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the attribute corresponding to the specified index from the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null if there is no attribute at the specified index.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the node to remove. The first node has index 0. </param>
       </Docs>
     </Member>
     <Member MemberName="SetNamedItem">
@@ -283,10 +370,17 @@
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Xml.XmlNode" /> using its <see cref="P:System.Xml.XmlNode.Name" /> property </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="node" /> replaces an existing node with the same name, the old node is returned; otherwise, the added node is returned.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />An attribute node to store in this collection. The node will later be accessible using the name of the node. If a node with that name is already present in the collection, it is replaced by the new one; otherwise, the node is appended to the end of the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.CopyTo">
@@ -306,10 +400,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlAttributeCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.XmlAttributeCollection.CopyTo(System.Xml.XmlAttribute[],System.Int32)" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that is the destination of the objects copied from this collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the array where copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -325,9 +427,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlAttributeCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.XmlAttributeCollection.System.Collections.ICollection.IsSynchronized" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -343,9 +451,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlAttributeCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.XmlAttributeCollection.System.Collections.ICollection.SyncRoot" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

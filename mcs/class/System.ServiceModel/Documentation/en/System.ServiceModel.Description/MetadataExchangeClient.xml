@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MetadataExchangeClient" FullName="System.ServiceModel.Description.MetadataExchangeClient">
   <TypeSignature Language="C#" Value="public class MetadataExchangeClient" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MetadataExchangeClient extends System.Object" />
@@ -10,8 +11,48 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> to download metadata. Typically, a <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> is configured for a metadata request and then passed to the <see cref="M:System.ServiceModel.Description.MetadataResolver.Resolve(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ContractDescription},System.Uri,System.ServiceModel.Description.MetadataExchangeClientMode)" /> or <see cref="M:System.ServiceModel.Description.MetadataResolver.Resolve(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ContractDescription},System.Uri,System.ServiceModel.Description.MetadataExchangeClientMode,System.ServiceModel.Description.MetadataExchangeClient)" /> method for the <see cref="T:System.ServiceModel.Description.MetadataResolver" /> to use to download metadata. </para>
+      <para>However, you can use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly to retrieve metadata as a <see cref="T:System.ServiceModel.Description.MetadataSet" /> that contains <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
+      <para>Whether used directly or passed to a <see cref="T:System.ServiceModel.Description.MetadataResolver" />, <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> has the following members to control the metadata download process:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the constructors to customize the binding to use when making the metadata request.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.HttpCredentials" /> property to specify the credentials used to make an HTTP/GET request.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.SoapCredentials" /> property to specify the credentials used to make a WS-Transfer metadata request.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.MaximumResolvedReferences" /> property to limit the number of metadata references the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> resolves.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.OperationTimeout" /> property to limit the time spent retrieving metadata.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.ResolveMetadataReferences" /> property to specify whether to locate and retrieve other metadata documents referred to by the metadata downloaded from the original metadata endpoint.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="Overload:System.ServiceModel.Description.MetadataExchangeClient.GetMetadata" /> methods to begin the downloading process.</para>
+        </item>
+      </list>
+      <para>In addition, you can create a derived class that can override the following two protected methods:</para>
+      <list type="bullet">
+        <item>
+          <para>Override the <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetChannelFactory(System.ServiceModel.EndpointAddress,System.String,System.String)" /> method to modify the channel that makes a metadata request using WS-Transfer.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetWebRequest(System.Uri,System.String,System.String)" /> method to modify the <see cref="T:System.Net.HttpWebRequest" /> that makes a metadata request using HTTP/GET.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Downloads service metadata.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +64,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +82,16 @@
         <Parameter Name="mexBinding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="mexBinding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to specify a binding to use when downloading metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class using the specified binding.</para>
+        </summary>
+        <param name="mexBinding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding to use when retrieving metadata using WS-Transfer.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +105,16 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to specify the address of the metadata endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class. </para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -70,9 +128,16 @@
         <Parameter Name="endpointConfigurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="endpointConfigurationName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to use the data from a specific endpoint configuration element to create a channel to download the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class. </para>
+        </summary>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the endpoint configuration information to use when downloading metadata.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -87,10 +152,18 @@
         <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to specify the address and whether to use an HTTP GET request or WS-Transfer Get. crdefault <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class. </para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address of the metadata.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode to use when downloading the metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginGetMetadata">
@@ -108,11 +181,22 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous implementation of the <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetMetadata" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous method call that returns a <see cref="T:System.ServiceModel.Description.MetadataSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginGetMetadata">
@@ -131,12 +215,24 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous implementation of the <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetMetadata(System.ServiceModel.EndpointAddress)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous method call that returns a <see cref="T:System.ServiceModel.Description.MetadataSet" /> using the specified address, callback, and asynchronous state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata obtained from the specified <paramref name="address" />.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address of the metadata.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginGetMetadata">
@@ -156,13 +252,26 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous implementation of the <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetMetadata(System.Uri,System.ServiceModel.Description.MetadataExchangeClientMode)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous method call that returns a <see cref="T:System.ServiceModel.Description.MetadataSet" /> using the specified address, callback, asynchronous state, and download mechanism.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata obtained from the specified <paramref name="address" />.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address of the metadata.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> value to use when downloading the metadata.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="EndGetMetadata">
@@ -179,10 +288,20 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends one of the asynchronous <see cref="Overload:System.ServiceModel.Description.MetadataExchangeClient.BeginGetMetadata" /> methods to return the downloaded metadata. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends an asynchronous method call that returns a <see cref="T:System.ServiceModel.Description.MetadataSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.MetadataSet" /> that contains the downloaded metadata.</para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> object that is received from a call to the <see cref="Overload:System.ServiceModel.Description.MetadataExchangeClient.BeginGetMetadata" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="GetChannelFactory">
@@ -201,12 +320,24 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataAddress">To be added.</param>
-        <param name="dialect">To be added.</param>
-        <param name="identifier">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when retrieving metadata for a <see cref="T:System.ServiceModel.Description.MetadataReference" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the channel factory that is used to make the WS-Transfer metadata request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.ChannelFactory`1" /> of type <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> that makes the WS-Transfer metadata request.</para>
+        </returns>
+        <param name="metadataAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="dialect">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dialect of the metadata.</param>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier of the metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMetadata">
@@ -221,9 +352,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.MetadataSet" /> that contains the downloaded metadata.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMetadata">
@@ -240,10 +377,17 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSet" /> from the specified address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata located at the <paramref name="address" />.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address from which to download the metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMetadata">
@@ -261,11 +405,22 @@
         <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to specify the address and whether to use HTTP GET or WS-Transfer Get to download the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSet" /> from the specified address using the specified download mode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The metadata that is downloaded.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address from which to download the metadata.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The download mechanism to use.</param>
       </Docs>
     </Member>
     <Member MemberName="GetWebRequest">
@@ -284,12 +439,32 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="location">To be added.</param>
-        <param name="dialect">To be added.</param>
-        <param name="identifier">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Description.MetadataExchangeClient.GetWebRequest(System.Uri,System.String,System.String)" /> method is called:</para>
+          <list type="bullet">
+            <item>
+              <para>When there is an attempt to resolve a <see cref="T:System.ServiceModel.Description.MetadataLocation" />.</para>
+            </item>
+            <item>
+              <para>When <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.HttpGet" /> is used.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the <see cref="T:System.Net.HttpWebRequest" /> used to make HTTP/GET metadata requests.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The internal <see cref="T:System.Net.HttpWebRequest" /> used to make HTTP GET metadata requests.</para>
+        </returns>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location of the metadata.</param>
+        <param name="dialect">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dialect of the metadata.</param>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier of the metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="HttpCredentials">
@@ -303,9 +478,15 @@
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.HttpCredentials" /> property to customize the security credentials that the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> uses when requesting metadata using HTTP/GET.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the credentials used to make an HTTP/GET request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumResolvedReferences">
@@ -319,9 +500,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.MaximumResolvedReferences" /> property to limit the resources accessed by metadata that contains a large number of references. This limit applies to any reference in the metadata that results in a subsequent request, including metadata references, metadata locations, WSDL imports, and XML Schema imports and includes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of references to metadata that the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> downloads.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OperationTimeout">
@@ -335,9 +522,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.OperationTimeout" /> property to limit the amount of time the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> takes before ending the operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the period of time within which the metadata must be downloaded before an exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResolveMetadataReferences">
@@ -351,9 +544,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.ResolveMetadataReferences" /> property to false to prevent the resolution of references to metadata. In this case, references are returned as <see cref="T:System.ServiceModel.Description.MetadataReference" /> or <see cref="T:System.ServiceModel.Description.MetadataLocation" /> objects inside the <see cref="T:System.ServiceModel.Description.MetadataSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls whether references to metadata are resolved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoapCredentials">
@@ -367,9 +566,15 @@
         <ReturnType>System.ServiceModel.Description.ClientCredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataExchangeClient.SoapCredentials" /> property to specify the security credentials the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> uses when making a WS-Transfer metadata request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the client security credentials used to make a WS-Transfer metadata request.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

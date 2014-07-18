@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuEventArgs" FullName="System.Web.UI.WebControls.MenuEventArgs">
   <TypeSignature Language="C#" Value="public sealed class MenuEventArgs : System.Web.UI.WebControls.CommandEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,49 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class is used to store the event data passed to an event handler for the events in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs when a menu item is clicked. This event is commonly used to synchronize a <see cref="T:System.Web.UI.WebControls.Menu" /> control with another control on the page.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs when a menu item is bound to data. This event is commonly used to modify a menu item before it is rendered in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </description>
+        </item>
+      </list>
+      <para>Depending on the event raised, you can access the menu item clicked by the user or the menu item being bound to data by using the <see cref="P:System.Web.UI.WebControls.MenuEventArgs.Item" /> property.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.MenuEventArgs.#ctor(System.Web.UI.WebControls.MenuItem)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" /> and <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" /> events of a <see cref="T:System.Web.UI.WebControls.Menu" /> control. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +62,71 @@
         <Parameter Name="item" Type="System.Web.UI.WebControls.MenuItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class from the specified menu item. The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.String.Empty" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuEventArgs.CommandSource" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuEventArgs.Item" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.MenuItem" /> object specified by the <paramref name="item" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class using the specified menu item.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" /> event, this parameter represents the menu item clicked by the user. For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" /> event, this parameter represents the menu item being bound to data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,12 +141,71 @@
         <Parameter Name="arguments" Type="System.Web.UI.WebControls.CommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
         <param name="source">To be added.</param>
         <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class from the specified menu item, command source, and event arguments. The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="originalArgs.CommandArgument" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="originalArgs.CommandName" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuEventArgs.CommandSource" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Object" /> specified by the <paramref name="commandSource" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuEventArgs.Item" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.MenuItem" /> object specified by the <paramref name="item" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuEventArgs" /> class using the specified menu item, command source, and event arguments.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" /> event, this parameter represents the menu item clicked by the user. For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" /> event, this parameter represents the menu item being bound to data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +218,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuEventArgs.CommandSource" /> property to access the <see cref="T:System.Object" /> that raised the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Object" /> that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +240,16 @@
         <ReturnType>System.Web.UI.WebControls.MenuItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuEventArgs.Item" /> property to access or modify the properties of the menu item associated with the event raised. For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" /> event, this item represents the menu item clicked by the user. For the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" /> event, this item represents the menu item being bound to data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the menu item associated with the event raised.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListBindingHelper" FullName="System.Windows.Forms.ListBindingHelper">
   <TypeSignature Language="C#" Value="public static class ListBindingHelper" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by classes such as <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+      <para>Note that for Smartphone applications, this class requires Windows Mobile Version 5.0 software for Smartphones.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality to discover a bindable list and the properties of the items contained in the list when they differ from the public properties of the object to which they bind.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetList">
@@ -26,10 +34,20 @@
         <Parameter Name="list" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="list">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the data source specified by the <paramref name="list" /> parameter implements the <see cref="T:System.ComponentModel.IListSource" /> interface, then the <see cref="M:System.Windows.Forms.ListBindingHelper.GetList(System.Object)" /> method will return an object of type <see cref="T:System.Collections.IList" /> that represents the associated list. Otherwise, this method will just return the specified data source since there is no underlying list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list associated with the specified data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the underlying list if it exists; otherwise, the original data source specified by <paramref name="list" />.</para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to examine for its underlying list.</param>
       </Docs>
     </Member>
     <Member MemberName="GetList">
@@ -46,11 +64,24 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the data member is null or an empty string (""), the <see cref="M:System.Windows.Forms.ListBindingHelper.GetList(System.Object,System.String)" /> method returns <paramref name="dataSource" />. </para>
+          <para>If <paramref name="dataSource" /> is not a list, <see cref="M:System.Windows.Forms.ListBindingHelper.GetList(System.Object,System.String)" /> returns the value of the <paramref name="dataSource" /> property that matches the <paramref name="dataMember" /> value.</para>
+          <para>If <paramref name="dataSource" /> is a list, in that it implements either the <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" /> or <see cref="T:System.Collections.IEnumerable" /> interfaces, then the underlying list is obtained by choosing an item from the list and querying that item for the value of the property named by <paramref name="dataMember" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object, typically a list, from the evaluation of a specified data source and optional data member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the underlying list if it was found; otherwise, <paramref name="dataSource" />.</para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source from which to find the list.</param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data source property that contains the list. This can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListItemProperties">
@@ -66,10 +97,56 @@
         <Parameter Name="list" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="list">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ListBindingHelper.GetListItemProperties(System.Object)" /> method is used to examine the collection of properties for a data source. The action of this method depends on the actual type of the <paramref name="list" /> parameter according to the following table:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Parameter type</para>
+                </term>
+                <description>
+                  <para>Action</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A type that is a list or collection of items.</para>
+              </term>
+              <description>
+                <para>Returns a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> describing the properties of the item type contained in the list.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A type that is not a list or collection.</para>
+              </term>
+              <description>
+                <para>Returns a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> describing the properties of the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>null</para>
+              </term>
+              <description>
+                <para>Returns an empty <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that describes the properties of an item type contained in a specified data source, or properties of the specified data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> containing the properties of the items contained in <paramref name="list" />, or properties of <paramref name="list." /></para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to examine for property information.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListItemProperties">
@@ -86,11 +163,22 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="list">To be added.</param>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ListBindingHelper.GetListItemProperties(System.Object,System.ComponentModel.PropertyDescriptor[])" /> method is useful when the data source has properties that are a collection of items and you need to know properties of the item type in the collection, not the properties of the collection type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that describes the properties of an item type contained in a collection property of a data source. Uses the specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> array to indicate which properties to examine.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> describing the properties of the item type contained in a collection property of the data source.</para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to be examined for property information.</param>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> array describing which properties of the data source to examine. This can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListItemProperties">
@@ -108,12 +196,26 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="dataMember" /> parameter can be null, in which case the <see cref="M:System.Windows.Forms.ListBindingHelper.GetListItemProperties(System.Object,System.String,System.ComponentModel.PropertyDescriptor[])" /> method will return property descriptions using the data source and the <see cref="T:System.ComponentModel.PropertyDescriptor" /> array.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.ListBindingHelper.GetListItemProperties(System.Object,System.ComponentModel.PropertyDescriptor[])" /> is useful when the data member has properties that are a collection of items and you need to know properties of the item type in the collection, not the properties of the collection type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that describes the properties of an item type contained in the specified data member of a data source. Uses the specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> array to indicate which properties to examine.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> describing the properties of an item type contained in a collection property of the specified data source.</para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to be examined for property information.</param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The optional data member to be examined for property information. This can be null.</param>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> array describing which properties of the data member to examine. This can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListItemType">
@@ -129,10 +231,20 @@
         <Parameter Name="list" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="list">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="list" /> parameter is not a list or array, the type returned will be that of the <paramref name="list" /> parameter itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data type of the items in the specified list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the items contained in the list.</para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list to be examined for type information. </param>
       </Docs>
     </Member>
     <Member MemberName="GetListItemType">
@@ -149,11 +261,24 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the <see cref="M:System.Windows.Forms.ListBindingHelper.GetListItemType(System.Object,System.String)" /> method is used to determine the type of items used in complex or simple data-binding schemes. This static method may be useful in determining whether a proposed data-binding scheme is appropriate before attempting it.</para>
+          <para>If <paramref name="dataSource" /> is null, the property descriptors cannot be found for the list items of the specified data member, or the property descriptor for the list item is an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />, then this method returns the type of the <see cref="T:System.Object" /> class. </para>
+          <para>If <paramref name="dataMember" /> is null or empty, then this method returns the <see cref="T:System.Type" /> of the items in the data source, if it is a list; otherwise, this method returns the <see cref="T:System.Type" /> of the data source itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data type of the items in the specified data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For complex data binding, the <see cref="T:System.Type" /> of the items represented by the <paramref name="dataMember" /> in the data source; otherwise, the <see cref="T:System.Type" /> of the item in the list itself.</para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to examine for items. </param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The optional name of the property on the data source that is to be used as the data member. This can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListName">
@@ -170,11 +295,22 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="list">To be added.</param>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="listAccessors" /> is null or empty, the <see cref="M:System.Windows.Forms.ListBindingHelper.GetListName(System.Object,System.ComponentModel.PropertyDescriptor[])" /> method returns the name of the data source type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of an underlying list, given a data source and optional <see cref="T:System.ComponentModel.PropertyDescriptor" /> array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the list in the data source, as described by <paramref name="listAccessors" />, or<paramref name=" " />the name of the data source type.</para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source to examine for the list name.</param>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the data source. This can be null.</param>
       </Docs>
     </Member>
   </Members>

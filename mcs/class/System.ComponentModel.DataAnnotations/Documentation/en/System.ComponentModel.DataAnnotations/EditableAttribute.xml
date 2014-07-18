@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EditableAttribute" FullName="System.ComponentModel.DataAnnotations.EditableAttribute">
   <TypeSignature Language="C#" Value="public sealed class EditableAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EditableAttribute extends System.Attribute" />
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The presence of the <see cref="T:System.ComponentModel.DataAnnotations.EditableAttribute" /> attribute on a data field indicates whether the user should be able to change the field's value.</para>
+      <para>This class neither enforces nor guarantees that a field is editable. The underlying data store might allow the field to be changed regardless of the presence of this attribute.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a data field is editable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +38,13 @@
         <Parameter Name="allowEdit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="allowEdit">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.EditableAttribute" /> class.</para>
+        </summary>
+        <param name="allowEdit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that field is editable; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="AllowEdit">
@@ -46,9 +58,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a field is editable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowInitialValue">
@@ -62,9 +77,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property defaults to the value that is specified in the <see cref="M:System.ComponentModel.DataAnnotations.EditableAttribute.#ctor(System.Boolean)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether an initial value is enabled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

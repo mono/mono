@@ -1,6 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data.SqlTypes">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data.SqlTypes" /> namespace provides classes for native data types in ssNoVersion. These classes provide a safer, faster alternative to the data types provided by the .NET Framework common language runtime (CLR). Using the classes in this namespace helps prevent type conversion errors caused by loss of precision. Because other data types are converted to and from SqlTypes behind the scenes, explicitly creating and using objects within this namespace also yields faster code.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each data type in SqlTypes has its equivalent data type in SQL Server, with the same underlying data representation. Many of them also have equivalent data types in the CLR. However, SqlDateTime, SqlDecimal, and SqlString have different underlying data structures with their corresponding .NET Framework data types. </para>
+      <para>The following table maps the members of the SqlTypes namespace to Microsoft ssNoVersion data types and to the members of the <see cref="T:System.Data.SqlDbType" /> enumeration. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>.NET Framework SqlTypes </para>
+            </term>
+            <description>
+              <para>Native ssNoVersion</para>
+            </description>
+            <description>
+              <para>.NET Framework SqlDbType</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlBinary" /> </para>
+          </term>
+          <description>
+            <para>binary, image, timestamp, varbinary</para>
+          </description>
+          <description>
+            <para>Binary, Image, TimeStamp, VarBinary</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlBoolean" /> </para>
+          </term>
+          <description>
+            <para>bit</para>
+          </description>
+          <description>
+            <para>Bit</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlByte" />
+            </para>
+          </term>
+          <description>
+            <para>tinyint</para>
+          </description>
+          <description>
+            <para>TinyInt</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlBytes" />
+            </para>
+          </term>
+          <description>
+            <para>binary, image, timestamp, varbinary</para>
+          </description>
+          <description>
+            <para>Binary, Image, TimeStamp, VarBinary</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlChars" />
+            </para>
+          </term>
+          <description>
+            <para>char, nchar, text, ntext, nvarchar, varchar</para>
+          </description>
+          <description>
+            <para>Char, NChar, Text, Ntext, NVarChar, VarChar</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlDateTime" /> </para>
+          </term>
+          <description>
+            <para>datetime, smalldatetime</para>
+          </description>
+          <description>
+            <para>DateTime, SmallDateTime</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlDecimal" /> </para>
+          </term>
+          <description>
+            <para>numeric, decimal</para>
+          </description>
+          <description>
+            <para>Decimal</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlDouble" /> </para>
+          </term>
+          <description>
+            <para>float</para>
+          </description>
+          <description>
+            <para>Float</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlFileStream" /> </para>
+          </term>
+          <description>
+            <para>varbinary</para>
+          </description>
+          <description>
+            <para>VarBinary</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlGuid" /> </para>
+          </term>
+          <description>
+            <para>uniqueidentifier</para>
+          </description>
+          <description>
+            <para>UniqueIdentifier</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlInt16" /> </para>
+          </term>
+          <description>
+            <para>smallint</para>
+          </description>
+          <description>
+            <para>SmallInt</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlInt32" /> </para>
+          </term>
+          <description>
+            <para>int</para>
+          </description>
+          <description>
+            <para>Int</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlInt64" /> </para>
+          </term>
+          <description>
+            <para>bigint</para>
+          </description>
+          <description>
+            <para>BigInt</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlMoney" /> </para>
+          </term>
+          <description>
+            <para>money, smallmoney</para>
+          </description>
+          <description>
+            <para>Money, SmallMoney</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlSingle" /> </para>
+          </term>
+          <description>
+            <para>real</para>
+          </description>
+          <description>
+            <para>Real</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlString" /> </para>
+          </term>
+          <description>
+            <para>char, nchar, text, ntext, nvarchar, varchar</para>
+          </description>
+          <description>
+            <para>Char, NChar, Text, Ntext, NVarChar, VarChar</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Data.SqlTypes.SqlXml" /> </para>
+          </term>
+          <description>
+            <para>xml</para>
+          </description>
+          <description>
+            <para>Xml</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

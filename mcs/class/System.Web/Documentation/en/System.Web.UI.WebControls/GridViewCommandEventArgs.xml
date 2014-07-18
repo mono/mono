@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewCommandEventArgs" FullName="System.Web.UI.WebControls.GridViewCommandEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewCommandEventArgs : System.Web.UI.WebControls.CommandEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.GridView.RowCommand" /> event is raised when a button within the <see cref="T:System.Web.UI.WebControls.GridView" /> control is clicked. This allows you to provide an event-handling method that performs a custom routine whenever this event occurs.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control also raises other specialized events when certain buttons are clicked (buttons with the CommandName property set to "Delete", "Update", and "Page" for example). When using one of these buttons, you should consider handling one of the specialized events provided by the control (such as <see cref="E:System.Web.UI.WebControls.GridView.RowDeleted" /> or <see cref="E:System.Web.UI.WebControls.GridView.RowDeleting" />).</para>
+      </block>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> object is passed to the event-handling method, which allows you to determine the command name and command argument of the button clicked. To determine the command name and command argument, use the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> and <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> properties, respectively. You can also access the button control that raised the event by using the <see cref="P:System.Web.UI.WebControls.GridViewCommandEventArgs.CommandSource" /> property.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" />, see the <see cref="Overload:System.Web.UI.WebControls.GridViewCommandEventArgs.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.RowCommand" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +37,61 @@
       <Docs>
         <param name="source">To be added.</param>
         <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contained in the <paramref name="originalArgs" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contained in the <paramref name="originalArgs" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewCommandEventArgs.CommandSource" />
+                </para>
+              </term>
+              <description>
+                <para>The object contained in the <paramref name="commandSource" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> class using the specified source of the command and event arguments.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,12 +106,63 @@
         <Parameter Name="arguments" Type="System.Web.UI.WebControls.CommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
         <param name="source">To be added.</param>
         <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contained in the <paramref name="originalArgs" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> </para>
+              </term>
+              <description>
+                <para>The value of the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contained in the <paramref name="originalArgs" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewCommandEventArgs.CommandSource" /> </para>
+              </term>
+              <description>
+                <para>The object contained in the <paramref name="commandSource" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> class using the specified row, source of the command, and event arguments.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.GridViewRow" /> object that represents the row containing the button.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +175,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewCommandEventArgs.CommandSource" /> property to access the properties of the object that represents the source of the command. In the case of a <see cref="T:System.Web.UI.WebControls.GridViewCommandEventArgs" /> object, the source of the command is the <see cref="T:System.Web.UI.WebControls.GridView" /> control that contains the button clicked by the user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the source of the command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

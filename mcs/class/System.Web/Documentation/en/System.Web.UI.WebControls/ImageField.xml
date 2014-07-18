@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageField" FullName="System.Web.UI.WebControls.ImageField">
   <TypeSignature Language="C#" Value="public class ImageField : System.Web.UI.WebControls.DataControlField" />
   <AssemblyInfo>
@@ -9,9 +10,79 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ImageField" /> class is used by data-bound controls (such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />) to display an image for each record displayed. The <see cref="T:System.Web.UI.WebControls.ImageField" /> object is displayed differently depending on the data-bound control in which it is used. For example, the <see cref="T:System.Web.UI.WebControls.GridView" /> control displays an <see cref="T:System.Web.UI.WebControls.ImageField" /> object as a column, while the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control displays it as a row.</para>
+      <para>To display images, you must bind an <see cref="T:System.Web.UI.WebControls.ImageField" /> object to a field from a data source that contains the URL of an image. This is accomplished by setting the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property. The URL value can be formatted by using the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property. Each image can also have alternate text associated with it. This text is displayed when an image cannot be loaded, or is unavailable. Browsers that support the ToolTips feature also display this text as a ToolTip. You can specify the alternate text for a displayed image by using one of the following methods:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> property to specify alternate text that applies to all images.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property to bind a field from a data source to the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property of each image. This allows you to have different alternate text for each image displayed. When binding data, you can optionally format the alternate text by using the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextFormatString" /> property.</para>
+        </item>
+      </list>
+      <para>When the URL value for an image is null, an image cannot be displayed. You can display an alternate image for null field values by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property. Instead of an alternate image, you can display alternate text by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> property.</para>
+      <para>By default, all declared fields are displayed in a data-bound control. You can hide an <see cref="T:System.Web.UI.WebControls.ImageField" /> object in a data-bound control by setting the <see cref="P:System.Web.UI.WebControls.DataControlField.Visible" /> property to false.</para>
+      <para>You can customize the header and footer sections of an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. To display a caption in the header or footer section, set the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> or <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" /> properties, respectively. To display an image in the header section instead of text, set the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> property. The header section can be hidden in the <see cref="T:System.Web.UI.WebControls.ImageField" /> object by setting the <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" /> property to false.</para>
+      <block subset="none" type="note">
+        <para>Some data-bound controls (such as the <see cref="T:System.Web.UI.WebControls.GridView" /> control) can show or hide only the entire header section of the control. These data-bound controls do not support the <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" /> property for an individual data-bound field. To show or hide the entire header section of a data-bound control, use the control's ShowHeader property (if available).</para>
+      </block>
+      <para>You also can customize the appearance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> object (font color, background color, and so on) by setting the style properties for the different parts of the field. The following table lists the different style properties.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Style property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the child Web server controls of the <see cref="T:System.Web.UI.WebControls.ImageField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the footer section of the <see cref="T:System.Web.UI.WebControls.ImageField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the header section of the <see cref="T:System.Web.UI.WebControls.ImageField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the data items in the <see cref="T:System.Web.UI.WebControls.ImageField" /> object. </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a field that is displayed as an image in a data-bound control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +90,19 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> class. This constructor is commonly used when adding fields to a dynamically created data-bound control.</para>
+          <para>To dynamically add an <see cref="T:System.Web.UI.WebControls.ImageField" /> object to a data-bound control, create a new <see cref="T:System.Web.UI.WebControls.ImageField" /> object, set its properties, and then add it to the data-bound control's field collection. For example, if you are using the <see cref="T:System.Web.UI.WebControls.GridView" /> control, add the <see cref="T:System.Web.UI.WebControls.ImageField" /> object to the <see cref="P:System.Web.UI.WebControls.GridView.Columns" /> collection.</para>
+          <block subset="none" type="note">
+            <para>Although you can dynamically add fields to a data-bound control, it is strongly recommended that fields be statically declared and then shown or hidden, as appropriate. Statically declaring all your fields reduces the size of the view state for the parent data-bound control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +123,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> property to specify the alternate text for the images displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. The alternate text is displayed when an image cannot be loaded or is unavailable. Browsers that support the ToolTips feature also display this text as a ToolTip.</para>
+          <block subset="none" type="note">
+            <para>When this property is set, all images displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object share the same alternate text. As an alternative, you can bind the alternate text to a field in a data source by setting the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property instead of this property. This allows you to have different alternate text for each image displayed. If both the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> and <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> properties are set, the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property takes precedence.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alternate text displayed for an image in the <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +154,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes the user may enter an empty string for a field value when updating or inserting records. Use the <see cref="P:System.Web.UI.WebControls.ImageField.ConvertEmptyStringToNull" /> property to specify whether an empty string value is automatically converted to null when the data field is updated in the data source</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.ImageField" /> class displays null as empty strings by default. To display a different value, set the <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether empty string ("") values are converted to null when the field values are returned from the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +182,17 @@
         <Parameter Name="newField" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="newField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.CopyProperties(System.Web.UI.WebControls.DataControlField)" /> method is called by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to copy the properties of the current <see cref="T:System.Web.UI.WebControls.ImageField" /> object to another.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the properties of the current <see cref="T:System.Web.UI.WebControls.ImageField" /> object to the specified object.</para>
+        </summary>
+        <param name="newField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" />-derived object that receives the copy.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,10 +206,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.CreateField" /> method is called by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to create a new instance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new instance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Web.UI.WebControls.ImageField" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,10 +239,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property to specify the name of the filed from the data source that contains the values to bind to the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property of each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. The enables you to have different alternate text for each image displayed. The alternate text is displayed when an image cannot be loaded or is unavailable. Browsers that support the ToolTips feature also display this text as a ToolTip.</para>
+          <block subset="none" type="note">
+            <para>You can specify alternate text that applies to all images by setting the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> property instead of this property. If both the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> and <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> properties are set, the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> field takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source that contains the values to bind to the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property of each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -144,10 +269,102 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextFormatString" /> property to specify a custom format for the alternate text values of the images displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+          <block subset="none" type="note">
+            <para>The format string is applied only when the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property is set. It is not applied when the <see cref="P:System.Web.UI.WebControls.ImageField.AlternateText" /> property is set.</para>
+          </block>
+          <para>This is useful when you need to modify the original value contained in the field. If the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextFormatString" /> property is not set, the alternate text values do not get any special formatting.</para>
+          <para>The format string can be any literal string and usually contains a placeholder for the field's value. For example, in the format string "Item Value: {0}", the "{0}" placeholder is replaced with the value of the fields specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextField" /> property. The rest of the format string is displayed as literal text.</para>
+          <block subset="none" type="note">
+            <para>If the format string does not include a placeholder, the field's value from the data source is not included in the final display text.</para>
+          </block>
+          <para>The placeholder consists of two parts separated by a colon (":") and wrapped in braces ("{}"), in the form {A:Bxx}. The value before the colon (A in the general example) specifies the field value's index in a zero-based list of parameters.</para>
+          <block subset="none" type="note">
+            <para>This parameter is part of the formatting syntax. Because there is only one field value in each cell, this value can only be set to 0.</para>
+          </block>
+          <para>The colon and the values after the colon are optional. The character after the colon (B in the general example) specifies the format in which to display the value. The following table lists the common formats.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format character</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>C</para>
+              </term>
+              <description>
+                <para>Displays numeric values in currency format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>D</para>
+              </term>
+              <description>
+                <para>Displays numeric values in decimal format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E</para>
+              </term>
+              <description>
+                <para>Displays numeric values in scientific (exponential) format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F</para>
+              </term>
+              <description>
+                <para>Displays numeric values in fixed format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>G</para>
+              </term>
+              <description>
+                <para>Displays numeric values in general format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>N</para>
+              </term>
+              <description>
+                <para>Displays numeric values in number format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>X</para>
+              </term>
+              <description>
+                <para>Displays numeric values in hexadecimal format.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The format characters are not case sensitive, except for X, which displays the hexadecimal characters in the case specified.</para>
+          </block>
+          <para>The value after the format character (xx in the general example) specifies the number of significant digits or decimal places to display. For example, the format string "{0:F2}" displays a fixed-point number with 2 decimal places.</para>
+          <para>For more information on formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that specifies the format in which the alternate text for each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,10 +385,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.MobileControls.Image.ImageUrl" /> property of each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. The specified field must contain the URLs for the images to display in the <see cref="T:System.Web.UI.WebControls.ImageField" /> object. You can optionally format the URL values by setting the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property.</para>
+          <block subset="none" type="note">
+            <para>When the filed value is null, an image cannot be displayed. You can display an alternate image for null field values by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property. Instead of an alternate image, you can display alternate text by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source that contains the values to bind to the <see cref="P:System.Web.UI.MobileControls.Image.ImageUrl" /> property of each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,10 +415,98 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property to specify a custom format for the URLs of the images displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. This is useful when you need to generate a URL, such as when the <see cref="T:System.Web.UI.WebControls.ImageField" /> object simply contains the file name. If the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property is not set, the URL values do not get any special formatting.</para>
+          <para>The format string can be any literal string and usually contains a placeholder for the field's value. For example, in the format string "Item Value: {0}", the "{0}" placeholder is replaced with the value of the fields specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property. The rest of the format string is displayed as literal text.</para>
+          <block subset="none" type="note">
+            <para>If the format string does not include a placeholder, the field's value from the data source is not included in the final display text.</para>
+          </block>
+          <para>The placeholder consists of two parts separated by a colon (":") and wrapped in braces ("{}"), in the form {A:Bxx}. The value before the colon (A in the general example) specifies the field value's index in a zero-based list of parameters.</para>
+          <block subset="none" type="note">
+            <para>This parameter is part of the formatting syntax. Because there is only one field value in each cell, this value can only be set to 0.</para>
+          </block>
+          <para>The colon and the values after the colon are optional. The character after the colon (B in the general example) specifies the format in which to display the value. The following table lists the common formats.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format character</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>C</para>
+              </term>
+              <description>
+                <para>Displays numeric values in currency format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>D</para>
+              </term>
+              <description>
+                <para>Displays numeric values in decimal format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E</para>
+              </term>
+              <description>
+                <para>Displays numeric values in scientific (exponential) format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F</para>
+              </term>
+              <description>
+                <para>Displays numeric values in fixed format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>G</para>
+              </term>
+              <description>
+                <para>Displays numeric values in general format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>N</para>
+              </term>
+              <description>
+                <para>Displays numeric values in number format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>X</para>
+              </term>
+              <description>
+                <para>Displays numeric values in hexadecimal format.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The format characters are not case sensitive, except for X, which displays the hexadecimal characters in the case specified.</para>
+          </block>
+          <para>The value after the format character (xx in the general example) specifies the number of significant digits or decimal places to display. For example, the format string "{0:F2}" displays a fixed-point number with 2 decimal places.</para>
+          <para>For more information on formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that specifies the format in which the URL for each image in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,13 +525,30 @@
         <Parameter Name="includeReadOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dictionary">To be added.</param>
-        <param name="cell">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="includeReadOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.ExtractValuesFromCell(System.Collections.Specialized.IOrderedDictionary,System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState,System.Boolean)" /> method is a helper method used to retrieve the values of the fields from the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+          <para>This method does not have a return value. Instead, the field values are returned by reference through the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object passed in for the <paramref name="dictionary" /> parameter. After the method has been called, iterate through the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values.</para>
+          <block subset="none" type="note">
+            <para>To include the read-only field values in the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object, pass in true for the <paramref name="includeReadOnly" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills the specified <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object with the values from the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object.</para>
+        </summary>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> used to store the values of the specified cell.</param>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> that contains the values to retrieve.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values.</param>
+        <param name="includeReadOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include the values of read-only fields; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -234,10 +565,19 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.FormatImageUrlValue(System.Object)" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.ImageField" /> class to apply the format specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property to a field value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the format specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property to a field value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -251,10 +591,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.GetDesignTimeValue" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.ImageField" /> class to determine what value to display for a field when rendering an <see cref="T:System.Web.UI.WebControls.ImageField" /> object in a designer. If real data cannot be retrieved from the data source at design time, the value returned by this method is displayed instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value used for a field's value when rendering the <see cref="T:System.Web.UI.WebControls.ImageField" /> object in a designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value to display in the designer as the field's value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -270,11 +619,21 @@
         <Parameter Name="controlContainer" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="controlContainer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.GetFormattedAlternateText(System.Web.UI.Control)" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.ImageField" /> class to apply the format specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlFormatString" /> property to the alternate text value. The alternate text value is contained in the <see cref="T:System.Web.UI.Control" /> object specified by the <paramref name="controlContainer" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the format specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataAlternateTextFormatString" /> property to the alternate text value contained in the specified <see cref="T:System.Web.UI.Control" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed value.</para>
+        </returns>
+        <param name="controlContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> that contains the alternate text value to transform.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -316,11 +675,22 @@
       </Parameters>
       <Docs>
         <param name="sortingEnabled">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.Initialize(System.Boolean,System.Web.UI.Control)" /> method is called by the data control with which the <see cref="T:System.Web.UI.WebControls.ImageField" /> object is associated to perform basic object initialization for instances of the field, before the field is ever added to a field collection. Data controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> call the <see cref="M:System.Web.UI.WebControls.ImageField.Initialize(System.Boolean,System.Web.UI.Control)" /> method in their CreateChildControls methods before other methods such as CreateRow are called to create specific rows with data.</para>
+          <para>Call this method when you are writing a custom data-bound control that uses <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects to perform basic initialization for an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. Implement this method if your <see cref="T:System.Web.UI.WebControls.ImageField" />-derived type requires any object initialization before it populates <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects with data or controls in the <see cref="M:System.Web.UI.WebControls.ImageField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data control that contains the <see cref="T:System.Web.UI.WebControls.ImageField" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,13 +709,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="cell">To be added.</param>
-        <param name="cellType">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method is implemented by <see cref="T:System.Web.UI.WebControls.ImageField" />-derived types to add text and controls to a <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object of a data control that uses tables to display a user interface (UI). These data controls create the complete table structure row-by-row when the control's CreateChildControls method is called. The <see cref="M:System.Web.UI.WebControls.ImageField.InitializeCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlCellType,System.Web.UI.WebControls.DataControlRowState,System.Int32)" /> method is called by the InitializeRow method of data controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+          <para>Call this method when you are writing a custom data-bound control that uses <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> objects to initialize the cells of the table structure with data or controls. Implement this method when you are writing an <see cref="T:System.Web.UI.WebControls.ImageField" />-derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object with the specified cell type, row state, and row index.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> to initialize. </param>
+        <param name="cellType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlCellType" /> values. </param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -362,11 +743,19 @@
         <Parameter Name="rowState" Type="System.Web.UI.WebControls.DataControlRowState" />
       </Parameters>
       <Docs>
-        <param name="cell">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.InitializeDataCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState)" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.ImageField" /> class to initialize a cell in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object with the specified row state.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> to initialize. </param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -387,10 +776,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the value of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property is null, an image cannot be displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. Use the <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> property to specify the text to display in the image's place. The text usually indicates that the normal image is not available or cannot be found.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can display an alternate image when the field value is null by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property instead of this property. If the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> and <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property has precedence.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object when the value of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property is null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -414,10 +813,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the value of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property is null, an image cannot be displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object. Use the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property to specify the URL to an alternate image to display. The alternate image is usually an image that indicates that the normal image is not available or cannot be found.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can simply display text when the field value is null by setting the <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> property instead of this property. If the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> and <see cref="P:System.Web.UI.WebControls.ImageField.NullDisplayText" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.ImageField.NullImageUrl" /> property has precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an alternate image displayed in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object when the value of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property is null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -434,11 +842,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.OnDataBindField(System.Object,System.EventArgs)" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.ImageField" /> class to bind the value of a field in the data source to a corresponding cell in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the value of a field to the <see cref="T:System.Web.UI.WebControls.ImageField" /> object.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -456,10 +872,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the values of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property can be modified by the user when a data-bound control is in edit mode. To prevent the user from changing the values of the field, set this property to true.</para>
+          <block subset="none" type="note">
+            <para>In an <see cref="T:System.Web.UI.WebControls.ImageField" /> object, the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property usually contains the name of the field that contains the URLs to the images displayed in the object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the values of the field specified by the <see cref="P:System.Web.UI.WebControls.ImageField.DataImageUrlField" /> property can be modified in edit mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -472,9 +897,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.ImageField.ThisExpression" /> field is use to indicate that the <see cref="T:System.Web.UI.WebControls.ImageField" /> object should bind to the data source itself rather than a filed of the data source. In this case, the value returned by the object's <see cref="M:System.Object.ToString" /> method will be displayed in the field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the "this" expression.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -488,9 +919,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageField.ValidateSupportsCallback" /> method is a helper method used to determine whether the controls contained in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object support callbacks. This method has been implemented as an empty method (a method that does not contain any code) to indicate that callbacks are supported.</para>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the controls contained in an <see cref="T:System.Web.UI.WebControls.ImageField" /> object support callbacks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -170,6 +170,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Handle for this process.")]
 		public IntPtr Handle {
 			get {
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("No process is associated with this object.");
 				return(process_handle);
 			}
 		}
@@ -1229,6 +1231,10 @@ namespace System.Diagnostics {
 			int ms = milliseconds;
 			if (ms == int.MaxValue)
 				ms = -1;
+
+			if (process_handle == IntPtr.Zero)
+				throw new InvalidOperationException ("No process is associated with this object.");
+
 
 			DateTime start = DateTime.UtcNow;
 			if (async_output != null && !async_output.IsCompleted) {

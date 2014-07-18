@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerType" FullName="System.Web.Compilation.CompilerType">
   <TypeSignature Language="C#" Value="public sealed class CompilerType" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="P:System.Web.Compilation.BuildProvider.CodeCompilerType" /> property of a <see cref="T:System.Web.Compilation.BuildProvider" /> implementation to examine the settings used to generate and compile source code from a virtual path for that build provider.</para>
+      <para>The ASP.NET build environment uses <see cref="T:System.Web.Compilation.BuildProvider" /> objects to generate source code for custom file types within the project. Classes derived from <see cref="T:System.Web.Compilation.BuildProvider" /> provide build details for source files, Web pages, resources, and other custom items. When the build provider requires a specific programming language, it overrides the <see cref="P:System.Web.Compilation.BuildProvider.CodeCompilerType" /> property and calls the <see cref="M:System.Web.Compilation.BuildProvider.GetDefaultCompilerType" /> method to return a <see cref="T:System.Web.Compilation.CompilerType" /> object for the supported programming language.</para>
+      <para>To set the <see cref="T:System.Web.Compilation.CompilerType" /> object within a build provider implementation, use the <see cref="M:System.Web.Compilation.BuildProvider.GetDefaultCompilerType" /> method or the <see cref="M:System.Web.Compilation.BuildProvider.GetDefaultCompilerTypeForLanguage(System.String)" /> method.</para>
+      <para>The <see cref="P:System.Web.Compilation.CompilerType.CodeDomProviderType" /> property specifies the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation used to generate and compile source code for a build provider. The <see cref="P:System.Web.Compilation.CompilerType.CompilerParameters" /> property defines the settings used to compile the source code into an assembly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the compiler settings used within the ASP.NET build environment to generate and compile source code from a virtual path. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CodeDomProviderType">
@@ -21,10 +31,17 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.CompilerType.CodeDomProviderType" /> property specifies the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation used to generate and compile source code for a build provider.</para>
+          <para>For example, if the build provider is configured to use the Visual Basic code provider in the .NET Framework, <see cref="P:System.Web.Compilation.CompilerType.CodeDomProviderType" /> returns a <see cref="T:System.Type" /> for the <see cref="T:Microsoft.VisualBasic.VBCodeProvider" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Type" /> for the configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +54,16 @@
         <ReturnType>System.CodeDom.Compiler.CompilerParameters</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.Compilation.CompilerType.CompilerParameters" /> property to examine the compiler options configured for the compiler. The <see cref="P:System.Web.Compilation.CompilerType.CompilerParameters" /> property specifies whether warnings are treated as errors, whether the compiler output includes debug information, and other compiler settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the settings and options used to compile source code into an assembly.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +79,23 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Compilation.CompilerType.Equals(System.Object)" /> method overrides the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+          <para>
+            <see cref="M:System.Web.Compilation.CompilerType.Equals(System.Object)" /> compares two instances based on their <see cref="P:System.Web.Compilation.CompilerType.CodeDomProviderType" />, <see cref="P:System.CodeDom.Compiler.CompilerParameters.WarningLevel" />, <see cref="P:System.CodeDom.Compiler.CompilerParameters.CompilerOptions" />, and <see cref="P:System.CodeDom.Compiler.CompilerParameters.IncludeDebugInformation" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object represents the same code provider and compiler settings as the current instance of <see cref="T:System.Web.Compilation.CompilerType" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.Web.Compilation.CompilerType" /> object and its value is the same as this instance; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance of <see cref="T:System.Web.Compilation.CompilerType" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +109,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Compilation.CompilerType.GetHashCode" /> method overrides the <see cref="M:System.Object.GetHashCode" /> method.</para>
+          <para>
+            <see cref="M:System.Web.Compilation.CompilerType.GetHashCode" /> generates the same hash code for two objects that are equal according to the <see cref="M:System.Web.Compilation.CompilerType.Equals(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code for the current instance of <see cref="T:System.Web.Compilation.CompilerType" />, suitable for use in hashing algorithms and data structures, such as a hash table.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

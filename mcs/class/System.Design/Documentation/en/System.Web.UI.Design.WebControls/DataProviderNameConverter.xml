@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataProviderNameConverter" FullName="System.Web.UI.Design.WebControls.DataProviderNameConverter">
   <TypeSignature Language="C#" Value="public class DataProviderNameConverter : System.ComponentModel.StringConverter" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.WebControls.DataProviderNameConverter" /> class is a <see cref="T:System.ComponentModel.TypeConverter" /> object that is typically referenced by the <see cref="T:System.ComponentModel.TypeConverterAttribute" /> attribute.</para>
+      <para>The names that are returned by the <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method are of ADO.NET providers, from the <see cref="M:System.Data.Common.DbProviderFactories.GetFactoryClasses" /> method, that create data objects.</para>
+      <para>The <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext)" /> method gets a value indicating whether the returned provider names are an exclusive list of possible values. The <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> method gets a value indicating whether the returned provider names are a standard set of values that can be picked from a list.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates a user-selectable list of ActiveX® Data Objects (ADO) for the .NET Framework (ADO.NET) provider names. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework internally constructs a new instance of the <see cref="T:System.Web.UI.Design.WebControls.DataProviderNameConverter" /> class when the class is referenced by a <see cref="T:System.ComponentModel.TypeConverterAttribute" /> attribute. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebControls.DataProviderNameConverter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,11 +52,22 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method uses the <see cref="M:System.Data.Common.DbProviderFactories.GetFactoryClasses" /> method to return a <see cref="T:System.Data.DataTable" /> object containing the ADO.NET provider names. It converts this <see cref="T:System.Data.DataTable" /> to a string array, and then converts this array to a <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> object.</para>
+          <para>The <paramref name="context" /> parameter is not used by the <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of the available ActiveX® Data Objects (ADO) for the .NET Framework (ADO.NET) provider names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> containing the names of the available ADO.NET providers.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about a context to a type converter so that the type converter can perform a conversion.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,11 +83,22 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you derive a class from the <see cref="T:System.Web.UI.Design.WebControls.DataProviderNameConverter" /> class and override the <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method to return an exclusive list of ADO.NET provider names, also override the <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext)" /> method to return true when the provider name list is exclusive.</para>
+          <para>The <paramref name="context" /> parameter is not used by the <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the returned ActiveX® Data Objects (ADO) for the .NET Framework (ADO.NET) provider names are an exclusive list of possible values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about a context to a type converter so that the type converter can perform a conversion.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,11 +114,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="context" /> parameter is not used by the  <see cref="M:System.Web.UI.Design.WebControls.DataProviderNameConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this object returns a standard set of ActiveX® Data Objects (ADO) for the .NET Framework (ADO.NET) provider names that can be picked from a list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always true.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about a context to a type converter so that the type converter can perform a conversion.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

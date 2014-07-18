@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LicenseUsageMode" FullName="System.ComponentModel.LicenseUsageMode">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum LicenseUsageMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LicenseUsageMode extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.LicenseManager" /> and the <see cref="T:System.ComponentModel.LicenseContext" /> classes use this enumeration. It is used to set a component's <see cref="P:System.ComponentModel.LicenseManager.CurrentContext" />. See the <see cref="T:System.ComponentModel.LicenseManager" /> class for details.</para>
+      <para>For more information on licensing, see <format type="text/html"><a href="8E66C1ED-A445-4B26-8185-990B6E2BBD57">[&lt;topic://cpconLicensingComponentsControls&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies when the <see cref="T:System.ComponentModel.License" /> can be used.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Designtime">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used during design time by a visual designer or the compiler.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Runtime">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used during runtime.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

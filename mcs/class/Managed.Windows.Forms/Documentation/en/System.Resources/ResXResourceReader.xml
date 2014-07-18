@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResXResourceReader" FullName="System.Resources.ResXResourceReader">
   <TypeSignature Language="C#" Value="public class ResXResourceReader : System.Resources.IResourceReader" />
   <AssemblyInfo>
@@ -14,8 +15,35 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Resources.ResXResourceReader" /> class provides a default implementation of the <see cref="T:System.Resources.IResourceReader" /> interface that reads resource information in an XML format. To read resource information from a binary resource format, use the <see cref="T:System.Resources.ResourceReader" /> class.</para>
+      <para>You use the <see cref="T:System.Resources.ResXResourceReader" /> class to enumerate resources in .resx files by traversing the dictionary enumerator (<see cref="T:System.Collections.IDictionaryEnumerator" />) that is returned by the <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method. You call the methods provided by <see cref="T:System.Collections.IDictionaryEnumerator" /> to advance to the next resource and to read the name and value of each resource in the .resx file. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Resources.ResXResourceReader" /> class provides two enumerators. The <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> object; we recommend that you use this method to enumerate resources. The <see cref="M:System.Resources.ResXResourceReader.System#Collections#IEnumerable#GetEnumerator" /> method is an explicit interface implementation that returns an <see cref="T:System.Collections.IEnumerator" /> object; we do not recommend its use.</para>
+      </block>
+      <para>The following example uses the <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method to obtain an <see cref="T:System.Collections.IDictionaryEnumerator" /> object that is used to enumerate the resources in a .resx file. The example includes a CreateResourceFile routine that creates the necessary resource file.</para>
+      <para>code reference: System.Resources.ResXResourceReader.Class#1</para>
+      <para>If the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property is true, the value of the <see cref="P:System.Collections.IDictionaryEnumerator.Value" /> property is a <see cref="T:System.Resources.ResXDataNode" /> object rather than the resource value. This makes a resource item's comment available from the <see cref="P:System.Resources.ResXDataNode.Comment" /> property. The following example sets the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property to true and enumerates the resources in a .resx file,</para>
+      <para>code reference: System.Resources.ResXResourceReader.Class#2</para>
+      <para>If <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> is true, the <see cref="T:System.Resources.ResXDataNode" /> items in the enumeration can be either: </para>
+      <list type="bullet">
+        <item>
+          <para>Named resources along with their data. In this case, the <see cref="P:System.Resources.ResXDataNode.FileRef" /> property is null. </para>
+        </item>
+        <item>
+          <para>Named resources along with the name of the file that contains the resource data. In this case, the <see cref="P:System.Resources.ResXDataNode.FileRef" /> property returns a <see cref="T:System.Resources.ResXFileRef" /> object that provides information about the resource, including its filename. If relative file names are used, you should always set the <see cref="P:System.Resources.ResXResourceReader.BasePath" /> property to provide a reference point for the relative file path.  </para>
+        </item>
+      </list>
+      <para>If you want to retrieve named resources from a .resx file rather than enumerating its resources, you can instantiate a <see cref="T:System.Resources.ResXResourceSet" /> object and call its GetString and GetObject methods. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Resources.ResXResourceReader" /> class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> exception is thrown when either the immediate caller or the derived class does not have full-trust permission. For more information about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enumerates XML resource (.resx) files and streams, and reads the sequential resource name and value pairs.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +53,18 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Resources.ResXResourceReader.Dispose(System.Boolean)" /> and <see cref="M:System.Resources.ResXResourceReader.Close" /> methods do not close the stream you specify in this constructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class for the specified stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input stream that contains resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +78,13 @@
         <Parameter Name="reader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class for the specified <see cref="T:System.IO.TextReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A text input stream that contains resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +98,13 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class for the specified resource file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path of the resource file to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -74,10 +119,15 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using an input stream and a type resolution service.  </para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input stream that contains resources. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that resolves type names specified in a resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,10 +145,15 @@
         <Parameter Name="assemblyNames" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="assemblyNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using a stream and an array of assembly names. </para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input stream that contains resources. </param>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.AssemblyName" /> objects that specifies one or more assemblies. The assemblies are used to resolve a type name in the resource to an actual type. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -109,10 +164,15 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using a text stream reader and a type resolution service.  </para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A text stream reader that contains resources. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that resolves type names specified in a resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,10 +190,15 @@
         <Parameter Name="assemblyNames" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="assemblyNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using a <see cref="T:System.IO.TextReader" /> object and an array of assembly names.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object used to read resources from a stream of text. </param>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.AssemblyName" /> objects that specifies one or more assemblies. The assemblies are used to resolve a type name in the resource to an actual type. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -144,10 +209,15 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using a file name and a type resolution service. </para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an XML resource file that contains resources. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that resolves type names specified in a resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,10 +235,15 @@
         <Parameter Name="assemblyNames" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="assemblyNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXResourceReader" /> class using an XML resource file name and an array of assembly names. </para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an XML resource file that contains resources. </param>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.AssemblyName" /> objects that specifies one or more assemblies. The assemblies are used to resolve a type name in the resource to an actual type. </param>
       </Docs>
     </Member>
     <Member MemberName="BasePath">
@@ -181,9 +256,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Resources.ResXResourceReader.BasePath" /> property is used to resolve relative file path references that are assigned to the <see cref="P:System.Resources.ResXFileRef.FileName" /> property of <see cref="T:System.Resources.ResXFileRef" /> objects.  By default, its value is <see cref="F:System.String.Empty" />, and relative file path references are resolved in relationship to the current directory returned by the <see cref="P:System.Environment.CurrentDirectory" /> property. You should set this property before you begin enumerating resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the base path for the relative file path specified in a <see cref="T:System.Resources.ResXFileRef" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -194,8 +275,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Resources.ResXResourceReader.Close" /> enables the resources used by the <see cref="T:System.Resources.ResXResourceReader" /> to be reallocated for other purposes. For more information about <see cref="M:System.Resources.ResXResourceReader.Close" />, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">[&lt;topic://cpconCleaningUpUnmanagedResources&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Resources.ResXResourceReader" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,9 +299,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called by either the <see cref="M:System.Resources.ResXResourceReader.System#IDisposable#Dispose" /> method or the <see cref="M:System.Object.Finalize" /> method. <see cref="M:System.Resources.ResXResourceReader.System#IDisposable#Dispose" /> invokes this method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes this method with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Resources.ResXResourceReader" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Resources.ResXResourceReader" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,8 +324,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member overrides the <see cref="M:System.Object.Finalize" /> method. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,10 +345,17 @@
         <Parameter Name="fileContents" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileContents">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Resources.ResXResourceReader" /> object and initializes it to read a string whose contents are in the form of an XML resource file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that reads resources from the <paramref name="fileContents" /> string.</para>
+        </returns>
+        <param name="fileContents">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing XML resource-formatted information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -268,11 +373,19 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="fileContents">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Resources.ResXResourceReader" /> object and initializes it to read a string whose contents are in the form of an XML resource file, and to use an <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> object to resolve type names specified in a resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that reads resources from the <paramref name="fileContents" /> string.</para>
+        </returns>
+        <param name="fileContents">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing XML resource-formatted information. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that resolves type names specified in a resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,11 +406,19 @@
         <Parameter Name="assemblyNames" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="fileContents">To be added.</param>
-        <param name="assemblyNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Resources.ResXResourceReader" /> object and initializes it to read a string whose contents are in the form of an XML resource file, and to use an array of <see cref="T:System.Reflection.AssemblyName" /> objects to resolve type names specified in a resource. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that reads resources from the <paramref name="fileContents" /> string.</para>
+        </returns>
+        <param name="fileContents">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string whose contents are in the form of an XML resource file. </param>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.AssemblyName" /> objects that specifies one or more assemblies. The assemblies are used to resolve a type name in the resource to an actual type. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -308,9 +429,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method retrieves the name/value pairs in the XML resource (.resx) stream or string associated with the current <see cref="T:System.Resources.ResXResourceReader" /> object. However, if the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property is set to true before you call <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" />, the resource items are retrieved as <see cref="T:System.Resources.ResXDataNode" /> objects. In this case, all resource nodes are returned regardless of type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for the current <see cref="T:System.Resources.ResXResourceReader" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the current <see cref="T:System.Resources.ResourceReader" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -328,9 +458,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resources are stored as name/value pairs in a resource file or stream. Design-time properties, which are called metadata, are stored in the resource file or stream along with runtime data resources. The <see cref="M:System.Resources.ResXResourceReader.GetMetadataEnumerator" /> method provides an <see cref="T:System.Collections.IDictionaryEnumerator" /> object that can retrieve the metadata from the resource file or stream associated with the current <see cref="T:System.Resources.ResXResourceReader" /> object. However, if the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property is set to true before you call <see cref="M:System.Resources.ResXResourceReader.GetMetadataEnumerator" />, no resource nodes are retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a dictionary enumerator that can retrieve the design-time properties from the current XML resource file or stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the metadata in a resource.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -345,9 +484,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Resources.ResXResourceReader" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface. To enumerate the resources in a .resx file, we recommend that you call the <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method, and then call the MoveNext method on the returned <see cref="T:System.Collections.IDictionaryEnumerator" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for the current <see cref="T:System.Resources.ResXResourceReader" /> object. For a description of this member, see the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can iterate through the name/value pairs in the XML resource (.resx) stream or string associated with the current <see cref="T:System.Resources.ResXResourceReader" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -362,8 +510,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Resources.ResXResourceReader" /> instance is cast to an <see cref="T:System.IDisposable" /> interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Resources.ResXResourceReader" /> and optionally releases the managed resources. For a description of this member, see the <see cref="M:System.IDisposable.Dispose" /> method. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseResXDataNodes">
@@ -376,9 +530,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property before you begin enumerating resources. By default, its value is false. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether <see cref="T:System.Resources.ResXDataNode" /> objects are returned when reading the current XML resource file or stream.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

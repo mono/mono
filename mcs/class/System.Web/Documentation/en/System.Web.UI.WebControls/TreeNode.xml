@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNode" FullName="System.Web.UI.WebControls.TreeNode">
   <TypeSignature Language="C#" Value="public class TreeNode : ICloneable, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -21,9 +22,48 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeView" /> control is made up of nodes. Each entry in the tree is called a node and is represented by a <see cref="T:System.Web.UI.WebControls.TreeNode" /> object. A node that contains other nodes is called a <newTerm>parent node</newTerm>. A node that is contained by another node is called a <newTerm>child node</newTerm>. A node that has no child nodes is called a <newTerm>leaf node</newTerm>. A node that is not contained by any other node but is the ancestor to all the other nodes is the <newTerm>root node</newTerm>. A node can be both a parent and a child, but root, parent, and leaf nodes are mutually exclusive. Several visual and behavioral properties of nodes are determined by whether a node is a <newTerm>root</newTerm>, <newTerm>parent</newTerm>, or <newTerm>leaf</newTerm> node.</para>
+      <para>Although a typical tree has only one root node, the <see cref="T:System.Web.UI.WebControls.TreeView" /> control allows you to add multiple root nodes to your tree structure. This is useful when you want to display item listings without displaying a single main root node, as in a list of product categories.</para>
+      <para>A node primarily stores data in two properties, the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property and the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property. The value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property is displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control, and the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property is used to store any additional data about the node, such as data used for handling postback events. A node also stores the path from the node to its root node in the <see cref="P:System.Web.UI.WebControls.TreeNode.ValuePath" /> property. The <see cref="P:System.Web.UI.WebControls.TreeNode.ValuePath" /> property indicates the node's position relative to the root node.</para>
+      <block subset="none" type="note">
+        <para>Nodes at the same level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property; the <see cref="T:System.Web.UI.WebControls.TreeView" /> control cannot distinguish between different nodes at the same level that have the same value. In this scenario, if the user clicks a node that has a duplicate value, the node that appears first in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control is selected.</para>
+      </block>
+      <para>A <see cref="T:System.Web.UI.WebControls.TreeNode" /> object is made up of the following four user interface (UI) elements, which can be customized or hidden: </para>
+      <list type="bullet">
+        <item>
+          <para>An expansion node indicator icon used to show whether the node is expanded, collapsed, or non-expandable.</para>
+        </item>
+        <item>
+          <para>An optional check box associated with the node.</para>
+        </item>
+        <item>
+          <para>An optional node image.</para>
+        </item>
+        <item>
+          <para>The node text.</para>
+        </item>
+      </list>
+      <para>You can specify a custom image for the expandable, collapsible, and non-expandable node indicators by setting the <see cref="P:System.Web.UI.WebControls.TreeView.ExpandImageUrl" />, <see cref="P:System.Web.UI.WebControls.TreeView.CollapseImageUrl" />, and <see cref="P:System.Web.UI.WebControls.TreeView.NoExpandImageUrl" /> properties of the <see cref="T:System.Web.UI.WebControls.TreeView" /> class. The expansion node indicator icons can even be hidden entirely by setting the <see cref="P:System.Web.UI.WebControls.TreeView.ShowExpandCollapse" /> property of the <see cref="T:System.Web.UI.WebControls.TreeView" /> class to false.</para>
+      <para>To display a check box next to a node, set the <see cref="P:System.Web.UI.WebControls.TreeView.ShowCheckBoxes" /> property of the <see cref="T:System.Web.UI.WebControls.TreeView" /> class. When the <see cref="P:System.Web.UI.WebControls.TreeView.ShowCheckBoxes" /> property is set to a value other than TreeNodeType.Node, check boxes are displayed next to the specified node type. You can selectively override the check box of an individual node by setting the node's <see cref="P:System.Web.UI.WebControls.TreeNode.ShowCheckBox" /> property. When a check box is displayed, use the <see cref="P:System.Web.UI.WebControls.TreeNode.Checked" /> property to determine whether the check box is selected.</para>
+      <para>You can display an image in a node by setting the <see cref="P:System.Web.UI.WebControls.TreeNode.ImageUrl" /> property. This image is displayed next to the node text.</para>
+      <para>The text of a node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control can be in one of two modes: selection mode or navigation mode. By default, a node is in selection mode. To put a node into navigation mode, set the node's <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property to a value other than an empty string (""). To put a node into selection mode, set the node's <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property to an empty string.</para>
+      <block subset="none" type="note">
+        <para>Some Internet browsers have a limitation that can affect the performance of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. For example, Microsoft Internet Explorer 6.0 has a URL character limit of 2067 characters that it posts. If the number of characters in a URL of a node is larger than that number, expanding that node will fail and no exception is thrown.</para>
+      </block>
+      <para>By default, clicking a node that is in selection mode posts the page back to the server and raises the <see cref="E:System.Web.UI.WebControls.TreeView.SelectedNodeChanged" /> event. You can optionally specify a different event to raise by setting the node's SelectAction property. For more information, see <see cref="P:System.Web.UI.WebControls.TreeNode.SelectAction" />. To determine which node was clicked in selection mode, use the <see cref="P:System.Web.UI.WebControls.TreeView.SelectedNode" /> property of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+      <para>When a node is in navigation mode, all selection events are disabled for that node. Clicking the node in navigation mode directs the user to the specified URL. You can optionally set the <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property to specify the window or frame in which to display the linked content.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeNode" /> class contains several properties that are used to store the state of the node. Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Selected" /> property to determine whether a node is selected. To determine whether the node is expanded, use the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property. The <see cref="P:System.Web.UI.WebControls.TreeNode.DataBound" /> property is used to determine whether a node is bound to data. When a node is bound to data, you can access the underlying data item by using the <see cref="P:System.Web.UI.WebControls.TreeNode.DataItem" /> property.</para>
+      <para>The class provides several properties that help to determine the position of a node relative to other nodes in the tree. Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Depth" /> property to determine the depth of the node. You can get the delimited list of nodes from the current node to its root node by using the <see cref="P:System.Web.UI.WebControls.TreeNode.ValuePath" /> property. To determine the node's parent node, use the <see cref="P:System.Web.UI.WebControls.TreeNode.Parent" /> property. Child nodes are accessed using the <see cref="P:System.Web.UI.WebControls.TreeNode.ChildNodes" /> collection.</para>
+      <para>Sometimes, it is not practical to statically predefine the tree structure due to data size or custom content that depends on user input. Because of this, the <see cref="T:System.Web.UI.WebControls.TreeView" /> control supports dynamic node population. A node can be populated at run time when it is expanded. Note that you can get unexpected behavior if you persist asynchronously created nodes. For example, if you use a background worker thread to populate nodes asynchronously, the node tree might not be populated immediately though the control proceeds with the rest of the page life cycle. On postback, the delayed creation of the nodes can cause problems when the control's view state is loaded but the node tree is not fully populated.  For more information on dynamic node population, see the <see cref="P:System.Web.UI.WebControls.TreeNode.PopulateOnDemand" /> property.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.TreeNode" />, see the <see cref="M:System.Web.UI.WebControls.TreeNode.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +71,18 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the default values.</para>
+          <block subset="none" type="note">
+            <para>When this constructor is used, all properties in the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object are set to their default values. Be sure to set the properties, as necessary, after creating the object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class without text or a value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +95,39 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the text specified by the <paramref name="text" /> parameter.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the specified text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that is displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control for the node. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,11 +141,50 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the text and value specified by the <paramref name="text" /> and <paramref name="value" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the specified text and value.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that is displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control for the node. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the node, such as data used for handling postback events. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,11 +198,16 @@
         <Parameter Name="isRoot" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="isRoot">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the specified owner.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeView" /> that will contain the new <see cref="T:System.Web.UI.WebControls.TreeNode" />.</param>
+        <param name="isRoot">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the <see cref="T:System.Web.UI.WebControls.TreeNode" /> is a root node; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,12 +222,61 @@
         <Parameter Name="imageUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="imageUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the text, value, and image URL specified by the <paramref name="text" />, <paramref name="value" />, and <paramref name="imageUrl" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.ImageUrl" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="imageUrl" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the specified text, value, and image URL.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that is displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control for the node. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the node, such as data used for handling postback events. </param>
+        <param name="imageUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to an image that is displayed next to the node. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,14 +293,83 @@
         <Parameter Name="target" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="imageUrl">To be added.</param>
-        <param name="navigateUrl">To be added.</param>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the text, value, image and navigation URLs, and display target specified by the <paramref name="text" />, <paramref name="value" />, <paramref name="imageUrl" />, <paramref name="navigateUrl" />, and <paramref name="target" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.ImageUrl" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="imageUrl" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="navigateUrl" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="target" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class using the specified text, value, image URL, navigation URL, and target.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that is displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control for the node. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the node, such as data used for handling postback events. </param>
+        <param name="imageUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to an image that is displayed next to the node. </param>
+        <param name="navigateUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to link to when the node is clicked. </param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target window or frame in which to display the Web page content linked to when the node is clicked. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -147,10 +387,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a node displays a check box, the <see cref="P:System.Web.UI.WebControls.TreeNode.Checked" /> property is commonly used to specify whether the check box is selected. When the check box associated with a node is selected, the node is automatically added to the <see cref="P:System.Web.UI.WebControls.TreeView.CheckedNodes" /> collection of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. The <see cref="P:System.Web.UI.WebControls.TreeNode.Checked" /> property can also be used to determine whether the check box is selected.</para>
+          <block subset="none" type="note">
+            <para>It is more common to determine which nodes in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control have their check boxes selected by iterating through the <see cref="P:System.Web.UI.WebControls.TreeView.CheckedNodes" /> collection.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the node's check box is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -177,10 +427,18 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.ChildNodes" /> property to get a <see cref="T:System.Web.UI.WebControls.TreeNodeCollection" /> collection that contains the first-level child nodes of the current node. This collection is commonly used to iterate through all the first-level child nodes, or to access a specific first-level child node of the current node.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.ChildNodes" /> property can also be used to programmatically manage the first-level child nodes in the current node. You can add, insert, remove, and retrieve <see cref="T:System.Web.UI.WebControls.TreeNode" /> objects from the collection. Any updates to the collection will automatically be reflected in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control the next time the page is refreshed.</para>
+          <para>To access child nodes further down the tree, use the <see cref="P:System.Web.UI.WebControls.TreeNode.ChildNodes" /> property of the next-level child node to navigate down the node levels.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.WebControls.TreeNodeCollection" /> collection that contains the first-level child nodes of the current node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -194,10 +452,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a helper method that supports the <see cref="T:System.ICloneable" /> interface implemented by <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class with the properties of the current <see cref="T:System.Web.UI.WebControls.TreeNode" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Web.UI.WebControls.TreeNode" /> with the properties of the current <see cref="T:System.Web.UI.WebControls.TreeNode" /> instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,9 +478,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.Collapse" /> method to conveniently collapse the current node.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can also set the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property to false.</para>
+          </block>
+          <para>To collapse the current node and all its child nodes, consider using the <see cref="M:System.Web.UI.WebControls.TreeNode.CollapseAll" /> method.</para>
+          <para>
+            <see cref="M:System.Web.UI.WebControls.TreeView.CollapseAll" /> will collapse all the nodes in the entire tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses the current tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,9 +506,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.CollapseAll" /> method to conveniently collapse the current node and all its child nodes.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can also set the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property of the current node and each of its child nodes to false.</para>
+          </block>
+          <para>To collapse only the current node, consider using the <see cref="M:System.Web.UI.WebControls.TreeNode.Collapse" /> method.</para>
+          <para>
+            <see cref="M:System.Web.UI.WebControls.TreeView.CollapseAll" /> will collapse all the nodes in the entire tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses the current node and all its child nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -253,10 +544,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.DataBound" /> property is used to programmatically determine whether the node was created through data binding. Because dynamic and static content cannot be mixed in the same node, this property is commonly used when populating a <see cref="T:System.Web.UI.WebControls.TreeView" /> control dynamically to determine whether the node contains static content.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the node was created through data binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -277,10 +575,19 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.TreeView" /> control is bound to a data source, such as an <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> object, this property is set to the data item that is bound to this specific node. This property is commonly used to access the values of the data item.</para>
+          <block subset="none" type="note">
+            <para>This property is available only after data binding has occurred.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data item that is bound to the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -304,10 +611,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.DataPath" /> property value is commonly used when calling the <see cref="M:System.Web.UI.IHierarchicalDataSource.GetHierarchicalView(System.String)" /> method to provide the path to the data bound to the current node. This method then returns a <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object that contains the data at the specified path.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path to the data bound to the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -328,10 +642,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Depth" /> property to determine the depth of the node. The depth represents the number of levels of hierarchy between a node and the root node. For example, a root node has a depth of zero. A child of the root node has a depth of one, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the depth of the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -345,9 +665,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.Expand" /> method to conveniently expand the current node.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can also set the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property to true.</para>
+          </block>
+          <para>To expand the current node and all its child nodes, consider using the <see cref="M:System.Web.UI.WebControls.TreeNode.ExpandAll" /> method.</para>
+          <para>
+            <see cref="M:System.Web.UI.WebControls.TreeView.ExpandAll" /> will expand all the nodes in the entire tree.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands the current tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -361,9 +694,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.ExpandAll" /> method to conveniently expand the current node and all its child nodes.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can also set the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property of the current node and each of its child nodes to true.</para>
+          </block>
+          <para>To expand only the current node, consider using the <see cref="M:System.Web.UI.WebControls.TreeNode.Expand" /> method.</para>
+          <para>
+            <see cref="M:System.Web.UI.WebControls.TreeView.ExpandAll" /> will expand all the nodes in the entire tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands the current node and all its child nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -381,10 +726,30 @@
         <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property to specify or determine whether the node is expanded. </para>
+          <para>You can expand and collapse a node by calling the <see cref="M:System.Web.UI.WebControls.TreeNode.Expand" /> and <see cref="M:System.Web.UI.WebControls.TreeNode.Collapse" /> methods, respectively. You can also expand and collapse a node and all its child nodes by calling the <see cref="M:System.Web.UI.WebControls.TreeNode.ExpandAll" /> and <see cref="M:System.Web.UI.WebControls.TreeNode.CollapseAll" /> methods, respectively.</para>
+          <para>Since the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property is a tri-state property, the following C# code snippet causes a compile error:</para>
+          <code>protected void TreeView1_SelectedNodeChanged(object sender, EventArgs e)
+{
+if (TreeView1.Nodes[0].Expanded)
+{
+// some work here 
+}
+}</code>
+          <para>While VB.Net implicitly casts the Boolean value to a NullableBoolean, C# does not. Therefore, it is a best practice to explicitly check the state of the property. For example, the following code examples in Visual Basic and C# explicitly test the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property.</para>
+          <para>The following Visual Basic code example explicitly tests the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property. This example tests if the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property is set to True; therefore Nothing and False fall through the If statement.</para>
+          <code>If TreeView1.Nodes(0).Expanded = True Then 'some work hereEnd IF</code>
+          <para>This C# code example explicitly tests the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property. This example tests if the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property is set to True; therefore Null and False fall through the If statement.</para>
+          <code>if( TreeView1.Nodes[0].Expanded == true ) { //some work here}</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the node is expanded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -405,10 +770,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an image is displayed next to a node (when the <see cref="P:System.Web.UI.WebControls.TreeNode.ImageUrl" /> property is set), use the <see cref="P:System.Web.UI.WebControls.TreeNode.ImageToolTip" /> property to specify the ToolTip displayed when the user positions the mouse pointer over the image. The text that you specify provides assistive technology devices with a description of the image that can be used to make the control more accessible.</para>
+          <para>The value of this property is stored in view state.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text for the image displayed next to a node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -432,10 +805,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.ImageUrl" /> property to specify a custom image for the current node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. This image is displayed next to the node and can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image that is displayed next to the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -448,10 +828,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the node is saving changes to its view state. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -468,9 +851,16 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.UI.WebControls.TreeNode.LoadViewState(System.Object)" /> is a helper method used to load the previously saved view state of the node </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved view state of the node. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -494,10 +884,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of a node can be in one of two modes: selection mode or navigation mode. By default, a node is in selection mode. To put a node into navigation mode, set the node's <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property to a value other than an empty string.</para>
+          <para>When a node is in navigation mode, all selection events are disabled for that node. Clicking the node in navigation mode links the user to the specified URL. You can optionally set the <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property to specify the window or frame in which to display the linked content.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to navigate to when the node is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -518,10 +916,20 @@
         <ReturnType>System.Web.UI.WebControls.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.Parent" /> property returns a <see cref="T:System.Web.UI.WebControls.TreeNode" /> object that represents the parent node of the current node. It is commonly used to determine the parent node or to access the properties of the parent node.</para>
+          <block subset="none" type="note">
+            <para>A root node does not have a parent node.</para>
+          </block>
+          <para>To access the child nodes of the current node, use the <see cref="P:System.Web.UI.WebControls.TreeNode.ChildNodes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent node of the current node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -539,10 +947,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes, it is not practical to statically predefine the tree structure due to data size or custom content that depends on user input. Because of this, the <see cref="T:System.Web.UI.WebControls.TreeView" /> control supports dynamic node population. When a node's <see cref="P:System.Web.UI.WebControls.TreeNode.PopulateOnDemand" /> property is set to true, that node is populated at run time through a postback event when the node is expanded. To populate a node dynamically, an event-handling method that populates the node must be defined for the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodePopulate" /> event.</para>
+          <para>Supported browsers can also take advantage of client-side node population. When enabled, this allows the <see cref="T:System.Web.UI.WebControls.TreeView" /> control to dynamically populate a node on the client when that node is expanded, which prevents the need to post back to the server. For more information on client-side node population, see <see cref="P:System.Web.UI.WebControls.TreeView.PopulateNodesFromClient" />.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the node is populated dynamically.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -558,10 +974,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be overridden by control developers to add additional rendering after the node is rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows control developers to add additional rendering to the node.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream used to write content to a Web page. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -577,10 +1000,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be overridden by control developers to add additional rendering before the node is rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows control developers to add additional rendering to the node.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream used to write content to a Web page.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -594,10 +1024,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TreeNode.SaveViewState" /> method is a helper method called by the node to save its state. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current view state of the node. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the saved state of the node. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -611,9 +1050,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.Select" /> method to select the current node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+          <para>Note   As an alternative, you can also select the current node by setting the <see cref="P:System.Web.UI.WebControls.TreeNode.Selected" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the current node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -631,10 +1077,68 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeSelectAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of a node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control can be in one of two modes: selection mode or navigation mode. By default, a node is in selection mode. To put a node into navigation mode, set the node's <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property to a value other than an empty string (""). To put a node into selection mode, set the node's <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property to an empty string.</para>
+          <block subset="none" type="note">
+            <para>When a node is in navigation mode, selection events are disabled for that node. Clicking a node will direct the user to the specified URL, rather than posting the page back to the server and raising an event.</para>
+          </block>
+          <para>When a node is in selection mode, use the <see cref="P:System.Web.UI.WebControls.TreeNode.SelectAction" /> property to specify which event or events are raised when a node is selected. The following table lists the available options.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Selection action</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TreeNodeSelectAction.Expand</para>
+              </term>
+              <description>
+                <para>Toggles the node between expanded and collapsed. Raises the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeExpanded" /> event or the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeCollapsed" /> event as appropriate.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TreeNodeSelectAction.None</para>
+              </term>
+              <description>
+                <para>Raises no events when a node is selected.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TreeNodeSelectAction.Select</para>
+              </term>
+              <description>
+                <para>Raises the <see cref="E:System.Web.UI.WebControls.TreeView.SelectedNodeChanged" /> event when a node is selected.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TreeNodeSelectAction.SelectExpand</para>
+              </term>
+              <description>
+                <para>Raises both the <see cref="E:System.Web.UI.WebControls.TreeView.SelectedNodeChanged" /> and the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeExpanded" /> events when a node is selected. Nodes are only expanded, never collapsed.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.TreeView.HoverNodeStyle" /> property is not rendered for a node with its <see cref="P:System.Web.UI.WebControls.TreeNode.SelectAction" /> property set to TreeNodeSelectAction.None.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the event or events to raise when a node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -652,10 +1156,24 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Selected" /> property to specify or determine whether the node is selected.</para>
+          <block subset="none" type="note">
+            <para>Although the property can be used to determine whether the node is selected, it is more common to use the <see cref="P:System.Web.UI.WebControls.TreeView.SelectedNode" /> property.</para>
+          </block>
+          <para>Only one node can be selected at a time in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control when using this property.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can also select the node by using the <see cref="M:System.Web.UI.WebControls.TreeNode.Select" /> method.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -673,10 +1191,31 @@
         <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.TreeView" /> control allows you to display a check box next to a node's image. Use the <see cref="P:System.Web.UI.WebControls.TreeNode.ShowCheckBox" /> property to show or hide the check box for the current node.</para>
+          <para>Although the <see cref="P:System.Web.UI.WebControls.TreeNode.ShowCheckBox" /> property can be used to display check boxes, it is more common to use the <see cref="P:System.Web.UI.WebControls.TreeView.ShowCheckBoxes" /> property of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. The <see cref="P:System.Web.UI.WebControls.TreeView.ShowCheckBoxes" /> property, however, affects every node type specified by the property; therefore, the <see cref="P:System.Web.UI.WebControls.TreeNode.ShowCheckBox" /> property is often used to override that setting for an individual node.</para>
+          <para>Since the <see cref="P:System.Web.UI.WebControls.TreeView.ShowCheckBoxes" /> property is a tri-state property, the following C# code snippet causes a compile error:</para>
+          <code>protected void TreeView1_SelectedNodeChanged(object sender, EventArgs e)
+{
+if (TreeView1.Nodes[0].Expanded)
+{
+// some work here 
+}
+}</code>
+          <para>While VB.Net implicitly casts the Boolean value to a NullableBoolean, C# does not. Therefore, it is a best practice to explicitly check the state of the property. For example, the following code examples in Visual Basic and C# explicitly test the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property.</para>
+          <para>The following Visual Basic code example explicitly tests the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property. This example tests if the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property is set to True; therefore Nothing and False fall through the If statement.</para>
+          <code>If TreeView1.Nodes(0).Expanded = True Then 'some work hereEnd IF</code>
+          <para>This C# code example explicitly tests the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property. This example tests if the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property is set to True; therefore Null and False fall through the If statement.</para>
+          <code>if( TreeView1.Nodes[0].Expanded == true ) { //some work here}</code>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a check box is displayed next to the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -693,9 +1232,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TreeNode.System.ICloneable.Clone" /> method is used by the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class to make a copy of itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a copy of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -708,9 +1256,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.TreeNode" /> instance is cast to the <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IStateManager.IsTrackingViewState" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -727,8 +1281,11 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the node's previously saved view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -742,9 +1299,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the view state changes to a <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the view state changes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -758,8 +1321,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this method has been called on a server control, the <see cref="P:System.Web.UI.Control.IsTrackingViewState" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object to track changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -774,10 +1343,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property to specify the window or frame in which to display the Web content linked to a node when that node is clicked.</para>
+          <block subset="none" type="note">
+            <para>Setting this property overrides the <see cref="P:System.Web.UI.WebControls.TreeView.Target" /> property of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+          </block>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object must be XHTML 1.1-compliant. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.TreeNode.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame in which to display the Web page content associated with a node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -798,10 +1381,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property to specify or determine the text that is displayed for the node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property contains null, the get accessor returns the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property. If the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property, in turn, contains null, <see cref="F:System.String.Empty" /> is returned.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for the node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -815,9 +1409,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNode.ToggleExpandState" /> method to alternate between an expanded and a collapsed state for the node. For example, if the node is collapsed, calling the <see cref="M:System.Web.UI.WebControls.TreeNode.ToggleExpandState" /> method expands the node, and vice versa.</para>
+          <block subset="none" type="note">
+            <para>As an alternative, you can set the <see cref="P:System.Web.UI.WebControls.TreeNode.Expanded" /> property directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Alternates between the expanded and collapsed state of the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -838,10 +1441,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNode.ToolTip" /> property to specify the ToolTip text for the node. The ToolTip text is displayed when the mouse pointer is positioned over the node.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text for the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -855,9 +1465,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the starting point at which to begin tracking and saving view state changes to the node. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -878,10 +1491,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property is used to supplement the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property by storing any additional data associated with the node. This value is not displayed in the control and is commonly used to store data for handling postback events.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property contains null, the get accessor returns the value of the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property. If the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property, in turn, contains null, <see cref="F:System.String.Empty" /> is returned.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Nodes at the same level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property; the <see cref="T:System.Web.UI.WebControls.TreeView" /> control cannot distinguish between different nodes at the same level that have the same value. In this scenario, if the user clicks a node that has a duplicate value, the node that appears first in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control is selected.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a non-displayed value used to store any additional data about the node, such as data used for handling postback events.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -902,10 +1529,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TreeNode.ValuePath" /> property contains a delimiter-separated list of node values that form a path from the root node to the current node. Use the <see cref="P:System.Web.UI.WebControls.TreeView.PathSeparator" /> property to specify the delimiter character used to separate the node values. This value is commonly used when parsing the list for the individual values, or to pass as an argument to the <see cref="M:System.Web.UI.WebControls.TreeView.FindNode(System.String)" /> method of the <see cref="T:System.Web.UI.WebControls.TreeView" /> class.</para>
+          <para>Depending on the value displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control, the delimiter character might need to be changed to prevent any conflicts. For example, if you set the delimiter character to a comma, the displayed value should not contain any commas; otherwise, you cannot accurately parse the <see cref="P:System.Web.UI.WebControls.TreeNode.ValuePath" /> property.</para>
+          <block subset="none" type="note">
+            <para>Nodes at the same level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.TreeNode.Value" /> property; the <see cref="T:System.Web.UI.WebControls.TreeView" /> control cannot distinguish between different nodes at the same level that have the same value. In this scenario, if the user clicks a node that has a duplicate value, the node that appears first in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control is selected.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path from the root node to the current node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionService" FullName="System.ComponentModel.Design.DesignerActionService">
   <TypeSignature Language="C#" Value="public class DesignerActionService : IDisposable" />
   <AssemblyInfo>
@@ -13,8 +14,45 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerActionService" /> class is responsible for managing the collection of <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects for each instance of a component that exists on a form at design time. This class enables a direct push model of item creation, and is primarily intended for use by design-time tool developers, although it can also be used by component and custom control developers.</para>
+      <para>Design-time tool developers will need to determine the list of items to display for a component and determine when this list changes. They may also create add-ins that operate in conjunction with smart tag panel objects.</para>
+      <para>Advanced component developers may need to dynamically control the items associated with a component, thus replacing or supplementing the standard pull model. For example, panel commands can be altered depending on the context of their use and the design-time state of the component.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.ComponentModel.Design.DesignerActionService" /> is actually the driving service behind both the push and pull models; however, in the latter case it operates implicitly.</para>
+      </block>
+      <para>
+        <see cref="T:System.ComponentModel.Design.DesignerActionService" /> provides a straightforward interface for accessing and manipulating the items for each component, including the following methods and events:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Contains(System.ComponentModel.IComponent)" /> method determines whether the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> is currently managing a particular component.</para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.ComponentModel.Design.DesignerActionService.GetComponentActions" /> method supports the enumeration of the lists of items.</para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> method allows adding a <see cref="T:System.ComponentModel.Design.DesignerActionList" /> or <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> to the set of existing items for a component instance. In contrast, the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Remove" /> method removes one or all of the item lists associated with a component.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> method represents the direct push model of associating panel items with a component. In contrast, the pull model relies on overriding the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property of the designer class for that component. The design environment is responsible for adding these items into the current <see cref="T:System.ComponentModel.Design.DesignerActionService" /> when a component is created on the design surface.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" />, <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Remove" />, <see cref="M:System.ComponentModel.Design.DesignerActionService.Contains(System.ComponentModel.IComponent)" />, and <see cref="M:System.ComponentModel.Design.DesignerActionService.Clear" /> methods only consider or affect push-model items.</para>
+          </block>
+        </item>
+        <item>
+          <para>The <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event indicates when the collection of items changes for a component.</para>
+        </item>
+      </list>
+      <para>Because it is often desirable to use some of the same panel items in both the component's design-time shortcut menu and its panel, a large degree of interoperability exists between <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects and designer verbs.</para>
+      <para>If a component designer does not explicitly specify a <see cref="T:System.ComponentModel.Design.DesignerActionList" /> (that is, it does not contain an overridden <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property), then a list will be created from existing designer verbs. These verbs are specified by the <see cref="P:System.ComponentModel.Design.ComponentDesigner.Verbs" /> property. In this case, an internal verb list class is used to contain the collection of verb item panel entries.</para>
+      <para>If you want a <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> to be used both as a panel entry and a design-time shortcut menu entry, then you can set the <paramref name="includeAsDesignerVerb" /> parameter in the item's constructor.</para>
+      <para>Use the <see cref="T:System.ComponentModel.Design.DesignerActionUIService" /> to control the display of your designer's <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Establishes a design-time service that manages the collection of <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects for components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +65,17 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service provider is necessary for monitoring selection and component changes. It is expected to support the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> and <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> types. The <see cref="T:System.ComponentModel.Design.DesignerActionService" /> class uses an internal table to manage components and their associated <see cref="T:System.ComponentModel.Design.DesignerActionList" /> smart tags.</para>
+          <para>Typically, component developers will not need to create an instance of this class; instead, they can acquire an existing instance through a call to the <see cref="M:System.ComponentModel.Component.GetService(System.Type)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> class.</para>
+        </summary>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service provider for the current design-time environment.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -46,10 +92,21 @@
         <Parameter Name="actionList" Type="System.ComponentModel.Design.DesignerActionList" />
       </Parameters>
       <Docs>
-        <param name="comp">To be added.</param>
-        <param name="actionList">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Add(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionList)" /> method represents the push model of adding smart tag items. The alternate pull model relies on overriding the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property in the designer for the corresponding component.</para>
+          <para>When this method is called, the lists to be added are scanned for any <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> with the <see cref="P:System.ComponentModel.Design.DesignerActionMethodItem.IncludeAsDesignerVerb" /> property set to true. These items are added to the list of designer verbs for this component, through a call to the <see cref="M:System.ComponentModel.Design.MenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method.</para>
+          <para>Smart tags are managed on a component instance basis. The managed collection may contain duplicate entries.</para>
+          <para>This method raises the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.ComponentModel.Design.DesignerActionList" /> to the current collection of managed smart tags.</para>
+        </summary>
+        <param name="comp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to associate the smart tags with.</param>
+        <param name="actionList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerActionList" /> that contains the new smart tag items to be added.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -66,10 +123,21 @@
         <Parameter Name="designerActionListCollection" Type="System.ComponentModel.Design.DesignerActionListCollection" />
       </Parameters>
       <Docs>
-        <param name="comp">To be added.</param>
-        <param name="designerActionListCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Add(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionListCollection)" /> method represents the push model of adding smart tag items. The alternate pull model relies on overriding the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property in the designer for the corresponding component.</para>
+          <para>When this method is called, the lists to be added are scanned for any <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> with the <see cref="P:System.ComponentModel.Design.DesignerActionMethodItem.IncludeAsDesignerVerb" /> property set to true. These items are added to the list of designer verbs for this component, through a call to the <see cref="M:System.ComponentModel.Design.MenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method.</para>
+          <para>Smart tags are managed on a component instance basis. The managed collection may contain duplicate entries.</para>
+          <para>This method raises the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> to the current collection of managed smart tags.</para>
+        </summary>
+        <param name="comp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to associate the smart tags with.</param>
+        <param name="designerActionListCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> that contains the new smart tag items to be added.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -83,8 +151,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Clear" /> method empties the internal table used to store information about components and their push-model smart tag lists.</para>
+          <block subset="none" type="note">
+            <para>Because this method affects all components managed by the current service, and not just the current component, this method should be used judiciously. Typically, the design-time tool developer uses it when resetting a design surface. Component developers should use one of the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Remove" /> methods instead to remove individual smart tag items or lists.</para>
+          </block>
+          <para>A <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event is raised for each component that was previously managed by the current service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all components from management and clears all push-model smart tag lists.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -100,10 +178,21 @@
         <Parameter Name="comp" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="comp">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Contains(System.ComponentModel.IComponent)" /> method only recognizes push-model smart tags, which are associated to a component with the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> method.</para>
+          <para>Although there is no structural limitation on the number of concurrent <see cref="T:System.ComponentModel.Design.DesignerActionService" /> instances created by a design-time tool, typically only a single instance of the service is created per design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current smart tag service manages the action lists for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component is managed by the current service; otherwise, false.</para>
+        </returns>
+        <param name="comp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to search for.</param>
       </Docs>
     </Member>
     <Member MemberName="DesignerActionListsChanged">
@@ -116,8 +205,57 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListsChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the set of specialized classes associated with the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Specialized type</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventArgs" />
+                </para>
+              </term>
+              <description>
+                <para>Adds information specific to smart tag list management. This class is specialized from <see cref="T:System.EventArgs" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventHandler" />
+                </para>
+              </term>
+              <description>
+                <para>Connects the <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventArgs" /> with its handler.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedType" />
+                </para>
+              </term>
+              <description>
+                <para>Denotes whether a list has been added or removed.</para>
+              </description>
+            </item>
+          </list>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.ComponentModel.Design.DesignerActionList" /> is removed or added for any component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -131,8 +269,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" /> method is the implementation of the only method mandated by the <see cref="T:System.IDisposable" /> interface. Call this method when you are finished using the <see cref="T:System.ComponentModel.Design.DesignerActionService" />. It performs two main actions:</para>
+          <list type="bullet">
+            <item>
+              <para>Removes the current service from the list of available services in the design environment through a call to the <see cref="Overload:System.ComponentModel.Design.IServiceContainer.RemoveService" /> method.</para>
+            </item>
+            <item>
+              <para>Unsubscribes to component change events from the associated <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> interface.</para>
+            </item>
+          </list>
+          <para>Call <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.DesignerActionService" />. The <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> in an unusable state. After calling <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.DesignerActionService" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -148,9 +304,26 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Dispose" /> method is the implementation of the only method mandated by the <see cref="T:System.IDisposable" /> interface. Call this method when you are finished using the <see cref="T:System.ComponentModel.Design.DesignerActionService" />. It performs two main actions:</para>
+          <list type="bullet">
+            <item>
+              <para>Removes the current service from the list of available services in the design environment through a call to the <see cref="Overload:System.ComponentModel.Design.IServiceContainer.RemoveService" /> method.</para>
+            </item>
+            <item>
+              <para>Unsubscribes to component change events from the associated <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> interface.</para>
+            </item>
+          </list>
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.DesignerActionService" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Design.DesignerActionService" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="GetComponentActions">
@@ -166,10 +339,21 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentActions(System.ComponentModel.IComponent)" /> method is equivalent to a call to the <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentActions(System.ComponentModel.IComponent,System.ComponentModel.Design.ComponentActionsType)" /> method using a <paramref name="type" /> parameter of <see cref="F:System.ComponentModel.Design.ComponentActionsType.All" />. Therefore, the collection returned will contain both the push and pull lists of smart tags.</para>
+          <para>The returned <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> is the union of item lists added through the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> methods and also the lists obtained from the <see cref="T:System.ComponentModel.Design.DesignerCommandSet" /> instance obtained from the component’s site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of smart tag item lists associated with a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of smart tags for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
       </Docs>
     </Member>
     <Member MemberName="GetComponentActions">
@@ -186,11 +370,62 @@
         <Parameter Name="type" Type="System.ComponentModel.Design.ComponentActionsType" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the overloaded <see cref="Overload:System.ComponentModel.Design.DesignerActionService.GetComponentActions" /> method filters on the <paramref name="type" /> parameter, which can have one of the following values. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.ComponentModel.Design.ComponentActionsType.All" /> </para>
+              </term>
+              <description>
+                <para>All associated smart tags.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.ComponentModel.Design.ComponentActionsType.Component" /> </para>
+              </term>
+              <description>
+                <para>Pull-model smart tags only.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.ComponentModel.Design.ComponentActionsType.Service" /> </para>
+              </term>
+              <description>
+                <para>Push-model smart tags only.</para>
+              </description>
+            </item>
+          </list>
+          <para>If the associated designer for a component does not supply a pull-model smart tag list, then the <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentActions(System.ComponentModel.IComponent,System.ComponentModel.Design.ComponentActionsType)" /> method will instead use the designer's design-time shortcut menu items from the <see cref="P:System.ComponentModel.Design.ComponentDesigner.Verbs" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of smart tag item lists of the specified type associated with a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of smart tags of the specified type for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.ComponentActionsType" /> to filter the associated smart tags with.</param>
       </Docs>
     </Member>
     <Member MemberName="GetComponentDesignerActions">
@@ -207,10 +442,19 @@
         <Parameter Name="actionLists" Type="System.ComponentModel.Design.DesignerActionListCollection" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="actionLists">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentDesignerActions(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionListCollection)" /> method is a helper method for the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.GetComponentActions" /> methods. <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentDesignerActions(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionListCollection)" /> searches for pull-model smart tags of type <see cref="F:System.ComponentModel.Design.ComponentActionsType.Component" />, and then adds these to the supplied <paramref name="actionLists" /> collection.</para>
+          <para>If the component's developer does not explicitly supply a collection of smart tags through the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> property of its designer, this method will reuse the design-time shortcut menu entries, which are obtained through the <see cref="P:System.ComponentModel.Design.ComponentDesigner.Verbs" /> property of the designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the pull-model smart tags associated with a component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
+        <param name="actionLists">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection to add the associated smart tags to.</param>
       </Docs>
     </Member>
     <Member MemberName="GetComponentServiceActions">
@@ -227,10 +471,18 @@
         <Parameter Name="actionLists" Type="System.ComponentModel.Design.DesignerActionListCollection" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="actionLists">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentServiceActions(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionListCollection)" /> method is a helper method for the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.GetComponentActions" /> methods. It searches for push-model smart tags of type <see cref="F:System.ComponentModel.Design.ComponentActionsType.Service" />, and then adds these to the supplied <paramref name="actionLists" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the push-model smart tags associated with a component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
+        <param name="actionLists">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection to add the associated smart tags to.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -246,9 +498,17 @@
         <Parameter Name="actionList" Type="System.ComponentModel.Design.DesignerActionList" />
       </Parameters>
       <Docs>
-        <param name="actionList">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Remove" /> method is typically used by design tool developers, because component developers typically do not know what other components exist in the current design space.</para>
+          <para>If successful, this method raises the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified smart tag list from all components managed by the current service.</para>
+        </summary>
+        <param name="actionList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of smart tags to be removed.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -264,9 +524,16 @@
         <Parameter Name="comp" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="comp">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the <see cref="M:System.ComponentModel.Design.DesignerActionService.Remove(System.ComponentModel.IComponent)" /> method raises the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the smart tag lists associated with the specified component.</para>
+        </summary>
+        <param name="comp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to disassociate the smart tags from.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -283,10 +550,18 @@
         <Parameter Name="actionList" Type="System.ComponentModel.Design.DesignerActionList" />
       </Parameters>
       <Docs>
-        <param name="comp">To be added.</param>
-        <param name="actionList">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the <see cref="M:System.ComponentModel.Design.DesignerActionService.Remove(System.ComponentModel.IComponent,System.ComponentModel.Design.DesignerActionList)" /> method raises the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified smart tag list from the specified component.</para>
+        </summary>
+        <param name="comp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to disassociate the smart tags from.</param>
+        <param name="actionList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The smart tag list to remove.</param>
       </Docs>
     </Member>
   </Members>

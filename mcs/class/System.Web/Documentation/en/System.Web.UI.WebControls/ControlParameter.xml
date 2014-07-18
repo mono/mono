@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlParameter" FullName="System.Web.UI.WebControls.ControlParameter">
   <TypeSignature Language="C#" Value="public class ControlParameter : System.Web.UI.WebControls.Parameter" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class to bind the value of a <see cref="T:System.Web.UI.Control" /> property, such as <see cref="P:System.Web.UI.WebControls.ListControl.SelectedValue" /> or <see cref="P:System.Web.UI.WebControls.ListControl.SelectedIndex" />, to a parameter that is used in a parameterized SQL query, business object method, or filtering expression.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class provides two properties in addition to those inherited from the <see cref="T:System.Web.UI.WebControls.Parameter" /> class: <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" />. The <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property identifies which <see cref="T:System.Web.UI.Control" /> instance to bind to and the <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property identifies the public property of the <see cref="T:System.Web.UI.Control" /> from which the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class retrieves a value. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Binds the value of a property of a <see cref="T:System.Web.UI.Control" /> to a parameter object. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object that is created with the <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor" /> constructor is initialized with default values for all its properties. The <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> properties are initialized to <see cref="F:System.String.Empty" />. In addition, the <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> property is initialized to <see cref="F:System.String.Empty" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property is initialized to <see cref="F:System.TypeCode.Object" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new unnamed instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +53,17 @@
         <Parameter Name="original" Type="System.Web.UI.WebControls.ControlParameter" />
       </Parameters>
       <Docs>
-        <param name="original">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor(System.Web.UI.WebControls.ControlParameter)" /> constructor is a protected copy constructor that is used to clone a <see cref="T:System.Web.UI.WebControls.ControlParameter" /> instance. The values of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object, including the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" />, <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" />, <see cref="P:System.Web.UI.WebControls.Parameter.Name" />, and <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> properties, are all transferred to the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class with values from the specified instance.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> instance from which the current instance is initialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +77,19 @@
         <Parameter Name="controlID" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="controlID">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object that is created with the <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor(System.String,System.String)" /> constructor is initialized with the specified parameter name and <see cref="T:System.Web.UI.Control" /> name, which identifies the <see cref="T:System.Web.UI.Control" /> that the parameter binds to. Other properties, including <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" />, <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, and <see cref="P:System.Web.UI.WebControls.Parameter.Direction" />, are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class, using the specified control name to identify which control to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="controlID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the control that the parameter is bound to. The default is <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +104,21 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="controlID">To be added.</param>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object that is created with the <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor(System.String,System.String,System.String)" /> constructor is initialized with the specified parameter name, <see cref="T:System.Web.UI.Control" /> name, and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property, which identifies the <see cref="T:System.Web.UI.Control" /> that the parameter binds to. Other properties, including <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, <see cref="P:System.Web.UI.WebControls.Parameter.Direction" />, and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" />, are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class, using the specified property name and control name to identify which control to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="controlID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the control that the parameter is bound to. The default is <see cref="F:System.String.Empty" />. </param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property on the control that the parameter is bound to. The default is <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,13 +134,23 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="controlID">To be added.</param>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object that is created with the <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor(System.String,System.TypeCode,System.String,System.String)" /> constructor is initialized with the specified parameter name, <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, <see cref="T:System.Web.UI.Control" /> name, and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property. Only the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named and strongly typed instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class, using the specified property name and control name to identify which control to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the parameter represents. The default is <see cref="F:System.TypeCode.Object" />. </param>
+        <param name="controlID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the control that the parameter is bound to. The default is <see cref="F:System.String.Empty" />. </param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property of the control that the parameter is bound to. The default is <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +164,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ControlParameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.ControlParameter.#ctor(System.Web.UI.WebControls.ControlParameter)" /> copy constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class with the values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.ControlParameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ControlParameter" /> that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +203,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property is a required property that identifies the <see cref="T:System.Web.UI.Control" /> instance that the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to at run time.</para>
+          <para>Typically, the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> properties are set for the <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to correctly bind to a control. If you do not set the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property, the <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method throws an <see cref="T:System.ArgumentException" /> exception when called. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the name of the control that the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,11 +231,25 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object attempts to bind to the <see cref="T:System.Web.UI.Control" /> object and property every time the <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called. The <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns the value of the control's property that is identified by the combination of the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> properties. </para>
+          <para>The <see cref="T:System.Web.UI.WebControls.ControlParameter" /> class never uses the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property, which is inherited from <see cref="T:System.Web.UI.WebControls.Parameter" />, when binding to a control's property value.</para>
+          <block subset="none" type="note">
+            <para>In this implementation of the method, the <paramref name="context" /> parameter is ignored. If the <paramref name="control" /> parameter is null, null is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the updated and current value of the parameter.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> that the parameter is bound to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -192,10 +270,162 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property identifies the public property of the <see cref="T:System.Web.UI.Control" /> object identified by the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property that the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to at run time. <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> can be set to a simple string, such as "SelectedValue", or an expression using <see cref="Overload:System.Web.UI.DataBinder.Eval" /> syntax to identify complex control properties.</para>
+          <para>While the <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property is optional, typically both <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> properties are set for the <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to correctly bind to a control. If you set the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property but not the <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property, the <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method attempts to use the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> attribute to identify a default <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property. (It is the responsibility of control authors to specify this attribute.) If this fails, <see cref="M:System.Web.UI.WebControls.ControlParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> throws an <see cref="T:System.ArgumentException" /> exception.</para>
+          <para>The following table identifies which ASP.NET controls decorate properties with the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> attribute.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Control</para>
+                </term>
+                <description>
+                  <para>Property</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.Calendar" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Calendar.SelectedDate" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.CheckBox" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.CheckBox.Checked" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.DataList" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DataList.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.DetailsView" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsView.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.FormView" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.FormView.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.GridView" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridView.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.Label" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Label.Text" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.ListControl" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.ListControl.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.Menu" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.Menu.SelectedValue" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.TextBox" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TextBox.Text" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Web.UI.WebControls.TreeView" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeView.SelectedValue" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the property name of the control identified by the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> property that the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

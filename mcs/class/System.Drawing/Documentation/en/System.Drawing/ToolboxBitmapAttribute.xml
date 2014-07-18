@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolboxBitmapAttribute" FullName="System.Drawing.ToolboxBitmapAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ToolboxBitmapAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply a <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> to a control so that containers, such as Microsoft Visual Studio Form Designer, can retrieve an icon that represents the control. The bitmap for the icon can be in a file by itself or embedded in the assembly that contains the control. The size of the bitmap that you embed in the control's assembly (or store in a separate file) should be 16 by 16. The <see cref="M:System.Drawing.ToolboxBitmapAttribute.GetImage(System.Type,System.Boolean)" /> method of a <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object can return the small 16 by 16 image or a large 32 by 32 image that it creates by scaling the small image.</para>
+      <para>If you want to use different versions of your icons with different versions of your assembly, you do not have to modify the <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> for each version. Instead, you can declare the assembly with a <see cref="T:System.Drawing.BitmapSuffixInSameAssemblyAttribute" /> or a <see cref="T:System.Drawing.BitmapSuffixInSatelliteAssemblyAttribute" />, and specify a <see cref="P:System.Drawing.Configuration.SystemDrawingSection.BitmapSuffix" /> configuration value for each assembly version. In this case, a file name indicated by a <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> is interpreted with the bitmap suffix appended.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows you to specify an icon to represent a control in a container, such as the Microsoft Visual Studio Form Designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +38,13 @@
         <Parameter Name="imageFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="imageFile">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object with an image from a specified file.</para>
+        </summary>
+        <param name="imageFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains a 16 by 16 bitmap. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +59,16 @@
         <Parameter Name="t" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="t">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor searches for an embedded resource in the assembly that defines the type specified by the <paramref name="t" /> parameter. The constructor searches for a resource named namespace.classname.bmp, where namespace is the namespace containing the definition of the class specified by the <paramref name="t" /> parameter. For example, if ControlA is in NamespaceA in AssemblyA.dll, then the constructor searches AssemblyA.dll for a resource named NamespaceA.ControlA.bmp.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object based on a 16 x 16 bitmap that is embedded as a resource in a specified assembly.</para>
+        </summary>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> whose defining assembly is searched for the bitmap resource. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,10 +84,18 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="t">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor searches for an embedded resource in the assembly that defines the type specified by the <paramref name="t" /> parameter. The constructor searches for a resource named namespace.name, where namespace is the namespace containing the definition of the class specified by the <paramref name="t" /> parameter. For example, suppose that ControlA is a class in NamespaceA in AssemblyA.dll and that you passed "MyBitmap.bmp" to the <paramref name="name" /> parameter. Then the constructor searches AssemblyA.dll for a resource named NamespaceA.MyBitmap.bmp.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object based on a 16 by 16 bitmap that is embedded as a resource in a specified assembly.</para>
+        </summary>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> whose defining assembly is searched for the bitmap resource. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the embedded bitmap resource. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,8 +110,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object that has its small image and its large image set to null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,10 +131,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified object is a <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object and is identical to this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if <paramref name="value" /> is both a <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object and is identical to this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +156,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,10 +181,20 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.classname.bmp, where namespace is the namespace containing the definition of the type of the object specified by the <paramref name="component" /> parameter. For example, suppose you pass an object of type ControlA to the <paramref name="component" /> parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.ControlA.bmp.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the small <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The small <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a small image, this method searches for a bitmap resource in the assembly that defines the type of the object specified by the component parameter. For example, if you pass an object of type ControlA to the component parameter, then this method searches the assembly that defines ControlA. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,10 +211,20 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.classname.bmp, where namespace is the namespace containing the definition of the type specified by the <paramref name="type" /> parameter. For example, suppose you pass typeof(ControlA) to the <paramref name="type" /> parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.ControlA.bmp.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the small <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The small <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a small image, this method searches for a bitmap resource in the assembly that defines the type specified by the type parameter. For example, if you pass typeof(ControlA) to the type parameter, then this method searches the assembly that defines ControlA. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -179,11 +242,23 @@
         <Parameter Name="large" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="large">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.classname.bmp, where namespace is the namespace containing the definition of the type of the object specified by the <paramref name="component" /> parameter. For example, suppose you pass an object of type ControlA to the <paramref name="component" /> parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.ControlA.bmp.</para>
+          <para>If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a large image, this method creates a large image by scaling the small image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the small or large <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> object associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a small image, this method searches for a bitmap resource in the assembly that defines the type of the object specified by the component parameter. For example, if you pass an object of type ControlA to the component parameter, then this method searches the assembly that defines ControlA. </param>
+        <param name="large">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether this method returns a large image (true) or a small image (false). The small image is 16 by 16, and the large image is 32 by 32. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,11 +276,23 @@
         <Parameter Name="large" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="large">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.classname.bmp, where namespace is the namespace containing the definition of the type specified by the <paramref name="type" /> parameter. For example, suppose you pass an typeof(ControlA) to the <paramref name="type" /> parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.ControlA.bmp.</para>
+          <para>If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a large image, this method creates a large image by scaling the small image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the small or large <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a small image, this method searches for a bitmap resource in the assembly that defines the type specified by the component type. For example, if you pass typeof(ControlA) to the type parameter, then this method searches the assembly that defines ControlA. </param>
+        <param name="large">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether this method returns a large image (true) or a small image (false). The small image is 16 by 16, and the large image is 32 by 32. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,12 +311,25 @@
         <Parameter Name="large" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="imgName">To be added: an object of type 'string'</param>
-        <param name="large">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.imgName, where namespace is the namespace containing the definition of the type specified by the <paramref name="type" /> parameter. For example, suppose you pass typeof(ControlA) to the <paramref name="type" /> parameter and that you passed "MyBitmap.bmp" to the imgName parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.MyBitmap.bmp.</para>
+          <para>If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a large image, this method creates a large image by scaling the small image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the small or large <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> associated with this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />If this <see cref="T:System.Drawing.ToolboxBitmapAttribute" /> object does not already have a small image, this method searches for an embedded bitmap resource in the assembly that defines the type specified by the component type. For example, if you pass typeof(ControlA) to the type parameter, then this method searches the assembly that defines ControlA. </param>
+        <param name="imgName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the embedded bitmap resource. </param>
+        <param name="large">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether this method returns a large image (true) or a small image (false). The small image is 16 by 16, and the large image is 32 by 32. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,12 +348,25 @@
         <Parameter Name="large" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="t">To be added: an object of type 'Type'</param>
-        <param name="imageName">To be added: an object of type 'string'</param>
-        <param name="large">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a resource named namespace.imgName, where namespace is the namespace containing the definition of the type specified by the <paramref name="t" /> parameter. For example, suppose you pass typeof(ControlA) to the <paramref name="t" /> parameter and you pass "MyBitmap.bmp" to the imgName parameter. If ControlA is in NamespaceA in AssemblyA.dll, then this method searches AssemblyA.dll for a resource named NamespaceA.MyBitmap.bmp.</para>
+          <para>This method is intended to retrieve a 16 x 16 bitmap resource that is embedded in an assembly. However, there is no requirement that the embedded bitmap has a size of 16 x 16. The bitmap that is retrieved from the assembly (no matter what size) is considered the small image. The large image is created by scaling the "small" image to a size of 32 x 32. So the large image will always be 32 by 32, regardless of the size of the bitmap retrieved from the assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Drawing.Image" /> object based on a bitmap resource that is embedded in an assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> object based on the retrieved bitmap.</para>
+        </returns>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />This method searches for an embedded bitmap resource in the assembly that defines the type specified by the t parameter. For example, if you pass typeof(ControlA) to the t parameter, then this method searches the assembly that defines ControlA. </param>
+        <param name="imageName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the embedded bitmap resource. </param>
+        <param name="large">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether this method returns a large image (true)or a small image (false). The small image is 16 by 16, and the large image is 32 x 32. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapFieldAttribute" FullName="System.Runtime.Remoting.Metadata.SoapFieldAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SoapFieldAttribute : System.Runtime.Remoting.Metadata.SoapAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SoapFieldAttribute extends System.Runtime.Remoting.Metadata.SoapAttribute" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The target objects for the <see cref="T:System.Runtime.Remoting.Metadata.SoapFieldAttribute" /> attribute are object fields. The <see cref="T:System.Runtime.Remoting.Metadata.SoapFieldAttribute" /> attribute is used to specify information that controls how the .NET Framework generates the SOAP XML wire format for target fields.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Customizes SOAP generation and processing for a field. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Metadata.SoapFieldAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInteropXmlElement">
@@ -56,9 +66,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the current attribute contains interop XML element values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current attribute contains interop XML element values; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Order">
@@ -74,9 +90,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not use this property; it is not used by the .NET Framework remoting infrastructure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order of the current field attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlElementName">
@@ -92,9 +114,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element name of the field contained in the <see cref="T:System.Runtime.Remoting.Metadata.SoapFieldAttribute" /> attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

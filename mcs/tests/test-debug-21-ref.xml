@@ -28,16 +28,6 @@
       <scopes />
     </method>
     <method token="0x6000005">
-      <sequencepoints />
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x6000006">
-      <sequencepoints />
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x6000007">
       <sequencepoints>
         <entry il="0x27" row="7" col="2" file_ref="1" hidden="false" />
         <entry il="0x28" row="8" col="3" file_ref="1" hidden="false" />
@@ -53,6 +43,16 @@
       <scopes>
         <entry index="0" start="0x42" end="0x5f" />
       </scopes>
+    </method>
+    <method token="0x6000006">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000007">
+      <sequencepoints />
+      <locals />
+      <scopes />
     </method>
     <method token="0x6000008">
       <sequencepoints />

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyInfoX509Data" FullName="System.Security.Cryptography.Xml.KeyInfoX509Data">
   <TypeSignature Language="C#" Value="public class KeyInfoX509Data : System.Security.Cryptography.Xml.KeyInfoClause" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit KeyInfoX509Data extends System.Security.Cryptography.Xml.KeyInfoClause" />
@@ -14,8 +15,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represent the XMLDSIG X509Data element which contains an XML representation (partial or complete) of an X.509 certificate.</summary>
-    <remarks>The &lt;X509Data&gt; element is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class represents the &lt;X509Data&gt; element that contains X.509v3 certificate information related to the validation or encryption key. For example, an &lt;X509Data&gt; element might contain an X.509 certificate whose subject public key is the validation key, or a chain of X.509 certificates that terminate in a certificate for the validating key, or other identifiers for related X.509 certificates.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class whenever you need to include X.509 certificate data in an encrypted or signed XML document.</para>
+      <para>For more information about the &lt;X509Data&gt; element, see Section 4.4.4 of the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/, or see the XML Encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an &lt;X509Data&gt; subelement of an XMLDSIG or XML Encryption &lt;KeyInfo&gt; element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,9 +60,13 @@
         <Parameter Name="rgbCert" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbCert">a <see cref="T:System.Byte" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified ASN.1 DER encoding of an X.509v3 certificate.</para>
+        </summary>
+        <param name="rgbCert">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ASN.1 DER encoding of an <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,9 +83,13 @@
         <Parameter Name="cert" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
       </Parameters>
       <Docs>
-        <param name="cert">a <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</para>
+        </summary>
+        <param name="cert">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -85,10 +105,15 @@
         <Parameter Name="includeOption" Type="System.Security.Cryptography.X509Certificates.X509IncludeOption" />
       </Parameters>
       <Docs>
-        <param name="cert">To be added.</param>
-        <param name="includeOption">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</para>
+        </summary>
+        <param name="cert">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
+        <param name="includeOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509IncludeOption" /> values that specifies how much of the certificate chain to include.</param>
       </Docs>
     </Member>
     <Member MemberName="AddCertificate">
@@ -107,9 +132,13 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
       </Parameters>
       <Docs>
-        <param name="certificate">a <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" />.</para>
+        </summary>
+        <param name="certificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="AddIssuerSerial">
@@ -129,10 +158,19 @@
         <Parameter Name="serialNumber" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="issuerName">a <see cref="T:System.String" /></param>
-        <param name="serialNumber">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For identification, each X.509v3 certificate carries the name of the certification authority that issued the certificate paired with a unique serial number assigned by the certification authority.</para>
+          <para>The <see cref="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddIssuerSerial(System.String,System.String)" /> method adds information about an issuer name and serial number pair to a list of <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> objects that are accessible through the <see cref="P:System.Security.Cryptography.Xml.KeyInfoX509Data.IssuerSerials" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified issuer name and serial number pair to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
+        <param name="issuerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The issuer name portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
+        <param name="serialNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serial number portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="AddSubjectKeyId">
@@ -151,9 +189,16 @@
         <Parameter Name="subjectKeyId" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="subjectKeyId">a <see cref="T:System.Byte" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subject key identifiers (SKIs) are a way of identifying certificates that contain a certain public key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified subject key identifier (SKI) byte array to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
+        <param name="subjectKeyId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="AddSubjectKeyId">
@@ -176,9 +221,16 @@
         <Parameter Name="subjectKeyId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="subjectKeyId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subject key identifiers (SKIs) are a shorthand way to identify certificates that contain a certain public key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified subject key identifier (SKI) string to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
+        <param name="subjectKeyId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="AddSubjectName">
@@ -197,9 +249,13 @@
         <Parameter Name="subjectName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="subjectName">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the subject name of the entity that was issued an X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
+        <param name="subjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the entity that was issued an X.509 certificate to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="Certificates">
@@ -216,9 +272,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ArrayList" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the X.509v3 certificates contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CRL">
@@ -235,9 +294,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Byte[]" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Certificate Revocation List (CRL) contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -254,9 +316,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> object returned by this method is suitable for use as a subelement of an XMLDSIG or XML encryption &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IssuerSerials">
@@ -273,9 +344,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ArrayList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.KeyInfoX509Data.IssuerSerials" /> property represents the &lt;X509IssuerSerial&gt; element of an XML digital signature using a list of <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structures contained within.  The &lt;X509IssuerSerial&gt; element represents an issuer name and serial number pair, which identify a specific X.509v3 certificate.</para>
+          <para>The issuer of an X.509 certificate is the name of the certification authority that issued the certificate. Certification authorities assign each certificate they issue a unique serial number.</para>
+          <para>You can add a name and serial number pair using the <see cref="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddIssuerSerial(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structures that represent an issuer name and serial number pair.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -294,9 +373,16 @@
         <Parameter Name="element" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="element">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is typically used to process an &lt;X509Data&gt; subelement of a &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the input <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object to match.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlElement" /> object that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="SubjectKeyIds">
@@ -313,9 +399,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ArrayList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subject key identifiers (SKIs) are a way to identify certificates that contain a certain public key. An SKI can be used to identify one or more certificates issued to a particular subject key pair.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the subject key identifiers (SKIs) contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubjectNames">
@@ -332,9 +424,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ArrayList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every X.509v3 certificate includes a subject name. This name can be used to identify one or more certificates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the subject names of the entities contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

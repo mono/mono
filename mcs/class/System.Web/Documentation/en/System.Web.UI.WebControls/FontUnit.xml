@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FontUnit" FullName="System.Web.UI.WebControls.FontUnit">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct FontUnit" />
   <AssemblyInfo>
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />, see the <see cref="Overload:System.Web.UI.WebControls.FontUnit.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the size of a font.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,9 +39,44 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.#ctor(System.Double)" /> constructor to create and initialize an instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class using the specified font size. The following table shows initial property values for the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object that is created.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>The <see cref="F:System.Web.UI.WebControls.FontSize.AsUnit" /> value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> with the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property equal to <paramref name="value" /> and the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property equal to the <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> value.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified font size in points.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Double" /> that specifies the font size. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,9 +87,45 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class using the specified font size.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.AsUnit </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> with its <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property set to the font size specified by the <paramref name="value" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified font size.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +140,16 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.FontUnit.#ctor(System.String)" /> constructor calls the <see cref="M:System.Web.UI.WebControls.FontUnit.#ctor(System.String,System.Globalization.CultureInfo)" /> constructor, using the <see cref="P:System.Globalization.CultureInfo.CurrentCulture" /> property for the <see cref="T:System.Globalization.CultureInfo" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified string.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to specify the font size.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,9 +164,75 @@
         <Parameter Name="type" Type="System.Web.UI.WebControls.FontSize" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'FontSize'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class using the specified <see cref="T:System.Web.UI.WebControls.FontSize" /> object.</para>
+          <para>If the <paramref name="type" /> parameter contains the value FontSize.AsUnit, the following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.AsUnit </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> object with its <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property set to 10. </para>
+              </description>
+            </item>
+          </list>
+          <para>If the <paramref name="type" /> parameter contains any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="type" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified <see cref="T:System.Web.UI.WebControls.FontSize" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.FontSize" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,9 +247,75 @@
         <Parameter Name="value" Type="System.Web.UI.WebControls.Unit" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'Unit'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class using the specified <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.Unit.IsEmpty" /> property of the <see cref="T:System.Web.UI.WebControls.Unit" /> passed in the <paramref name="value" /> parameter is true, the following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.NotSet </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Web.UI.WebControls.Unit.IsEmpty" /> property of the <see cref="T:System.Web.UI.WebControls.Unit" /> passed in the <paramref name="value" /> parameter is false, the following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.AsUnit </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Unit" /> that specifies the font size. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,10 +333,47 @@
         <Parameter Name="type" Type="System.Web.UI.WebControls.UnitType" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.#ctor(System.Double,System.Web.UI.WebControls.UnitType)" /> constructor to create and initialize an instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class using the specified font size and measuring unit, such as point or pixel. </para>
+          <para>The following table shows the initial property values for a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>The <see cref="F:System.Web.UI.WebControls.FontSize.AsUnit" /> value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> with the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property equal to <paramref name="value" /> and the <see cref="P:System.Web.UI.WebControls.Unit.Type" /> property equal to <paramref name="type" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified font size and <see cref="T:System.Web.UI.WebControls.UnitType" /> value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Double" /> that specifies the font size. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.UnitType" /> to specify the units of the size.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -131,10 +385,124 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.String" /></param>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.FontUnit.#ctor(System.String,System.Globalization.CultureInfo)" /> constructor recognizes the strings for <paramref name="value" /> that are shown in the following table to create a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>String value</para>
+                </term>
+                <description>
+                  <para>
+                    <see cref="T:System.Web.UI.WebControls.FontUnit" />
+                  </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>xx-small, xxsmall</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.XXSmall" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>x-small, xsmall</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.XSmall" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>x-large, xlarge</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.XLarge" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>xx-large, xxlarge</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.XXLarge" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>small</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.Small" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>smaller</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.Smaller" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>large</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.Large" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>larger</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.Larger" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>medium</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.FontUnit.Medium" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>In all cases, the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property has the value <see cref="F:System.Web.UI.WebControls.FontSize.NotSet" />. The string comparison is case insensitive.</para>
+          <para>For all other values of <paramref name="value" />, a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class is created by treating <paramref name="value" /> as a font size and setting the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property to <see cref="F:System.Web.UI.WebControls.UnitType.Point" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class with the specified string using the specified <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to specify the font size.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> used to make string comparisons.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,8 +517,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Empty" /> field to represent an empty <see cref="T:System.Web.UI.WebControls.FontUnit" /> object. No HTML rendered output is created when this field is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an empty <see cref="T:System.Web.UI.WebControls.FontUnit" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,10 +541,20 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.Equals(System.Object)" /> method to determine whether the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from. For the specified <see cref="T:System.Object" /> to be equivalent, the object must be a <see cref="T:System.Web.UI.WebControls.FontUnit" /> that contains the same values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> and <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> properties as the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" /> that contains the object to compare to this instance. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +569,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that represents the hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,9 +591,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontUnit.IsEmpty" /> property to determine whether the font size has been set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the font size has been set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -218,8 +614,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Large" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Large.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:Large". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="5"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Large.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -234,8 +637,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Larger" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Larger.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:Larger". In browsers earlier than Internet Explorer 4.0, no HTML rendered output is created.</para>
+          <block subset="none" type="note">
+            <para>Some browers do not recognize the <see cref="F:System.Web.UI.WebControls.FontSize.Larger" /> font size. Check your browser for compatibility.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Larger.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,8 +663,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Medium" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Medium.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:Medium". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="4"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Medium.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,11 +689,22 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.FontUnit" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects to be equivalent, each object must have the same values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> and <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects for equality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> on the left of the operator that contains font properties. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> on the right of the operator that contains font properties. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -311,11 +742,22 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.FontUnit" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects to be not equal to each other, each object must either have different values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property or the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects for inequality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects are not equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that contains font properties on the left of the operator. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that contains font properties on the right of the operator. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -332,10 +774,109 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FontUnit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Parse(System.String)" /> method to convert the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
+          <para>If the value of the <paramref name="s" /> parameter is not null, not <see cref="F:System.String.Empty" />, and a valid <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the following table shows initial property values for the new instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FontSize" /> enumeration equivalent of the <paramref name="s" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+          <para>If the value of the <paramref name="s" /> parameter is not null, not <see cref="F:System.String.Empty" />, and an invalid <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the following table shows initial property values for the new instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.AsUnit </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> object with its <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property initialized with the <paramref name="s" /> parameter in the current thread's culture. </para>
+              </description>
+            </item>
+          </list>
+          <para>If the value of the <paramref name="s" /> parameter is null or <see cref="F:System.String.Empty" />, the following table shows initial property values for the new instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.NotSet </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="s" /> parameter.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of one of the <see cref="T:System.Web.UI.WebControls.FontSize" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -353,11 +894,111 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.WebControls.FontUnit" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Parse(System.String)" /> method to convert the specified string and culture to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
+          <para>If the value of the <paramref name="s" /> parameter is not null, not <see cref="F:System.String.Empty" />, and a valid <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the following table shows initial property values for the new instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FontSize" /> enumeration equivalent of the <paramref name="s" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+          <para>If the value of the <paramref name="s" /> parameter is not null, not <see cref="F:System.String.Empty" />, and an invalid <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the following table shows initial property values for the new instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.AsUnit </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.Web.UI.WebControls.Unit" /> object with its <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property initialized with the <paramref name="s" /> parameter in the specified culture. </para>
+              </description>
+            </item>
+          </list>
+          <para>If the value of the <paramref name="s" /> parameter is null or <see cref="F:System.String.Empty" />, the following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Type </para>
+              </term>
+              <description>
+                <para>FontSize.NotSet </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Unit </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.Unit.Empty" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent in the specified culture.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="s" /> parameter in the culture specified by the <paramref name="culture" /> parameter.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of one of the <see cref="T:System.Web.UI.WebControls.FontSize" /> values. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that represents the culture of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -374,10 +1015,20 @@
         <Parameter Name="n" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="n">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FontUnit'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Point(System.Int32)" /> method to create a <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="n" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.FontUnit" /> of type <see cref="T:System.Drawing.Point" /> from an integer value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="n" /> parameter.</para>
+        </returns>
+        <param name="n">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the <see cref="T:System.Drawing.Point" /> value to convert to a <see cref="T:System.Web.UI.WebControls.FontUnit" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,8 +1043,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Small" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Small.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:Small". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="3"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Small.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -408,8 +1066,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.Smaller" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Smaller.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:Smaller". In browsers earlier than Internet Explorer 4.0, no HTML rendered output is created.</para>
+          <block subset="none" type="note">
+            <para>Some browers do not recognize the <see cref="F:System.Web.UI.WebControls.FontSize.Smaller" /> font size. Check your browser for compatibility.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.Smaller.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -424,9 +1092,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" />. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to FontSize.AsUnit, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.Unit" /> contained in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.FontSize" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to the default string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,10 +1120,20 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="culture">a <see cref="T:System.Globalization.CultureInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> in the specified culture. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to FontSize.AsUnit, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.Unit" /> contained in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.FontSize" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to a string representation, using the specified <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object in the specified culture.</para>
+        </returns>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that contains the culture to represent the <see cref="T:System.Web.UI.WebControls.FontUnit" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -467,9 +1154,20 @@
       </Parameters>
       <Docs>
         <param name="fmt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object using a culture-specific format provider for any numeric values that are in the string. </para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to the <see cref="F:System.Web.UI.WebControls.FontSize.AsUnit" /> value, the returned string is the string equivalent of the unit value that is contained in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. The numeric portion of the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> value is formatted using the specified <paramref name="formatProvider" />. In other words, when the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to the <see cref="F:System.Web.UI.WebControls.FontSize.AsUnit" /> value, the returned string representation is generated using the <see cref="M:System.Web.UI.WebControls.Unit.ToString(System.IFormatProvider)" /> method on the unit object that is stored in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. </para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.FontSize" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to a string equivalent using the specified format provider.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Web.UI.WebControls.FontUnit" />, with any numeric unit value in the format specified by <paramref name="formatProvider" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -479,9 +1177,15 @@
         <ReturnType>System.Web.UI.WebControls.FontSize</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontSize'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property to retrieve a <see cref="T:System.Web.UI.WebControls.FontSize" /> enumeration value that represents the font size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.WebControls.FontSize" /> enumeration value that represents the font size.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -495,9 +1199,15 @@
         <ReturnType>System.Web.UI.WebControls.Unit</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property to retrieve a <see cref="T:System.Web.UI.WebControls.Unit" /> that represents the font size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.WebControls.Unit" /> that represents the font size.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -512,8 +1222,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.XLarge" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XLarge.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:X-Large". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="6"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XLarge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -528,8 +1245,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.XSmall" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XSmall.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:X-Small". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="2"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XSmall.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -544,8 +1268,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.XXLarge" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XXLarge.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:XX-Large". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="7"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XXLarge.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -560,8 +1291,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.FontUnit.XXSmall" /> field to represent a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XXSmall.</para>
+          <para>In Internet Explorer 4.0 and later, the HTML rendered output from a control with the <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> property set to this field is style= "font-size:XX-Small". In browsers earlier than Internet Explorer 4.0, the HTML rendered output is &lt;font size="1"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object with the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property set to FontSize.XXSmall.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

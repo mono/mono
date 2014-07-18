@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataView" FullName="System.Data.DataView">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataView : System.ComponentModel.MarshalByValueComponent, System.ComponentModel.IBindingListView, System.ComponentModel.ISupportInitializeNotification, System.ComponentModel.ITypedList" />
   <AssemblyInfo>
@@ -37,8 +38,21 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A major function of the <see cref="T:System.Data.DataView" /> is to allow for data binding on both Windows Forms and Web Forms.</para>
+      <para>Additionally, a <see cref="T:System.Data.DataView" /> can be customized to present a subset of data from the <see cref="T:System.Data.DataTable" />. This capability lets you have two controls bound to the same <see cref="T:System.Data.DataTable" />, but that show different versions of the data. For example, one control might be bound to a <see cref="T:System.Data.DataView" /> that shows all the rows in the table, and a second might be configured to display only the rows that have been deleted from the <see cref="T:System.Data.DataTable" />. The <see cref="T:System.Data.DataTable" /> also has a <see cref="P:System.Data.DataTable.DefaultView" /> property. This returns the default <see cref="T:System.Data.DataView" /> for the table. For example, if you want to create a custom view on the table, set the <see cref="P:System.Data.DataView.RowFilter" /> on the <see cref="T:System.Data.DataView" /> returned by the <see cref="P:System.Data.DataTable.DefaultView" />.</para>
+      <para>To create a filtered and sorted view of data, set the <see cref="P:System.Data.DataView.RowFilter" /> and <see cref="P:System.Data.DataView.Sort" /> properties. Then, use the <see cref="P:System.Data.DataView.Item(System.Int32)" /> property to return a single <see cref="T:System.Data.DataRowView" />.</para>
+      <para>You can also add and delete from the set of rows using the <see cref="M:System.Data.DataView.AddNew" /> and <see cref="M:System.Data.DataView.Delete(System.Int32)" /> methods. When you use those methods, the <see cref="P:System.Data.DataView.RowStateFilter" /> property can set to specify that only deleted rows or new rows be displayed by the <see cref="T:System.Data.DataView" />.</para>
+      <block subset="none" type="note">
+        <para>If you do not explicitly specify sort criteria for DataView, the DataRowView objects in DataView are sorted based on the index of DataView's corresponding DataRow in the DataTable.Rows DataRowCollection.</para>
+      </block>
+      <para>linq_dataset allows developers to create complex, powerful queries over a <see cref="T:System.Data.DataSet" /> by using vbteclinq. A linq_dataset query returns an enumeration of <see cref="T:System.Data.DataRow" /> objects, however, which is not easily used in a binding scenario. <see cref="T:System.Data.DataView" /> can be created from a linq_dataset query and takes on the filtering and sorting characteristics of that query. linq_dataset extends the functionality of the <see cref="T:System.Data.DataView" /> by providing vbteclinq expression-based filtering and sorting, which allows for much more complex and powerful filtering and sorting operations than string-based filtering and sorting. See <format type="text/html"><a href="310bff4a-32dd-4f20-a271-6dbd82912631">Data Binding and LINQ to DataSet</a></format> for more information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a databindable, customized view of a <see cref="T:System.Data.DataTable" /> for sorting, filtering, searching, editing, and navigation. The <see cref="T:System.Data.DataView" /> does not store data, but instead represents a connected view of its corresponding <see cref="T:System.Data.DataTable" />. Changes to the <see cref="T:System.Data.DataView" />’s data will affect the <see cref="T:System.Data.DataTable" />. Changes to the <see cref="T:System.Data.DataTable" />’s data will affect all <see cref="T:System.Data.DataView" />s associated with it.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -47,8 +61,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataView" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +80,13 @@
         <Parameter Name="table" Type="System.Data.DataTable" />
       </Parameters>
       <Docs>
-        <param name="table">To be added: an object of type 'DataTable'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataView" /> class with the specified <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
+        <param name="table">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataTable" /> to add to the <see cref="T:System.Data.DataView" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,12 +104,19 @@
         <Parameter Name="RowState" Type="System.Data.DataViewRowState" />
       </Parameters>
       <Docs>
-        <param name="table">To be added: an object of type 'DataTable'</param>
-        <param name="RowFilter">To be added.</param>
-        <param name="Sort">To be added.</param>
-        <param name="RowState">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataView" /> class with the specified <see cref="T:System.Data.DataTable" />, <see cref="P:System.Data.DataView.RowFilter" />, <see cref="P:System.Data.DataView.Sort" />, and <see cref="T:System.Data.DataViewRowState" />.</para>
+        </summary>
+        <param name="table">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataTable" /> to add to the <see cref="T:System.Data.DataView" />. </param>
+        <param name="RowFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Data.DataView.RowFilter" /> to apply to the <see cref="T:System.Data.DataView" />. </param>
+        <param name="Sort">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="P:System.Data.DataView.Sort" /> to apply to the <see cref="T:System.Data.DataView" />. </param>
+        <param name="RowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataViewRowState" /> to apply to the <see cref="T:System.Data.DataView" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,9 +131,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRowView'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new row to the <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataRowView" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +155,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets or gets a value that indicates whether deletes are allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,9 +181,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether edits are allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +207,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the new rows can be added by using the <see cref="M:System.Data.DataView.AddNew" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,9 +233,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to use the default sort. The default sort is (ascending) by all primary keys as specified by <see cref="P:System.Data.DataTable.PrimaryKey" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -215,8 +261,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio .NET design environment uses this method to start the initialization of a component that is used on a form or used by another component. The <see cref="M:System.Data.DataView.EndInit" /> method ends the initialization. Using the BeginInit and EndInit methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the initialization of a <see cref="T:System.Data.DataView" /> that is used on a form or used by another component. The initialization occurs at runtime.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,8 +283,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method lets you manually close the <see cref="T:System.Data.DataView" /> in derived classes. Use the corresponding <see cref="M:System.Data.DataView.Open" /> method to open the <see cref="T:System.Data.DataView" />.</para>
+          <para>This property is designed for internal use only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.Data.DataView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,10 +309,15 @@
         <Parameter Name="e" Type="System.ComponentModel.CollectionChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added: an object of type 'object'</param>
-        <param name="e">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after a <see cref="T:System.Data.DataColumnCollection" /> has been changed successfully.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListChangedEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -271,10 +335,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies items into an array. Only for Web Forms Interfaces.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />array to copy into. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />index to start at. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -288,9 +357,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of records in the <see cref="T:System.Data.DataView" /> after <see cref="P:System.Data.DataView.RowFilter" /> and <see cref="P:System.Data.DataView.RowStateFilter" /> have been applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -309,9 +381,12 @@
         <ReturnType>System.Data.DataViewManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataViewManager'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataViewManager" /> associated with this view.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -333,9 +408,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After deleting a <see cref="T:System.Data.DataRow" />, its state changes to DataViewRowState.Deleted. You can roll back the deletion by calling <see cref="M:System.Data.DataTable.RejectChanges" /> on the <see cref="T:System.Data.DataTable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a row at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row to delete. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,9 +434,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Property change notifications between the <see cref="T:System.Data.DataView" /> and the underlying <see cref="T:System.Data.DataTable" /> stop after this method is called. <see cref="M:System.Data.DataView.Dispose(System.Boolean)" /> should be called for all <see cref="T:System.Data.DataView" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources (other than memory) used by the <see cref="T:System.Data.DataView" /> object.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -369,8 +458,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio .NET design environment uses this method to end the initialization of a component that is used on a form or used by another component. The <see cref="M:System.Data.DataView.BeginInit" /> method starts the initialization. Using the BeginInit and EndInit methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the initialization of a <see cref="T:System.Data.DataView" /> that is used on a form or used by another component. The initialization occurs at runtime.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,9 +486,15 @@
       </Parameters>
       <Docs>
         <param name="dv">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Data.DataView" /> instances are considered equal. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Data.DataView" /> instances are equal; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -406,10 +507,17 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a row in the <see cref="T:System.Data.DataView" /> by the specified sort key value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the row in the <see cref="T:System.Data.DataView" /> that contains the sort key value specified; otherwise -1 if the sort key value does not exist.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -426,10 +534,17 @@
         <Parameter Name="key" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a row in the <see cref="T:System.Data.DataView" /> by the specified sort key values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the position of the first row in the <see cref="T:System.Data.DataView" /> that matches the sort key values specified; otherwise -1 if there are no matching sort key values. </para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of values, typed as <see cref="T:System.Object" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -446,10 +561,17 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRowView []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Data.DataRowView" /> objects whose columns match the specified sort key value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of DataRowView objects whose columns match the specified sort key value; or, if no rows contain the specified sort key values, an empty DataRowView array.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column value, typed as <see cref="T:System.Object" />, to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -466,10 +588,17 @@
         <Parameter Name="key" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRowView []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Data.DataRowView" /> objects whose columns match the specified sort key value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of DataRowView objects whose columns match the specified sort key value; or, if no rows contain the specified sort key values, an empty DataRowView array.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of column values, typed as <see cref="T:System.Object" />, to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -484,9 +613,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumerator for this <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for navigating through the list.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -504,10 +639,15 @@
         <Parameter Name="e" Type="System.ComponentModel.ListChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added: an object of type 'object'</param>
-        <param name="e">To be added: an object of type 'ComponentModel.ListChangedEventArgs'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after a <see cref="T:System.Data.DataView" /> has been changed successfully.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListChangedEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -524,8 +664,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when initialization of the <see cref="T:System.Data.DataView" /> is completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInitialized">
@@ -543,9 +686,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the component is initialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsOpen">
@@ -555,9 +701,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataView" /> is a "view" on a <see cref="T:System.Data.DataTable" /> because it provides custom sorting and filtering of the data. The <see cref="P:System.Data.DataView.IsOpen" /> property can be queried to determine whether a <see cref="T:System.Data.DataView" /> has been opened by using the <see cref="M:System.Data.DataView.Open" /> method.</para>
+          <para>This property is designed for internal use only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the data source is currently open and projecting views of data on the <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -597,8 +750,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the list managed by the <see cref="T:System.Data.DataView" /> changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -615,9 +771,13 @@
         <Parameter Name="e" Type="System.ComponentModel.ListChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'ComponentModel.ListChangedEventArgs'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Data.DataView.ListChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListChangedEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -632,8 +792,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method lets you manually open the <see cref="T:System.Data.DataView" /> in derived classes. Use the corresponding <see cref="M:System.Data.DataView.Close" /> method to close the <see cref="T:System.Data.DataView" />.</para>
+          <para>This property is designed for internal use only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a <see cref="T:System.Data.DataView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -648,8 +815,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for internal use only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,9 +835,19 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To form a <see cref="P:System.Data.DataView.RowFilter" /> value, specify the name of a column followed by an operator and a value to filter on. The value must be in quotation marks. For example: </para>
+          <para>"LastName = 'Smith'" </para>
+          <para>See the <see cref="P:System.Data.DataColumn.Expression" /> property of the <see cref="T:System.Data.DataColumn" /> class for more information.</para>
+          <para>To return only those columns with null values, use the following expression: </para>
+          <para>"Isnull(Col1,'Null Column') = 'Null Column'" </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression used to filter which rows are viewed in the <see cref="T:System.Data.DataView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -688,9 +868,20 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataViewRowState'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only rows that have been deleted by using the <see cref="M:System.Data.DataView.Delete(System.Int32)" /> method will have their <see cref="P:System.Data.DataView.RowStateFilter" /> value set to Deleted. Those rows added using the <see cref="M:System.Data.DataView.AddNew" /> method will similarly have the property set to Added.</para>
+          <block subset="none" type="note">
+            <para>  Using the <see cref="M:System.Data.DataRowCollection.Remove(System.Data.DataRow)" /> method of the <see cref="T:System.Data.DataRowCollection" /> class does not mean that a row will be marked as Deleted. Use the <see cref="M:System.Data.DataView.Delete(System.Int32)" /> method instead to make sure that such rows can be viewed in the <see cref="T:System.Data.DataView" />.</para>
+          </block>
+          <para>New rows will also be visible when the <see cref="P:System.Data.DataView.RowStateFilter" /> is set to ModifiedCurrent or CurrentRows.</para>
+          <para>Deleted rows will also be visible when the <see cref="P:System.Data.DataView.RowStateFilter" /> is set to ModifiedOriginal and OriginalRows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the row state filter used in the <see cref="T:System.Data.DataView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -711,9 +902,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly specify sort criteria for DataView, the DataRowView objects in DataView are sorted based on the index of its corresponding DataRow in the DataTable.Rows DataRowCollection.</para>
+          <para>For more information, see <format type="text/html"><a href="0FE5DFA2-C1CD-435F-90B6-B4DD2E3EF34B">Creating and Using DataViews</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the sort column or columns, and sort order for the <see cref="T:System.Data.DataView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -736,9 +934,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.IsSynchronized" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -752,9 +956,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.SyncRoot" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -771,10 +981,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -789,8 +1009,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. The use of this member is not supported and will cause a <see cref="T:System.ArgumentException" />. Instead, use the Clear method on the <see cref="T:System.Data.DataRowCollection" /> object returned by <see cref="P:System.Data.DataTable.Rows" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Clear" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -807,10 +1033,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -827,10 +1063,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -848,10 +1094,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Int32" /> value.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value to be inserted.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -865,9 +1119,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.IList.IsFixedSize" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -881,9 +1141,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.IList.IsReadOnly" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -920,9 +1186,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Remove(System.Object)" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -939,9 +1212,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Int32" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AddIndex">
@@ -958,9 +1238,16 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.AddIndex(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.PropertyDescriptor" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AddNew">
@@ -975,9 +1262,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.AddNew" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowEdit">
@@ -991,9 +1287,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.AllowEdit" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowNew">
@@ -1007,9 +1309,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.AllowNew" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowRemove">
@@ -1023,9 +1331,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.AllowRemove" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.ApplySort">
@@ -1043,10 +1357,18 @@
         <Parameter Name="direction" Type="System.ComponentModel.ListSortDirection" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" />.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.PropertyDescriptor" /> object.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.ListSortDirection" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.Find">
@@ -1064,11 +1386,22 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />.</para>
+        </returns>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.PropertyDescriptor" /> object.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.Object" /> value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.IsSorted">
@@ -1082,9 +1415,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.IsSorted" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.RemoveIndex">
@@ -1101,9 +1440,16 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.RemoveIndex(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.PropertyDescriptor" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.RemoveSort">
@@ -1118,8 +1464,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.RemoveSort" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SortDirection">
@@ -1133,9 +1485,15 @@
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SortDirection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SortProperty">
@@ -1149,9 +1507,15 @@
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SortProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsChangeNotification">
@@ -1165,9 +1529,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsChangeNotification" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsSearching">
@@ -1181,9 +1551,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsSearching" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsSorting">
@@ -1197,9 +1573,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.ApplySort">
@@ -1215,9 +1597,16 @@
         <Parameter Name="sorts" Type="System.ComponentModel.ListSortDescriptionCollection" />
       </Parameters>
       <Docs>
-        <param name="sorts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingListView.ApplySort(System.ComponentModel.ListSortDescriptionCollection)" />.</para>
+        </summary>
+        <param name="sorts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="System.ComponentModel.ListSortDescriptionCollection" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.Filter">
@@ -1230,9 +1619,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingListView.Filter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.RemoveFilter">
@@ -1246,8 +1641,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingListView.RemoveFilter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.SortDescriptions">
@@ -1260,9 +1661,15 @@
         <ReturnType>System.ComponentModel.ListSortDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. The use of this member is not supported and will cause a <see cref="T:System.ArgumentException" />. Instead, use the Clear method on the <see cref="T:System.Data.DataRowCollection" /> object returned by <see cref="P:System.Data.DataTable.Rows" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingListView.SortDescriptions" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.SupportsAdvancedSorting">
@@ -1275,9 +1682,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingListView.SupportsAdvancedSorting" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingListView.SupportsFiltering">
@@ -1290,9 +1703,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingListView" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingListView.SupportsFiltering" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ITypedList.GetItemProperties">
@@ -1310,9 +1729,15 @@
       </Parameters>
       <Docs>
         <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.ITypedList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ITypedList.GetListName">
@@ -1329,10 +1754,20 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataView" /> instance is cast to an <see cref="T:System.ComponentModel.ITypedList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ITypedList.GetListName(System.ComponentModel.PropertyDescriptor[])" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ITypedList.GetListName(System.ComponentModel.PropertyDescriptor[])" />.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="System.ComponentModel.PropertyDescriptor" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName="Table">
@@ -1344,9 +1779,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTable'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.DataTable" /> also has a <see cref="P:System.Data.DataTable.DefaultView" /> property which returns the default <see cref="T:System.Data.DataView" /> for the table. For example, if you want to create a custom view on the table, set the <see cref="P:System.Data.DataView.RowFilter" /> on the <see cref="T:System.Data.DataView" /> returned by the <see cref="P:System.Data.DataTable.DefaultView" />.</para>
+          <para>You can only set the <see cref="P:System.Data.DataView.Table" /> property if the current value is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the source <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1375,9 +1817,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because this method does not let you specify the name for the output <see cref="T:System.Data.DataTable" />, its name is the same as the name of the source DataTable. Because this method does not let you specify a subset of available columns, the output table contains the same columns as the input table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Data.DataTable" /> based on rows in an existing <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> instance that contains the requested rows and columns.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToTable">
@@ -1393,10 +1844,20 @@
         <Parameter Name="tableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tableName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because this method does not let you specify a subset of available columns, the output table contains the same columns as the input table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Data.DataTable" /> based on rows in an existing <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> instance that contains the requested rows and columns.</para>
+        </returns>
+        <param name="tableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the returned <see cref="T:System.Data.DataTable" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ToTable">
@@ -1420,10 +1881,20 @@
       </Parameters>
       <Docs>
         <param name="isDistinct">To be added.</param>
-        <param name="columnNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because this method does not let you specify the name for the output <see cref="T:System.Data.DataTable" />, its name is the same as the name of the source <see cref="T:System.Data.DataTable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Data.DataTable" /> based on rows in an existing <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> instance that contains the requested rows and columns.</para>
+        </returns>
+        <param name="columnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array that contains a list of the column names to be included in the returned <see cref="T:System.Data.DataTable" />. The <see cref="T:System.Data.DataTable" /> contains the specified columns in the order they appear within this array.</param>
       </Docs>
     </Member>
     <Member MemberName="ToTable">
@@ -1449,10 +1920,20 @@
       <Docs>
         <param name="tablename">To be added.</param>
         <param name="isDistinct">To be added.</param>
-        <param name="columnNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overloaded version of the <see cref="M:System.Data.DataView.ToTable" /> method if you have to retrieve distinct values in a subset of available columns, specifying a new name for the returned <see cref="T:System.Data.DataTable" />. If you do not need distinct rows or a subset of columns, see <see cref="M:System.Data.DataView.ToTable(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Data.DataTable" /> based on rows in an existing <see cref="T:System.Data.DataView" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> instance that contains the requested rows and columns.</para>
+        </returns>
+        <param name="columnNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array that contains a list of the column names to be included in the returned <see cref="T:System.Data.DataTable" />. The DataTable contains the specified columns in the order they appear within this array.</param>
       </Docs>
     </Member>
     <Member MemberName="UpdateIndex">
@@ -1463,8 +1944,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for internal use only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1481,9 +1965,13 @@
         <Parameter Name="force" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="force">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for internal use only.</para>
+        </summary>
+        <param name="force">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reserved for internal use only. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

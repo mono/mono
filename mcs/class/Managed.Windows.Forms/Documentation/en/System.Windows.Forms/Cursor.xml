@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Cursor" FullName="System.Windows.Forms.Cursor">
   <TypeSignature Language="C#" Value="public sealed class Cursor : IDisposable, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -25,8 +26,24 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A cursor is a small picture whose location on the screen is controlled by a pointing device, such as a mouse, pen, or trackball. When the user moves the pointing device, the operating system moves the cursor accordingly.</para>
+      <para>Different cursor shapes are used to inform the user what operation the mouse will have. For example, when editing or selecting text, a <see cref="P:System.Windows.Forms.Cursors.IBeam" /> cursor is typically displayed. A wait cursor is commonly used to inform the user that a process is currently running. Examples of processes you might have the user wait for are opening a file, saving a file, or filling a control such as a <see cref="T:System.Windows.Forms.DataGrid" />, <see cref="T:System.Windows.Forms.ListBox" /> or <see cref="T:System.Windows.Forms.TreeView" /> with a large amount of data.</para>
+      <para>All controls that derive from the <see cref="T:System.Windows.Forms.Control" /> class have a <see cref="P:System.Windows.Forms.Control.Cursor" /> property. To change the cursor displayed by the mouse pointer when it is within the bounds of the control, assign a <see cref="T:System.Windows.Forms.Cursor" /> to the <see cref="P:System.Windows.Forms.Control.Cursor" /> property of the control. Alternatively, you can display cursors at the application level by assigning a <see cref="T:System.Windows.Forms.Cursor" /> to the <see cref="P:System.Windows.Forms.Cursor.Current" /> property. For example, if the purpose of your application is to edit a text file, you might set the <see cref="P:System.Windows.Forms.Cursor.Current" /> property to <see cref="P:System.Windows.Forms.Cursors.WaitCursor" /> to display a wait cursor over the application while the file loads or saves to prevent any mouse events from being processed. When the process is complete, set the <see cref="P:System.Windows.Forms.Cursor.Current" /> property to <see cref="P:System.Windows.Forms.Cursors.Default" /> for the application to display the appropriate cursor over each control type.</para>
+      <block subset="none" type="note">
+        <para>If you call <see cref="M:System.Windows.Forms.Application.DoEvents" /> before resetting the <see cref="P:System.Windows.Forms.Cursor.Current" /> property back to the <see cref="P:System.Windows.Forms.Cursors.Default" /> cursor, the application will resume listening for mouse events and will resume displaying the appropriate <see cref="T:System.Windows.Forms.Cursor" /> for each control in the application.</para>
+      </block>
+      <para>Cursor objects can be created from several sources, such as the handle of an existing <see cref="T:System.Windows.Forms.Cursor" />, a standard <see cref="T:System.Windows.Forms.Cursor" /> file, a resource, or a data stream.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.Cursor" /> class does not support animated cursors (.ani files) or cursors with colors other than black and white.</para>
+      </block>
+      <para>If the image you are using as a cursor is too small, you can use the <see cref="M:System.Windows.Forms.Cursor.DrawStretched(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method to force the image to fill the bounds of the cursor. You can temporarily hide the cursor by calling the <see cref="M:System.Windows.Forms.Cursor.Hide" /> method, and restore it by calling the <see cref="M:System.Windows.Forms.Cursor.Show" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the image used to paint the mouse pointer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,9 +53,16 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must free the cursor handle when you are done with it. For more information about disposing of resources, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Cursor" /> class from the specified Windows handle.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> that represents the Windows handle of the cursor to create. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,9 +76,19 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data stream specified by <paramref name="stream" /> must contain a cursor (.cur) file.</para>
+          <block subset="none" type="note">
+            <para>Animated cursors (.ani files) are not supported by the <see cref="T:System.Windows.Forms.Cursor" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Cursor" /> class from the specified data stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data stream to load the <see cref="T:System.Windows.Forms.Cursor" /> from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,9 +102,19 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="fileName" /> parameter must reference a standard cursor (.cur) file.</para>
+          <block subset="none" type="note">
+            <para>Animated cursors (.ani files) are not supported by the <see cref="T:System.Windows.Forms.Cursor" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Cursor" /> class from the specified file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cursor file to load. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,10 +129,25 @@
         <Parameter Name="resource" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="resource">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following is an example of how to embed a cursor as a resource within your application. To embed the resource, reference the resource name followed by a comma, then its full assembly path. See the Example section to learn how to load the cursor from the embedded resource.</para>
+          <code> Using the C# compiler:
+ csc /resource:"MyWaitCursor.cur","MyCursors.MyWaitCursor.cur" MyCursor.cs
+ Using the Visual Basic compiler:
+ vbc /resource:"MyWaitCursor.cur","MyCursors.MyWaitCursor.cur" MyCursor.vb</code>
+          <block subset="none" type="note">
+            <para>The resource reference when compiling as well as when referencing it in code, is case sensitive for both the C# and Visual Basic compilers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Cursor" /> class from the specified resource with the specified resource type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The resource <see cref="T:System.Type" />. </param>
+        <param name="resource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,9 +161,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A clipped cursor is allowed to move only within its clipping rectangle. Generally, the system allows this only if the mouse is currently captured. If the cursor is not currently clipped, the resulting rectangle contains the dimensions of the entire screen.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the bounds that represent the clipping rectangle for the cursor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +184,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The handle created as a result of calling this method must be disposed of when you are done with it because it will not be disposed of by the garbage collector.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the handle of this <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IntPtr" /> that represents the cursor's handle.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +209,15 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.Cursor.Current" /> property changes the cursor currently displayed. The application may or may not continue to listen for mouse events. To signal that the application should not respond to mouse events during a long-running operation, use the <see cref="P:System.Windows.Forms.Application.UseWaitCursor" /> property. In most cases, however, it's better to use a background thread to manage a long-running operation, and leave your user interface accessible to the user. For more information on easily implementing a background task, see <see cref="T:System.ComponentModel.BackgroundWorker" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a cursor object that represents the mouse cursor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,8 +232,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.Cursor.Dispose" /> when you are finished using the <see cref="T:System.Windows.Forms.Cursor" />. The Dispose method leaves the <see cref="T:System.Windows.Forms.Cursor" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.Cursor.Dispose" />, you must release all references to the <see cref="T:System.Windows.Forms.Cursor" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Windows.Forms.Cursor" /> was occupying. For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="EB4E1AF0-3B48-4FBC-AD4E-FC2F64138BF9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.Cursor.Dispose" /> before you release your last reference to the <see cref="T:System.Windows.Forms.Cursor" />. Otherwise, the resources it is using will not be freed until the garbage collector frees it.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -171,10 +260,18 @@
         <Parameter Name="targetRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="targetRect">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drawing command originates on the graphics surface represented by the <paramref name="g" /> parameter, but a <see cref="T:System.Drawing.Graphics" /> does not contain information about how to render a given image, so it passes the call to the <see cref="T:System.Windows.Forms.Cursor" />. The <see cref="M:System.Windows.Forms.Cursor.Draw(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method crops the image to the given dimensions and allows you to specify a <see cref="T:System.Drawing.Rectangle" /> within which to draw the <see cref="T:System.Windows.Forms.Cursor" />. This method is typically used if you want to draw the cursor on a Graphics surface. For example, you might have a dialog that allows the user to select cursors from a <see cref="T:System.Windows.Forms.ListBox" /> control, or a group of <see cref="T:System.Windows.Forms.RadioButton" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the cursor on the specified surface, within the specified bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> surface on which to draw the <see cref="T:System.Windows.Forms.Cursor" />. </param>
+        <param name="targetRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the <see cref="T:System.Windows.Forms.Cursor" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -192,10 +289,18 @@
         <Parameter Name="targetRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="targetRect">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drawing command originates on the graphics surface represented by the <paramref name="g" /> parameter, but a <see cref="T:System.Drawing.Graphics" /> object does not contain information about how to render a given image, so it passes the call to the <see cref="T:System.Windows.Forms.Cursor" /> object. The <see cref="M:System.Windows.Forms.Cursor.DrawStretched(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method stretches the image to fill the specified <see cref="T:System.Drawing.Rectangle" /> when the cursor is drawn.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the cursor in a stretched format on the specified surface, within the specified bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> surface on which to draw the <see cref="T:System.Windows.Forms.Cursor" />. </param>
+        <param name="targetRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the <see cref="T:System.Windows.Forms.Cursor" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,10 +317,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this cursor is equal to the specified <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this cursor is equal to the specified <see cref="T:System.Windows.Forms.Cursor" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Cursor" /> to compare. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -246,9 +358,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the hash code for the current <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -262,9 +380,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is not a copy of the handle; do not dispose of it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the handle of the cursor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -279,8 +403,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Cursor.Show" /> and <see cref="M:System.Windows.Forms.Cursor.Hide" /> method calls must be balanced. For every call to the <see cref="M:System.Windows.Forms.Cursor.Hide" /> method there must be a corresponding call to the <see cref="M:System.Windows.Forms.Cursor.Show" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Hides the cursor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,9 +427,15 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Cursor.HotSpot" /> is the <see cref="T:System.Drawing.Point" /> in the cursor that interacts with other elements on the screen.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cursor hot spot.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -313,11 +449,19 @@
         <Parameter Name="right" Type="System.Windows.Forms.Cursor" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two instances of the <see cref="T:System.Windows.Forms.Cursor" /> class are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if two instances of the <see cref="T:System.Windows.Forms.Cursor" /> class are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> to compare. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> to compare. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,11 +479,19 @@
         <Parameter Name="right" Type="System.Windows.Forms.Cursor" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two instances of the <see cref="T:System.Windows.Forms.Cursor" /> class are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if two instances of the <see cref="T:System.Windows.Forms.Cursor" /> class are not equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> to compare. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Cursor" /> to compare. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -353,9 +505,15 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Cursor.Position" /> property is identical to the <see cref="P:System.Windows.Forms.Control.MousePosition" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cursor's position.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,8 +528,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Cursor.Show" /> and <see cref="M:System.Windows.Forms.Cursor.Hide" /> method calls must be balanced. For every call to the <see cref="M:System.Windows.Forms.Cursor.Hide" /> method there must be a corresponding call to the <see cref="M:System.Windows.Forms.Cursor.Show" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the cursor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -385,9 +549,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the cursor object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -409,10 +576,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the object.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> class.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> class.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -439,9 +611,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains data about the <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -452,9 +627,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a human readable string representing this <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents this <see cref="T:System.Windows.Forms.Cursor" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

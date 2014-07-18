@@ -34,7 +34,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security.Protocol.Tls;
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
@@ -367,12 +367,15 @@ namespace System.Net.Security
 				return null;
 			};
 
-			if (validation_callback != null) {
-#if MONOTOUCH
-				var helper = new ServicePointManager.ChainValidationHelper (this, targetHost);
-				helper.ServerCertificateValidationCallback = validation_callback;
-				s.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
+#if MONOTOUCH || MONODROID
+			// Even if validation_callback is null this allows us to verify requests where the user
+			// does not provide a verification callback but attempts to authenticate with the website
+			// as a client (see https://bugzilla.xamarin.com/show_bug.cgi?id=18962 for an example)
+			var helper = new ServicePointManager.ChainValidationHelper (this, targetHost);
+			helper.ServerCertificateValidationCallback = validation_callback;
+			s.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
 #else
+			if (validation_callback != null) {
 				s.ServerCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
 					X509Chain chain = new X509Chain ();
 					X509Certificate2 x2 = (cert as X509Certificate2);
@@ -412,8 +415,8 @@ namespace System.Net.Security
 
 					return validation_callback (this, cert, chain, errors);
 				};
-#endif
 			}
+#endif
 			if (selection_callback != null)
 				s.ClientCertSelectionDelegate = OnCertificateSelection;
 

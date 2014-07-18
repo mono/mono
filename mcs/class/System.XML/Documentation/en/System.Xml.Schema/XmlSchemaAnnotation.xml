@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaAnnotation" FullName="System.Xml.Schema.XmlSchemaAnnotation">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaAnnotation : System.Xml.Schema.XmlSchemaObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaAnnotation extends System.Xml.Schema.XmlSchemaObject" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An annotation element can contain one or more <see cref="T:System.Xml.Schema.XmlSchemaAppInfo" /> instances (information for applications) and <see cref="T:System.Xml.Schema.XmlSchemaDocumentation" /> instances (comments or text for humans).</para>
+      <para>An annotation is used to store extra information about the schema or its elements. These notes are specified for human consumption, xs:documentation, or by software, xs:appinfo. Annotation can be the first element of most schema elements or anywhere under the schema element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the World Wide Web Consortium (W3C) annotation element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaAnnotation" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -53,9 +64,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string id.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Items">
@@ -79,9 +93,15 @@
         <ReturnType>System.Xml.Schema.XmlSchemaObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaObjectCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An annotation can contain <see cref="T:System.Xml.Schema.XmlSchemaAppInfo" /> (information used by applications) or <see cref="T:System.Xml.Schema.XmlSchemaDocumentation" /> (comments or text used by humans).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Items collection that is used to store the appinfo and documentation child elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnhandledAttributes">
@@ -103,9 +123,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlAttribute[]'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the qualified attributes that do not belong to the schema's target namespace.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

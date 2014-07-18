@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SynchronizationContext" FullName="System.Threading.SynchronizationContext">
   <TypeSignature Language="C#" Value="public class SynchronizationContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SynchronizationContext extends System.Object" />
@@ -11,9 +12,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.SynchronizationContext" /> class is a base class that provides a free-threaded context with no synchronization. </para>
+      <para>The purpose of the synchronization model implemented by this class is to allow the internal asynchronous/synchronous operations of the common language runtime to behave properly with different synchronization models. This model also simplifies some of the requirements that managed applications have had to follow in order to work correctly under different synchronization environments.</para>
+      <para>Providers of synchronization models can extend this class and provide their own implementations for these methods. </para>
+      <para>For more information about synchronization contexts, see the article <see cref="http://msdn.microsoft.com/magazine/gg598924.aspx">It's All About the SynchronizationContext</see>in the MSDN Magazine.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the basic functionality for propagating a synchronization context in various synchronization models. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +36,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor performs no parameter initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Threading.SynchronizationContext" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateCopy">
@@ -44,10 +60,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation returns an empty <see cref="T:System.Threading.SynchronizationContext" /> object.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a copy of the synchronization context.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Threading.SynchronizationContext" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Current">
@@ -62,10 +87,16 @@
         <ReturnType>System.Threading.SynchronizationContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful for propagating a synchronization context from one thread to another.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the synchronization context for the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsWaitNotificationRequired">
@@ -81,10 +112,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if wait notification is required.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if wait notification is required; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OperationCompleted">
@@ -100,9 +137,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation contains no code. You can optionally override this method to provide code that executes when an operation is complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, responds to the notification that an operation has completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OperationStarted">
@@ -118,9 +161,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation contains no code. You can optionally override this method to provide code that executes when an operation starts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, responds to the notification that an operation has started.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Post">
@@ -139,11 +188,19 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.SynchronizationContext.Post(System.Threading.SendOrPostCallback,System.Object)" /> method starts an asynchronous request to post a message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, dispatches an asynchronous message to a synchronization context.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.SendOrPostCallback" /> delegate to call.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object passed to the delegate.</param>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -162,11 +219,19 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.SynchronizationContext.Send(System.Threading.SendOrPostCallback,System.Object)" /> method starts a synchronous request to send a message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, dispatches a synchronous message to a synchronization context.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.SendOrPostCallback" /> delegate to call.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object passed to the delegate. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSynchronizationContext">
@@ -184,10 +249,14 @@
         <Parameter Name="syncContext" Type="System.Threading.SynchronizationContext" />
       </Parameters>
       <Docs>
-        <param name="syncContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current synchronization context.</para>
+        </summary>
+        <param name="syncContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.SynchronizationContext" /> object to be set.</param>
       </Docs>
     </Member>
     <Member MemberName="SetWaitNotificationRequired">
@@ -203,9 +272,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets notification that wait notification is required and prepares the callback method so it can be called more reliably when a wait occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -233,13 +305,25 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="waitHandles">To be added.</param>
-        <param name="waitAll">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.SynchronizationContext.Wait(System.IntPtr[],System.Boolean,System.Int32)" /> method calls the external declaration <see cref="M:System.Threading.SynchronizationContext.WaitHelper(System.IntPtr[],System.Boolean,System.Int32)" /> to perform the wait activity.  Override the <see cref="M:System.Threading.SynchronizationContext.Wait(System.IntPtr[],System.Boolean,System.Int32)" /> method to change the wait behavior for the synchronization context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for any or all the elements in the specified array to receive a signal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait.</para>
+        </returns>
+        <param name="waitHandles">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.IntPtr" /> that contains the native operating system handles.</param>
+        <param name="waitAll">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to wait for all handles; false to wait for any handle. </param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="WaitHelper">
@@ -270,13 +354,26 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="waitHandles">To be added.</param>
-        <param name="waitAll">To be added.</param>
-        <param name="millisecondsTimeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.SynchronizationContext.WaitHelper(System.IntPtr[],System.Boolean,System.Int32)" /> is a declaration for an unmanaged external helper function. <see cref="M:System.Threading.SynchronizationContext.WaitHelper(System.IntPtr[],System.Boolean,System.Int32)" /> is called by the <see cref="M:System.Threading.SynchronizationContext.Wait(System.IntPtr[],System.Boolean,System.Int32)" /> method to wait for a signal for the specified operating system handles.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Helper function that waits for any or all the elements in the specified array to receive a signal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait.</para>
+        </returns>
+        <param name="waitHandles">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.IntPtr" /> that contains the native operating system handles.</param>
+        <param name="waitAll">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to wait for all handles;  false to wait for any handle. </param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ChannelDispatcher" FullName="System.ServiceModel.Dispatcher.ChannelDispatcher">
   <TypeSignature Language="C#" Value="public class ChannelDispatcher : System.ServiceModel.Dispatcher.ChannelDispatcherBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ChannelDispatcher extends System.ServiceModel.Dispatcher.ChannelDispatcherBase" />
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> object associates an <see cref="T:System.ServiceModel.Channels.IChannelListener" /> at a particular URI (called a listen URI) with an instance of a service. Each <see cref="T:System.ServiceModel.ServiceHost" /> object can have many <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> objects, each associated with a different listener and listen URI for that service.</para>
+      <para>When a message arrives, the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> queries each of the associated <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" /> objects whether the endpoint can accept the message, and passes the message to the one that can. The <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" /> object is responsible for processing messages from a <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> when the destination address of a message matches the <see cref="P:System.ServiceModel.Dispatcher.EndpointDispatcher.AddressFilter" /> property and the message action matches the <see cref="P:System.ServiceModel.Dispatcher.EndpointDispatcher.ContractFilter" /> property.</para>
+      <para>All properties that control the lifetime and behavior of a channel session are available for inspection or modification on the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> object. In addition to the <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" />, these include custom <see cref="T:System.ServiceModel.Dispatcher.IChannelInitializer" /> objects, the <see cref="T:System.ServiceModel.Channels.IChannelListener" />, the <see cref="T:System.ServiceModel.ServiceHost" />, the associated and <see cref="T:System.ServiceModel.InstanceContext" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A component that accepts channels and associates them with a service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +34,16 @@
         <Parameter Name="listener" Type="System.ServiceModel.Channels.IChannelListener" />
       </Parameters>
       <Docs>
-        <param name="listener">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class from the provided listener, with system-provided default timeouts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class. </para>
+        </summary>
+        <param name="listener">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.IChannelListener" /> for the channel dispatcher.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +58,18 @@
         <Parameter Name="bindingName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="listener">To be added.</param>
-        <param name="bindingName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class from the provided listener and binding, with system-provided default timeouts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class. </para>
+        </summary>
+        <param name="listener">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.IChannelListener" /> for the channel dispatcher.</param>
+        <param name="bindingName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding used to configure the service.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,11 +85,20 @@
         <Parameter Name="timeouts" Type="System.ServiceModel.IDefaultCommunicationTimeouts" />
       </Parameters>
       <Docs>
-        <param name="listener">To be added.</param>
-        <param name="bindingName">To be added.</param>
-        <param name="timeouts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class from the provided listener and binding, with the specified default timeouts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> class. </para>
+        </summary>
+        <param name="listener">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.IChannelListener" /> for the service.</param>
+        <param name="bindingName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding used to configure the service.</param>
+        <param name="timeouts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.IDefaultCommunicationTimeouts" /> for the service.</param>
       </Docs>
     </Member>
     <Member MemberName="Attach">
@@ -82,9 +115,16 @@
         <Parameter Name="host" Type="System.ServiceModel.ServiceHostBase" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attaches the channel dispatcher to the host.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" /> for the service.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingName">
@@ -98,9 +138,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to obtain the binding name for the binding with which this channel dispatcher is associated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the binding used to configure the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChannelInitializers">
@@ -114,9 +160,15 @@
         <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IChannelInitializer&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to insert a custom channel initializer into the initialization collection to inspect or modify channel state when they are created. This is also useful to perform the same behavior on outgoing channels if the contract associated with a dispatcher is a duplex contract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.ServiceModel.Dispatcher.IChannelInitializer" /> objects that you can use to inspect and add state to channels when they are first created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseInput">
@@ -131,8 +183,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method stops the listener listening.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops the listener from accepting new channels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultCloseTimeout">
@@ -146,9 +204,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default close timeout can be set using <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcher.#ctor(System.ServiceModel.Channels.IChannelListener,System.String,System.ServiceModel.IDefaultCommunicationTimeouts)" />. Otherwise, a service model default value of 1 minute is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time allowed for the channel dispatcher to close.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultOpenTimeout">
@@ -162,9 +226,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default open timeout can be set using <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcher.#ctor(System.ServiceModel.Channels.IChannelListener,System.String,System.ServiceModel.IDefaultCommunicationTimeouts)" />. Otherwise, a service model default value of 1 minute is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time allowed for the channel dispatcher to open.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Detach">
@@ -181,9 +251,17 @@
         <Parameter Name="host" Type="System.ServiceModel.ServiceHostBase" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceHostBase" /> can only be detached when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+          <para>Sets the <see cref="T:System.ServiceModel.ServiceHostBase" /> associated with the channel dispatcher to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Detaches the service host from the channel dispatcher.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" /> for the service.</param>
       </Docs>
     </Member>
     <Member MemberName="Endpoints">
@@ -197,9 +275,16 @@
         <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.EndpointDispatcher&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> has a distinct <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" /> for each endpoint that the channel can support.</para>
+          <para>Use the <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" /> to obtain access to runtime properties that enable you to customize the runtime across an entire endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the endpoint dispatchers which forward messages to the channel endpoints.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorHandlers">
@@ -213,9 +298,12 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Dispatcher.IErrorHandler&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> objects that can be used to insert custom error handling functionality for an endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Host">
@@ -229,9 +317,15 @@
         <ReturnType>System.ServiceModel.ServiceHostBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.ServiceModel.ServiceHost" /> object can have many <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> objects, each associated with a different <see cref="T:System.ServiceModel.Channels.IChannelListener" /> for that service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the host for the service associated with the dispatcher.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncludeExceptionDetailInFaults">
@@ -245,9 +339,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to include the details about an exception in a fault.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsTransactedAccept">
@@ -261,9 +361,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the accept method calls on the listener are done under a transaction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsTransactedReceive">
@@ -277,9 +380,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.IsTransactedReceive" /> property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the receive method calls on the listener are done under a transaction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Listener">
@@ -293,9 +402,15 @@
         <ReturnType>System.ServiceModel.Channels.IChannelListener</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> associates an <see cref="T:System.ServiceModel.Channels.IChannelListener" /> at a particular URI with an instance of a service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the listener associated with the channel dispatcher.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ManualAddressing">
@@ -309,9 +424,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+          <para>Set the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ManualAddressing" /> property to true if you want to prevent the client from adding Message ID and ReplyTo addressing headers to request/response messages so that your application can control these headers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the channel dispatcher adds addressing headers to request-reply messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxTransactedBatchSize">
@@ -325,9 +447,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.MaxTransactedBatchSize" /> property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size for a transacted batch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageVersion">
@@ -341,9 +469,16 @@
         <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the versions of SOAP and WS-Addressing associated with a message and its exchange. </para>
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAP message and WS-Addressing versions that are used or expected.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAbort">
@@ -358,8 +493,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Aborts the listener associated with the dispatcher.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBeginClose">
@@ -378,12 +516,21 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to close a channel listener for the dispatcher that must be completed within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous operation to close a channel listener for the dispatcher. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the close operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous completion of the close operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous close operation.</param>
       </Docs>
     </Member>
     <Member MemberName="OnBeginOpen">
@@ -402,12 +549,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel dispatcher must be associated with a non-null service host when this method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to open a channel listener for the dispatcher that must be completed within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous operation to open a channel listener for the dispatcher. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the open operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous completion of the open operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous open operation.</param>
       </Docs>
     </Member>
     <Member MemberName="OnClose">
@@ -424,9 +583,13 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the channel listener associated with the dispatcher within a specified interval of time.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies the interval of time allowed for the listener to close.</param>
       </Docs>
     </Member>
     <Member MemberName="OnClosed">
@@ -441,8 +604,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a trace of the closing of the endpoint dispatchers associated with the channel dispatcher.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnEndClose">
@@ -459,9 +625,13 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to close a channel listener for the dispatcher.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcher.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="OnEndOpen">
@@ -478,9 +648,13 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to open a channel listener for the dispatcher.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcher.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="OnOpen">
@@ -497,9 +671,16 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel dispatcher must be associated with a non-null service host when this method is called and message version must be set to a non-null value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the listener associated with the channel dispatcher.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies the interval of time allowed for the listener to open.</param>
       </Docs>
     </Member>
     <Member MemberName="OnOpened">
@@ -514,8 +695,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel dispatcher must be associated with a non-null service host when this method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates and validates filter table used to dispatch to the endpoints.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnOpening">
@@ -530,8 +717,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel dispatcher must be associated with a non-null service host on opening.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the channel dispatcher is attached to a host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveSynchronously">
@@ -545,9 +738,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a binding implements <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" />, indigo1 assigns the value of the <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> property to this property. So if this value is true, the false default value of <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> is overridden.</para>
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the dispatcher uses synchronous calls to read messages from channels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServiceThrottle">
@@ -561,9 +761,16 @@
         <ReturnType>System.ServiceModel.Dispatcher.ServiceThrottle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provides access to the controls used to optimize the availability and performance of a service.</para>
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the service throttle for the service associated with the channel dispatcher.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionIsolationLevel">
@@ -577,9 +784,16 @@
         <ReturnType>System.Transactions.IsolationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.TransactionIsolationLevel" /> property to get or set the default isolation level for new transactions created by the dispatcher for the service.</para>
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default isolation level for transactions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionTimeout">
@@ -593,9 +807,15 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the default timeout for new transactions created by the dispatcher on behalf of the service.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

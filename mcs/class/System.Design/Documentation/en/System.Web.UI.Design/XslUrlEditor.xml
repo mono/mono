@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XslUrlEditor" FullName="System.Web.UI.Design.XslUrlEditor">
   <TypeSignature Language="C#" Value="public class XslUrlEditor : System.Web.UI.Design.UrlEditor" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.UI.Design.XslUrlEditor" /> is a <see cref="T:System.Drawing.Design.UITypeEditor" /> that provides a dialog for selecting a URL that indicates the location of an XSL file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a user interface for selecting an URL that indicates the location of an XSL file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +27,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.UI.Design.XslUrlEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +45,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the caption to display on the selection dialog window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +64,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.XslUrlEditor.Filter" /> property specifies a filter string with two filter options: one for XSL files (*.xsl;*.xslt), and one for all files (*.*).</para>
+          <para>A filter string contains one or more filter options. Each filter option contains a description of the filter, followed by the vertical bar (|) and the filter pattern. The strings for different filtering options are separated by the vertical bar. </para>
+          <para>The following is an example of a filter string that contains two filter options: "XSLT Files (*.xslt)|*.xslt|All Files (*.*)|*.*".</para>
+          <para>You can specify several filter patterns in a filter option by separating the filter patterns with semicolons. The following is an example of a filter string in which the first filter option specifies two filter patterns: "XSL Files (*.xslt;*.xsl)|*.xslt;*.xsl|All Files (*.*)|*.*".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name filter string for the editor. This is used to determine the items that appear in the file list of the dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +89,12 @@
         <ReturnType>System.Web.UI.Design.UrlBuilderOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the options for the URL builder to use.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

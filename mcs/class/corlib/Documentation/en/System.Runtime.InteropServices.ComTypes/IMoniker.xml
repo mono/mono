@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMoniker" FullName="System.Runtime.InteropServices.ComTypes.IMoniker">
   <TypeSignature Language="C#" Value="public interface IMoniker" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMoniker" />
@@ -16,9 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about the IMoniker, IPersist, and IPersistStream interfaces, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IMoniker interface, with COM functionality from IPersist and IPersistStream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BindToObject">
@@ -293,10 +301,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IPersistStream::IsDirty, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the object for changes since it was last saved.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the object has changed; otherwise, an S_FALSE HRESULT value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEqual">
@@ -314,11 +331,21 @@
         <Parameter Name="pmkOtherMoniker" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <param name="pmkOtherMoniker">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IMoniker::IsEqual, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current moniker with a specified moniker and indicates whether they are identical.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the monikers are identical; otherwise, an S_FALSE HRESULT value.  </para>
+        </returns>
+        <param name="pmkOtherMoniker">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker to use for comparison. </param>
       </Docs>
     </Member>
     <Member MemberName="IsRunning">
@@ -338,13 +365,25 @@
         <Parameter Name="pmkNewlyRunning" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <param name="pbc">To be added.</param>
-        <param name="pmkToLeft">To be added.</param>
-        <param name="pmkNewlyRunning">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IMoniker::IsRunning, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the object that is identified by the current moniker is currently loaded and running.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the moniker is running; an S_FALSE HRESULT value if the moniker is not running; or an E_UNEXPECTED HRESULT value.</para>
+        </returns>
+        <param name="pbc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the bind context to use in this binding operation. </param>
+        <param name="pmkToLeft">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker to the left of the current moniker if the current moniker is part of a composite. </param>
+        <param name="pmkNewlyRunning">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker most recently added to the Running Object Table (ROT). </param>
       </Docs>
     </Member>
     <Member MemberName="IsSystemMoniker">
@@ -384,10 +423,17 @@
         <Parameter Name="pStm" Type="System.Runtime.InteropServices.ComTypes.IStream" />
       </Parameters>
       <Docs>
-        <param name="pStm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IPersistStream::Load, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an object from the stream where it was previously saved.</para>
+        </summary>
+        <param name="pStm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that the object is loaded from. </param>
       </Docs>
     </Member>
     <Member MemberName="ParseDisplayName">
@@ -485,11 +531,19 @@
         <Parameter Name="fClearDirty" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="pStm">To be added.</param>
-        <param name="fClearDirty">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IPersistStream::Save, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves an object to the specified stream.</para>
+        </summary>
+        <param name="pStm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to which the object is saved. </param>
+        <param name="fClearDirty">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to clear the modified flag after the save is complete; otherwise false </param>
       </Docs>
     </Member>
   </Members>

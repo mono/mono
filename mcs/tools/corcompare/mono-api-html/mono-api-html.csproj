@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D25986E2-7A41-4966-A26D-5614BAC7B8A7}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -19,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>../../../6.4.5.xml ../../../7.0.2.xml</Commandlineparameters>
+    <Commandlineparameters>/Developer/MonoTouch/Source/monotouch/tools/apidiff/references/monotouch.xml /Developer/MonoTouch/Source/monotouch/tools/apidiff/temp/monotouch.xml</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>

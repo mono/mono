@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VisualStyleElement" FullName="System.Windows.Forms.VisualStyles.VisualStyleElement">
   <TypeSignature Language="C#" Value="public class VisualStyleElement" />
   <AssemblyInfo>
@@ -9,9 +10,30 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> class identifies a Windows control or user interface (UI) element that is defined by the current visual style of the operating system. A visual style element is defined in terms of <newTerm>class</newTerm>, <newTerm>part</newTerm>, and <newTerm>state</newTerm>:</para>
+      <list type="bullet">
+        <item>
+          <para>The <newTerm>class</newTerm> identifies a group of related visual style elements that are typically drawn together. The class is specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.ClassName" /> property.</para>
+        </item>
+        <item>
+          <para>The <newTerm>part</newTerm> defines a discrete member of a class. The part is specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Part" /> property.</para>
+        </item>
+        <item>
+          <para>The <newTerm>state</newTerm> describes the current visual state of the element defined by the class and part. The state is specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.State" /> property.</para>
+        </item>
+      </list>
+      <para>The <see cref="N:System.Windows.Forms.VisualStyles" /> namespace exposes hundreds of <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> objects that represent the controls and user interface elements that can be defined by a visual style. These objects are exposed as static properties of nested classes of <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" />. For each property, the qualified name of the owning class represents the class and the part of the drawn element, and the property name represents the state of the element. For example, the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Button.PushButton.Pressed" /> property returns a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> that can be used to draw a button in the pressed state with visual styles. The Pressed property name corresponds to the state, PushButton corresponds to the part, and Button identifies the class of the visual style element. </para>
+      <para>To draw a visual style element, create a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" />, set it to the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> you wish to draw, and then call the <see cref="Overload:System.Windows.Forms.VisualStyles.VisualStyleRenderer.DrawBackground" /> method. To determine whether the current visual style provides a definition for a particular element, call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement)" /> method with the element as the argument.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> and <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> wrap the functionality of the visual styles API from the Windows Shell portion of the Windows Platform SDK. For more information on visual styles, see "Using Windows XP Visual Styles" in the Platform SDK portion of the MSDN Library at <see cref="http://msdn.microsoft.com/library/">http://msdn.microsoft.com/library</see>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a control or user interface (UI) element that is drawn with visual styles.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClassName">
@@ -21,10 +43,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class name refers to a group of related visual style elements that are typically drawn together. A class name can correspond to a control, such as "SCROLLBAR" and "TRACKBAR", but a class name can also refer to a group of elements that do not correspond to a particular control, such as "EXPLORERBAR" and "STARTPANEL". </para>
+          <para>For more information on visual style classes, parts, and states, see "Parts and States" in the Windows Shell documentation at <see cref="">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class name of the visual style element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,13 +71,22 @@
         <Parameter Name="state" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="className">To be added.</param>
-        <param name="part">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new visual style element from the specified class, part, and state values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> with the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.ClassName" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.State" /> properties initialized to the <paramref name="className" />, <paramref name="part" />, and <paramref name="state" /> parameters.</para>
+        </returns>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the class name of the visual style element to be created.</param>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that represents the part of the visual style element to be created.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that represents the state of the visual style element to be created.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +99,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A part is a discrete member of a class of visual style elements. For example, visual style elements that represent a check box, radio button, and push button are all considered parts of the "BUTTON" class. </para>
+          <para>Part values are integers that range from 1 to the number of parts defined for a particular class. For more information on visual style classes, parts, and states, see "Parts and States" in the Windows Shell documentation at <see cref="">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the part of the visual style element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +122,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual style part can have one or more visual states. For example, a visual style element that represents a radio button can be in the disabled, checked, or unchecked state. </para>
+          <para>State values are integers that range from 1 to the number of states defined for a particular part. For more information on visual style classes, parts, and states, see "Parts and States" in the Windows Shell documentation located at <see cref="">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the state of the visual style element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataTypeAttribute" FullName="System.ComponentModel.DataAnnotations.DataTypeAttribute">
   <TypeSignature Language="C#" Value="public class DataTypeAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DataTypeAttribute extends System.ComponentModel.DataAnnotations.ValidationAttribute" />
@@ -15,8 +16,37 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute enables you to mark fields by using a type that is more specific than the database intrinsic type. The type name is selected from the <see cref="T:System.ComponentModel.DataAnnotations.DataType" /> enumeration type. For example, a string data field that contains e-mail addresses can be specified as the <see cref="F:System.ComponentModel.DataAnnotations.DataType.EmailAddress" /> type. This information is then accessed by the field templates to modify how the data field is processed. </para>
+      <para>You use the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute for the following reasons:</para>
+      <list type="bullet">
+        <item>
+          <para>To provide additional type information for a data field. You do this by applying the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute to a data field in the data model and by specifying the additional type name from the <see cref="T:System.ComponentModel.DataAnnotations.DataType" /> enumeration. The field template that processes the data field can access this additional metadata type information to determine how to process the field. For example, the text field template can generate hyperlinks for e-mail addresses whose intrinsic type is String.</para>
+        </item>
+        <item>
+          <para>To associate a custom field template with a data field. The specified custom field template will then be used to process the data field. This is an alternative to using the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> attribute. </para>
+        </item>
+      </list>
+      <para>When you apply the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute to a data field you must do the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Follow the attribute usage rules.</para>
+        </item>
+        <item>
+          <para>Implement the metadata class that contains the data fields to which you want to apply the attribute.</para>
+        </item>
+        <item>
+          <para>Issue validation errors as appropriate.</para>
+        </item>
+      </list>
+      <para>For more information, see <format type="text/html"><a href="c563bbf3-feb9-484e-81d1-a585f1b0e192">ASP.NET Dynamic Data Guidelines</a></format>.</para>
+      <para>See a run-time code example of this feature: <see cref="http://go.microsoft.com/fwlink/?LinkId=120736&amp;sref=System.ComponentModel.DataAnnotations.DataTypeAttribute">Run</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the name of an additional type to associate with a data field.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +60,16 @@
         <Parameter Name="dataType" Type="System.ComponentModel.DataAnnotations.DataType" />
       </Parameters>
       <Docs>
-        <param name="dataType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name is one of the values that are defined by the <see cref="T:System.ComponentModel.DataAnnotations.DataType" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeTypeAttribute" /> class by using the specified type name.</para>
+        </summary>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to associate with the data field.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,9 +83,16 @@
         <Parameter Name="customDataType" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="customDataType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides an alternative to using the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeTypeAttribute" /> class by using the specified field template name.</para>
+        </summary>
+        <param name="customDataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom field template to associate with the data field.</param>
       </Docs>
     </Member>
     <Member MemberName="CustomDataType">
@@ -62,9 +106,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of custom field template that is associated with the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataType">
@@ -78,9 +125,12 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DataType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that is associated with the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisplayFormat">
@@ -94,9 +144,12 @@
         <ReturnType>System.ComponentModel.DataAnnotations.DisplayFormatAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a data-field display format.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDataTypeName">
@@ -111,9 +164,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the type that is associated with the data field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the type that is associated with the data field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the type associated with the data field.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -130,10 +192,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements validation logic that is specific to the <see cref="T:System.ComponentModel.DataAnnotations.DataTypeAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks that the value of the data field is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true always.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data field value to validate.</param>
       </Docs>
     </Member>
   </Members>

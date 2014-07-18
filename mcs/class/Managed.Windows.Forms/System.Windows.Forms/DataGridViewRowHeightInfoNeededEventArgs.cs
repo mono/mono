@@ -39,7 +39,7 @@ namespace System.Windows.Forms {
 
 		public int Height {
 			get { return height; }
-			set { height = value; }
+			set { height = value < minimumHeight ? minimumHeight : value; }
 		}
 
 		public int MinimumHeight {

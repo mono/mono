@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpUnhandledException" FullName="System.Web.HttpUnhandledException">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class HttpUnhandledException : System.Web.HttpException" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when a generic exception occurs.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpUnhandledException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -40,9 +47,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpUnhandledException" /> class with the specified error messages.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message displayed to the client when the exception is thrown. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -56,10 +67,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpUnhandledException" /> class with the specified error message and inner exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message displayed to the client when the exception is thrown. </param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Exception.InnerException" />, if any, that threw the current exception. </param>
       </Docs>
     </Member>
   </Members>

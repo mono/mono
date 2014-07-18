@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XPathMessageFilterTable&lt;TFilterData&gt;" FullName="System.ServiceModel.Dispatcher.XPathMessageFilterTable&lt;TFilterData&gt;">
   <TypeSignature Language="C#" Value="public class XPathMessageFilterTable&lt;TFilterData&gt; : System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;&gt;, System.Collections.Generic.IDictionary&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;, System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;&gt;, System.ServiceModel.Dispatcher.IMessageFilterTable&lt;TFilterData&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XPathMessageFilterTable`1&lt;TFilterData&gt; extends System.Object implements class System.Collections.Generic.ICollection`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;&gt;, class System.Collections.Generic.IDictionary`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;, class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;&gt;, class System.Collections.IEnumerable, class System.ServiceModel.Dispatcher.IMessageFilterTable`1&lt;!TFilterData&gt;" />
@@ -32,8 +33,15 @@
   </Attributes>
   <Docs>
     <typeparam name="TFilterData">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> implements the <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> interface. This filter table is optimized for declarative XPath filters, so the table key is a <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" />. </para>
+      <para>The <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> class optimizes matching for a subset of XPath that covers most of the messaging scenarios and also supports the full XPath 1.0 grammar. It has optimized algorithms for efficient parallel matching.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds a collection of filter/data pairs for efficient matching.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,8 +53,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,8 +72,11 @@
       </Parameters>
       <Docs>
         <param name="quota">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -138,8 +152,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all filter/data pairs from the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -177,9 +194,18 @@
       </Parameters>
       <Docs>
         <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements the ContainsKey method of <see cref="T:System.Collections.Generic.IDictionary`2" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the filter table contains a specified filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="filter" /> is contained in the filter table; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -214,9 +240,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of filter/data pairs currently in the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -231,9 +260,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Collections.Generic.SynchronizedCollection`1.System.Collections.IEnumerable.GetEnumerator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can iterate through the filter table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerator`1" />&lt;KeyValuePair&lt;Filter, FilterData&gt;&gt; that can be used to iterate through the filter table.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilter">
@@ -339,11 +377,25 @@
         <Parameter Name="results" Type="System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when more than one filter is expected to match the message and the matching filters are required.</para>
+          <para>The filters in the table are not allowed to inspect the message body. </para>
+          <para>The matching <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> objects are stored in the <paramref name="results" /> parameter of <see cref="T:System.Collections.Generic.ICollection`1" />. The <paramref name="FilterData" /> can then be recovered from the filter table using these filters as keys with the methods provided by <see cref="T:System.Collections.Generic.IDictionary`2" />.</para>
+          <para>This method implements <see cref="M:System.ServiceModel.Dispatcher.IMessageFilterTable`1.GetMatchingFilters(System.ServiceModel.Message,System.Collections.Generic.ICollection{System.ServiceModel.Dispatcher.MessageFilter})" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of at least one <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> in the table is satisfied by the specified message and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="message" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to test.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilters">
@@ -362,10 +414,23 @@
       </Parameters>
       <Docs>
         <param name="buffer">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when more than one filter is expected to match the buffered message and the matching filters are required.</para>
+          <para>The filters in the table are allowed to inspect the message body. </para>
+          <para>The matching <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects are stored in the <paramref name="results" /> parameter of <see cref="T:System.Collections.Generic.ICollection`1" />. The <paramref name="FilterData" /> can then be recovered from the filter table using these filters as keys with the methods provided by <see cref="T:System.Collections.Generic.IDictionary`2" />.</para>
+          <para>This method implements <see cref="M:System.ServiceModel.Dispatcher.MessageFilterTable`1.GetMatchingFilters(System.ServiceModel.Channels.MessageBuffer,System.Collections.Generic.ICollection{System.ServiceModel.Dispatcher.MessageFilter})" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of at least one <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> in the table is satisfied by the specified buffered message and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="messageBuffer" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilters">
@@ -383,11 +448,23 @@
         <Parameter Name="results" Type="System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;" />
       </Parameters>
       <Docs>
-        <param name="navigator">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when more than one filter is expected to match the navigator and the matching filters are required.</para>
+          <para>If only one filter is expected to match the message, use the <see cref="M:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1.GetMatchingFilter(System.ServiceModel.Dispatcher.SeekableXPathNavigator)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of at least one <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> in the table is satisfied by the specified buffered message and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="messageBuffer" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="navigator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> to test.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilters">
@@ -405,11 +482,23 @@
         <Parameter Name="results" Type="System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;" />
       </Parameters>
       <Docs>
-        <param name="navigator">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when multiple filters can be expected to match the message specified by the <see cref="T:System.Xml.XPath.XPathNavigator" /> and the matching filters are required. </para>
+          <para>If only one filter is expected to match the message, use the <see cref="M:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1.GetMatchingFilter(System.Xml.XPath.XPathNavigator,System.ServiceModel.Dispatcher.MessageFilter@)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of at least one <see cref="T:System.Xml.XPath.XPathNavigator" /> in the table is satisfied by the specified buffered message and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="messageBuffer" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="navigator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> to test.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingValue">
@@ -599,9 +688,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> is not read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -635,9 +727,16 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Collections.Generic.IDictionary`2.Keys" />. The <see cref="T:System.Collections.Generic.IDictionary`2" /> that the filter table implements uses the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> as the key and the <paramref name="FilterData" /> as the value of the pair. </para>
+          <para>The order of the filters returned in the collection is unspecified, but it is guaranteed to be the same order as the corresponding <paramref name="FilterData" /> in the collection returned by the <see cref="P:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1.Values" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the filters contained in the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeQuota">
@@ -656,9 +755,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to alleviate a security threat. Some filters can be extremely expensive to evaluate or are very long-running. <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" />s are most often evaluated against a document from an untrusted source (SOAP message off the wire), which may be malicious. Because filters operate on XML documents, the best way to set computational limits on filter tables is to specify the maximum number of nodes that are examined while evaluating a filter in this table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of XML document nodes that can be examined by the individual filters during a single call to a Match method. This value applies for each filter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -695,10 +800,17 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.MessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a filter and its associated filter data from the filter table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the filter was found and removed; otherwise, false. </para>
+        </returns>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -715,10 +827,20 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.XPathMessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not throw an exception if the specified filter does not exist in the filter table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> and its associated filter data from the filter table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> was found and removed; otherwise, false.</para>
+        </returns>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -733,9 +855,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Collections.Generic.SynchronizedCollection`1.System.Collections.IEnumerable.GetEnumerator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can iterate through the filter table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerator`1" />&lt;KeyValuePair&lt;Filter, FilterData&gt;&gt; that can be used to iterate through the filter table.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TrimToSize">
@@ -750,8 +881,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is conceptually equivalent to setting a collection's capacity to its count.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compacts the filter table, purging any excess allocations or buffers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">
@@ -787,9 +924,16 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;TFilterData&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Collections.Generic.IDictionary`2.Values" />. The <see cref="T:System.Collections.Generic.IDictionary`2" />&lt;Filter, <paramref name="FilterData" />&gt; that the filter table implements uses the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> as the key and the <paramref name="FilterData" /> as the value of the pair.</para>
+          <para>The order of the <paramref name="FilterData" /> returned in the collection is unspecified, but it is guaranteed to be the same order as the corresponding filters in the collection returned by the <see cref="P:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1.Keys" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the <paramref name="FilterData" /> contained in the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

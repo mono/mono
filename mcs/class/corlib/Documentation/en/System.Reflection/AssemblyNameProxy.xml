@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyNameProxy" FullName="System.Reflection.AssemblyNameProxy">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class AssemblyNameProxy : MarshalByRefObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AssemblyNameProxy extends System.MarshalByRefObject" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a remotable version of the AssemblyName.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyNameProxy" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAssemblyName">
@@ -55,10 +62,20 @@
         <Parameter Name="assemblyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AssemblyName'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This will only work if the file contains an assembly manifest. This method causes the file to be opened and closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the AssemblyName for a given file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An AssemblyName object representing the given file.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly file for which to get the AssemblyName. </param>
       </Docs>
     </Member>
   </Members>

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Markup;
-#if !NET_2_1
+#if !__MOBILE__
 using System.Xaml.Permissions;
 #endif
 using System.Xaml.Schema;
@@ -42,7 +42,7 @@ namespace System.Xaml
 			: base (settings)
 		{
 			var s = settings;
-#if !NET_2_1
+#if !__MOBILE__
 			AccessLevel = s.AccessLevel;
 #endif
 			AfterBeginInitHandler = s.AfterBeginInitHandler;
@@ -65,7 +65,7 @@ namespace System.Xaml
 		public EventHandler<XamlObjectEventArgs> BeforePropertiesHandler { get; set; }
 		public EventHandler<XamlSetValueEventArgs> XamlSetValueHandler { get; set; }
 
-#if !NET_2_1
+#if !__MOBILE__
 		[MonoTODO ("Ignored")]
 		public XamlAccessLevel AccessLevel { get; set; }
 #endif

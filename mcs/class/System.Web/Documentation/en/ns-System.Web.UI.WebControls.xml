@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.UI.WebControls" FullName="System.Web.UI.WebControls" FullNameSP="System.Web.UI.WebControls" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.UI.WebControls" /> namespace contains classes that allow you to create Web server controls on a Web page. Web server controls run on the server and include form controls such as buttons and text boxes. They also include special-purpose controls such as a calendar. Because Web server controls run on the server, you can programmatically control these elements. Although Web server controls are rendered as HTML, their object model does not necessarily reflect HTML syntax.</para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.UI.WebControls" /> namespace contains classes that are rendered as HTML tags, such as the <see cref="T:System.Web.UI.WebControls.TextBox" /> control and the <see cref="T:System.Web.UI.WebControls.ListBox" /> control. The namespace also contains classes that are not rendered on the Web page, but support data operations, such as the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> classes. Other controls, such as the <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" /> controls, support data display and editing. The <see cref="T:System.Web.UI.WebControls.WebControl" /> class serves as the base class for many of the classes in the <see cref="N:System.Web.UI.WebControls" /> namespace.</para>
     </remarks>
   </Docs>
 </Namespace>

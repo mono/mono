@@ -4,7 +4,6 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.Mvc2.dll
 LIBRARY_NAME = System.Web.Mvc.dll
-LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 RESX_DIST =  System.Web.Mvc/Resources/MvcResources.resx
 

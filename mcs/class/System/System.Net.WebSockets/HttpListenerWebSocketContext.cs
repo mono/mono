@@ -27,6 +27,7 @@
 //
 
 #if NET_4_5
+#if SECURITY_DEP
 
 using System;
 using System.Net;
@@ -125,5 +126,5 @@ namespace System.Net.WebSockets
 		}
 	}
 }
-
+#endif
 #endif

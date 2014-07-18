@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OSFeature" FullName="System.Windows.Forms.OSFeature">
   <TypeSignature Language="C#" Value="public class OSFeature : System.Windows.Forms.FeatureSupport" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the static instance of this class provided in the <see cref="P:System.Windows.Forms.OSFeature.Feature" /> property to query for operating system features. You cannot create an instance of this class.</para>
+      <para>To determine the version of a feature, call the <see cref="M:System.Windows.Forms.OSFeature.GetVersionPresent(System.Object)" /> method. To determine if a feature or a specific version is present, call the <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.String,System.String)" /> method and specify the feature to look for with the feature identifiers provided in this class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides operating-system specific feature queries.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +27,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class cannot be instantiated. To query for operating system features, use the static instance of <see cref="T:System.Windows.Forms.OSFeature" /> provided in this class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.OSFeature" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +48,16 @@
         <ReturnType>System.Windows.Forms.OSFeature</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this static property to query for operating system features. You cannot create an instance of this class.</para>
+          <para>To determine the version of a feature, call the <see cref="M:System.Windows.Forms.OSFeature.GetVersionPresent(System.Object)" /> method. To determine if a feature or a specific version is present, call the <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.String,System.String)" /> method and specify the feature to look for with the feature identifiers provided in this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a static instance of the <see cref="T:System.Windows.Forms.OSFeature" /> class to use for feature queries. This property is read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,10 +74,20 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="feature">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.OSFeature.Feature" /> property, the static instance of <see cref="T:System.Windows.Forms.OSFeature" /> provided in this class, to query for the version number of a feature.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the version of the specified feature currently available on the system. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Version" /> representing the version of the specified operating system feature currently available on the system; or null if the feature cannot be found.</para>
+        </returns>
+        <param name="feature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The feature whose version is requested, either <see cref="F:System.Windows.Forms.OSFeature.LayeredWindows" /> or <see cref="F:System.Windows.Forms.OSFeature.Themes" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,10 +107,21 @@
         <Parameter Name="enumVal" Type="System.Windows.Forms.SystemParameter" />
       </Parameters>
       <Docs>
-        <param name="enumVal">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you use the <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" /> method to determine if the operating system supports the specific feature or metric identified by <paramref name="enumValue" />. Based upon the value returned from <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" />, you would perform conditional actions in your code. For example, if calling this method with a parameter value of <see cref="F:System.Windows.Forms.SystemParameter.FlatMenu" /> returns true, you could create owner-drawn menus in your application in a flat style.</para>
+          <para>Accessing some system features or metrics can raise exceptions if they are not available on a specific operating system version. In this case, first use the corresponding <see cref="T:System.Windows.Forms.SystemParameter" /> enumeration value, along with <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" />, to determine if the metric is supported. For example, call <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" /> with <see cref="P:System.Windows.Forms.SystemInformation.CaretWidth" /> before getting the <see cref="P:System.Windows.Forms.SystemInformation.CaretWidth" /> property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a value indicating whether the operating system supports the specified feature or metric. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is available on the system; otherwise, false.</para>
+        </returns>
+        <param name="enumVal">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.SystemParameter" /> representing the feature to search for.</param>
       </Docs>
     </Member>
     <Member MemberName="LayeredWindows">
@@ -90,8 +132,16 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A layered window can be made transparent or translucent by the operating system. Support for layered windows was first introduced in Windows 2000. For more information, see the "Layered Windows: A New Way to Use Translucency and Transparency Effects in Windows Applications" in the Platform SDK documentation at http://msdn.microsoft.com.</para>
+          <para>To determine if the layered windows feature is installed, use the <see cref="P:System.Windows.Forms.OSFeature.Feature" /> property to call the base class method <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.Object)" /> with <see cref="F:System.Windows.Forms.OSFeature.LayeredWindows" /> as the feature to look for.</para>
+          <para>Alternatively, you can check to see if the feature is installed by calling the <see cref="M:System.Windows.Forms.OSFeature.GetVersionPresent(System.Object)" /> method with <see cref="F:System.Windows.Forms.OSFeature.LayeredWindows" /> as the feature to find.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the layered, top-level windows feature. This field is read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -106,8 +156,16 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A theme is a collection of visual interface settings that include wallpaper, cursors, fonts, sounds, and icons first introduced in Microsoft Plus! for Windows 95. The .NET Framework does not directly support manipulating themes, although it does have extensive support for visual styles in the <see cref="N:System.Windows.Forms.VisualStyles" /> namespace. For more information about Windows Themes, see the topics Themes and Visual Styles and Visual Styles Reference in the Win32 SDK.</para>
+          <para>To determine if the themes feature is installed, call the base class method <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.Object)" /> with <see cref="F:System.Windows.Forms.OSFeature.Themes" /> as the feature to look for.</para>
+          <para>Alternatively, you can check to see if the feature is installed by calling the <see cref="M:System.Windows.Forms.OSFeature.GetVersionPresent(System.Object)" /> method with <see cref="F:System.Windows.Forms.OSFeature.Themes" /> as the feature to find.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the operating system themes feature. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

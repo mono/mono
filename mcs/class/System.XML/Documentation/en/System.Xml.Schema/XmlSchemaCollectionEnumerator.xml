@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaCollectionEnumerator" FullName="System.Xml.Schema.XmlSchemaCollectionEnumerator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class XmlSchemaCollectionEnumerator : System.Collections.IEnumerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSchemaCollectionEnumerator extends System.Object implements class System.Collections.IEnumerator" />
@@ -18,8 +19,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports a simple iteration over a collection. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -35,9 +39,12 @@
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchema'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Xml.Schema.XmlSchema" /> in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -54,9 +61,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the enumerator to the next schema in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the move was successful; false if the enumerator has passed the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
@@ -72,9 +85,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollectionEnumerator" /> instance is cast to an <see cref="T:System.Collections.IEnumerator" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.Schema.XmlSchemaCollectionEnumerator.Current" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.MoveNext">
@@ -91,9 +110,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollectionEnumerator" /> instance is cast to an <see cref="T:System.Collections.IEnumerator" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlSchemaCollectionEnumerator.MoveNext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the next node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Reset">
@@ -110,8 +138,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollectionEnumerator" /> instance is cast to an <see cref="T:System.Collections.IEnumerator" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlSchemaCollectionEnumerator.System.Collections.IEnumerator.Reset" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

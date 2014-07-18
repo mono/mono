@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrivacyNoticeBindingElement" FullName="System.ServiceModel.Channels.PrivacyNoticeBindingElement">
   <TypeSignature Language="C#" Value="public sealed class PrivacyNoticeBindingElement : System.ServiceModel.Channels.BindingElement, System.ServiceModel.Description.IPolicyExportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PrivacyNoticeBindingElement extends System.ServiceModel.Channels.BindingElement implements class System.ServiceModel.Description.IPolicyExportExtension" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the binding element that contains the privacy policy for the WS-Federation binding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.PrivacyNoticeBindingElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +49,13 @@
         <Parameter Name="elementToBeCloned" Type="System.ServiceModel.Channels.PrivacyNoticeBindingElement" />
       </Parameters>
       <Docs>
-        <param name="elementToBeCloned">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.PrivacyNoticeBindingElement" /> class from an existing element.</para>
+        </summary>
+        <param name="elementToBeCloned">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.PrivacyNoticeBindingElement" /> used to initialize the new element.</param>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -59,9 +70,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current binding element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BindingElement" /> that is a copy of the current element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProperty&lt;T&gt;">
@@ -85,11 +102,22 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls <see cref="M:System.ServiceModel.Channels.BindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)" /> on the next binding element in the binding context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queries the binding element stack to see whether it supports a particular interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface whose support is being tested.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the current binding element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interface whose support is being tested.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy">
@@ -107,10 +135,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="exporter">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports custom policy assertions regarding the privacy notice from the binding elements that contain the policy.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> that you can use to modify the exporting process.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that contains the binding assertions and elements associated with the policy.</param>
       </Docs>
     </Member>
     <Member MemberName="Url">
@@ -124,9 +157,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI at which the privacy notice is located.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -140,9 +176,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the privacy notice version number for the binding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

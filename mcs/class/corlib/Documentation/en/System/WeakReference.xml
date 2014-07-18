@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WeakReference" FullName="System.WeakReference">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class WeakReference : System.Runtime.Serialization.ISerializable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit WeakReference extends System.Object implements class System.Runtime.Serialization.ISerializable" />
@@ -23,13 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>A weak reference holds a reference to another object but does not prevent the object from being garbage collected.</summary>
     <remarks>
-      <para>Garbage collection is the automatic, background process where unused objects are deallocated from memory.  Normally, objects that can still be accessed by the program will not be garbage collected.  The WeakReference object provides an exception.  The reference from a WeakReference object to another object, the target, is not considered when determining whether that object is ready for garbage collection.</para>
-      <para>That is, an object is elligible for garbage collection when there are no "strong" references to the object.</para>
-      <para>When the target of a WeakReference is garbage collected, the Target property of the WeakReference is reset to <see langword="null" /> and the target is no longer accessible to the program.</para>
-      <para>If the WeakReference is tracking an object's ressurection, the object will still be accessible from the Target property after the object's Finalize method has been called but before the object is cleared from memory.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A weak reference allows the garbage collector to collect an object while still allowing an application to access the object. If you need the object, you can still obtain a strong reference to it and prevent it from being collected. For more information about how to use short and long weak references, see <format type="text/html"><a href="6a600fe5-3af3-4c64-82da-10a0a8e2d79b">Using Weak References</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a weak reference, which references an object while still allowing that object to be reclaimed by garbage collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -46,9 +48,16 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="target">The target object object.</param>
-        <summary>Creates a new WeakReference referencing an object.</summary>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a short weak reference to <paramref name="target" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.WeakReference" /> class, referencing the specified object.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to track or null. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,10 +75,18 @@
         <Parameter Name="trackResurrection" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="target">The target object.</param>
-        <param name="trackResurrection">Whether to retain the reference to the object after the object's finalizer has been called but before the object has been removed from memory.</param>
-        <summary>Creates a new WeakReference referencing an object, and optionally tracking the ressurection of the object.</summary>
-        <remarks>Accessing an object post-finalization should be done with care.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="trackResurrection" /> is false, a short weak reference is created. If <paramref name="trackResurrection" /> is true, a long weak reference is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.WeakReference" /> class, referencing the specified object and using the specified resurrection tracking.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to track. </param>
+        <param name="trackResurrection">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates when to stop tracking the object. If true, the object is tracked after finalization; if false, the object is only tracked until finalization. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -87,10 +104,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">No information available.</param>
-        <param name="context">No information available.</param>
-        <summary>This constructor is for serialization.</summary>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="context" /> parameter is reserved, and does not currently participate in this operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.WeakReference" /> class, using deserialized data from the specified serialization and stream objects.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that holds all the data needed to serialize or deserialize the current <see cref="T:System.WeakReference" /> object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) Describes the source and destination of the serialized stream specified by <paramref name="info" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -107,8 +132,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards the reference to the target represented by the current <see cref="T:System.WeakReference" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -128,10 +156,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">No information available.</param>
-        <param name="context">No information available.</param>
-        <summary>This method is used for serialization.</summary>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method stores all the information in <paramref name="info" /> necessary to serialize the current <see cref="T:System.WeakReference" /> object.</para>
+          <para>The <paramref name="context" /> parameter is reserved and is not currently used in the execution of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with all the data needed to serialize the current <see cref="T:System.WeakReference" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that holds all the data needed to serialize or deserialize the current <see cref="T:System.WeakReference" /> object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) The location where serialized data is stored and retrieved. </param>
       </Docs>
     </Member>
     <Member MemberName="IsAlive">
@@ -147,9 +184,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets whether the target has been garbage collected.</summary>
         <value>True if the target has been garbage collected.</value>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because an object could potentially be reclaimed for garbage collection immediately after the <see cref="P:System.WeakReference.IsAlive" /> property returns true, using this property is not recommended unless you are testing only for a false return value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an indication whether the object referenced by the current <see cref="T:System.WeakReference" /> object has been garbage collected.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -167,9 +210,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Gets or sets the target object.</summary>
         <value>The target object.</value>
-        <remarks>The target is potentially elligible for garbage collection although it may be reachable through this property.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After setting this property to the target object, make sure that there are no other strong references to the object; otherwise, it will not be collected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object (the target) referenced by the current <see cref="T:System.WeakReference" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TrackResurrection">
@@ -185,9 +234,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets whether this WeakReference is tracking the object's resurrection.</summary>
         <value>True if the WeakReference is tracking the target object's ressurection.</value>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the weak reference is a long weak reference and true was specified for the <paramref name="trackResurrection" /> parameter in the <see cref="T:System.WeakReference" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an indication whether the object referenced by the current <see cref="T:System.WeakReference" /> object is tracked after it is finalized.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

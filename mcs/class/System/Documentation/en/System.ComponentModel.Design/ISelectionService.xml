@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISelectionService" FullName="System.ComponentModel.Design.ISelectionService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ISelectionService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISelectionService" />
@@ -17,8 +18,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a component is selected, its viewable or editable properties are shown in the Properties window.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for a designer to select components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetComponentSelected">
@@ -37,10 +44,20 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to check whether a specific component is currently selected. This process is generally quicker than getting and parsing the entire list of selected components.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified component is currently selected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component is part of the user's current selection; otherwise, false.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to test. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSelectedComponents">
@@ -57,9 +74,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of components that are currently selected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that represents the current set of components that are selected.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PrimarySelection">
@@ -75,9 +98,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When multiple components are selected at design time, one of the objects is the primary selected object. Some operations behave differently depending on which selected component is the primary selected object. The primary selected object is typically the last object that was selected, but the primary object of a multiple component selection can be changed to any of the selected components. The primary selected object has a selection border that is distinct in appearance from the other selected objects. The specific type of visual distinction depends on the development environment's implementation of a selection user interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that is currently the primary selected object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectionChanged">
@@ -93,8 +122,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimize processing when handling this event, because processing that occurs within this event handler can significantly affect the overall performance of the form designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the current selection changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectionChanging">
@@ -110,8 +145,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimize processing when handling this event, because processing that occurs within this event handler can significantly affect the overall performance of the form designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the current selection is about to change.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectionCount">
@@ -127,9 +168,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the count of selected objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetSelectedComponents">
@@ -148,9 +192,16 @@
         <Parameter Name="components" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="components">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the array is null or does not contain any components, <see cref="M:System.ComponentModel.Design.ISelectionService.SetSelectedComponents(System.Collections.ICollection)" /> selects the top-level component in the designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the specified collection of components.</para>
+        </summary>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of components to select. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSelectedComponents">
@@ -170,10 +221,18 @@
         <Parameter Name="selectionType" Type="System.ComponentModel.Design.SelectionTypes" />
       </Parameters>
       <Docs>
-        <param name="components">To be added: an object of type 'Collections.ICollection'</param>
-        <param name="selectionType">To be added: an object of type 'SelectionTypes'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the array is null or does not contain any components, <see cref="M:System.ComponentModel.Design.ISelectionService.SetSelectedComponents(System.Collections.ICollection)" /> selects the top-level component in the designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the components from within the specified collection of components that match the specified selection type.</para>
+        </summary>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of components to select. </param>
+        <param name="selectionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value from the <see cref="T:System.ComponentModel.Design.SelectionTypes" /> enumeration. The default is <see cref="F:System.ComponentModel.Design.SelectionTypes.Normal" />. </param>
       </Docs>
     </Member>
   </Members>

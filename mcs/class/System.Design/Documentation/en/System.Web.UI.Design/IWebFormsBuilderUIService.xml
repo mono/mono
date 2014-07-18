@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebFormsBuilderUIService" FullName="System.Web.UI.Design.IWebFormsBuilderUIService">
   <TypeSignature Language="C#" Value="public interface IWebFormsBuilderUIService" />
   <AssemblyInfo>
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods to start specific user interfaces for building properties at design-time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BuildColor">
@@ -22,11 +26,22 @@
         <Parameter Name="initialColor" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="initialColor">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="initialColor" /> parameter should be a named color, or an RGB color expressed in HTML color format (#RRGGBB).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts a <see cref="T:System.Web.UI.Design.ColorBuilder" /> to build a color property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color that was selected. This value will be a named color, or an RGB color expressed in HTML color format (#RRGGBB).</para>
+        </returns>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control used to parent the dialog shown by the <see cref="T:System.Web.UI.Design.ColorBuilder" />. </param>
+        <param name="initialColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial color for the editor to pre-select. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,15 +63,27 @@
         <Parameter Name="options" Type="System.Web.UI.Design.UrlBuilderOptions" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="initialUrl">To be added.</param>
-        <param name="baseUrl">To be added.</param>
-        <param name="caption">To be added.</param>
-        <param name="filter">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Launches an editor to build a URL property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the URL returned by the <see cref="T:System.Web.UI.Design.UrlBuilder" />.</para>
+        </returns>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control used to parent the dialog shown by the <see cref="T:System.Web.UI.Design.UrlBuilder" />. </param>
+        <param name="initialUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial URL to display in the selection interface. </param>
+        <param name="baseUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URL used to construct relative URLs. </param>
+        <param name="caption">
+          <attribution license="cc4" from="Microsoft" modified="false" />A caption that presents a message in the selection interface. </param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter string to use to optionally filter the files displayed in the selection interface. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.UrlBuilderOptions" /> that indicates the options for the <see cref="T:System.Web.UI.Design.UrlBuilder" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

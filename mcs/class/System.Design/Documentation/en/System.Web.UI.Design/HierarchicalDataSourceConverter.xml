@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HierarchicalDataSourceConverter" FullName="System.Web.UI.Design.HierarchicalDataSourceConverter">
   <TypeSignature Language="C#" Value="public class HierarchicalDataSourceConverter : System.Web.UI.Design.DataSourceConverter" />
   <AssemblyInfo>
@@ -9,8 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.HierarchicalDataSourceConverter" /> class provides methods that can be used to retrieve a list of the hierarchical data sources that are accessible to the current design-time component.</para>
+      <para>The <see cref="T:System.Web.UI.Design.HierarchicalDataSourceConverter" /> type converter is used by Microsoft Visual Studio to provide the values that appear in the list of data sources in the <ui>Properties</ui> window.</para>
+      <block subset="none" type="note">
+        <para>You should never access a type converter directly. Instead, call the appropriate converter by using the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. For more information, see the examples in <see cref="T:System.ComponentModel.TypeConverter" />.</para>
+      </block>
+      <para>For more information about type converters, see the <see cref="T:System.ComponentModel.TypeConverter" /> base class and <format type="text/html"><a href="90373A3F-D8C8-492D-841C-945D62393C56">How to: Implement a Type Converter</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter that can retrieve a list of the hierarchical data sources that are accessible to the current component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +33,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.HierarchicalDataSourceConverter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsValidDataSource">
@@ -38,10 +53,20 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DataSourceConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method uses the <see cref="M:System.Web.UI.Design.HierarchicalDataSourceConverter.IsValidDataSource(System.ComponentModel.IComponent)" /> method to determine which components are available as standard accessible data sources. For the <see cref="T:System.Web.UI.Design.HierarchicalDataSourceConverter" /> class, a valid data source is a component that implements the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified component is a valid data source for this converter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="component" /> implements <see cref="T:System.Web.UI.IHierarchicalEnumerable" />; otherwise, false.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to check as a valid data source.</param>
       </Docs>
     </Member>
   </Members>

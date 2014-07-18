@@ -293,15 +293,13 @@ amd64_icompare_reg_membase: src1:i src2:b len:8
 amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
 amd64_save_sp_to_lmf: len:16
-tls_get: dest:i len:16
+tls_get: dest:i len:32
 tls_get_reg: dest:i src1:i len:32
 tls_set: src1:i len:16
 tls_set_reg: src1:i src2:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
-atomic_add_new_i4: src1:b src2:i dest:i len:32
-atomic_exchange_i4: src1:b src2:i dest:a len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
-atomic_add_new_i8: src1:b src2:i dest:i len:32
+atomic_exchange_i4: src1:b src2:i dest:a len:32
 atomic_exchange_i8: src1:b src2:i dest:a len:32
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 atomic_cas_i8: src1:b src2:i src3:a dest:a len:24
@@ -353,7 +351,6 @@ int_sub_imm: dest:i src1:i clob:1 len:8 nacl:10
 int_mul_imm: dest:i src1:i clob:1 len:32
 int_div_imm: dest:a src1:i clob:d len:32
 int_div_un_imm: dest:a src1:i clob:d len:32
-int_rem_imm: dest:a src1:a len:32 clob:d
 int_rem_un_imm: dest:d src1:i clob:a len:32
 int_and_imm: dest:i src1:i clob:1 len:8
 int_or_imm: dest:i src1:i clob:1 len:8

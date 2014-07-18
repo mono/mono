@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlBulkCopyColumnMappingCollection" FullName="System.Data.SqlClient.SqlBulkCopyColumnMappingCollection">
   <TypeSignature Language="C#" Value="public sealed class SqlBulkCopyColumnMappingCollection : System.Collections.CollectionBase" />
   <AssemblyInfo>
@@ -9,8 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Column mappings define the mapping between data source and the target table.</para>
+      <para>If mappings are not defined—that is, the <see cref="P:System.Data.SqlClient.SqlBulkCopy.ColumnMappings" /> collection is empty—the columns are mapped implicitly based on ordinal position. For this to work, source and target schemas must match. If they do not, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+      <para>If the <see cref="P:System.Data.SqlClient.SqlBulkCopy.ColumnMappings" /> collection is not empty, not every column present in the data source has to be specified. Those not mapped by the collection are ignored.</para>
+      <para>You can refer to source and target columns by either name or ordinal. You can mix by-name and by-ordinal column references in the same mappings collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Collection of <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> objects that inherits from <see cref="T:System.Collections.CollectionBase" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -26,10 +36,17 @@
         <Parameter Name="bulkCopyColumnMapping" Type="System.Data.SqlClient.SqlBulkCopyColumnMapping" />
       </Parameters>
       <Docs>
-        <param name="bulkCopyColumnMapping">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified mapping to the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object.</para>
+        </returns>
+        <param name="bulkCopyColumnMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object that describes the mapping to be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -46,11 +63,22 @@
         <Parameter Name="destinationColumnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="sourceColumnIndex">To be added.</param>
-        <param name="destinationColumnIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mappings in a collection must be uniform: either all integer/integer pairs, all string/string pairs, all integer/string pairs, or all string/integer pairs. If you try to add a mapping that is different from others already in the collection, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> and adds it to the collection, using ordinals to specify both source and destination columns.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column mapping.</para>
+        </returns>
+        <param name="sourceColumnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ordinal position of the source column within the data source.</param>
+        <param name="destinationColumnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ordinal position of the destination column within the destination table.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -67,11 +95,22 @@
         <Parameter Name="destinationColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceColumnIndex">To be added.</param>
-        <param name="destinationColumn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mappings in a collection must be uniform: either all integer/integer pairs, all string/string pairs, all integer/string pairs, or all string/integer pairs. If you try to add a mapping that is different from others already in the collection, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> and adds it to the collection, using an ordinal for the source column and a string for the destination column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column mapping.</para>
+        </returns>
+        <param name="sourceColumnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ordinal position of the source column within the data source.</param>
+        <param name="destinationColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the destination column within the destination table.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -88,11 +127,22 @@
         <Parameter Name="destinationColumnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="sourceColumn">To be added.</param>
-        <param name="destinationColumnIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mappings in a collection must be uniform: either all integer/integer pairs, all string/string pairs, all integer/string pairs, or all string/integer pairs. If you try to add a mapping that is different from others already in the collection, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> and adds it to the collection, using a column name to describe the source column and an ordinal to specify the destination column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column mapping.</para>
+        </returns>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column within the data source.</param>
+        <param name="destinationColumnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ordinal position of the destination column within the destination table.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -109,11 +159,22 @@
         <Parameter Name="destinationColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceColumn">To be added.</param>
-        <param name="destinationColumn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mappings in a collection must be uniform: either all integer/integer pairs, all string/string pairs, all integer/string pairs, or all string/integer pairs. If you try to add a mapping that is different from others already in the collection, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> and adds it to the collection, using column names to specify both source and destination columns.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column mapping.</para>
+        </returns>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column within the data source.</param>
+        <param name="destinationColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the destination column within the destination table.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -127,8 +188,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Clear" /> method is most commonly used when you use a single <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> instance to process more than one bulk copy operation. If you create column mappings for one bulk copy operation, you must clear the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" /> after the <see cref="Overload:System.Data.SqlClient.SqlBulkCopy.WriteToServer" /> method and before processing the next bulk copy.</para>
+          <para>Performing several bulk copies using the same <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> instance will usually be more efficient from a performance point of view than using a separate <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> for each operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the contents of the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -144,10 +212,17 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlBulkCopyColumnMapping" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a specified <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified mapping exists in the collection; otherwise false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A valid <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -164,10 +239,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" /> to an array of <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> items, starting at a particular index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> array that is the destination of the elements copied from <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" />. The array must have zero-based indexing. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -183,10 +263,17 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlBulkCopyColumnMapping" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the specified <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the column mapping, or -1 if the column mapping is not found in the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object for which to search.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -203,10 +290,16 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlBulkCopyColumnMapping" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Insert a new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> at the index specified.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Integer value of the location within the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" />  at which to insert the new <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" />.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object to be inserted in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -241,9 +334,18 @@
         <Parameter Name="value" Type="System.Data.SqlClient.SqlBulkCopyColumnMapping" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Remove(System.Data.SqlClient.SqlBulkCopyColumnMapping)" /> method is most commonly used when you use a single <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> instance to process more than one bulk copy operation. If you create column mappings for one bulk copy operation, you must remove mappings that no longer apply after the <see cref="Overload:System.Data.SqlClient.SqlBulkCopy.WriteToServer" /> method is called and before defining mapping for the next bulk copy. You can clear the entire collection by using the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Clear" /> method, or remove mappings individually using the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Remove(System.Data.SqlClient.SqlBulkCopyColumnMapping)" /> method or the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.RemoveAt(System.Int32)" /> method.</para>
+          <para>Performing several bulk copies using the same <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> instance will usually be more efficient from a performance point of view than using a separate <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> for each operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> element from the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object to be removed from the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -259,9 +361,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.RemoveAt(System.Int32)" /> method is most commonly used when you use a single <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> instance to process more than one bulk copy operation. If you create column mappings for one bulk copy operation, you must remove mappings that no longer apply after the <see cref="Overload:System.Data.SqlClient.SqlBulkCopy.WriteToServer" /> method is called and before defining mapping for the next bulk copy. You can clear the entire collection by using the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Clear" /> method, or remove mappings individually using the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.Remove(System.Data.SqlClient.SqlBulkCopyColumnMapping)" /> method or the <see cref="M:System.Data.SqlClient.SqlBulkCopyColumnMappingCollection.RemoveAt(System.Int32)" /> method.</para>
+          <para>Performing several bulk copies using the same <see cref="T:System.Data.SqlClient.SqlBulkCopy" />  instance will usually be more efficient from a performance point of view than using a separate <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> for each operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the mapping at the specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the <see cref="T:System.Data.SqlClient.SqlBulkCopyColumnMapping" /> object to be removed from the collection.</param>
       </Docs>
     </Member>
   </Members>

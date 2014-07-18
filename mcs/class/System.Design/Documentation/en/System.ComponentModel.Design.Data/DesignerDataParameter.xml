@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerDataParameter" FullName="System.ComponentModel.Design.Data.DesignerDataParameter">
   <TypeSignature Language="C#" Value="public sealed class DesignerDataParameter" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataParameter" /> class is one of several types that represent the schema of a data store at design-time. These schema items are made available to controls by designers implementing the <see cref="T:System.ComponentModel.Design.Data.IDataEnvironment" /> interface. Controls access schema objects by calling the <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetConnectionSchema(System.ComponentModel.Design.Data.DesignerDataConnection)" /> method of the interface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataParameter" /> class represents the parameters required to call a stored procedure in the data store. The <see cref="P:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.Parameters" /> property contains a collection of <see cref="T:System.ComponentModel.Design.Data.DesignerDataParameter" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter for a stored procedure. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,11 +33,17 @@
         <Parameter Name="direction" Type="System.Data.ParameterDirection" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="dataType">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataParameter" /> class with the specified name, data type, and input/output semantics. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter.</param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DbType" /> values.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="DataType">
@@ -42,9 +56,15 @@
         <ReturnType>System.Data.DbType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Data.DesignerDataParameter.DataType" /> property contains the type of data required by the underlying data store.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the database type of the parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -57,9 +77,15 @@
         <ReturnType>System.Data.ParameterDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ComponentModel.Design.Data.DesignerDataParameter.Direction" /> property to indicate whether a parameter is passed into a stored procedure, returned from a stored procedure, or both.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the parameter is input-only, output-only, bidirectional, or a stored procedure return-value parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -72,9 +98,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the parameter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

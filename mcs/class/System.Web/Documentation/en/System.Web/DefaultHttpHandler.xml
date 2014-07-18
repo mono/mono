@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultHttpHandler" FullName="System.Web.DefaultHttpHandler">
   <TypeSignature Language="C#" Value="public class DefaultHttpHandler : System.Web.IHttpAsyncHandler" />
   <AssemblyInfo>
@@ -13,9 +14,27 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.DefaultHttpHandler" /> object intercepts incoming requests in the HTTP pipeline when both request interception has been configured through Internet Information Services (IIS) 6.0 and no explicit <format type="text/html"><a href="24ca01f3-7141-4fdc-acac-71c0733cf6c2">httpHandlers</a></format> bindings apply to the requested extension. </para>
+      <para>Request interception can be set up through the wildcard application mapping feature introduced in IIS 6.0. For more information, search the <see cref="http://go.microsoft.com/fwlink/?linkid=37118">MSDN Library</see> for information about using wildcard application maps to remap a URL. </para>
+      <para>The <see cref="T:System.Web.DefaultHttpHandler" /> class implements the <see cref="T:System.Web.IHttpAsyncHandler" /> interface to provide asynchronous request processing. For general information about HTTP handlers, see <format type="text/html"><a href="f540bdeb-d22e-4e1d-ba8a-fe6c9926283b">HTTP Handlers and HTTP Modules Overview</a></format>. Additionally, for more information see the following: </para>
+      <list type="bullet">
+        <item>
+          <para>About creating asynchronous HTTP handlers, see <format type="text/html"><a href="1b5c4a27-599b-44d0-8a06-72edc6765aa9">How to: Create an Asynchronous HTTP Handler</a></format>. </para>
+        </item>
+        <item>
+          <para>About registering HTTP handlers, see <format type="text/html"><a href="d5633f9a-03fb-4ccc-a799-dc67d656fa60">How to: Register HTTP Handlers</a></format>. </para>
+        </item>
+      </list>
+      <para>Classes can derive from the <see cref="T:System.Web.DefaultHttpHandler" /> class to provide customized handling of requests. An asynchronous HTTP handler that is derived from the <see cref="T:System.Web.DefaultHttpHandler" /> could override the <see cref="M:System.Web.DefaultHttpHandler.BeginProcessRequest(System.Web.HttpContext,System.AsyncCallback,System.Object)" /> method to change how requests are processed.</para>
+      <para>A <see cref="T:System.Web.DefaultHttpHandler" /> does not use ASP.NET errors. Existing content that uses IIS errors or a propriety ISAPI custom error mechanism would work unchanged.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the properties and methods of a default HTTP handler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +42,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.DefaultHttpHandler" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,13 +65,25 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When creating an HTTP handler for asynchronous use, your handler must implement the asynchronous <see cref="M:System.Web.DefaultHttpHandler.BeginProcessRequest(System.Web.HttpContext,System.AsyncCallback,System.Object)" /> and <see cref="M:System.Web.DefaultHttpHandler.EndProcessRequest(System.IAsyncResult)" /> methods that are called asynchronously by ASP.NET. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates an asynchronous call to the HTTP handler.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that contains information about the status of the process.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that provides references to intrinsic server objects that are used to service HTTP requests.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to call when the asynchronous method call is complete. If <paramref name="callback" /> is null, the delegate is not called.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any state data that is needed to process the request.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,10 +96,16 @@
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.DefaultHttpHandler.Context" /> property provides access to the current <see cref="T:System.Web.HttpContext" /> object for derived classes. An <see cref="T:System.Web.HttpContext" /> object provides access to the intrinsic <see cref="P:System.Web.HttpApplication.Request" />, <see cref="P:System.Web.HttpApplication.Response" />, and <see cref="P:System.Web.HttpApplication.Server" /> properties for the request. For more information about accessing contextual information, see <see cref="T:System.Web.HttpContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the context that is associated with the current <see cref="T:System.Web.DefaultHttpHandler" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +121,17 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.DefaultHttpHandler.EndProcessRequest(System.IAsyncResult)" /> method to throw any exceptions that are caught during the asynchronous process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an end method for an asynchronous process.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains information about the status of the process.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +144,16 @@
         <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.DefaultHttpHandler.ExecuteUrlHeaders" /> property returns an empty collection unless it is populated in a class that is derived from the <see cref="T:System.Web.DefaultHttpHandler" /> class. The headers that are added are appended to the collection of headers in the request before passing the request back to Internet Information Services (IIS).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of request headers and request values to transfer along with the request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +166,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To explicitly set the <see cref="P:System.Web.DefaultHttpHandler.IsReusable" /> property to true or false, override the <see cref="P:System.Web.DefaultHttpHandler.IsReusable" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value indicating that another request can use the current instance of the <see cref="T:System.Web.DefaultHttpHandler" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,9 +189,34 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preconditions are specified by the client in the request-header fields and are evaluated on the Web server. For example, by using preconditions, clients can prevent a requested method (for example, GET) from being applied to a resource other than the one intended. For more information, see section 14, "Header Field Definitions," in the <see cref="http://go.microsoft.com/fwlink/?LinkID=73147">Hypertext Transfer Protocol -- HTTP/1.1</see> specification on the World Wide Web Consortium (W3C) Web site.</para>
+          <para>The <see cref="M:System.Web.DefaultHttpHandler.OnExecuteUrlPreconditionFailure" /> method is called when preconditions prevent the <see cref="T:System.Web.DefaultHttpHandler" /> object from processing a request. A deriving class might override the <see cref="M:System.Web.DefaultHttpHandler.OnExecuteUrlPreconditionFailure" /> method to throw an exception when the preconditions fail. The <see cref="T:System.Web.DefaultHttpHandler" /> does not throw an exception in the <see cref="M:System.Web.DefaultHttpHandler.OnExecuteUrlPreconditionFailure" /> method.</para>
+          <para>Any of the following will cause the preconditions to fail:</para>
+          <list type="bullet">
+            <item>
+              <para>Calling <see cref="Overload:System.Web.HttpResponse.Write" />.</para>
+            </item>
+            <item>
+              <para>Calling <see cref="M:System.Web.HttpResponse.AddHeader(System.String,System.String)" />.</para>
+            </item>
+            <item>
+              <para>Calling <see cref="M:System.Web.HttpResponse.Flush" />.</para>
+            </item>
+            <item>
+              <para>Changing the cache policy for the response.</para>
+            </item>
+            <item>
+              <para>Adding a <see cref="T:System.IO.Stream" /> object as a filter to the <see cref="P:System.Web.HttpResponse.Filter" /> property.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when preconditions prevent the <see cref="T:System.Web.DefaultHttpHandler" /> object from processing a request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +230,37 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.DefaultHttpHandler.OverrideExecuteUrlPath" /> method returns null unless it is overridden in a class that is derived from the <see cref="T:System.Web.DefaultHttpHandler" /> class.</para>
+          <para>The <see cref="M:System.Web.DefaultHttpHandler.OverrideExecuteUrlPath" /> method is called only if ASP.NET is running in worker process isolation mode on IIS 6.0, and if the response was not modified before the <see cref="T:System.Web.DefaultHttpHandler" /> object was called. The response is modified by any of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Calling <see cref="Overload:System.Web.HttpResponse.Write" />.</para>
+            </item>
+            <item>
+              <para>Calling <see cref="M:System.Web.HttpResponse.AddHeader(System.String,System.String)" />.</para>
+            </item>
+            <item>
+              <para>Calling <see cref="M:System.Web.HttpResponse.Flush" />.</para>
+            </item>
+            <item>
+              <para>Changing the cache policy for the response.</para>
+            </item>
+            <item>
+              <para>Adding a <see cref="T:System.IO.Stream" /> object as a filter to the <see cref="P:System.Web.HttpResponse.Filter" /> property.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the target URL for the current request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The overridden URL to use in the request; or null if an overridden URL is not provided.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,10 +276,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.DefaultHttpHandler.ProcessRequest(System.Web.HttpContext)" /> method should not be called synchronously. Classes that are derived from the <see cref="T:System.Web.DefaultHttpHandler" /> class can override the <see cref="M:System.Web.DefaultHttpHandler.ProcessRequest(System.Web.HttpContext)" /> to provide customized request processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a <see cref="T:System.Web.DefaultHttpHandler" /> object to process of HTTP Web requests.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that provides references to intrinsic server objects used to service HTTP requests.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

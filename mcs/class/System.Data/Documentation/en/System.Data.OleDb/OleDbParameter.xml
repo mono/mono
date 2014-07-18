@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbParameter" FullName="System.Data.OleDb.OleDbParameter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OleDbParameter : System.Data.Common.DbParameter, ICloneable" />
   <AssemblyInfo>
@@ -22,8 +23,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The OLE DB.NET Framework Data Provider uses positional parameters that are marked with a question mark (?) instead of named parameters.</para>
+      <para>When querying an Oracle database using the Microsoft OLE DB Provider for Oracle (MSDAORA) and the OLE DB.NET Framework Data Provider, using the LIKE clause to query values in fixed-length fields may not return all expected matches. The reason is that when Oracle matches values for fixed-length fields in a LIKE clause, it matches the entire length of the string, including any padding trailing spaces. For example, if a table in an Oracle database contains a field named "Field1" that is defined as char(3), and you enter the value "a" into a row of that table, the following code does not return the row.</para>
+      <code>Dim queryString As String = "SELECT * FROM Table1 WHERE Field1 LIKE ?"
+Dim command As OleDbCommand = New OleDbCommand(queryString, connection)
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a"
+Dim reader As OleDbDataReader = command.ExecuteReader()</code>
+      <code>string queryString = "SELECT * FROM Table1 WHERE Field1 LIKE ?";
+OleDbCommand command = new OleDbCommand(queryString, connection);
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a";
+OleDbDataReader reader = command.ExecuteReader();</code>
+      <para>This is because Oracle stores the column value as "a  " (padding "a", with trailing spaces, to the fixed field length of 3), which Oracle does not treat as a match for the parameter value of "a" in the case of a LIKE comparison of fixed-length fields. </para>
+      <para>To resolve this problem, append a percentage ("%") wildcard character to the parameter value ("a%"), or use an SQL = comparison instead.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter to an <see cref="T:System.Data.OleDb.OleDbCommand" /> and optionally its mapping to a <see cref="T:System.Data.DataSet" /> column. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +50,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,10 +70,18 @@
         <Parameter Name="dataType" Type="System.Data.OleDb.OleDbType" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'OleDbType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data type, and if appropriate, <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> and <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> are inferred from the value of the <paramref name="dataType" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name and data type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,10 +97,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use caution when you are using this overload of the <see cref="T:System.Data.OleDb.OleDbParameter" /> constructor to specify integer parameter values. Because this overload takes a <paramref name="value" /> of type <see cref="T:System.Object" />, you must convert the integral value to an <see cref="T:System.Object" /> type when the value is zero, as the following C# example demonstrates.</para>
+          <code>Parameter = new OleDbParameter("@pname", Convert.ToInt32(0));</code>
+          <para>If you do not perform this conversion, the compiler assumes that you are trying to call the <see cref="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType)" /> constructor overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name and the value of the new <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the new <see cref="T:System.Data.OleDb.OleDbParameter" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,11 +127,20 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'OleDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> is inferred from the value of the <paramref name="dataType" /> parameter if it is not explicitly set in the <paramref name="size" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, and length.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,12 +158,22 @@
         <Parameter Name="srcColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'OleDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="srcColumn">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> is inferred from the value of the <paramref name="dataType" /> parameter if it is not explicitly set in the <paramref name="size" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, and source column name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="srcColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,18 +197,34 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="direction">To be added: an object of type 'Data.ParameterDirection'</param>
-        <param name="isNullable">To be added: an object of type 'bool'</param>
-        <param name="precision">To be added: an object of type 'byte'</param>
-        <param name="scale">To be added: an object of type 'byte'</param>
-        <param name="srcColumn">To be added: an object of type 'string'</param>
-        <param name="srcVersion">To be added: an object of type 'Data.DataRowVersion'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> and <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> are inferred from the value of the <paramref name="dataType" /> parameter if they are not explicitly set in the <paramref name="size" /> and <paramref name="precision" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, source column name, parameter direction, numeric precision, and other properties.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values. </param>
+        <param name="isNullable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the value of the field can be null; otherwise false. </param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved. </param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved. </param>
+        <param name="srcColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column. </param>
+        <param name="srcVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.OleDb.OleDbParameter" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,18 +260,34 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <param name="size">To be added.</param>
-        <param name="direction">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="sourceVersion">To be added.</param>
-        <param name="sourceColumnNullMapping">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> and <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> are inferred from the value of the <paramref name="dataType" /> parameter if they are not explicitly set in the <paramref name="size" /> and <paramref name="precision" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, source column name, parameter direction, numeric precision, and other properties.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values. </param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</param>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column.</param>
+        <param name="sourceVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values.</param>
+        <param name="sourceColumnNullMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the source column is nullable; false if it is not.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.OleDb.OleDbParameter" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DbType">
@@ -209,9 +299,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DbType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> and <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> changes the <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> to a supporting <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -227,9 +324,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.ParameterDirection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.ParameterDirection" /> is output, and execution of the associated <see cref="T:System.Data.OleDb.OleDbCommand" /> does not return a value, the <see cref="T:System.Data.OleDb.OleDbParameter" /> contains a null value.</para>
+          <para>Output, InputOut, and ReturnValue parameters returned by calling <see cref="M:System.Data.OleDb.OleDbCommand.ExecuteReader" /> cannot be accessed until you call <see cref="M:System.Data.OleDb.OleDbDataReader.Close" /> or Dispose on the <see cref="T:System.Data.OleDb.OleDbDataReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter is input-only, output-only, bidirectional, or a stored procedure return-value parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -250,9 +354,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null values are handled using the <see cref="T:System.DBNull" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter accepts null values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -268,9 +378,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OleDbType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> and <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> changes the <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> to a supporting <see cref="T:System.Data.OleDb.OleDbType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="T:System.Data.OleDb.OleDbType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.OleDb.OleDbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,9 +411,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OLE DB .NET Provider uses positional parameters that are marked with a question mark (?) instead of named parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -312,9 +435,24 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> property is only used for decimal and numeric input parameters. </para>
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> property should be set only for Decimal and Numeric parameters prior to calling the <see cref="M:System.Data.OleDb.OleDbCommand.Prepare" /> method of the <see cref="T:System.Data.OleDb.OleDbCommand" />.</para>
+          <para>Setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, truncate, or round data.</para>
+          <para>The Precision property only affects parameters whose <see cref="T:System.Data.OleDb.OleDbType" /> is Decimal, Numeric, or VarNumeric. For other data types, Precision is ignored.</para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> or <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> of <see cref="T:System.Decimal" /> parameter values. This can cause truncated data to be inserted at the data source. If you are using .NET Framework version 1.0, validate the <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> and <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> of <see cref="T:System.Decimal" /> values before setting the parameter value. <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> values that exceed the <see cref="T:System.Decimal" /> parameter scale are still truncated.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of digits used to represent the <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,8 +475,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> and <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> properties of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetOleDbType">
@@ -352,8 +496,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> and <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> properties of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scale">
@@ -365,9 +515,23 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> property is only used for decimal and numeric input parameters before calling the <see cref="M:System.Data.OleDb.OleDbCommand.Prepare" /> method of the <see cref="T:System.Data.OleDb.OleDbCommand" /> and to specify numeric output parameters.</para>
+          <para>Setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, truncate, or round data.</para>
+          <para>When using SQL Server Native Client 10 (or later), to bind a parameter whose type is Decimal, Numeric, VarNumeric, DBDate, or DBTimeStamp, you must manually specify an appropriate scale value.</para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> or <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> of <see cref="T:System.Decimal" /> parameter values. This can cause truncated data to be inserted at the data source. If you are using .NET Framework version 1.0, validate the <see cref="P:System.Data.OleDb.OleDbParameter.Precision" /> and <see cref="T:System.Data.OleDb.OleDbParameter" /> of <see cref="T:System.Decimal" /> values before setting the parameter value. <see cref="P:System.Data.OleDb.OleDbParameter.Scale" /> values that exceed the <see cref="T:System.Decimal" /> parameter scale are still truncated.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -388,9 +552,21 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> property is used for binary and string types.</para>
+          <para>For nonstring data types and ANSI string data, the <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> property refers to the number of bytes. For Unicode string data, <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> refers to the number of characters. The count for strings does not include the terminating character.</para>
+          <para>For variable-length data types, <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> describes the maximum amount of data to transmit to the server. For example, for a Unicode string value, <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> could be used to limit the amount of data sent to the server to the first 100 characters.</para>
+          <para>For bidirectional and output parameters, and return values, you must set the value of <see cref="P:System.Data.OleDb.OleDbParameter.Size" />. This is not required for input parameters, and if not explicitly set, the value of is inferred from the actual size of the specified parameter when a parameterized statement is executed.</para>
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.DbType" />, <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" />, and <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> properties of a parameter can be inferred by setting <see cref="P:System.Data.OleDb.OleDbParameter.Value" />. Therefore, you are not required to specify them. However, they are not exposed in <see cref="T:System.Data.OleDb.OleDbParameter" /> property settings. For example, if the size of the parameter has been inferred, <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> does not contain the inferred value after statement execution.</para>
+          <para>For fixed-length data types, the value of <see cref="P:System.Data.OleDb.OleDbParameter.Size" /> is ignored. It can be retrieved for informational purposes, and returns the maximum amount of bytes the provider uses when transmitting the value of the parameter to the server.</para>
+          <para>If the size of the value supplied for an <see cref="T:System.Data.OleDb.OleDbParameter" /> exceeds the specified <see cref="P:System.Data.OleDb.OleDbParameter.Size" />, the <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> of the <see cref="T:System.Data.OleDb.OleDbParameter" /> contains the specified value, truncated to the size of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, of the data within the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -406,9 +582,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumn" /> is set to anything other than an empty string, the value of the parameter is retrieved from the column with the <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumn" /> name. If <see cref="P:System.Data.OleDb.OleDbParameter.Direction" /> is set to Input, the value is taken from the <see cref="T:System.Data.DataSet" />. If <see cref="P:System.Data.OleDb.OleDbParameter.Direction" /> is set to Output, the value is taken from the data source. A <see cref="P:System.Data.OleDb.OleDbParameter.Direction" /> of InputOutput is a combination of both.</para>
+          <para>For more information about how to use the <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumn" /> property, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format> and <format type="text/html"><a href="d1bd9a8c-0e29-40e3-bda8-d89176b72fb1">Updating the Database with a DataAdapter and the DataSet</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the source column mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see cref="P:System.Data.OleDb.OleDbParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -425,9 +608,23 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" /> is used by the <see cref="T:System.Data.Common.DbCommandBuilder" /> to correctly generate update commands when dealing with nullable columns. Generally, use of <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" /> is limited to developers inheriting from <see cref="T:System.Data.Common.DbCommandBuilder" />.</para>
+          <para>
+            <see cref="T:System.Data.Common.DbCommandBuilder" /> uses this property to determine whether the source column is nullable, and sets this property to true if it is nullable, and false if it is not. When <see cref="T:System.Data.Common.DbCommandBuilder" /> is generating its Update statement, it examines the <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" /> for each parameter. If the property is true, <see cref="T:System.Data.Common.DbCommandBuilder" /> generates a WHERE clauses like the following (in this query expression, "FieldName" represents the name of the field):</para>
+          <code>((@IsNull_FieldName = 1 AND FieldName IS NULL) OR 
+  (FieldName = @Original_FieldName))</code>
+          <para>If <see cref="P:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" /> for the field is false, <see cref="T:System.Data.Common.DbCommandBuilder" /> generates the following WHERE clause:</para>
+          <code>FieldName = @OriginalFieldName</code>
+          <para>In addition, @IsNull_FieldName contains 1 if the source field contains null, and 0 if it does not. This mechanism allows for a performance optimization in SQL Server, and provides for common code that works across multiple providers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets or gets a value which indicates whether the source column is nullable. This allows <see cref="T:System.Data.Common.DbCommandBuilder" /> to correctly generate Update statements for nullable columns.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceVersion">
@@ -439,9 +636,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DataRowVersion'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by <see cref="P:System.Data.OleDb.OleDbDataAdapter.UpdateCommand" /> during an update operation to determine whether the parameter value is set to Current or Original. This lets primary keys be updated. This property is set to the version of the <see cref="T:System.Data.DataRow" /> used by the <see cref="P:System.Data.DataRow.Item" /> property, or the <see cref="M:System.Data.DataRow.GetChildRows(System.String,System.Data.DataRowVersion)" /> method of the <see cref="T:System.Data.DataRow" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when you load <see cref="P:System.Data.OleDb.OleDbParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -460,9 +663,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.OleDb.OleDbParameter" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Object" /> that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -473,9 +685,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -491,9 +709,19 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For input parameters, the value is bound to the <see cref="T:System.Data.OleDb.OleDbCommand" /> that is sent to the server. For output and return value parameters, the value is set on completion of the <see cref="T:System.Data.OleDb.OleDbCommand" /> and after the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is closed.</para>
+          <para>When you send a null parameter value to the server, you must specify <see cref="T:System.DBNull" />, not null. The null value in the system is an empty object that has no value. <see cref="T:System.DBNull" /> is used to represent null values.</para>
+          <para>If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server. The provider tries to convert any type of value if it supports the <see cref="T:System.IConvertible" /> interface. Conversion errors may result if the specified type is not compatible with the value.</para>
+          <para>Both the <see cref="P:System.Data.OleDb.OleDbParameter.DbType" /> and <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> properties can be inferred by setting the Value.</para>
+          <para>The <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> property is overwritten by the Update method of <see cref="T:System.Data.IDbDataAdapter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StrongNamePublicKeyBlob" FullName="System.Security.Permissions.StrongNamePublicKeyBlob">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class StrongNamePublicKeyBlob" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit StrongNamePublicKeyBlob extends System.Object" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class facilitates the use of strong names for identification purposes.</para>
+      <para>For a complete description of strong names, see <see cref="T:System.Security.Policy.StrongName" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the public key information (called a blob) for a strong name. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +45,13 @@
         <Parameter Name="publicKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.StrongNamePublicKeyBlob" /> class with raw bytes of the public key blob.</para>
+        </summary>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes representing the raw public key data. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -58,10 +70,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the current public key blob is equal to the specified public key blob.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the public key blob of the current object is equal to the public key blob of the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing a public key blob. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -78,9 +97,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Hash functions map binary strings of an arbitrary length to small binary strings of a fixed length, known as hash values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code based on the public key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code based on the public key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -97,9 +125,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a string representation of the public key blob.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hexadecimal version of the public key blob.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

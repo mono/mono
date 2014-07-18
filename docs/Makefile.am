@@ -82,7 +82,7 @@ TOOL_MAKE=$(MAKE) -f $(srcdir)/docs.make topdir=$(srcdir)/../mcs srcdir=$(srcdir
 monoapi.zip: monoapi.tree
 
 monoapi.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/toc.xml $(srcdir)/deploy/.stamp 
-	-mkdir deploy
+	-mkdir -p deploy
 	cp -f $(srcdir)/api-style.css deploy
 	$(TOOL_MAKE) $@
 

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceType" FullName="System.Security.AccessControl.ResourceType">
   <TypeSignature Language="C#" Value="public enum ResourceType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ResourceType extends System.Enum" />
@@ -10,9 +11,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the defined native object types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DSObject">
@@ -27,8 +31,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A directory service (DS) object or a property set or property of a directory service object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DSObjectAll">
@@ -43,8 +50,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A directory service object and all of its property sets and properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileObject">
@@ -59,8 +69,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file or directory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KernelObject">
@@ -75,8 +88,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local kernel object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LMShare">
@@ -91,8 +107,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A network share.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Printer">
@@ -107,8 +126,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A printer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProviderDefined">
@@ -123,8 +145,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object defined by a provider.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RegistryKey">
@@ -139,8 +164,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RegistryWow6432Key">
@@ -155,8 +183,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object for a registry entry under WOW64.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Service">
@@ -171,8 +202,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -187,8 +221,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown object type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WindowObject">
@@ -203,8 +240,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A window station or desktop object on the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WmiGuidObject">
@@ -219,8 +259,11 @@
         <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows Management Instrumentation (WMI) object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ErrorEventArgs" FullName="System.IO.ErrorEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ErrorEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ErrorEventArgs extends System.EventArgs" />
@@ -15,8 +16,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.IO.ErrorEventArgs" /> contains the <see cref="T:System.Exception" /> that caused the <see cref="E:System.IO.FileSystemWatcher.Error" /> event. This class provides the <see cref="M:System.IO.ErrorEventArgs.GetException" /> method to retrieve the exception.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.IO.FileSystemWatcher.Error" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +41,13 @@
         <Parameter Name="exception" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="exception">To be added: an object of type 'Exception'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.ErrorEventArgs" /> class.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Exception" /> that represents the error that occurred. </param>
       </Docs>
     </Member>
     <Member MemberName="GetException">
@@ -52,9 +64,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Exception" /> that represents the error that occurred.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Exception" /> that represents the error that occurred.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

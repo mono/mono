@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableRow" FullName="System.Web.UI.WebControls.TableRow">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TableRow : System.Web.UI.WebControls.WebControl" />
   <AssemblyInfo>
@@ -31,8 +32,177 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.TableRow" /> class represents a row in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+      <para>This class allows you to control how the contents of the row are displayed. The alignment of the contents in the row are specified by setting the <see cref="P:System.Web.UI.WebControls.TableRow.HorizontalAlign" /> and <see cref="P:System.Web.UI.WebControls.TableRow.VerticalAlign" /> properties.</para>
+      <para>You can programmatically manage the cells in the row by using the <see cref="P:System.Web.UI.WebControls.TableRow.Cells" /> collection. The <see cref="P:System.Web.UI.WebControls.TableRow.Cells" /> collection is a collection of <see cref="T:System.Web.UI.WebControls.TableCell" /> objects that represent the cells in the row.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.TableCell" /> control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="fa2aa14d-a461-492e-9a79-c990904613ef">Validation ASP.NET Controls</a></format>.</para>
+      </block>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:TableRow
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    TableSection="TableHeader|<codeFeaturedElement>TableBody</codeFeaturedElement>|TableFooter"
+    ToolTip="string"
+    VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+        &lt;asp:TableCell
+            AccessKey="string"
+            AssociatedHeaderCellID="string"
+            BackColor="color name|#dddddd"
+            BorderColor="color name|#dddddd"
+            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|
+                Groove|Ridge|Inset|Outset"
+            BorderWidth="size"
+            ColumnSpan="integer"
+            CssClass="string"
+            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Names="string"
+            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Size="string|Smaller|Larger|XX-Small|
+                X-Small|Small|Medium|Large|X-Large|XX-Large"
+            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            ForeColor="color name|#dddddd"
+            Height="size"
+            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+            ID="string"
+            OnDataBinding="DataBinding event handler"
+            OnDisposed="Disposed event handler"
+            OnInit="Init event handler"
+            OnLoad="Load event handler"
+            OnPreRender="PreRender event handler"
+            OnUnload="Unload event handler"
+            RowSpan="integer"
+            runat="server"
+            SkinID="string"
+            Style="string"
+            TabIndex="integer"
+            Text="string"
+            ToolTip="string"
+            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            Width="size"
+            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+        /&gt;
+        &lt;asp:TableHeaderCell
+            AbbreviatedText="string"
+            AccessKey="string"
+            AssociatedHeaderCellID="string"
+            BackColor="color name|#dddddd"
+            BorderColor="color name|#dddddd"
+            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|
+                Groove|Ridge|Inset|Outset"
+            BorderWidth="size"
+            CategoryText="string"
+            ColumnSpan="integer"
+            CssClass="string"
+            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Names="string"
+            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Size="string|Smaller|Larger|XX-Small|
+                X-Small|Small|Medium|Large|X-Large|XX-Large"
+            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+            ForeColor="color name|#dddddd"
+            Height="size"
+            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+            ID="string"
+            OnDataBinding="DataBinding event handler"
+            OnDisposed="Disposed event handler"
+            OnInit="Init event handler"
+            OnLoad="Load event handler"
+            OnPreRender="PreRender event handler"
+            OnUnload="Unload event handler"
+            RowSpan="integer"
+            runat="server"
+            Scope="<codeFeaturedElement>NotSet</codeFeaturedElement>|Row|Column"
+            SkinID="string"
+            Style="string"
+            TabIndex="integer"
+            Text="string"
+            ToolTip="string"
+            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            Width="size"
+            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+        /&gt;
+&lt;/asp:TableRow&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a row in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +211,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TableRow" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TableRow" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +232,18 @@
         <ReturnType>System.Web.UI.WebControls.TableCellCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableCellCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to programmatically control a collection of <see cref="T:System.Web.UI.WebControls.TableCell" /> objects that represent the cells from a row of the <see cref="T:System.Web.UI.WebControls.Table" /> control. You can programmatically add, insert, or remove a <see cref="T:System.Web.UI.WebControls.TableCell" /> object from the collection.</para>
+          <block subset="none" type="note">
+            <para>This property is only used when building <see cref="T:System.Web.UI.WebControls.Table" /> controls programmatically. At design time, this property is set by declaring <see cref="T:System.Web.UI.WebControls.TableCell" /> objects.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.UI.WebControls.TableCell" /> objects that represent the cells of a row in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +266,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TableRow.CreateControlCollection" /> method creates a new <see cref="T:System.Web.UI.ControlCollection" /> object that holds the <see cref="T:System.Web.UI.WebControls.TableRow" /> cells.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.TableRow.CreateControlCollection" /> method is primarily of interest to control developers extending the functionality of the <see cref="T:System.Web.UI.WebControls.TableRow" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object for the <see cref="T:System.Web.UI.WebControls.TableRow" /> control. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> object that contains the <see cref="T:System.Web.UI.WebControls.TableRow" /> control's child server controls.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +293,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Style" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> object for the <see cref="T:System.Web.UI.WebControls.TableRow" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> object that specifies the style properties for the <see cref="T:System.Web.UI.WebControls.TableRow" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.TableRow.CreateControlCollection" /> method is primarily of interest to control developers extending the functionality of the <see cref="T:System.Web.UI.WebControls.TableRow" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +317,72 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HorizontalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableRow.HorizontalAlign" /> property to specify the horizontal alignment of the contents of the row. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Horizontal Alignment </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.NotSet" /> </para>
+              </term>
+              <description>
+                <para>The horizontal alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Left" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are left justified. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Center" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are centered. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Right" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are right justified. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Justify" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are uniformly spread out and aligned with both the left and right margins. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the contents in the row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,9 +409,59 @@
         <ReturnType>System.Web.UI.WebControls.TableRowSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableRow.TableSection" /> property to get or set where the <see cref="T:System.Web.UI.WebControls.TableRow" /> object is placed in a <see cref="T:System.Web.UI.WebControls.Table" /> control. For the available table locations, see <see cref="T:System.Web.UI.WebControls.TableRowSection" />. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Table row section </para>
+                </term>
+                <description>
+                  <para>Displayed as </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.TableRowSection.TableHeader" />
+                </para>
+              </term>
+              <description>
+                <para>The header row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.TableRowSection.TableBody" />
+                </para>
+              </term>
+              <description>
+                <para>The body of the table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.TableRowSection.TableFooter" /> </para>
+              </term>
+              <description>
+                <para>The footer row. </para>
+              </description>
+            </item>
+          </list>
+          <para>When using the declarative syntax, the sections must be in the order of header, body, and then footer.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.TableRowSection" /> enumeration enables you to build accessible Web sites using the <see cref="T:System.Web.UI.WebControls.Table" /> control by adding the &lt;thead&gt;, &lt;tbody&gt;, and &lt;tfoot&gt; elements to the HTML that is rendered to the client. If all rows in a table are in the &lt;tbody&gt; element, the section information is not rendered. At least one row must be in a non-body element.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location for a <see cref="T:System.Web.UI.WebControls.TableRow" /> object in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerticalAlign">
@@ -157,9 +472,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'VerticalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableRow.VerticalAlign" /> property to specify the vertical alignment of the contents of the row. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Vertical Alignment </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.NotSet" /> </para>
+              </term>
+              <description>
+                <para>The vertical alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Top" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are aligned with the top of the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Middle" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are aligned with the middle of the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Bottom" /> </para>
+              </term>
+              <description>
+                <para>The contents of the row are aligned with the bottom of the row. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the vertical alignment of the contents in the row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

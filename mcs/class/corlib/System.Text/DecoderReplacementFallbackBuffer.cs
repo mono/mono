@@ -60,7 +60,7 @@ namespace System.Text
 			if (bytesUnknown == null)
 				throw new ArgumentNullException ("bytesUnknown");
 			if (fallback_assigned && Remaining != 0)
-				throw new ArgumentException ("Reentrant Fallback method invocation occured. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
+				throw new ArgumentException ("Reentrant Fallback method invocation occurred. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
 			if (index < 0 || bytesUnknown.Length < index)
 				throw new ArgumentOutOfRangeException ("index");
 			fallback_assigned = true;

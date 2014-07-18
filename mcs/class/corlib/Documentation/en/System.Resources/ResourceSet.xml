@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceSet" FullName="System.Resources.ResourceSet">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ResourceSet : IDisposable, System.Collections.IEnumerable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ResourceSet extends System.Object implements class System.Collections.IEnumerable, class System.IDisposable" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Resources.ResourceSet" /> class enumerates over an <see cref="T:System.Resources.IResourceReader" />, loading every name and value, and storing them in a <see cref="T:System.Collections.Hashtable" />. A custom <see cref="T:System.Resources.IResourceReader" /> can be used.</para>
+      <para>You can instantiate a <see cref="T:System.Resources.ResourceSet" /> object that represents the resources of a specific culture by calling the <see cref="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores all the resources localized for one particular culture, ignoring all other cultures, including any fallback rules.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +50,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResourceSet" /> class with default properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,9 +71,13 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Resources.ResourceSet" /> class using the system default <see cref="T:System.Resources.ResourceReader" /> that reads resources from the given stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> of resources to be read. The stream should refer to an existing resources file. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -79,9 +94,16 @@
         <Parameter Name="reader" Type="System.Resources.IResourceReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added: an object of type 'IResourceReader'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this constructor to support custom resource formats using a user-provided <see cref="T:System.Resources.IResourceReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Resources.ResourceSet" /> class using the specified resource reader.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reader that will be used. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -98,9 +120,13 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Resources.ResourceSet" /> class using the system default <see cref="T:System.Resources.ResourceReader" /> that opens and reads resources from the given file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />Resource file to read. </param>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -117,8 +143,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All calls to methods on the <see cref="T:System.Resources.ResourceSet" /> after a call to this method might fail.</para>
+          <para>
+            <see cref="M:System.Resources.ResourceSet.Close" /> can be safely called multiple times.</para>
+          <block subset="none" type="note">
+            <para>The current implementation of <see cref="M:System.Resources.ResourceSet.Close" /> calls <see cref="M:System.Resources.ResourceSet.Dispose(System.Boolean)" /> (true).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes and releases any resources used by this <see cref="T:System.Resources.ResourceSet" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -135,8 +172,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Resources.ResourceSet.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:System.Resources.ResourceSet" />. The <see cref="M:System.Resources.ResourceSet.Dispose(System.Boolean)" /> method leaves the <see cref="T:System.Resources.ResourceSet" /> in an unusable state. After calling <see cref="M:System.Resources.ResourceSet.Dispose(System.Boolean)" />, you must release all references to the <see cref="T:System.Resources.ResourceSet" /> so the memory it was occupying can be reclaimed by garbage collection.</para>
+          <block subset="none" type="note">
+            <para>The current method is the implementation of <see cref="M:System.IDisposable.Dispose" />. This implementation calls <see cref="M:System.Resources.ResourceSet.Dispose(System.Boolean)" /> (true).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources (other than memory) used by the current instance of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -155,9 +201,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="dispose" /> parameter is true, the current method frees all the resources associated with it as well as with all objects associated with it. If <paramref name="dispose" /> is false, the current method frees only the resources allocated to it, and ignores any objects associated with it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases resources (other than memory) associated with the current instance, closing internal managed objects if requested.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the objects contained in the current instance should be explicitly closed. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultReader">
@@ -174,9 +227,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the preferred resource reader class for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Type" /> for the preferred resource reader for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultWriter">
@@ -193,9 +252,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the preferred resource writer class for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Type" /> for the preferred resource writer for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -217,9 +282,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enumerators only allow reading the data in the collection. Enumerators cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Collections.IEnumerator.Reset" /> also brings the enumerator back to this position. At this position, calling <see cref="P:System.Collections.IEnumerator.Current" /> throws an exception. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>After the end of the collection is passed, the enumerator is positioned after the last element in the collection, and calling <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, calling <see cref="P:System.Collections.IEnumerator.Current" /> throws an exception. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying or deleting elements, the enumerator is irrecoverably invalidated and the next call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> throws an <see cref="T:System.InvalidOperationException" />. If the collection is modified between <see cref="M:System.Collections.IEnumerator.MoveNext" /> and <see cref="P:System.Collections.IEnumerator.Current" />, <see cref="P:System.Collections.IEnumerator.Current" /> will return the element that it is set to, even if the enumerator is already invalidated.</para>
+          <para>You can use the <see cref="P:System.Collections.IDictionaryEnumerator.Entry" /> property to access the value stored in the current element. Use the <see cref="P:System.Collections.IDictionaryEnumerator.Key" /> property to access the key of the current element. Use the <see cref="P:System.Collections.IDictionaryEnumerator.Value" /> property to access the value of the current element.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads could still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> that can iterate through the <see cref="T:System.Resources.ResourceSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> for this <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObject">
@@ -238,10 +319,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the resource object is case sensitive. For a case-insensitive search, use <see cref="M:System.Resources.ResourceSet.GetObject(System.String,System.Boolean)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for a resource object with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested resource.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Case-sensitive name of the resource to search for. </param>
       </Docs>
     </Member>
     <Member MemberName="GetObject">
@@ -261,11 +352,23 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="ignoreCase" /> parameter is true, a resource with the name "Resource" is equivalent to the resource with the name "resource". Note, however, that this method always performs case-insensitive string comparisons using <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />. The advantage is that results of case-insensitive string comparisons performed by this method are the same on all computers regardless of culture. The disadvantage is that the results are not consistent with the casing rules of all cultures.</para>
+          <para>For example, the Turkish alphabet has two versions of the character I: one with a dot and one without a dot. In Turkish, the character I (Unicode 0049) is considered the uppercase version of a different character ı (Unicode 0131). The character i (Unicode 0069) is considered the lowercase version of yet another character İ (Unicode 0130). According to these casing rules, a case-insensitive string comparison of the characters i (Unicode 0069) and I (Unicode 0049) should fail for the culture "tr-TR" (Turkish in Turkey). Using the GetObject method with <paramref name="ignoreCase" /> set to true, this comparison succeeds.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for a resource object with the specified name in a case-insensitive manner, if requested.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested resource.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the case of the specified name should be ignored. </param>
       </Docs>
     </Member>
     <Member MemberName="GetString">
@@ -284,10 +387,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for a <see cref="T:System.String" /> resource with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of a resource, if the value is a <see cref="T:System.String" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
       </Docs>
     </Member>
     <Member MemberName="GetString">
@@ -307,11 +417,23 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="ignoreCase" /> parameter is true, a resource with the name "Resource" is equivalent to the resource with the name "resource". Note, however, that this method always performs case-insensitive string comparisons using <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />. The advantage is that results of case-insensitive string comparisons performed by this method are the same on all computers regardless of culture. The disadvantage is that the results are not consistent with the casing rules of all cultures.</para>
+          <para>For example, the Turkish alphabet has two versions of the character I: one with a dot and one without a dot. In Turkish, the character I (Unicode 0049) is considered the uppercase version of a different character ı (Unicode 0131). The character i (Unicode 0069) is considered the lowercase version of yet another character İ (Unicode 0130). According to these casing rules, a case-insensitive string comparison of the characters i (Unicode 0069) and I (Unicode 0049) should fail for the culture "tr-TR" (Turkish in Turkey). Using the GetString method with <paramref name="ignoreCase" /> set to true, this comparison succeeds.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for a <see cref="T:System.String" /> resource with the specified name in a case-insensitive manner, if requested.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of a resource, if the value is a <see cref="T:System.String" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the case of the case of the specified name should be ignored. </param>
       </Docs>
     </Member>
     <Member MemberName="Reader">
@@ -328,8 +450,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the <see cref="T:System.Resources.IResourceReader" /> used to read the resources.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadResources">
@@ -346,8 +471,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads all the resources and stores them in a <see cref="T:System.Collections.Hashtable" /> indicated in the <see cref="F:System.Resources.ResourceSet.Table" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -364,9 +492,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> object to avoid a race condition with Dispose. This member is not intended to be used directly from your code.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the current <see cref="T:System.Resources.ResourceSet" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Table">
@@ -383,8 +517,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Hashtable" /> in which the resources are stored.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

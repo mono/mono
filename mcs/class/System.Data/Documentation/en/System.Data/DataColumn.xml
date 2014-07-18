@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataColumn" FullName="System.Data.DataColumn">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataColumn : System.ComponentModel.MarshalByValueComponent" />
   <AssemblyInfo>
@@ -28,8 +29,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataColumn" /> is the fundamental building block for creating the schema of a <see cref="T:System.Data.DataTable" />. You build the schema by adding one or more <see cref="T:System.Data.DataColumn" /> objects to the <see cref="T:System.Data.DataColumnCollection" />. For more information, see <format type="text/html"><a href="e85c4a0e-4f3f-458c-b58b-0ddbc06bf974">Adding Columns to a Table</a></format>.</para>
+      <para>Each <see cref="T:System.Data.DataColumn" /> has a <see cref="P:System.Data.DataColumn.DataType" /> property that determines the kind of data the <see cref="T:System.Data.DataColumn" /> contains. For example, you can restrict the data type to integers, or strings, or decimals. Because data that is contained by the <see cref="T:System.Data.DataTable" /> is typically merged back into its original data source, you must match the data types to those in the data source. For more information, see <format type="text/html"><a href="d4afab94-ada6-4c77-a73c-41f17bae6b5a">Mapping .NET Framework Data Provider Data Types to .NET Framework Data Types</a></format>.</para>
+      <para>Properties such as <see cref="P:System.Data.DataColumn.AllowDBNull" />, <see cref="P:System.Data.DataColumn.Unique" />, and <see cref="P:System.Data.DataColumn.ReadOnly" /> put restrictions on the entry and updating of data, thereby helping to guarantee data integrity. You can also use the <see cref="P:System.Data.DataColumn.AutoIncrement" />, <see cref="P:System.Data.DataColumn.AutoIncrementSeed" />, and <see cref="P:System.Data.DataColumn.AutoIncrementStep" /> properties to control automatic data generation. For more information about <see cref="P:System.Data.DataColumn.AutoIncrement" /> columns, see <format type="text/html"><a href="cf09732a-ab54-4d98-89e2-4d0a1f28fbce">Creating AutoIncrement Columns</a></format>. For more information, see <format type="text/html"><a href="2ea85959-e763-4669-8bd9-46a9dab894bd">Defining a Primary Key for a Table</a></format>.</para>
+      <para>You can also make sure that values in a <see cref="T:System.Data.DataColumn" /> are unique by creating a <see cref="T:System.Data.UniqueConstraint" /> and adding it to the <see cref="T:System.Data.ConstraintCollection" /> of the <see cref="T:System.Data.DataTable" /> to which the <see cref="T:System.Data.DataColumn" /> belongs. For more information, see <format type="text/html"><a href="27c9f2fd-f64d-4b4e-bbf6-1d24f47067cb">Adding Constraints to a Table</a></format>.</para>
+      <para>To create a relation between <see cref="T:System.Data.DataColumn" /> objects, create a <see cref="T:System.Data.DataRelation" /> object and add it to the <see cref="T:System.Data.DataRelationCollection" /> of a <see cref="T:System.Data.DataSet" />.</para>
+      <para>You can use the <see cref="P:System.Data.DataColumn.Expression" /> property of the <see cref="T:System.Data.DataColumn" /> object to calculate the values in a column, or create an aggregate column. For more information, see <format type="text/html"><a href="0af3bd64-92a2-4b47-ae62-f5df35f131a6">Creating Expression Columns</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the schema of a column in a <see cref="T:System.Data.DataTable" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +50,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When created, a <see cref="T:System.Data.DataColumn" /> object has no default <see cref="P:System.Data.DataColumn.ColumnName" /> or <see cref="P:System.Data.DataColumn.Caption" />. When you add it to a <see cref="T:System.Data.DataColumnCollection" />, a default name ("Column1", "Column2", and so on) will be generated if a name has not been assigned to the <see cref="P:System.Data.DataColumn.ColumnName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.Data.DataColumn" /> class as type string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,9 +72,16 @@
         <Parameter Name="columnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the name specific to a column becomes the <see cref="P:System.Data.DataColumn.Caption" /> property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataColumn" /> class, as type string, using the specified column name.</para>
+        </summary>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the name of the column to be created. If set to null or an empty string (""), a default name will be specified when added to the columns collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,10 +97,15 @@
         <Parameter Name="dataType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataColumn" /> class using the specified column name and data type.</para>
+        </summary>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the name of the column to be created. If set to null or an empty string (""), a default name will be specified when added to the columns collection. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A supported <see cref="P:System.Data.DataColumn.DataType" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,11 +122,17 @@
         <Parameter Name="expr" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'Type'</param>
-        <param name="expr">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataColumn" /> class using the specified name, data type, and expression.</para>
+        </summary>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the name of the column to be created. If set to null or an empty string (""), a default name will be specified when added to the columns collection. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A supported <see cref="P:System.Data.DataColumn.DataType" />. </param>
+        <param name="expr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression used to create this column. For more information, see the <see cref="P:System.Data.DataColumn.Expression" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,12 +150,24 @@
         <Parameter Name="type" Type="System.Data.MappingType" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <param name="dataType">To be added: an object of type 'Type'</param>
-        <param name="expr">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'MappingType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="type" /> argument sets the <see cref="P:System.Data.DataColumn.ColumnMapping" /> property. The property specifies how a <see cref="T:System.Data.DataColumn" /> is mapped when a <see cref="T:System.Data.DataSet" /> is transformed into an XML document. For example, if the column is named "fName," and the value it contains is "Bob," and <paramref name="type" /> is set to MappingType.Attribute, the XML element would be as follows: </para>
+          <para>&lt;Name fName = 'Bob'/&gt; </para>
+          <para>For more information about how columns are mapped to elements or attributes, see the <see cref="P:System.Data.DataColumn.ColumnMapping" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataColumn" /> class using the specified name, data type, expression, and value that determines whether the column is an attribute.</para>
+        </summary>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the name of the column to be created. If set to null or an empty string (""), a default name will be specified when added to the columns collection. </param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A supported <see cref="P:System.Data.DataColumn.DataType" />. </param>
+        <param name="expr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression used to create this column. For more information, see the <see cref="P:System.Data.DataColumn.Expression" /> property. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.MappingType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +183,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether null values are allowed in this column for rows that belong to the table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,9 +209,19 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type of this column is not Int16, Int32, or Int64 when this property is set, the <see cref="P:System.Data.DataColumn.DataType" /> property is coerced to Int32. An exception is generated if this is a computed column. The <see cref="P:System.Data.DataColumn.Expression" /> property is set. The incremented value is used only if the row's value for this column, when added to the columns collection, is equal to the default value.</para>
+          <para>You can create a new row using the <see cref="P:System.Data.DataRow.ItemArray" /> property of the <see cref="T:System.Data.DataRow" /> class and passing in an array of values. This is a potential problem for a column with its <see cref="P:System.Data.DataColumn.AutoIncrement" /> set to true, because its value is generated automatically. To use the <see cref="P:System.Data.DataRow.ItemArray" /> property, place null in the column's position in the array. For more information, see the <see cref="P:System.Data.DataRow.ItemArray" /> property of the <see cref="T:System.Data.DataRow" /> class.</para>
+          <para>If the type of the column is <see cref="T:System.Data.SqlTypes.SqlInt16" /> or <see cref="T:System.Data.SqlTypes.SqlInt32" />, <see cref="P:System.Data.DataColumn.AutoIncrement" /> will not work. Use Int16 or Int32 instead.</para>
+          <para>If the type of the column is <see cref="T:System.Data.SqlTypes.SqlInt64" /> or <see cref="T:System.Data.SqlTypes.SqlDecimal" />, <see cref="P:System.Data.DataColumn.AutoIncrement" /> will only partially work. Use Int64 or Decimal instead.</para>
+          <para>When the <see cref="P:System.Data.DataColumn.AutoIncrementStep" /> value is added to the current value, the overflow check is suppressed.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the column automatically increments the value of the column for new rows added to the table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +245,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the starting value for a column that has its <see cref="P:System.Data.DataColumn.AutoIncrement" /> property set to true. The default is 0.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -207,9 +271,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'long'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the increment used by a column with its <see cref="P:System.Data.DataColumn.AutoIncrement" /> property set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -230,9 +297,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Data.DataColumn.Caption" /> property to display a descriptive or friendly name for a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption for the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -251,8 +324,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CheckUnique">
@@ -263,8 +339,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -280,9 +359,33 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'MappingType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.ColumnMapping" /> property determines how a <see cref="T:System.Data.DataColumn" /> is mapped when a <see cref="T:System.Data.DataSet" /> is saved as an XML document using the <see cref="M:System.Data.DataSet.WriteXml(System.IO.Stream)" /> method.</para>
+          <para>For example, if a <see cref="T:System.Data.DataColumn" /> is named "customerID," and its <see cref="P:System.Data.DataColumn.ColumnMapping" /> property is set to MappingType.Element, the column value will produce the following XML: </para>
+          <code> &lt;Customers&gt;
+  &lt;customerID&gt;ALFKI&lt;/customerID&gt;
+ ......
+  &lt;/Customers&gt;
+  &lt;Orders&gt;
+  &lt;OrderID&gt;12345&lt;/OrderID&gt;
+  &lt;customerID&gt;ALFKI&lt;/customerID&gt;
+ ......
+  &lt;/Orders&gt;</code>
+          <para>However, if the same column is mapped to MappingType.Attribute, the following XML is produced: </para>
+          <code> &lt;Customers customerID="ALFKI"........more attributes.....&gt;
+  &lt;Order orderID="1234"....more attributes..../&gt;
+  &lt;Order orderID="1234"....more attributes..../&gt;
+ ...... More orders for this customer
+  &lt;/Customers&gt;</code>
+          <para>Use the <see cref="M:System.Data.DataColumn.#ctor" /> constructor that contains the <paramref name="type" /> argument to specificy how the <see cref="T:System.Data.DataColumn" /> is mapped when its <see cref="T:System.Data.DataSet" /> is transformed to an XML document.</para>
+          <para>The <see cref="P:System.Data.DataColumn.ColumnMapping" /> property corresponds to the constructor argument <paramref name="type" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.MappingType" /> of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -303,9 +406,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Data.DataColumn" /> is created, it has no <see cref="P:System.Data.DataColumn.ColumnName" /> value. However, when the <see cref="T:System.Data.DataColumn" /> is added to a <see cref="T:System.Data.DataColumnCollection" /> for a <see cref="T:System.Data.DataTable" /> object, it is given a default name ("Column1", "Column2", and so on).</para>
+          <para>By default, the <see cref="P:System.Data.DataColumn.Caption" /> value is set to the <see cref="P:System.Data.DataColumn.ColumnName" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the column in the <see cref="T:System.Data.DataColumnCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -329,9 +439,121 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Data.DataColumn.DataType" /> value is very important to guaranteeing the correct creation and updating of data in a data source.</para>
+          <para>The <see cref="P:System.Data.DataColumn.DataType" /> property supports the following base .NET Framework data types: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.Boolean" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Byte" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Char" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.DateTime" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Decimal" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Double" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Guid" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Int16" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Int32" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Int64" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.SByte" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.Single" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.String" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.TimeSpan" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.UInt16" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.UInt32" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.UInt64" /> </para>
+            </item>
+          </list>
+          <para>as well as the following array type:</para>
+          <list type="bullet">
+            <item>
+              <para>Byte[]</para>
+            </item>
+          </list>
+          <para>An exception is generated when changing this property after the column has begun storing data.</para>
+          <para>If <see cref="P:System.Data.DataColumn.AutoIncrement" /> is set to true before setting the <see cref="P:System.Data.DataColumn.DataType" /> property, and you try to set the type to anything except an integer type, an exception is generated.</para>
+          <block subset="none" type="note">
+            <para>A column of data type Byte[] requires special treatment in certain cases since, unlike the base .NET Framework data types, it is a reference data type. If a column of data type Byte[] is used as a <see cref="P:System.Data.DataTable.PrimaryKey" />, or as a <see cref="P:System.Data.DataView.Sort" /> or <see cref="P:System.Data.DataView.RowFilter" /> key for a <see cref="T:System.Data.DataView" />, any change to the column value must involve assigning the Byte[] column value to a separately instantiated Byte[] object. This assignment is required to trigger the update of the internal indexes used by sorting, filtering, and primary key operations. This is illustrated by the following example: </para>
+          </block>
+          <code>byte[] columnValue = (byte[])myDataTable.Rows[0][0];
+byte[] newValue = (byte[])columnValue.Clone();
+newValue[1] = 2;
+myDataTable.Rows[0][0] = newValue;</code>
+          <block subset="none" type="note">
+            <para>Although it is possible to define a column as data type other than the base .NET Framework data types and Byte[], such a column will be treated as a user-defined type, subject to the following usage restrictions. (For more information on user-defined types, see <format type="text/html"><a href="ec0266d2-7e5b-47e4-938a-85ac9d04fa40">Creating and Using User-Defined Types</a></format>.)</para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para>The column cannot be part of a <see cref="P:System.Data.DataView.RowFilter" /> or <see cref="M:System.Data.DataTable.Select" /> expression.</para>
+            </item>
+            <item>
+              <para>If the column is used as a <see cref="P:System.Data.DataTable.PrimaryKey" />, or as a <see cref="P:System.Data.DataView.Sort" /> or for a <see cref="T:System.Data.DataView" />, it must be treated as an immutable field; the column data must not be changed once it has been added to the table.</para>
+            </item>
+            <item>
+              <para>Its <see cref="P:System.Data.DataColumn.ColumnMapping" /> can be only set to MappingType.Element.</para>
+            </item>
+            <item>
+              <para>The class that implements the column’s data type must be must be marked with the <see cref="T:System.SerializableAttribute" />, and if necessary implement the <see cref="T:System.Runtime.Serialization.ISerializable" /> or <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
+            </item>
+            <item>
+              <para>Support for change tracking is limited. To utilize the <see cref="T:System.Data.DataTable" /> class’s change tracking mechanism, the class that implements the column’s data type must either implement the <see cref="T:System.ComponentModel.IChangeTracking" /> interface, or take over the responsibility for informing the <see cref="T:System.Data.DataRow" /> when the column value has been modified, either by calling <see cref="M:System.Data.DataRow.SetModified" /> on the row or by assigning the column value object to a separately instantiated column value object.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of data stored in the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -367,9 +589,15 @@
         <ReturnType>System.Data.DataSetDateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.DateTimeMode" /> cannot be modified after rows are added to a <see cref="T:System.Data.DataColumn" />, except for modifying from <see cref="F:System.Data.DataSetDateTime.Unspecified" /> and <see cref="F:System.Data.DataSetDateTime.UnspecifiedLocal" /> or vice-versa. The modification from UnspecifiedLocal to Unspecified and vice-versa is allowed as the difference between these two options is only during serialization and does not affect the storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the DateTimeMode for the column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultValue">
@@ -381,9 +609,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A default value is the value that is automatically assigned to the column when a <see cref="T:System.Data.DataRow" /> is created (for example, the date and time when the <see cref="T:System.Data.DataRow" /> was created.</para>
+          <para>When <see cref="P:System.Data.DataColumn.AutoIncrement" /> is set to true, there can be no default value.</para>
+          <para>You can create a new row using the <see cref="P:System.Data.DataRow.ItemArray" /> property of the <see cref="T:System.Data.DataRow" /> class and passing the method an array of values. This is a potential problem for a column with a default value because its value is generated automatically. To use the <see cref="P:System.Data.DataRow.ItemArray" /> property with such a column, place null in the column's position in the array. For more information, see the <see cref="P:System.Data.DataRow.ItemArray" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default value for the column when you are creating new rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -404,9 +640,325 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One use of the <see cref="P:System.Data.DataColumn.Expression" /> property is to create calculated columns. For example, to calculate a tax value, the unit price is multiplied by a tax rate of a specific region. Because tax rates vary from region to region, it would be impossible to put a single tax rate in a column; instead, the value is calculated using the <see cref="P:System.Data.DataColumn.Expression" /> property, as shown in the Visual Basic code in the following section: </para>
+          <para>DataSet1.Tables("Products").Columns("tax").Expression = "UnitPrice * 0.086" </para>
+          <para>A second use is to create an aggregate column. Similar to a calculated value, an aggregate performs an operation based on the complete set of rows in the <see cref="T:System.Data.DataTable" />. A simple example is to count the number of rows returned in the set. This is the method you would use to count the number of transactions completed by a particular salesperson, as shown in this Visual Basic code: </para>
+          <code> DataSet1.Tables("Orders").Columns("OrderCount").Expression = "Count(OrderID)"</code>
+          <format type="text/html">
+            <h2>Expression Syntax</h2>
+          </format>
+          <para>When you create an expression, use the <see cref="P:System.Data.DataColumn.ColumnName" /> property to refer to columns. For example, if the <see cref="P:System.Data.DataColumn.ColumnName" /> for one column is "UnitPrice", and another "Quantity", the expression would be as follows: </para>
+          <para>"UnitPrice * Quantity" </para>
+          <block subset="none" type="note">
+            <para>If a column is used in an expression, then the expression is said to have a dependency on that column. If a dependent column is renamed or removed, no exception is thrown. An exception will be thrown when the now-broken expression column is accessed.</para>
+          </block>
+          <para>When you create an expression for a filter, enclose strings with single quotation marks: </para>
+          <para>"LastName = 'Jones'" </para>
+          <para>If a column name contains any non-alphanumeric characters or starts with a digit or matches (case-insensitively) any of the following reserved words, it requires special handling, as described in the following paragraphs.  </para>
+          <para>And</para>
+          <para>Between</para>
+          <para>Child</para>
+          <para>False</para>
+          <para>In</para>
+          <para>Is</para>
+          <para>Like</para>
+          <para>Not</para>
+          <para>Null</para>
+          <para>Or</para>
+          <para>Parent</para>
+          <para>True</para>
+          <para>If a column name satisfies one of the above conditions, it must be wrapped in either square brackets or the "`" (grave accent) quotes. For example, to use a column named "Column#" in an expression, you would write either "[Column#]":</para>
+          <para>Total * [Column#]</para>
+          <para>or "`Column#`":</para>
+          <para>Total * `Column#`</para>
+          <para>If the column name is enclosed in square brackets then any ']' and '\' characters (but not any other characters) in it must be escaped by prepending them with the backslash ("\") character. If the column name is enclosed in grave accent characters then it must not contain any grave accent characters in it. For example, a column named "Column[]\" would be written:</para>
+          <para>Total * [Column[\]\\] </para>
+          <para>or</para>
+          <para>Total * `Column[]\`</para>
+          <format type="text/html">
+            <h2>User-Defined Values</h2>
+          </format>
+          <para>User-defined values may be used within expressions to be compared with column values. String values should be enclosed within single quotation marks (and each single quotation character in a string value has to be escaped by prepending it with another single quotation character). Date values should be enclosed within pound signs (#) or single quotes (') based on the data provider. Decimals and scientific notation are permissible for numeric values. For example: </para>
+          <para>"FirstName = 'John'" </para>
+          <para>"Price &lt;= 50.00" </para>
+          <para>"Birthdate &lt; #1/31/82#" </para>
+          <para>For columns that contain enumeration values, cast the value to an integer data type. For example: </para>
+          <para>"EnumColumn = 5" </para>
+          <format type="text/html">
+            <h2>Parsing Literal Expressions</h2>
+          </format>
+          <para>All literal expressions must be expressed in the invariant culture locale. When DataSet parses and converts literal expressions, it always uses the invariant culture, not the current culture.</para>
+          <para>String literals are identified when there are single quotes surrounding the value. For example:</para>
+          <para>'John'</para>
+          <para>Boolean literals are true and false; they are not quoted in expressions.</para>
+          <para>Integer literals [+-]?[0-9]+ are treated as System.Int32, System.Int64 or System.Double. System.Double can lose precision depending on how large the number is. For example, if the number in the literal is 2147483650, DataSet will first attempt to parse the number as an Int32. This will not succeed because the number is too large. In this case DataSet will parse the number as an Int64, which will succeed. If the literal was a number larger than the maximum value of an Int64, DataSet will parse the literal using Double.</para>
+          <para>Real literals using scientific notation, such as 4.42372E-30, are parsed using System.Double.</para>
+          <para>Real literals without scientific notation, but with a decimal point, are treated as System.Decimal. If the number exceeds the maximum or minimum values supported by System.Decimal, then it is parsed as a System.Double. For example:</para>
+          <para>142526.144524 will be converted to a Decimal.</para>
+          <para>345262.78036719560925667 will be treated as a Double.</para>
+          <format type="text/html">
+            <h2>Operators</h2>
+          </format>
+          <para>Concatenation is allowed using Boolean AND, OR, and NOT operators. You can use parentheses to group clauses and force precedence. The AND operator has precedence over other operators. For example: </para>
+          <para>(LastName = 'Smith' OR LastName = 'Jones') AND FirstName = 'John' </para>
+          <para>When you create comparison expressions, the following operators are allowed: </para>
+          <para>&lt; </para>
+          <para>&gt; </para>
+          <para>&lt;= </para>
+          <para>&gt;= </para>
+          <para>&lt;&gt; </para>
+          <para>= </para>
+          <para>IN </para>
+          <para>LIKE </para>
+          <para>The following arithmetic operators are also supported in expressions: </para>
+          <para>+ (addition) </para>
+          <para>- (subtraction) </para>
+          <para>* (multiplication) </para>
+          <para>/ (division) </para>
+          <para>% (modulus) </para>
+          <format type="text/html">
+            <h2>String Operators</h2>
+          </format>
+          <para>To concatenate a string, use the + character. The value of the <see cref="P:System.Data.DataSet.CaseSensitive" /> property of the <see cref="T:System.Data.DataSet" /> class determines whether string comparisons are case-sensitive. However, you can override that value with the <see cref="P:System.Data.DataTable.CaseSensitive" /> property of the <see cref="T:System.Data.DataTable" /> class.</para>
+          <format type="text/html">
+            <h2>Wildcard Characters</h2>
+          </format>
+          <para>Both the * and % can be used interchangeably for wildcard characters in a LIKE comparison. If the string in a LIKE clause contains a * or %, those characters should be enclosed in brackets ([]). If a bracket is in the clause, each bracket character should be enclosed in brackets (for example [[] or []]). A wildcard is allowed at the start and end of a pattern, or at the end of a pattern, or at the start of a pattern. For example: </para>
+          <para>"ItemName LIKE '*product*'" </para>
+          <para>"ItemName LIKE '*product'" </para>
+          <para>"ItemName LIKE 'product*'" </para>
+          <para>Wildcard characters are not allowed in the middle of a string. For example, 'te*xt' is not allowed.</para>
+          <format type="text/html">
+            <h2>Parent/Child Relation Referencing</h2>
+          </format>
+          <para>A parent table may be referenced in an expression by prepending the column name with Parent. For example, the Parent.Price references the parent table's column named Price.</para>
+          <para>When a child has more than one parent row, use Parent(RelationName).ColumnName. For example, the Parent(RelationName).Price references the parent table’s column named Price via the relation.</para>
+          <para>A column in a child table may be referenced in an expression by prepending the column name with Child. However, because child relationships may return multiple rows, you must include the reference to the child column in an aggregate function. For example, Sum(Child.Price) would return the sum of the column named Price in the child table.</para>
+          <para>If a table has more than one child, the syntax is: Child(RelationName). For example, if a table has two child tables named Customers and Orders, and the <see cref="T:System.Data.DataRelation" /> object is named Customers2Orders, the reference would be as follows: </para>
+          <para>Avg(Child(Customers2Orders).Quantity) </para>
+          <format type="text/html">
+            <h2>Aggregates</h2>
+          </format>
+          <para>The following aggregate types are supported:</para>
+          <para>Sum (Sum) </para>
+          <para>Avg (Average) </para>
+          <para>Min (Minimum) </para>
+          <para>Max (Maximum) </para>
+          <para>Count (Count) </para>
+          <para>StDev (Statistical standard deviation) </para>
+          <para>Var (Statistical variance).</para>
+          <para>Aggregates are ordinarily performed along relationships. Create an aggregate expression by using one of the functions listed earlier and a child table column as detailed in Parent/Child Relation Referencing that was discussed earlier. For example: </para>
+          <para>Avg(Child.Price) </para>
+          <para>Avg(Child(Orders2Details).Price) </para>
+          <para>An aggregate can also be performed on a single table. For example, to create a summary of figures in a column named "Price": </para>
+          <para>Sum(Price) </para>
+          <block subset="none" type="note">
+            <para>If you use a single table to create an aggregate, there would be no group-by functionality. Instead, all rows would display the same value in the column.</para>
+          </block>
+          <para>If a table has no rows, the aggregate functions will return null.</para>
+          <para>Data types can always be determined by examining the <see cref="P:System.Data.DataColumn.DataType" /> property of a column. You can also convert data types using the Convert function, shown in the following section.</para>
+          <para>An aggregate can only be applied to a single column and no other expressions can be used inside the aggregate.</para>
+          <format type="text/html">
+            <h2>Functions</h2>
+          </format>
+          <para>The following functions are also supported: </para>
+          <para>CONVERT </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Converts particular expression to a specified .NET Framework Type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>Convert(<paramref name="expression" />, <paramref name="type" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expression" /> -- The expression to convert.</para>
+                <para>
+                  <paramref name="type" /> -- The .NET Framework type to which the value will be converted. </para>
+              </description>
+            </item>
+          </list>
+          <para>Example: myDataColumn.Expression="Convert(total, 'System.Int32')" </para>
+          <para>All conversions are valid with the following exceptions: Boolean can be coerced to and from Byte, SByte, Int16, Int32, Int64, UInt16, UInt32, UInt64, String and itself only. Char can be coerced to and from Int32, UInt32, String, and itself only. DateTime can be coerced to and from String and itself only. TimeSpan can be coerced to and from String and itself only.</para>
+          <para>LEN </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Gets the length of a string </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>LEN(<paramref name="expression" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expression" /> -- The string to be evaluated. </para>
+              </description>
+            </item>
+          </list>
+          <para>Example: myDataColumn.Expression="Len(ItemName)" </para>
+          <para>ISNULL </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Checks an expression and either returns the checked expression or a replacement value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>ISNULL(<paramref name="expression" />, <paramref name="replacementvalue" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expression" /> -- The expression to check.</para>
+                <para>
+                  <paramref name="replacementvalue" /> -- If expression is null, <paramref name="replacementvalue" /> is returned. </para>
+              </description>
+            </item>
+          </list>
+          <para>Example: myDataColumn.Expression="IsNull(price, -1)" </para>
+          <para>IIF </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Gets one of two values depending on the result of a logical expression. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>IIF(<paramref name="expr" />, <paramref name="truepart" />, <paramref name="falsepart" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expr" /> -- The expression to evaluate.</para>
+                <para>
+                  <paramref name="truepart" /> -- The value to return if the expression is true.</para>
+                <para>
+                  <paramref name="falsepart" /> -- The value to return if the expression is false. </para>
+              </description>
+            </item>
+          </list>
+          <para>Example: myDataColumn.Expression = "IIF(total&gt;1000, 'expensive', 'dear') </para>
+          <para>TRIM </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Removes all leading and trailing blank characters like \r, \n, \t, ' ' </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>TRIM(<paramref name="expression" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expression" /> -- The expression to trim. </para>
+              </description>
+            </item>
+          </list>
+          <para>SUBSTRING </para>
+          <list type="table">
+            <item>
+              <term>
+                <para>Description </para>
+              </term>
+              <description>
+                <para>Gets a sub-string of a specified length, starting at a specified point in the string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Syntax </para>
+              </term>
+              <description>
+                <para>SUBSTRING(<paramref name="expression" />,<paramref name=" start" />,<paramref name=" length" />) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Arguments </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="expression" /> -- The source string for the substring.</para>
+                <para>
+                  <paramref name="start" /> -- Integer that specifies where the substring starts.</para>
+                <para>
+                  <paramref name="length" /> -- Integer that specifies the length of the substring. </para>
+              </description>
+            </item>
+          </list>
+          <para>Example: myDataColumn.Expression = "SUBSTRING(phone, 7, 8)" </para>
+          <block subset="none" type="note">
+            <para>You can reset the <see cref="P:System.Data.DataColumn.Expression" /> property by assigning it a null value or empty string. If a default value is set on the expression column, all previously filled rows are assigned the default value after the <see cref="P:System.Data.DataColumn.Expression" /> property is reset.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression used to filter rows, calculate the values in a column, or create an aggregate column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -428,9 +980,16 @@
         <ReturnType>System.Data.PropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PropertyCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.ExtendedProperties" /> property lets you store custom information with the object. For example, you may store a time when the data should be refreshed.</para>
+          <para>Extended properties must be of type <see cref="T:System.String" />. Properties that are not of type <see cref="T:System.String" /> are not persisted when the <see cref="T:System.Data.DataColumn" /> is written as XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of custom user information associated with a <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -451,9 +1010,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.MaxLength" /> property is ignored for non-text columns. A <see cref="T:System.ArgumentException" /> exception is raised if you assign <see cref="P:System.Data.DataColumn.MaxLength" /> to a non-string column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum length of a text column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -474,9 +1039,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.Namespace" /> property is used when reading and writing an XML document into a <see cref="T:System.Data.DataTable" /> in the <see cref="T:System.Data.DataSet" /> using the <see cref="M:System.Data.DataSet.ReadXml(System.Xml.XmlReader)" />, <see cref="M:System.Data.DataSet.WriteXml(System.IO.Stream)" />, <see cref="M:System.Data.DataSet.ReadXmlSchema(System.Xml.XmlReader)" />, or <see cref="M:System.Data.DataSet.WriteXmlSchema(System.IO.Stream)" /> methods.</para>
+          <para>The namespace of an XML document is used to scope XML attributes and elements when read into a <see cref="T:System.Data.DataSet" />. For example, a <see cref="T:System.Data.DataSet" /> contains a schema read from a document that has the namespace "myCompany," and an attempt is made to read data (with the <see cref="M:System.Data.DataSet.ReadXml(System.Xml.XmlReader)" /> method) from a document that has the namespace "theirCompany." Any data that does not correspond to the existing schema will be ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -497,9 +1069,13 @@
         <Parameter Name="pcevent" Type="System.ComponentModel.PropertyChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="pcevent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="pcevent">
+          <attribution license="cc4" from="Microsoft" modified="false" />Parameter reference.</param>
       </Docs>
     </Member>
     <Member MemberName="Ordinal">
@@ -509,9 +1085,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the (zero-based) position of the column in the <see cref="T:System.Data.DataColumnCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -535,9 +1114,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataTable.Prefix" /> is used throughout an XML document to identify elements which belong to the namespace for a <see cref="T:System.Data.DataSet" /> object (as set by the <see cref="P:System.Data.DataSet.Namespace" /> property).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an XML prefix that aliases the namespace of the <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -563,9 +1148,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Parameter reference.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -577,9 +1166,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the column allows for changes as soon as a row has been added to the table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -604,9 +1196,17 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the ordinal or position of the <see cref="T:System.Data.DataColumn" /> to the specified ordinal or position. If ordinal is less than 0 or greater than the existing number of columns – 1 (greater than the ordinal of the last column) then an Invalid <see cref="T:System.ArgumentException" /> is thrown.</para>
+          <para>When you change a column’s ordinal, the column is moved to the new position in the collection of columns. Any columns between the previous and new ordinal will be renumbered, to adjust for a column's new ordinal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the ordinal or position of the <see cref="T:System.Data.DataColumn" /> to the specified ordinal or position.</para>
+        </summary>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified ordinal.</param>
       </Docs>
     </Member>
     <Member MemberName="Table">
@@ -616,9 +1216,12 @@
         <ReturnType>System.Data.DataTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTable'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataTable" /> to which the column belongs to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -641,9 +1244,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.Data.DataColumn.Expression" /> of the column, if one exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.DataColumn.Expression" /> value, if the property is set; otherwise, the <see cref="P:System.Data.DataColumn.ColumnName" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -659,9 +1268,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As soon as this property is changed from false to true, a unique constraint will be created on this column to make sure that values are unique.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the values in each row of the column must be unique.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

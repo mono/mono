@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PermissionState" FullName="System.Security.Permissions.PermissionState" FullNameSP="System_Security_Permissions_PermissionState" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable PermissionState extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum PermissionState" />
@@ -19,22 +20,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Represents a value specifying whether an entity, at
- creation, should have full or no access to resources.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para> Code access permission objects supply a constructor that takes a <see cref="T:System.Security.Permissions.PermissionState" /> value specifying that the new
- instance is either fully restricted (<see cref="F:System.Security.Permissions.PermissionState.None" />) or unrestricted (<see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />). A fully restricted permission
- object disallows access to a resource; an unrestricted permission object allows
- full access to a resource. For example, a fully restricted <see cref="T:System.Security.Permissions.FileIOPermission" /> object disallows access to files
- and directories, while an unrestricted object of the same
- 
- type allows full access to all
- files and directories in the file system.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Permissions can be created in either a totally restrictive or totally unrestrictive state. A totally restrictive state allows no access to resources; a totally unrestricted state allows all access to a particular resource. For example, the file permission constructor could create an object representing either no access to any files or all access to all files.</para>
+      <para>Each type of permission clearly defines extreme states representing either all or none of the permissions expressible within the type. Thus, it is possible to create a generic permission in a completely restricted or unrestricted state without knowledge of the particular permission; however, intermediate states can only be set according to the specific permission semantics.</para>
+      <para>All code access permissions implemented in the .NET Framework can take a <see cref="T:System.Security.Permissions.PermissionState" /> value as an argument to their constructor.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a permission should have all or no access to resources at creation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -53,11 +48,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies access to the resource protected
- by the permission is not allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No access to the resource protected by the permission.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -77,10 +72,11 @@
       <Parameters />
       <MemberValue>Unrestricted</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies full access to the resource protected by the permission.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Full access to the resource protected by the permission.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

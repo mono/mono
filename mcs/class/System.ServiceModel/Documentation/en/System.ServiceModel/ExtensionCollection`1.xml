@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtensionCollection&lt;T&gt;" FullName="System.ServiceModel.ExtensionCollection&lt;T&gt;">
   <TypeSignature Language="C#" Value="public sealed class ExtensionCollection&lt;T&gt; : System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;, System.Collections.Generic.ICollection&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;, System.Collections.Generic.IEnumerable&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;, System.ServiceModel.IExtensionCollection&lt;T&gt; where T : IExtensibleObject&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ExtensionCollection`1&lt;(class System.ServiceModel.IExtensibleObject`1&lt;!T&gt;) T&gt; extends System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.IExtension`1&lt;!T&gt;&gt; implements class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.IExtension`1&lt;!T&gt;&gt;, class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.IExtension`1&lt;!T&gt;&gt;, class System.Collections.IEnumerable, class System.ServiceModel.IExtensionCollection`1&lt;!T&gt;" />
@@ -31,8 +32,14 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, implementations of <see cref="T:System.ServiceModel.IExtensibleObject`1" /> return an <see cref="T:System.ServiceModel.ExtensionCollection`1" /> from the <see cref="P:System.ServiceModel.IExtensibleObject`1.Extensions" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of extensions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -100,10 +107,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="E">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an extension if it is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An extension of the type sought, or null if no extensions implement the type. If more than one extension implements the type, the most recently added is returned.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of extension sought.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindAll&lt;E&gt;">
@@ -121,10 +135,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="E">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of extensions if found in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of extensions of the type sought. If no extensions implement this type, a non-null empty collection is returned.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type for which the collection of extensions is sought.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">

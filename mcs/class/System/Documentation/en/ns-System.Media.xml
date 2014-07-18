@@ -1,6 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Media">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Media" /> namespace contains classes for playing sound files and accessing sounds provided by the system.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following classes are included in this namespace: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="T:System.Media.SoundPlayer" /> class for loading and playing sounds in various file formats.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Media.SystemSound" /> class for representing and playing a system sound.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Media.SystemSounds" /> class that retrieves sounds associated with a set of Windows operating system sound-event types.</para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridItem" FullName="System.Web.UI.WebControls.DataGridItem">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataGridItem : System.Web.UI.WebControls.TableRow, System.Web.UI.IDataItemContainer" />
   <AssemblyInfo>
@@ -17,23 +18,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>One of the elements composing the DataGrid. It can be a header element, paging element, item element, etc.</summary>
-    <remarks>You can use Item.ItemType to determine the type of the DataGrid item selected.
-
-
-<example><code lang="C#">
-if(myitem.ItemType == ListItemType.Item)
-{
-	// We have a Item of one row of the dataset
-	...
-}
-else if(myitem.ItemType == ListItemType.Pager)
-{
-	// We made click on the pager item of the grid
-	...
-}
-
-  </code></example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object represents an item (row) in a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control, such as a heading section, a footer section, or a data row.</para>
+      <para>The data items of a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control are stored in a <see cref="T:System.Web.UI.WebControls.DataGridItemCollection" /> collection that can be accessed by using the <see cref="P:System.Web.UI.WebControls.DataGrid.Items" /> property of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+      <para>You can use a <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object to programmatically access the properties of an item in a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an item (row) in a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -46,11 +40,20 @@ else if(myitem.ItemType == ListItemType.Pager)
         <Parameter Name="itemType" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added: an object of type 'int'</param>
-        <param name="dataSetIndex">To be added: an object of type 'int'</param>
-        <param name="itemType">To be added: an object of type 'ListItemType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> class.</para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item from the <see cref="P:System.Web.UI.WebControls.DataGrid.Items" /> collection in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </param>
+        <param name="dataSetIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index number of the item, from the bound data source, that appears in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </param>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +68,18 @@ else if(myitem.ItemType == ListItemType.Pager)
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>One item of the data structure referenced.</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridItem.DataItem" /> property to specify or determine the properties of a data item represented by the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+          <block subset="none" type="note">
+            <para>This property applies only to data items in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The <see cref="P:System.Web.UI.WebControls.DataGridItem.ItemType" /> property must be set to ListItemType.Item, ListItemType.AlternatingItem, ListItemType.SelectedItem, or ListItemType.EditItem.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data item represented by the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +93,18 @@ else if(myitem.ItemType == ListItemType.Pager)
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridItem.DataSetIndex" /> property to get the index of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object from the bound data source.</para>
+          <block subset="none" type="note">
+            <para>This property applies only to data items in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The <see cref="P:System.Web.UI.WebControls.DataGridItem.ItemType" /> property of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object must be set to ListItemType.Item, ListItemType.AlternatingItem, ListItemType.SelectedItem, or ListItemType.EditItem.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object from the bound data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +118,18 @@ else if(myitem.ItemType == ListItemType.Pager)
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridItem.ItemIndex" /> property to determine the index of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object from the <see cref="P:System.Web.UI.WebControls.DataGrid.Items" /> collection of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+          <block subset="none" type="note">
+            <para>This property applies only to data items in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The <see cref="P:System.Web.UI.WebControls.DataGridItem.ItemType" /> property of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object must be set to ListItemType.Item, ListItemType.AlternatingItem, ListItemType.SelectedItem, or ListItemType.EditItem.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object from the <see cref="P:System.Web.UI.WebControls.DataGrid.Items" /> collection of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,12 +143,94 @@ else if(myitem.ItemType == ListItemType.Pager)
         <ReturnType>System.Web.UI.WebControls.ListItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>A list containing the types of items that can be found on a item of a web control</summary>
         <value>
 List items contains one of this types.
 
 <list type="bullet"><item><term>Header</term></item><item><term>Footer</term></item><item><term>Item</term></item><item><term>AlternatingItem</term></item><item><term>SelectedItem</term></item><item><term>EditItem</term></item><item><term>Pager</term></item></list></value>
-        <remarks>The type of the Item selected. This type defines the type of item we are referencing. It may not always be a dataset item. It can be a header of paging for example.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridItem.ItemType" /> property to determine the type of an item in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The following table lists the various item types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Item Type </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Header </para>
+              </term>
+              <description>
+                <para>The heading section of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Footer </para>
+              </term>
+              <description>
+                <para>The footer section of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Item </para>
+              </term>
+              <description>
+                <para>An item in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AlternatingItem </para>
+              </term>
+              <description>
+                <para>An alternating item in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SelectedItem </para>
+              </term>
+              <description>
+                <para>The selected item in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EditItem </para>
+              </term>
+              <description>
+                <para>The item selected for editing in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Separator </para>
+              </term>
+              <description>
+                <para>A separator between the items of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Pager </para>
+              </term>
+              <description>
+                <para>The page selection section of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the item represented by the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,11 +248,18 @@ List items contains one of this types.
         <Parameter Name="args" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">a <see cref="T:System.Object" /></param>
         <param name="args">To be added.</param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally by the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event has been canceled; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +280,13 @@ List items contains one of this types.
         <Parameter Name="itemType" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <param name="itemType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally by the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> class.</para>
+        </summary>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataItemContainer.DataItem">
@@ -176,9 +299,15 @@ List items contains one of this types.
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> instance is cast to an <see cref="T:System.Web.UI.IDataItemContainer" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataItemContainer.DataItem" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataItemContainer.DataItemIndex">
@@ -191,9 +320,15 @@ List items contains one of this types.
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> instance is cast to an <see cref="T:System.Web.UI.IDataItemContainer" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataItemContainer.DataItemIndex" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataItemContainer.DisplayIndex">
@@ -206,9 +341,15 @@ List items contains one of this types.
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> instance is cast to an <see cref="T:System.Web.UI.IDataItemContainer" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataItemContainer.DisplayIndex" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

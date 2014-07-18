@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebBrowserSiteBase" FullName="System.Windows.Forms.WebBrowserSiteBase">
   <TypeSignature Language="C#" Value="public class WebBrowserSiteBase : IDisposable" />
   <AssemblyInfo>
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the interfaces of an ActiveX site for use as a base class by the <see cref="T:System.Windows.Forms.WebBrowser.WebBrowserSite" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Dispose">
@@ -33,8 +37,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.WebBrowserSiteBase" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -50,9 +57,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.WebBrowserSiteBase" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
   </Members>

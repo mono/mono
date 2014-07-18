@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Executor" FullName="System.CodeDom.Compiler.Executor">
   <TypeSignature Language="C#" Value="public static class Executor" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Executor extends System.Object" />
@@ -15,8 +16,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides a collection of methods that can be used to invoke a compiler, typically from an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the immediate caller does not have full-trust permission. For more information, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides command execution functions for invoking compilers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ExecWait">
@@ -36,10 +46,19 @@
         <Parameter Name="tempFiles" Type="System.CodeDom.Compiler.TempFileCollection" />
       </Parameters>
       <Docs>
-        <param name="cmd">To be added: an object of type 'string'</param>
-        <param name="tempFiles">To be added: an object of type 'TempFileCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the command using the specified temporary files and waits for the call to return.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from the compiler.</para>
+        </returns>
+        <param name="cmd">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command to execute. </param>
+        <param name="tempFiles">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.TempFileCollection" /> with which to manage and store references to intermediate files generated during compilation. </param>
       </Docs>
     </Member>
     <Member MemberName="ExecWaitWithCapture">

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StringWriter" FullName="System.IO.StringWriter" FullNameSP="System_IO_StringWriter" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable StringWriter extends System.IO.TextWriter" />
   <TypeSignature Language="C#" Value="public class StringWriter : System.IO.TextWriter" />
@@ -22,10 +23,132 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table lists examples of other typical or related I/O tasks.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>To do this... </para>
+            </term>
+            <description>
+              <para>See the example in this topic... </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Create a text file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+              </format> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Write to a text file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+              </format> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Read from a text file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+              </format> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Append text to a file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+              </format> </para>
+            <para>
+              <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+            <para>
+              <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Get the size of a file. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.IO.FileInfo.Length" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Get the attributes of a file. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Set the attributes of a file. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Determine if a file exists. </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Read from a binary file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+              </format> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Write to a binary file. </para>
+          </term>
+          <description>
+            <para>
+              <format type="text/html">
+                <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+              </format> </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
     <summary>
-   Implements a <see cref="T:System.IO.TextWriter" /> that writes information to a string.
-</summary>
-    <remarks>To be added.</remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a <see cref="T:System.IO.TextWriter" /> for writing information to a string. The information is stored in an underlying <see cref="T:System.Text.StringBuilder" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,13 +164,133 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class.</para>
-        </summary>
         <remarks>
-          <para>A new <see cref="T:System.Text.StringBuilder" /> is automatically created and associated with the
-   new <see cref="T:System.IO.StringWriter" /> instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Text.StringBuilder" /> is automatically created and associated with the new StringWriter.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -66,12 +309,134 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="formatProvider">A <see cref="T:System.IFormatProvider" /> object that defines formatting.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
         <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class with the specified format
-   provider.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class with the specified format control.</para>
         </summary>
-        <remarks>To be added.</remarks>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object that controls formatting. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -90,14 +455,136 @@
         <Parameter Name="sb" Type="System.Text.StringBuilder" />
       </Parameters>
       <Docs>
-        <param name="sb">The <see cref="T:System.Text.StringBuilder" /> to write to.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class that
-   writes to the specified <see cref="T:System.Text.StringBuilder" />.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="sb" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class that writes to the specified <see cref="T:System.Text.StringBuilder" />.</para>
+        </summary>
+        <param name="sb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The StringBuilder to write to. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -117,16 +604,140 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="sb">The <see cref="T:System.Text.StringBuilder" /> to write to.</param>
-        <param name="formatProvider">A <see cref="T:System.IFormatProvider" /> object that defines formatting.</param>
-        <param name="formatProvider">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class that writes to the specified
-<see cref="T:System.Text.StringBuilder" /> and has the specified format provider.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="sb" /> is <see langword="null" />.</exception>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object that controls formatting. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StringWriter" /> class that writes to the specified <see cref="T:System.Text.StringBuilder" /> and has the specified format provider.</para>
+        </summary>
+        <param name="sb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The StringBuilder to write to. </param>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object that controls formatting. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -145,15 +756,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Closes the current <see cref="T:System.IO.StringWriter" /> instance.</para>
-        </summary>
         <remarks>
-          <block subset="none" type="note">
-            <para>This version of <see cref="M:System.IO.StringWriter.Close" /> is equivalent to <see cref="M:System.IO.StringWriter.Dispose(System.Boolean)" />(<see langword="true" />).</para>
-            <para>This method overrides <see cref="M:System.IO.Stream.Close" qualify="true" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For an example of creating a file and writing text to a file, see <format type="text/html"><a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a></format>. For an example of reading text from a file, see <format type="text/html"><a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a></format>. For an example of reading from and writing to a binary file, see <format type="text/html"><a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a></format>.</para>
+          <para>This method overrides <see cref="M:System.IO.Stream.Close" />.</para>
+          <para>This implementation of Close calls the <see cref="M:System.IO.StringWriter.Dispose(System.Boolean)" /> method passing a true value.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call Close. Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current <see cref="T:System.IO.StringWriter" /> and the underlying stream.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -174,25 +787,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">
-          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
-        <summary>
-          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.StringWriter" /> and 
-   optionally releases the managed resources.</para>
-        </summary>
         <remarks>
-          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method 
-   releases all resources held by any managed objects that this <see cref="T:System.IO.StringWriter" />
-   references. This method invokes the <see langword="Dispose()" /> method of each
-   referenced object.</para>
-          <para>
-            <block subset="none" type="note">
-              <see cref="M:System.IO.StringWriter.Dispose(System.Boolean)" /> can be called multiple 
-times by other objects. When overriding <see cref="M:System.IO.StringWriter.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
-to reference objects that have been previously disposed in an earlier call to
-<see cref="M:System.IO.StringWriter.Dispose(System.Boolean)" /> .</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.StringWriter" /> references. This method invokes the Dispose method of each referenced object.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.StringWriter" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -211,24 +815,63 @@ to reference objects that have been previously disposed in an earlier call to
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
-        </summary>
         <value>
           <para>The <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
         </value>
         <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">This property is required in some XML 
-      scenarios where a header must be written containing the encoding used by the
-   <see cref="T:System.IO.StringWriter" />. 
-      This allows XML code to consume an arbitrary <see cref="T:System.IO.StringWriter" /> and generate a correct XML
-      header.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is necessary for some XML scenarios where a header must be written containing the encoding used by the StringWriter. This allows the XML code to consume an arbitrary StringWriter and generate the correct XML header.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -244,9 +887,15 @@ to reference objects that have been previously disposed in an earlier call to
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously clears all buffers for the current writer and causes any buffered data to be written to the underlying device. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStringBuilder">
@@ -264,24 +913,64 @@ to reference objects that have been previously disposed in an earlier call to
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is either the StringBuilder that was passed to the constructor, or the StringBuilder that was automatically created.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
         <summary>
-          <para> Returns the underlying <see cref="T:System.Text.StringBuilder" />
-.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the underlying <see cref="T:System.Text.StringBuilder" />.</para>
         </summary>
         <returns>
-          <para> The underlying <see cref="T:System.Text.StringBuilder" />
-.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying StringBuilder.</para>
         </returns>
-        <remarks>
-          <para> This method returns either the <see cref="T:System.Text.StringBuilder" /> that was passed to the
-   constructor, or the <see cref="T:System.Text.StringBuilder" /> that was automatically
-   created.
-   </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -300,22 +989,63 @@ to reference objects that have been previously disposed in an earlier call to
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
         <summary>
-          <para> Returns a string containing the characters written to
-      the current <see cref="T:System.IO.StringWriter" /> instance
-      so far.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the characters written to the current StringWriter so far.</para>
         </summary>
         <returns>
-          <para> The <see cref="T:System.String" /> containing the characters written to the
-   current <see cref="T:System.IO.StringWriter" /> instance.
-   </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string containing the characters written to the current StringWriter.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" qualify="true" />.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -336,18 +1066,136 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Char" /> to write.</param>
-        <summary>
-          <para>Writes a character to the current instance of the <see cref="T:System.IO.StringWriter" />
-.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method
-      overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The writer is closed.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character to the string.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -368,18 +1216,137 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.String" /> to write. If <paramref name="value" /> is <see langword="null" />, nothing is written.</param>
-        <summary>
-          <para>Writes a string to the current instance of the 
-   <see cref="T:System.IO.StringWriter" />.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method
-      overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" /> .</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The writer is closed.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>If the specified string is null, nothing is written.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string to the current string.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -402,19 +1369,6 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">The <see cref="T:System.Char" /> array to read data from.</param>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the index at which to begin reading from <paramref name="buffer" /> .</param>
-        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of characters to write.</param>
-        <summary>
-          <para>Writes the specified region of a character array to this
-      instance of the <see cref="T:System.IO.StringWriter" />.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method
-      overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -426,6 +1380,140 @@ to reference objects that have been previously disposed in an earlier call to
         </exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
         <exception cref="T:System.ObjectDisposedException">The writer is closed.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>This method writes <paramref name="count" /> characters of data to this StringWriter from <paramref name="buffer" />, starting at position <paramref name="index" />.</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Append text to a file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="74423362-1721-49CB-AA0A-E04005F72A06">[&lt;topic://cpconopeningappendingtologfile&gt;]</a>
+                  </format> </para>
+                <para>
+                  <see cref="M:System.IO.File.AppendText(System.String)" /> </para>
+                <para>
+                  <see cref="M:System.IO.FileInfo.AppendText" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the size of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="P:System.IO.FileInfo.Length" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Get the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.GetAttributes(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Set the attributes of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.SetAttributes(System.String,System.IO.FileAttributes)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Determine if a file exists. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.File.Exists(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a binary file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters to the string.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the buffer at which to start reading data.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -443,10 +1531,17 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character to the string asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the string.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAsync">
@@ -463,10 +1558,17 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string to the current string asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If <paramref name="value" /> is null, nothing is written to the text stream.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAsync">
@@ -485,12 +1587,21 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters to the string asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the buffer at which to start reading data.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteLineAsync">
@@ -507,10 +1618,20 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character followed by a line terminator asynchronously to the string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the string.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteLineAsync">
@@ -527,10 +1648,20 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string followed by a line terminator asynchronously to the current string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If the value is null, only a line terminator is written.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteLineAsync">
@@ -549,12 +1680,24 @@ to reference objects that have been previously disposed in an earlier call to
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters followed by a line terminator asynchronously to the string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the buffer at which to start reading data.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write. </param>
       </Docs>
     </Member>
   </Members>

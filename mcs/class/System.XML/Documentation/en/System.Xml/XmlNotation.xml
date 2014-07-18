@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlNotation" FullName="System.Xml.XmlNotation">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlNotation : System.Xml.XmlNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlNotation extends System.Xml.XmlNode" />
@@ -15,8 +16,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a notation declaration, such as &lt;!NOTATION... &gt;.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CloneNode">
@@ -35,10 +39,17 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deep">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of this node. Notation nodes cannot be cloned. Calling this method on an <see cref="T:System.Xml.XmlNotation" /> object throws an exception.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Xml.XmlNode" /> copy of the node from which the method is called.</para>
+        </returns>
+        <param name="deep">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself.</param>
       </Docs>
     </Member>
     <Member MemberName="InnerXml">
@@ -54,9 +65,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlNotation nodes are read-only. Setting this property throws an exception.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup representing the children of this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -72,9 +90,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only node is one whose properties, attributes, or children cannot be changed. You can remove a read-only node from the tree and insert it somewhere else.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the node is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalName">
@@ -90,9 +115,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current node without the namespace prefix.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -108,9 +136,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -126,9 +157,12 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OuterXml">
@@ -144,9 +178,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup representing this node and all its children.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PublicId">
@@ -162,9 +202,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the public identifier on the notation declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemId">
@@ -180,9 +223,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the system identifier on the notation declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteContentTo">
@@ -201,9 +247,16 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the children of the node to the specified <see cref="T:System.Xml.XmlWriter" />. This method has no effect on XmlNotation nodes.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -222,9 +275,16 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the node to the specified <see cref="T:System.Xml.XmlWriter" />. This method has no effect on XmlNotation nodes.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
   </Members>

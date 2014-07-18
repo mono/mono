@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IReadOnlyList&lt;T&gt;" FullName="System.Collections.Generic.IReadOnlyList&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IReadOnlyList&lt;out T&gt; : System.Collections.Generic.IEnumerable&lt;out T&gt;, System.Collections.Generic.IReadOnlyCollection&lt;out T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IReadOnlyList`1&lt;+ T&gt; implements class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.Generic.IReadOnlyCollection`1&lt;!T&gt;, class System.Collections.IEnumerable" />
@@ -22,8 +23,11 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a read-only collection of elements that can be accessed by index. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Item">

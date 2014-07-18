@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolScope" FullName="System.Diagnostics.SymbolStore.ISymbolScope">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolScope" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolScope" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolScope" /> interface also provides access to all locals defined within the current scope.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the <unmanagedCodeEntityReference>ISymUnmanagedScope</unmanagedCodeEntityReference> interface, which is one of the unmanaged symbol store interfaces that provide an alternate way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a lexical scope within <see cref="T:System.Diagnostics.SymbolStore.ISymbolMethod" />, providing access to the start and end offsets of the scope, as well as its child and parent scopes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EndOffset">
@@ -33,9 +43,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the end offset of the current lexical scope.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetChildren">
@@ -52,9 +65,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolScope []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child lexical scopes of the current lexical scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child lexical scopes that of the current lexical scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocals">
@@ -71,9 +90,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local variables are returned in no particular order. If a local variable changes its address within the current scope, that variable is returned multiple times, each with a different offset range.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local variables within the current lexical scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local variables within the current lexical scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNamespaces">
@@ -90,9 +118,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolNamespace []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespaces that are used within the current scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespaces that are used within the current scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Method">
@@ -108,9 +142,12 @@
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ISymbolMethod'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method that contains the current lexical scope.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
@@ -126,9 +163,12 @@
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ISymbolScope'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent lexical scope of the current scope.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartOffset">
@@ -144,9 +184,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the start offset of the current lexical scope.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

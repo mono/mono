@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormatterConverter" FullName="System.Runtime.Serialization.FormatterConverter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class FormatterConverter : System.Runtime.Serialization.IFormatterConverter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FormatterConverter extends System.Object implements class System.Runtime.Serialization.IFormatterConverter" />
@@ -23,8 +24,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a base implementation of the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> interface that uses the <see cref="T:System.Convert" /> class and the <see cref="T:System.IConvertible" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.FormatterConverter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Convert">
@@ -60,11 +67,19 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to the given <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> into which <paramref name="value" /> is converted. </param>
       </Docs>
     </Member>
     <Member MemberName="Convert">
@@ -84,11 +99,19 @@
         <Parameter Name="typeCode" Type="System.TypeCode" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <param name="typeCode">To be added: an object of type 'TypeCode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to the given <see cref="T:System.TypeCode" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" />, or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
+        <param name="typeCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TypeCode" /> into which <paramref name="value" /> is converted. </param>
       </Docs>
     </Member>
     <Member MemberName="ToBoolean">
@@ -107,10 +130,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToBoolean(System.Object)" /> method instead. For more information, see <see cref="T:System.Boolean" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a <see cref="T:System.Boolean" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToByte">
@@ -129,10 +162,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToByte(System.Object)" /> method instead. For more information, see <see cref="T:System.Byte" />, <see cref="T:System.Convert" /> and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to an 8-bit unsigned integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToChar">
@@ -151,10 +194,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToChar(System.Object)" /> method instead. For more information, see <see cref="T:System.Char" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a Unicode character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDateTime">
@@ -173,10 +226,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToDateTime(System.DateTime)" /> method instead. For more information, see <see cref="T:System.DateTime" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDecimal">
@@ -195,10 +258,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToDecimal(System.Object)" /> method instead. For more information, see <see cref="T:System.Decimal" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDouble">
@@ -217,10 +290,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToDouble(System.Object)" /> method instead. For more information, see <see cref="T:System.Double" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a double-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt16">
@@ -239,10 +322,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToInt16(System.Object)" /> method instead. For more information, see <see cref="T:System.Int16" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 16-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt32">
@@ -261,10 +354,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToInt32(System.Object)" /> method instead. For more information, see <see cref="T:System.Int32" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt64">
@@ -283,10 +386,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToInt64(System.Object)" /> method instead. For more information, see <see cref="T:System.Int64" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToSByte">
@@ -310,10 +423,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'sbyte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToSByte(System.Object)" /> method instead. For more information, see <see cref="T:System.SByte" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a <see cref="T:System.SByte" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToSingle">
@@ -332,10 +455,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToSingle(System.Object)" /> method instead. For more information, see <see cref="T:System.Single" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a single-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -354,10 +487,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToString(System.Object)" /> method instead. For more information, see <see cref="T:System.String" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt16">
@@ -381,10 +524,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ushort'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToUInt16(System.Object)" /> method instead. For more information, see <see cref="T:System.UInt16" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 16-bit unsigned integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt32">
@@ -408,10 +561,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'uint'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToUInt32(System.Object)" /> method instead. For more information, see <see cref="T:System.UInt32" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 32-bit unsigned integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt64">
@@ -435,10 +598,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ulong'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the invariant culture (see <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />). To use the current culture or to specify a culture, use the <see cref="M:System.Convert.ToUInt64(System.Object)" /> method instead. For more information, see <see cref="T:System.UInt64" />, <see cref="T:System.Convert" />, and <see cref="T:System.ValueType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value to a 64-bit unsigned integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted <paramref name="value" /> or null if the <paramref name="type" /> parameter is null.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
     </Member>
   </Members>

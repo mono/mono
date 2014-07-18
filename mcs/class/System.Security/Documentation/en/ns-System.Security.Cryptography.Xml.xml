@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Security.Cryptography.Xml">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.Cryptography.Xml" /> namespace contains classes to support the creation and validation of XML digital signatures. The classes in this namespace implement the World Wide Web Consortium Recommendation, "XML-Signature Syntax and Processing", described at http://www.w3.org/TR/xmldsig-core/.</para>
+    </summary>
   </Docs>
 </Namespace>

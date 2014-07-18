@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRequest" FullName="System.Web.HttpRequest">
   <TypeSignature Language="C#" Value="public sealed class HttpRequest" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Provides a high-level access of the various elements of an http request.</summary>
-    <remarks>Provides high-level access to many of the components of an http request.  This acts as a bridge to the elements of an <see cref="T:System.Web.HttpWorkerRequest" />.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The methods and properties of the <see cref="T:System.Web.HttpRequest" /> class are exposed through the Request properties of the <see cref="T:System.Web.HttpApplication" />, <see cref="T:System.Web.HttpContext" />, <see cref="T:System.Web.UI.Page" />, and <see cref="T:System.Web.UI.UserControl" /> classes.</para>
+      <para>To access data from the <see cref="P:System.Web.HttpRequest.QueryString" />, <see cref="P:System.Web.HttpRequest.Form" />, <see cref="P:System.Web.HttpRequest.Cookies" />, or <see cref="P:System.Web.HttpRequest.ServerVariables" /> collections, you can write Request["key"], as shown in the example for the <see cref="P:System.Web.HttpRequest.QueryString" /> property.</para>
+      <block subset="none" type="note">
+        <para>Unicode support for <see cref="T:System.Web.HttpRequest" /> class members requires IIS version 6.0 or later.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables ASP.NET to read the HTTP values sent by a client during a Web request. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +38,20 @@
         <Parameter Name="queryString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added.</param>
-        <param name="url">To be added.</param>
-        <param name="queryString">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to create your own instance of the <see cref="T:System.Web.HttpRequest" /> class. The methods and properties of the <see cref="T:System.Web.HttpRequest" /> class are exposed through the Request property of the <see cref="T:System.Web.HttpApplication" />, <see cref="T:System.Web.HttpContext" />, <see cref="T:System.Web.UI.Page" />, and <see cref="T:System.Web.UI.UserControl" /> classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an <see cref="T:System.Web.HttpRequest" /> object.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file associated with the request. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information regarding the URL of the current request. </param>
+        <param name="queryString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The entire query string sent with the request (everything after the'?'). </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +65,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string array of client-supported MIME accept types.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +87,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.AnonymousID" /> property assigns a long-lived unique identifier to a non-authenticated user, which can be used to track the user or assign profile properties to that user without storing data in a Session object. By default, the <see cref="P:System.Web.HttpRequest.AnonymousID" /> property is tracked using a cookie, but it can be set to use the URI when the <see cref="P:System.Web.Configuration.SessionStateSection.Cookieless" /> attribute in the anonymous identification configuration section is set to either the <see cref="F:System.Web.HttpCookieMode.UseUri" />, <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" />, or <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> value. You must explicitly clear the cookie if you no longer want it available, for example when an anonymous user is authenticated. </para>
+          <para>Anonymous identification is used when there is a need to identify entities that are not authenticated and when authorization is required. For more information, see <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification Element (ASP.NET Settings Schema)</a></format> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the anonymous identifier for the user, if present.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationPath">
@@ -76,9 +106,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to construct a URL relative to the application root from a page or Web user control that is not in the root directory. This allows pages and shared controls that exist at different levels of a directory structure to use the same code to link to resources at fixed locations in the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ASP.NET application's virtual application root path on the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +131,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide URL information that will stay the same even if the application changes location. This allows the same URL-mapping code to be used in a test environment and in the final deployment environment, or to be used by copies of Web applications in different domains.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path of the application root and makes it relative by using the tilde (~) notation for the application root (as in "~/page.aspx").</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryRead">
@@ -110,10 +152,20 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpRequest.BinaryRead(System.Int32)" /> method is provided for compatibility with ASP.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a binary read of a specified number of bytes from the current input stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array.</para>
+        </returns>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,9 +181,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpBrowserCapabilities'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets information about the requesting client's browser capabilities.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -145,9 +200,12 @@
         <ReturnType>System.Web.HttpClientCertificate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpClientCertificate'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current request's client security certificate.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -162,9 +220,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The content encoding used by the data sent on this request.</summary>
         <value>The <see cref="T:System.Text.Encoding" /> used for the request body.</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Default content encoding can be specified in the <format type="text/html"><a href="e2dffc8e-ebd2-439b-a2fd-e3ac5e620da7">globalization Element (ASP.NET Settings Schema)</a></format> of a configuration file. If content encoding is also specified by the client, the default configuration settings are overridden.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character set of the entity-body.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +242,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The content length for the data that is being uploaded by the client.</summary>
         <value>The size of the data that has been attached to this request or zero if this information was not provided.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the length, in bytes, of content sent by the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +261,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the MIME content type of the incoming request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,14 +280,18 @@
         <ReturnType>System.Web.HttpCookieCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The cookies sent on this HTTP request.</summary>
         <value>The return value is a collection of the cookies.</value>
-        <remarks>Example:
-
-
-<example><code lang="C#">
-      string prefered_color = Request.Cookies ["color"];
-  </code></example></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET includes two intrinsic cookie collections. The collection accessed through the <see cref="P:System.Web.HttpRequest.Cookies" /> collection of <see cref="T:System.Web.HttpRequest" /> contains cookies transmitted by the client to the server in the Cookie header. The collection accessed through the <see cref="P:System.Web.HttpResponse.Cookies" /> collection of <see cref="T:System.Web.HttpResponse" /> contains new cookies created on the server and transmitted to the client in the Set-Cookie header.</para>
+          <block subset="none" type="note">
+            <para>After you add a cookie by using the <see cref="P:System.Web.HttpResponse.Cookies" /> collection, the cookie is immediately available in the <see cref="P:System.Web.HttpRequest.Cookies" /> collection, even if the response has not been sent to the client.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of cookies sent by the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,9 +305,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Web.HttpRequest.CurrentExecutionFilePath" /> returns the file path to the currently executing page handler. For redirect scenarios using <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> and <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" /> methods this means that the <see cref="P:System.Web.HttpRequest.CurrentExecutionFilePath" /> property returns the path to the page redirected to (child page). However, when the client is redirected to another page, the <see cref="P:System.Web.HttpRequest.FilePath" /> property returns the path to the original page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path of the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,9 +328,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The virtual path to the request.</summary>
         <value>The path as a string</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.FilePath" /> property does not include the <see cref="P:System.Web.HttpRequest.PathInfo" /> trailer. For example, for the URL http://www.contoso.com/virdir/page.html/tail, the <see cref="P:System.Web.HttpRequest.FilePath" /> value is /virdir/page.html.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path of the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -263,9 +350,15 @@
         <ReturnType>System.Web.HttpFileCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpFileCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file collection is populated only when the HTTP request Content-Type value is "multipart/form-data".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of files uploaded by the client, in multipart MIME format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -280,9 +373,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.IO.Stream" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the filter to use when reading the current input stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,9 +393,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.Form" /> property is populated when the HTTP request Content-Type value is either "application/x-www-form-urlencoded" or "multipart/form-data".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of form variables.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -314,13 +416,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>All of the headers of this HTTP request.</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
-        <remarks>This collection contains all of the headers for this HTTP request.
-
-<para>
-   If you only need a single header value you might want to use <see cref="M:System.Web.HttpWorkerRequest.GetKnownRequestHeader(int)" />.
-</para></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a listing of all possible headers, see <see cref="http://go.microsoft.com/fwlink/?LinkId=73147">Request Header Fields</see> on the W3C Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of HTTP headers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -334,9 +438,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The method used (typically GET or POST).</summary>
         <value>The method used to trigger this request.</value>
         <remarks>The values are typically GET or POST but any valid HTTP verb can be returned as well as user-defined verbs or application-defined verbs.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP data transfer method (such as GET, POST, or HEAD) used by the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,7 +458,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>A stream representing the data sent on the request.</summary>
         <value>a <see cref="T:System.IO.Stream" /></value>
         <remarks>The stream returned is a seekable stream.  Because of this the whole stream lives in memory for the duration of the request.
 
@@ -360,6 +466,10 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
 </para><para>
    The stream is created on the first access to this property.   Module authors and IHttpHandler developers can work around this by using the <see cref="I:System.ServiceProvider.GetService(Type)" /> method from the <see cref="T:System.Web.HttpContext" /> passing a <see cref="T:System.Web.HttpWorkerRequest" /> to get direct access to the input data.
 </para></remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contents of the incoming HTTP entity body.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -373,9 +483,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the request has been authenticated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,9 +505,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.IsLocal" /> property returns true if the IP address of the request originator is 127.0.0.1 or if the IP address of the request is the same as the server's IP address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the request is from the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSecureConnection">
@@ -404,9 +523,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns true or false to determine if the connection is using secure sockets layer.</summary>
         <value>returns true if the request is using https and false if not.</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the HTTP connection uses secure sockets (that is, HTTPS).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,9 +565,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Security.Principal.WindowsIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.LogonUserIdentity" /> property exposes the properties and methods of the <see cref="T:System.Security.Principal.WindowsIdentity" /> object for the currently connected user to Microsoft Internet Information Services (IIS). The instance of the <see cref="T:System.Security.Principal.WindowsIdentity" /> class that is exposed by <see cref="P:System.Web.HttpRequest.LogonUserIdentity" /> tracks the IIS request token and provides easy access to this token for the current HTTP request being processed inside of ASP.NET. An instance of the <see cref="T:System.Security.Principal.WindowsIdentity" /> class is automatically created so it does not need to be constructed to in order to gain access to its methods and properties. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Security.Principal.WindowsIdentity" /> type for the current user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MapImageCoordinates">
@@ -458,10 +586,17 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="imageFieldName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="imageFieldName">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32[]" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps an incoming image-field form parameter to appropriate x-coordinate and y-coordinate values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A two-dimensional array of integers.</para>
+        </returns>
+        <param name="imageFieldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the form image map. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -478,10 +613,22 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.HttpRequest.MapPath(System.String)" /> property potentially contains sensitive information about the hosting environment. The return value should not be displayed to users.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps the specified virtual path to a physical path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server specified by <paramref name="virtualPath" />.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative) for the current request. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -500,12 +647,26 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="allowCrossAppMapping" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added: an object of type 'string'</param>
-        <param name="baseVirtualDir">To be added: an object of type 'string'</param>
-        <param name="allowCrossAppMapping">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.HttpRequest.MapPath(System.String,System.String,System.Boolean)" /> property potentially contains sensitive information about the hosting environment. The return value should not be displayed to users.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps the specified virtual path to a physical path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative) for the current request. </param>
+        <param name="baseVirtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual base directory path used for relative resolution. </param>
+        <param name="allowCrossAppMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that <paramref name="virtualPath" /> may belong to another application; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -520,9 +681,29 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Name-value pairs are added to the collection in the following order:</para>
+          <list type="ordered">
+            <item>
+              <para>Query-string parameters.</para>
+            </item>
+            <item>
+              <para>Form fields.</para>
+            </item>
+            <item>
+              <para>Cookies.</para>
+            </item>
+            <item>
+              <para>Server variables.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a combined collection of <see cref="P:System.Web.HttpRequest.QueryString" />, <see cref="P:System.Web.HttpRequest.Form" />, <see cref="P:System.Web.HttpRequest.Cookies" />, and <see cref="P:System.Web.HttpRequest.ServerVariables" /> items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -536,9 +717,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpRequest.Path" /> is the concatenation of the <see cref="P:System.Web.HttpRequest.FilePath" /> and the <see cref="P:System.Web.HttpRequest.PathInfo" /> trailer. For example, for the URL http://www.contoso.com/virdir/page.html/tail, the <see cref="P:System.Web.HttpRequest.Path" /> is /virdir/page.html/tail.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path of the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -552,9 +739,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the URL Http://www.contoso.com/virdir/page.html/tail, the <see cref="P:System.Web.HttpRequest.PathInfo" /> value is /tail.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets additional path information for a resource with a URL extension.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -568,9 +761,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical file system path of the currently executing server application's root directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -584,9 +780,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In redirect scenarios using <see cref="M:System.Web.HttpServerUtility.Execute(System.String)" /> and <see cref="M:System.Web.HttpServerUtility.Transfer(System.String,System.Boolean)" />, the <see cref="P:System.Web.HttpRequest.PhysicalPath" /> property returns the path to the original page. To find the physical path of the currently executing page use the <see cref="M:System.Web.HttpRequest.MapPath(System.String,System.String,System.Boolean)" /> method with the input argument set as the <see cref="P:System.Web.HttpRequest.CurrentExecutionFilePath" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical file system path corresponding to the requested URL.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -601,9 +803,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of HTTP query string variables.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -617,9 +822,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The raw URL is defined as the part of the URL following the domain information. In the URL string http://www.contoso.com/articles/recent.aspx, the raw URL is /articles/recent.aspx. The raw URL includes the query string, if present.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw URL of the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -635,9 +846,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP data transfer method (GET or POST) used by the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -655,10 +869,18 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="includeHeaders" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="includeHeaders">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saving the request context to disk can be useful in debugging.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves an HTTP request to disk.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical drive path. </param>
+        <param name="includeHeaders">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value specifying whether an HTTP header should be saved to disk. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -673,9 +895,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of server variables supported by IIS, see <see cref="http://go.microsoft.com/fwlink/?LinkId=52471">IIS Server Variables</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of Web server variables.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -689,9 +917,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes in the current input stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -705,9 +936,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Uri'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information about the URL of the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -721,9 +955,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Uri'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information about the URL of the client's previous request that linked to the current URL.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -737,9 +974,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the raw user agent string of the client browser.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -753,9 +993,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IP host address of the remote client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -769,9 +1012,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the DNS name of the remote client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -785,9 +1031,12 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a sorted string array of client language preferences.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -802,9 +1051,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Request that potentially unsafe data sent by a user is validated.</summary>
-        <remarks>This method is typically invoked by the various http modules loaded in your application to request that cookies, the query string or the input data does not contain information that could be used to inject malicious code into later renderings of data onto the page.
-</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpRequest" /> class uses input validation flags to track whether to perform validation on the request collections accessed through the <see cref="P:System.Web.HttpRequest.Cookies" />, <see cref="P:System.Web.HttpRequest.Form" />, and <see cref="P:System.Web.HttpRequest.QueryString" /> properties. The <see cref="M:System.Web.HttpRequest.ValidateInput" /> method sets these flags so that when the get accessors for the <see cref="P:System.Web.HttpRequest.Cookies" />, <see cref="P:System.Web.HttpRequest.Form" />, or <see cref="P:System.Web.HttpRequest.QueryString" /> property are invoked, input validation is performed. Validation works by checking all input data against a hard-coded list of potentially dangerous data.</para>
+          <para>If the validation feature is enabled by page directive or configuration, this method is called during the page's ProcessRequest processing phase. The <see cref="M:System.Web.HttpRequest.ValidateInput" /> method can be called by your code if the validation feature is not enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes validation to occur for the collections accessed through the <see cref="P:System.Web.HttpRequest.Cookies" />, <see cref="P:System.Web.HttpRequest.Form" />, and <see cref="P:System.Web.HttpRequest.QueryString" /> properties.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

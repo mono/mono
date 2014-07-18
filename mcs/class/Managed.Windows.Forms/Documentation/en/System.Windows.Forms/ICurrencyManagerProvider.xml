@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICurrencyManagerProvider" FullName="System.Windows.Forms.ICurrencyManagerProvider">
   <TypeSignature Language="C#" Value="public interface ICurrencyManagerProvider" />
   <AssemblyInfo>
@@ -6,8 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface allows component authors to provide their own <see cref="T:System.Windows.Forms.CurrencyManager" /> for components that will interact with the Windows Forms data-binding engine. It is rare for a component author to need to implement this interface.</para>
+      <para>The <see cref="T:System.Windows.Forms.BindingSource" /> class provides an example implementation of <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" />.</para>
+      <para>Note that for Smartphone applications, this class requires Windows Mobile Version 5.0 software for Smartphones.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides custom binding management for components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CurrencyManager">
@@ -20,9 +29,12 @@
         <ReturnType>System.Windows.Forms.CurrencyManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.CurrencyManager" /> associated with this <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetRelatedCurrencyManager">
@@ -38,10 +50,20 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="dataMember" /> is null or an empty string (""), <see cref="M:System.Windows.Forms.ICurrencyManagerProvider.GetRelatedCurrencyManager(System.String)" /> returns the main currency manager for this <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" />, which is the same currency manager returned from the <see cref="P:System.Windows.Forms.ICurrencyManagerProvider.CurrencyManager" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.CurrencyManager" /> for this <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" /> and the specified data member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The related <see cref="T:System.Windows.Forms.CurrencyManager" /> obtained from this <see cref="T:System.Windows.Forms.ICurrencyManagerProvider" /> and the specified data member.</para>
+        </returns>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column or list, within the data source, to obtain the <see cref="T:System.Windows.Forms.CurrencyManager" /> for.</param>
       </Docs>
     </Member>
   </Members>

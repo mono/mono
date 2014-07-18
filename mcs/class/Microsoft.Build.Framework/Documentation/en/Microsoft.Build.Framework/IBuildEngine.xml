@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBuildEngine" FullName="Microsoft.Build.Framework.IBuildEngine">
   <TypeSignature Language="C#" Value="public interface IBuildEngine" />
   <AssemblyInfo>
@@ -6,9 +7,12 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way for task authors to use a subset of the functionality of the vstecmsbuild engine. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BuildProjectFile">
@@ -24,14 +28,29 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="projectFileName">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="globalProperties">To be added.</param>
-        <param name="targetOutputs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="targetNames" />, <paramref name="globalProperties" />, and <paramref name="targetOutputs" /> parameters can be null.</para>
+          <para>If no targets are specified, vstecmsbuild builds the default targets of the project.</para>
+          <para>Target outputs are returned as <see cref="T:Microsoft.Build.Framework.ITaskItem" /> arrays indexed by target name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a build of a project file. If the build is successful, the outputs, if any, of the specified targets are returned.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the project file to build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The names of the target in the project to build. Separate multiple targets with a semicolon (;).</param>
+        <param name="globalProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of additional global properties to apply to the project. The key and value must be String data types.</param>
+        <param name="targetOutputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outputs of each specified target.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,10 +63,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number of the task node within the project file that called it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +82,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the ContinueOnError flag was set to true for this particular task in the project file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,10 +101,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number of the task node within the project file that called it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +123,14 @@
         <Parameter Name="e" Type="Microsoft.Build.Framework.CustomBuildEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a custom event to all registered loggers.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,10 +146,14 @@
         <Parameter Name="e" Type="Microsoft.Build.Framework.BuildErrorEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises an error event to all registered loggers.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,10 +169,14 @@
         <Parameter Name="e" Type="Microsoft.Build.Framework.BuildMessageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a message event to all registered loggers.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -152,10 +192,14 @@
         <Parameter Name="e" Type="Microsoft.Build.Framework.BuildWarningEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a warning event to all registered loggers.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,10 +212,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full path to the project file that contained the call to this task.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

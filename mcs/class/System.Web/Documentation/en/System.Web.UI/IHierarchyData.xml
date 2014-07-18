@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHierarchyData" FullName="System.Web.UI.IHierarchyData">
   <TypeSignature Language="C#" Value="public interface IHierarchyData" />
   <AssemblyInfo>
@@ -6,9 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.IHierarchyData" /> interface is implemented by classes that represent nodes of a hierarchical structure, and track the hierarchical relationships to their parent and child nodes. Classes that implement the <see cref="T:System.Web.UI.IHierarchyData" /> interface can be contained in collections that implement the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes a node of a hierarchical data structure, including the node object and some properties that describe characteristics of the node. Objects that implement the <see cref="T:System.Web.UI.IHierarchyData" /> interface can be contained in <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collections, and are used by ASP.NET site navigation and data source controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetChildren">
@@ -19,10 +26,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.UI.IHierarchyData.HasChildren" /> property to determine whether the <see cref="T:System.Web.UI.IHierarchyData" /> node has child nodes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumeration object that represents all the child nodes of the current hierarchical node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of child nodes of the current hierarchical node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,10 +52,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.IHierarchyData" /> interface does not define a HasParent convenience property, so callers must check the return value of the <see cref="M:System.Web.UI.IHierarchyData.GetParent" /> method for null to determine whether the current <see cref="T:System.Web.UI.IHierarchyData" /> node is the root node of the hierarchical data structure to which the node belongs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Web.UI.IHierarchyData" /> object that represents the parent node of the current hierarchical node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchyData" /> object that represents the parent node of the current hierarchical node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,10 +77,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.IHierarchyData.HasChildren" /> property is a convenience property that enables callers to avoid checking the return value of the <see cref="M:System.Web.UI.IHierarchyData.GetChildren" /> method for null. If the <see cref="P:System.Web.UI.IHierarchyData.HasChildren" /> property returns true, call the <see cref="M:System.Web.UI.IHierarchyData.GetChildren" /> method to retrieve an <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of child nodes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the hierarchical data node that the <see cref="T:System.Web.UI.IHierarchyData" /> object represents has any child nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -68,10 +99,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>While many classes that represent hierarchical data nodes, such as the <see cref="T:System.Web.SiteMapNode" /> class, implement the <see cref="T:System.Web.UI.IHierarchyData" /> interface directly, other classes only act as a wrapper for a class that does not implement the interface. The <see cref="P:System.Web.UI.IHierarchyData.Item" /> property is provided for these design situations, when business objects are functionally equivalent to an <see cref="T:System.Web.UI.IHierarchyData" /> object but cannot be redesigned easily.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hierarchical data node that the <see cref="T:System.Web.UI.IHierarchyData" /> object represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +121,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.IHierarchyData.Path" /> property can be passed to the <see cref="M:System.Web.UI.HierarchicalDataSourceControl.GetHierarchicalView(System.String)" /> method to retrieve the <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object that corresponds to the node identified by <see cref="P:System.Web.UI.IHierarchyData.Path" />.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.IHierarchyData.Path" /> property should not contain any sensitive information about the host environment, because it might be rendered to the client in a data-bound control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hierarchical path of the node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,10 +146,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.IHierarchyData.Type" /> property does not return the <see cref="T:System.Type" /> of the object represented in an <see cref="T:System.Web.UI.IHierarchyData" /> object. It returns a name used by data-bound controls to differentiate between items in a hierarchy that have different bindable properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the type of <see cref="T:System.Object" /> contained in the <see cref="P:System.Web.UI.IHierarchyData.Item" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

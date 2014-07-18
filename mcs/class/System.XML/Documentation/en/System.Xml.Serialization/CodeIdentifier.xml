@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeIdentifier" FullName="System.Xml.Serialization.CodeIdentifier">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CodeIdentifier" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeIdentifier extends System.Object" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The methods of the <see cref="T:System.Xml.Serialization.CodeIdentifier" /> class are used by the XML serialization infrastructure while producing .NET Framework types from XML element and data type definitions. XML element or attribute names typically provide the methods' input text.</para>
+      <para>You do not need to call the methods of the <see cref="T:System.Xml.Serialization.CodeIdentifier" /> class directly from your code. Instead, use the various tools and APIs provided by the .NET Framework for XML serialization, such as the <see cref="T:System.Xml.Serialization.XmlSerializer" />, or the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format> tool.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides static methods to convert input text into names for code entities.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.CodeIdentifier" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MakeCamel">
@@ -55,10 +66,21 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="identifier">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakeCamel(System.String)" /> method converts the initial character from an upper-case to lower-case letter, if necessary.</para>
+          <para>You do not need to call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a camel-case string from an input string. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A camel-case version of the parameter string.</para>
+        </returns>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>
     </Member>
     <Member MemberName="MakePascal">
@@ -77,10 +99,21 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="identifier">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakePascal(System.String)" /> method converts the initial character from a lower-case to upper-case letter, if necessary.</para>
+          <para>You do not need to call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a Pascal-case string from an input string. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Pascal-case version of the parameter string.</para>
+        </returns>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>
     </Member>
     <Member MemberName="MakeValid">
@@ -99,10 +132,21 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="identifier">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakeValid(System.String)" /> method removes any characters that cannot appear in a code identifier. It returns the string "Item" if no characters are valid. It prefixes the string "Item" to an input that begins with an invalid start character, for example, a digit, or a currency symbol.</para>
+          <para>You do not need to call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a valid code entity name from an input string. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that can be used as a code identifier, such as the name of a method parameter.</para>
+        </returns>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>
     </Member>
   </Members>

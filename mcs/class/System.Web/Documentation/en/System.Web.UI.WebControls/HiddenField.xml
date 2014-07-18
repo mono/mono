@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HiddenField" FullName="System.Web.UI.WebControls.HiddenField">
   <TypeSignature Language="C#" Value="public class HiddenField : System.Web.UI.Control, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -13,9 +14,62 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.HiddenField" /> control is used to store a value that needs to be persisted across posts to the server. It is rendered as an &lt;input type= "hidden"/&gt; element.</para>
+      <para>Normally view state, session state, and cookies are used to maintain the state of a Web Forms page. However, if these methods are disabled or are not available, you can use the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control to store state values.</para>
+      <para>To specify the value for a <see cref="T:System.Web.UI.WebControls.HiddenField" /> control, use the <see cref="P:System.Web.UI.WebControls.HiddenField.Value" /> property. You can provide a routine that gets called every time the value of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control changes between posts to the server by creating an event handler for the <see cref="E:System.Web.UI.WebControls.HiddenField.ValueChanged" /> event.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:HiddenField
+    EnableTheming="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    OnValueChanged="ValueChanged event handler"
+    runat="server"
+    SkinID="string"
+    Value="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a hidden field used to store a non-displayed value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +77,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of a <see cref="T:System.Web.UI.WebControls.HiddenField" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +99,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.CreateControlCollection" /> method is normally used to create a <see cref="T:System.Web.UI.ControlCollection" /> object for storing the child controls of a Web Server control. In this implementation of the method, an <see cref="T:System.Web.UI.EmptyControlCollection" /> collection is always returned to indicate that child controls are not allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Web.UI.EmptyControlCollection" /> object used to indicate that child controls are not allowed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an <see cref="T:System.Web.UI.EmptyControlCollection" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +124,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.HiddenField" /> control does not support themes. This property has been overridden to always return false. If you attempt to set this property, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether themes apply to this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,9 +147,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting focus to a <see cref="T:System.Web.UI.WebControls.HiddenField" /> control is not supported. A <see cref="T:System.NotSupportedException" /> is thrown if you attempt to call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets input focus to this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,12 +172,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Forms page framework tracks all the server controls that return true to this method call, then invokes the <see cref="M:System.Web.UI.WebControls.HiddenField.RaisePostDataChangedEvent" /> on those controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes postback data for a <see cref="T:System.Web.UI.WebControls.HiddenField" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,9 +207,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnValueChanged">
@@ -130,10 +226,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.HiddenField.ValueChanged" /> event is raised when the value of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control changes between posts to the server. This allows you to provide an event-handling method that performs a custom routine whenever this event occurs.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.HiddenField.OnValueChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.HiddenField.ValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -147,9 +252,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.HiddenField.RaisePostDataChangedEvent" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.HiddenField" /> class to notify the ASP.NET application that the state of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control has changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the ASP.NET application that the state of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,9 +279,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.HiddenField.Render(System.Web.UI.HtmlTextWriter)" /> method is used to render the server control content to the client's browser using the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the Web server control content to the client's browser using the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object used to render the server control content on the client's browser. </param>
       </Docs>
     </Member>
     <Member MemberName="SkinID">
@@ -180,10 +298,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.HiddenField" /> control does not support themes. This property has been overridden to always return an empty string. If you attempt to set this property, a <see cref="T:System.NotSupportedException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the skin to apply to the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -203,11 +327,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.HiddenField" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -221,8 +356,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.HiddenField" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -237,10 +378,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.HiddenField.Value" /> property to specify or determine the value of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the hidden field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -253,9 +400,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.HiddenField.ValueChanged" /> event is raised when the value of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control changes between posts to the server. This allows you to provide an event-handling method that performs a custom routine whenever this event occurs.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="T:System.Web.UI.WebControls.HiddenField" /> control changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

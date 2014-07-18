@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SplitContainer" FullName="System.Windows.Forms.SplitContainer">
   <TypeSignature Language="C#" Value="public class SplitContainer : System.Windows.Forms.ContainerControl" />
   <AssemblyInfo>
@@ -26,9 +27,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can add controls to the two resizable panels, and you can add other <see cref="T:System.Windows.Forms.SplitContainer" /> controls to existing <see cref="T:System.Windows.Forms.SplitContainer" /> panels to create many resizable display areas.</para>
+      <para>Use the <see cref="T:System.Windows.Forms.SplitContainer" /> control to divide the display area of a container (such as a <see cref="T:System.Windows.Forms.Form" />) and allow the user to resize controls that are added to the <see cref="T:System.Windows.Forms.SplitContainer" /> panels. When the user passes the mouse pointer over the splitter, the cursor changes to indicate that the controls inside the <see cref="T:System.Windows.Forms.SplitContainer" /> control can be resized.</para>
+      <block subset="none" type="note">
+        <para>Previous versions of the dnprdnshort only support the <see cref="T:System.Windows.Forms.Splitter" /> control.</para>
+      </block>
+      <para>
+        <see cref="T:System.Windows.Forms.SplitContainer" /> also eases control placement at design time. For example, to create a window similar to Windows Explorer, add a <see cref="T:System.Windows.Forms.SplitContainer" /> control to a <see cref="T:System.Windows.Forms.Form" /> and set its <see cref="P:System.Windows.Forms.Control.Dock" /> property to DockStyle.Fill. Add a <see cref="T:System.Windows.Forms.TreeView" /> control to the <see cref="T:System.Windows.Forms.Form" /> and set its <see cref="P:System.Windows.Forms.Control.Dock" /> property to DockStyle.Fill. To complete the layout, add a <see cref="T:System.Windows.Forms.ListView" /> control and set its <see cref="P:System.Windows.Forms.Control.Dock" /> property to DockStyle.Fill to have the <see cref="T:System.Windows.Forms.ListView" /> occupy the remaining space on the <see cref="T:System.Windows.Forms.Form" />. At run time, the user can then resize the width of both controls using the splitter. Use the <see cref="P:System.Windows.Forms.SplitContainer.FixedPanel" /> property to specify that a control should not be resized along with the <see cref="T:System.Windows.Forms.Form" /> or other container.</para>
+      <para>Use <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> to specify where the splitter starts on your form. Use <see cref="P:System.Windows.Forms.SplitContainer.SplitterIncrement" /> to specify how many pixels the splitter moves at a time. The default for <see cref="P:System.Windows.Forms.SplitContainer.SplitterIncrement" /> is one pixel.</para>
+      <para>Use <see cref="P:System.Windows.Forms.SplitContainer.Panel1MinSize" /> and <see cref="P:System.Windows.Forms.SplitContainer.Panel2MinSize" /> to specify how close the splitter bar can be moved to the outside edge of a <see cref="T:System.Windows.Forms.SplitContainer" /> panel. The default minimum size of a panel is 25 pixels.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property to specify horizontal orientation. The default orientation of the <see cref="T:System.Windows.Forms.SplitContainer" /> is vertical.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.BorderStyle" /> property to specify the border style of the <see cref="T:System.Windows.Forms.SplitContainer" /> and coordinate its border style with the border style of controls that you add to the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control consisting of a movable bar that divides a container's display area into two resizable panels. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,9 +53,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.SplitContainer" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,10 +85,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets or sets a value indicating whether scroll bars automatically appear if controls are placed outside the <see cref="T:System.Windows.Forms.SplitContainer" /> client area. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +118,18 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The auto-scroll margin is the distance between any child controls and the edges of the scrollable parent control. The <see cref="P:System.Windows.Forms.SplitContainer.AutoScrollMargin" /> size is added to the size of any child controls contained in the scrollable control to determine if scroll bars are needed. The <see cref="P:System.Windows.Forms.SplitContainer.AutoScrollMargin" /> property is evaluated when the parent scrollable control is resized or the individual child controls are brought into view, and is used to determine if scroll bars must be displayed. Docked controls are excluded from the calculations that determine if scroll bars must be displayed.</para>
+          <para>If the distance from the edge of a child control to the parent scrollable control is less than the value assigned to the <see cref="P:System.Windows.Forms.SplitContainer.AutoScrollMargin" /> property and the <see cref="P:System.Windows.Forms.SplitContainer.AutoScroll" /> property is set to true, the appropriate scroll bar is displayed.</para>
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the auto-scroll margin. This property is not relevant to this class. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -119,10 +153,17 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.AutoScrollMinSize" /> property to manage the screen size allocated to the automatic scroll bar.</para>
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum size of the scroll bar. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -149,9 +190,15 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoScrollPosition">
@@ -172,10 +219,16 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,10 +252,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of a control may change for many reasons; including display data changes; addition of child controls; layout and padding changes; or system font, language, or resolution changes. If the <see cref="P:System.Windows.Forms.SplitContainer.AutoSize" /> property is set to true, the <see cref="T:System.Windows.Forms.SplitContainer" /> will resize automatically to encompass its contents, although it will never be resized to be smaller than its original <see cref="T:System.Drawing.Size" />. This operation will maintain the control’s <see cref="P:System.Windows.Forms.SplitContainer.Padding" />. This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.SplitContainer" /> is automatically resized to display its entire contents. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -223,9 +282,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.SplitContainer.AutoSize" /> property changes. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,10 +304,24 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="bullet">
+            <item>
+              <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImage" /> property to place a graphic image onto a control. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Images with translucent or transparent colors are not supported by Windows Forms controls as background images.</para>
+            <para>This property is not supported on child controls whose <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> property is true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image displayed in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,8 +353,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised if the <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImage" /> property is changed by either a programmatic modification or user interaction.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImage" /> property changes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayout">
@@ -295,9 +382,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -318,8 +411,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImageLayout" /> property changes. This event is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingContext">
@@ -334,10 +433,13 @@
         <ReturnType>System.Windows.Forms.BindingContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.BindingContext" /> for the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -358,10 +460,16 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.BorderStyle" /> property to coordinate the border of the splitter and the outer edges of the <see cref="T:System.Windows.Forms.SplitContainer" /> panels with the border of the control or controls that the <see cref="T:System.Windows.Forms.SplitContainer" /> contains.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of border for the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,8 +493,14 @@
         <ReturnType>System.Windows.Forms.ControlEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlRemoved">
@@ -407,8 +521,14 @@
         <ReturnType>System.Windows.Forms.ControlEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Controls">
@@ -426,10 +546,16 @@
         <ReturnType>System.Windows.Forms.Control+ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of child controls. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -451,9 +577,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the control collection for the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Windows.Forms.Control.ControlCollection" /> assigned to the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -463,10 +595,16 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="P:System.Windows.Forms.SplitContainer.DefaultSize" /> property in a derived class to specify a default size for <see cref="T:System.Windows.Forms.SplitContainer" />. This is more efficient than setting the size in the <see cref="T:System.Windows.Forms.SplitContainer" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -479,10 +617,20 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dock a <see cref="T:System.Windows.Forms.SplitContainer" /> to any edge of its container, or you can dock a <see cref="T:System.Windows.Forms.SplitContainer" /> to all edges of the container so that the <see cref="T:System.Windows.Forms.SplitContainer" /> entirely fills the container. For example, set this property to <see cref="F:System.Windows.Forms.DockStyle.Left" /> to attach the left edge of the <see cref="T:System.Windows.Forms.SplitContainer" /> to the left edge of its container. Controls are docked in z-order.</para>
+          <block subset="none" type="note">
+            <para>The z-order corresponds to the depth dimension of the screen, and the x-order and y-order corresponds to the horizontal and vertical dimensions, respectively. Z-order defines which object appears in front of which, in cases where controls or windows can overlap or occupy the same space on the screen. A control or window at the top of the z-order appears on top of all other controls or windows and is referenced by an index of 0 in the <see cref="P:System.Windows.Forms.SplitContainer.Controls" /> property. A control or window at the bottom of the z-order appears underneath all other controls or windows and is referenced by an index of (Controls.Count-1) in the <see cref="P:System.Windows.Forms.SplitContainer.Controls" /> property.</para>
+          </block>
+          <para>For more information about anchoring and docking controls, see <format type="text/html"><a href="e79f6bcc-3740-4d1e-b46a-c5594d9b7327">How to: Create a Multipane User Interface with Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which <see cref="T:System.Windows.Forms.SplitContainer" /> borders are attached to the edges of the container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -500,10 +648,16 @@
         <ReturnType>System.Windows.Forms.FixedPanel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify which <see cref="T:System.Windows.Forms.SplitContainer" /> panel stays the same size when a user resizes the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which <see cref="T:System.Windows.Forms.SplitContainer" /> panel remains the same size when the container is resized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -524,10 +678,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.IsSplitterFixed" /> property to enable or disable splitter movement. For example, you might programmatically set <see cref="P:System.Windows.Forms.SplitContainer.IsSplitterFixed" /> to true when refreshing the display, when some other control has the focus, or when an event is occurring for which the display areas divided by the <see cref="T:System.Windows.Forms.SplitContainer" /> must remain constant, and set <see cref="P:System.Windows.Forms.SplitContainer.IsSplitterFixed" /> to false when those circumstances do not apply.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the splitter is fixed or movable.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -546,9 +706,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnGotFocus(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.GotFocus" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnKeyDown">
@@ -564,9 +732,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="M:System.Windows.Forms.SplitContainer.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> event handler allows the user to move the splitter down when the DOWN arrow key is pressed. The <see cref="M:System.Windows.Forms.SplitContainer.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> event handler also draws the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnKeyUp">
@@ -582,9 +759,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="M:System.Windows.Forms.SplitContainer.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event handler allows the user to move the splitter up when the UP arrow key is pressed. The <see cref="M:System.Windows.Forms.SplitContainer.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event handler also draws the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyUp" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnLayout">
@@ -600,9 +786,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnLayout(System.Windows.Forms.LayoutEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Layout" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.LayoutEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnLostFocus">
@@ -618,9 +812,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnLostFocus(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.LostFocus" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMouseCaptureChanged">
@@ -654,9 +856,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="M:System.Windows.Forms.SplitContainer.OnMouseDown(System.Windows.Forms.MouseEventArgs)" /> event handler allows the user to track the splitter position while it is moved down with the mouse. <see cref="M:System.Windows.Forms.SplitContainer.OnMouseDown(System.Windows.Forms.MouseEventArgs)" /> also draws the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving. The <see cref="T:System.Windows.Forms.SplitContainer" /> keeps track of the initial <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> in case the user cancels the move.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnMouseDown(System.Windows.Forms.MouseEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMouseLeave">
@@ -672,9 +883,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnMouseLeave(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMouseMove">
@@ -695,9 +914,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="M:System.Windows.Forms.SplitContainer.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> event handler allows the user to track the splitter position while it is moved with the mouse. <see cref="M:System.Windows.Forms.SplitContainer.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> also draws the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving. The <see cref="T:System.Windows.Forms.SplitContainer" /> keeps track of the initial <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> in case the user cancels the move.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseMove" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMouseUp">
@@ -713,9 +941,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="M:System.Windows.Forms.SplitContainer.OnMouseUp(System.Windows.Forms.MouseEventArgs)" /> event handler allows the user to track the splitter position while it is moved up with the mouse. <see cref="M:System.Windows.Forms.SplitContainer.OnMouseUp(System.Windows.Forms.MouseEventArgs)" /> also draws the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving. The <see cref="T:System.Windows.Forms.SplitContainer" /> keeps track of the initial <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> in case the user cancels the move.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnMouseUp(System.Windows.Forms.MouseEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseUp" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnPaint">
@@ -731,9 +968,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.SplitContainer.OnPaint(System.Windows.Forms.PaintEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftChanged">
@@ -754,9 +999,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.RightToLeftChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSplitterMoved">
@@ -769,10 +1018,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.SplitterEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoved" /> event is raised after the splitter has been moved. When the <see cref="T:System.Windows.Forms.SplitContainer" /> is in the process of moving, use the <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoving" /> event and the <see cref="M:System.Windows.Forms.SplitContainer.OnSplitterMoving(System.Windows.Forms.SplitterCancelEventArgs)" /> event handler.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoved" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.SplitterEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -788,10 +1045,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.SplitterCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoving" /> event is raised while the splitter is in the process of moving. After the <see cref="T:System.Windows.Forms.SplitContainer" /> has moved, use the <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoved" /> event and the <see cref="M:System.Windows.Forms.SplitContainer.OnSplitterMoved(System.Windows.Forms.SplitterEventArgs)" /> event handler.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.SplitContainer.SplitterMoving" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.SplitterEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -812,10 +1077,16 @@
         <ReturnType>System.Windows.Forms.Orientation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property to change the <see cref="T:System.Windows.Forms.SplitContainer" /> from vertical to horizontal or from horizontal to vertical.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the horizontal or vertical orientation of the <see cref="T:System.Windows.Forms.SplitContainer" /> panels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -839,10 +1110,16 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interior spacing, in pixels, between the edges of a <see cref="T:System.Windows.Forms.SplitterPanel" /> and its contents. This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -866,8 +1143,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Panel1">
@@ -885,10 +1168,21 @@
         <ReturnType>System.Windows.Forms.SplitterPanel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> property to configure the left panel of a vertical <see cref="T:System.Windows.Forms.SplitContainer" /> or the top panel of a horizontal <see cref="T:System.Windows.Forms.SplitContainer" />. For example, you can specify the minimum size of the panel by changing the value of the <see cref="P:System.Windows.Forms.SplitContainer.Panel1MinSize" /> property, set the <see cref="P:System.Windows.Forms.SplitContainer.FixedPanel" /> property to Panel1 so that the panel remains the same size when the container is resized, or you can get or set the panel's <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImage" /> and <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImageLayout" /> properties.</para>
+          <para>You cannot remove <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> from the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> contains no control that can receive the focus, the focus remains on the splitter when it is clicked. To change the focus to <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />, set the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> to 0 and the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> to 1.</para>
+          </block>
+          <para>If <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> contains no control that can receive the focus, the focus remains on the splitter when it is clicked. To change the focus to <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />, set the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> to 0 and the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> to 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the left or top panel of the <see cref="T:System.Windows.Forms.SplitContainer" />, depending on <see cref="P:System.Windows.Forms.SplitContainer.Orientation" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -906,10 +1200,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value determining whether <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> is collapsed or expanded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -933,10 +1230,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Panel1MinSize" /> property to prevent the splitter from moving too close to the left or top edge of the container. For example, you might want to prevent some of the display area of a <see cref="T:System.Windows.Forms.TreeView" /> from being covered.</para>
+          <para>If the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property is Vertical (the default), <see cref="P:System.Windows.Forms.SplitContainer.Panel1MinSize" /> returns the minimum distance in pixels of the splitter from the left edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" />. If the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property is Horizontal, <see cref="P:System.Windows.Forms.SplitContainer.Panel1MinSize" /> returns the minimum distance in pixels of the splitter from the top edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum distance in pixels of the splitter from the left or top edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -957,10 +1261,20 @@
         <ReturnType>System.Windows.Forms.SplitterPanel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> property to configure the right panel of a vertical <see cref="T:System.Windows.Forms.SplitContainer" /> or the bottom panel of a horizontal <see cref="T:System.Windows.Forms.SplitContainer" />. For example, you can specify the minimum size of the panel by changing the value of the <see cref="P:System.Windows.Forms.SplitContainer.Panel2MinSize" /> property, set the <see cref="P:System.Windows.Forms.SplitContainer.FixedPanel" /> property to Panel2 so that the panel remains the same size when the container is resized, or you can get or set the panel's <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImage" /> and <see cref="P:System.Windows.Forms.SplitContainer.BackgroundImageLayout" /> properties.</para>
+          <para>You cannot remove <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> from the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> contains no control that can receive the focus, the focus remains on the splitter when it is clicked. To change the focus to <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> or <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />, set the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> to 0 and the <see cref="P:System.Windows.Forms.SplitterPanel.TabIndex" /> property of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> to 1.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the right or bottom panel of the <see cref="T:System.Windows.Forms.SplitContainer" />, depending on <see cref="P:System.Windows.Forms.SplitContainer.Orientation" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -978,10 +1292,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value determining whether <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> is collapsed or expanded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1005,10 +1322,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.Panel2MinSize" /> property to prevent the splitter from moving too close to the right or bottom edge of the container. For example, you might want to prevent some of the display area of a <see cref="T:System.Windows.Forms.TreeView" /> from being covered.</para>
+          <para>If the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property is Vertical (the default), <see cref="P:System.Windows.Forms.SplitContainer.Panel2MinSize" /> returns the minimum distance in pixels that the splitter can be from the right edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />. If the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> property is Horizontal, <see cref="P:System.Windows.Forms.SplitContainer.Panel2MinSize" /> returns the minimum distance in pixels that the splitter can be from the bottom edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum distance in pixels of the splitter from the right or bottom edge of <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1027,10 +1351,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called during message preprocessing to handle dialog box key characters, such as TAB, LEFT ARROW, RIGHT ARROW, UP ARROW, and DOWN ARROW. Keys that include the ALT or CONTROL modifiers are not handled. This method is called only if the <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> method indicates that the control is not processing the key. The <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> simply sends the character to the parent's <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> method, or returns false if the control has no parent. The <see cref="T:System.Windows.Forms.Form" /> class overrides this method to perform actual processing of dialog box keys. The run time calls this method only when the control is hosted in a Windows Forms application or as an ActiveX control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a dialog box key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
     </Member>
     <Member MemberName="ProcessTabKey">
@@ -1046,10 +1380,38 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="forward">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.SplitContainer.ProcessTabKey(System.Boolean)" /> controls the tab focus order in the following manner: </para>
+          <list type="bullet">
+            <item>
+              <para>From the first control outside the <see cref="T:System.Windows.Forms.SplitContainer" /> to the first control on <see cref="P:System.Windows.Forms.SplitContainer.Panel1" />.</para>
+            </item>
+            <item>
+              <para>All controls on <see cref="P:System.Windows.Forms.SplitContainer.Panel1" />.</para>
+            </item>
+            <item>
+              <para>The splitter (so that the user can use the arrow keys to move the splitter).</para>
+            </item>
+            <item>
+              <para>All controls on <see cref="P:System.Windows.Forms.SplitContainer.Panel2" />.</para>
+            </item>
+            <item>
+              <para>The second control outside the <see cref="T:System.Windows.Forms.SplitContainer" /> that is next in the tab order.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the next available control and makes it the active control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a control is selected; otherwise, false.</para>
+        </returns>
+        <param name="forward">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cycle forward through the controls in the <see cref="T:System.Windows.Forms.ContainerControl" />; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="ScaleControl">
@@ -1071,10 +1433,15 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="factor">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the location, size, padding and margin.</para>
+        </summary>
+        <param name="factor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which the height and width of the control will be scaled.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BoundsSpecified" /> value that specifies the bounds of the control to use when defining its size and position.</param>
       </Docs>
     </Member>
     <Member MemberName="Select">
@@ -1091,10 +1458,15 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="directed">To be added.</param>
-        <param name="forward">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activates a child control. Optionally specifies the direction in the tab order to select the control from.</para>
+        </summary>
+        <param name="directed">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify the direction of the control to select; otherwise, false. </param>
+        <param name="forward">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to move forward in the tab order; false to move backward in the tab order. </param>
       </Docs>
     </Member>
     <Member MemberName="SetBoundsCore">
@@ -1141,10 +1513,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> property to determine or specify the distance in pixels of the splitter from the left or top edge of the container. You can both specify an initial distance and change the distance at design time or run time. If <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> is Horizontal, <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> is calculated in pixels from the top edge of the <see cref="T:System.Windows.Forms.SplitContainer" />. If <see cref="P:System.Windows.Forms.SplitContainer.Orientation" /> is Vertical, <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> is calculated in pixels from the left edge of the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the splitter, in pixels, from the left or top edge of the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1165,10 +1543,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.SplitterIncrement" /> property to create a snapping splitter that moves in larger increments than one pixel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value representing the increment of splitter movement in pixels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1181,9 +1565,15 @@
         <ReturnType>System.Windows.Forms.SplitterEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">Events and Delegates</a></format>. For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the splitter control is moved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1196,9 +1586,16 @@
         <ReturnType>System.Windows.Forms.SplitterCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs only when the user moves the splitter control. It does not occur when you change the <see cref="P:System.Windows.Forms.SplitContainer.SplitterDistance" /> property value programmatically.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the splitter control is in the process of moving.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1216,10 +1613,76 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to get the width and height of the splitter relative to the <see cref="T:System.Windows.Forms.SplitContainer" />. The <see cref="M:System.Windows.Forms.SplitContainer.OnKeyDown(System.Windows.Forms.KeyEventArgs)" />, <see cref="M:System.Windows.Forms.SplitContainer.OnKeyUp(System.Windows.Forms.KeyEventArgs)" />, <see cref="M:System.Windows.Forms.SplitContainer.OnMouseDown(System.Windows.Forms.MouseEventArgs)" />, <see cref="M:System.Windows.Forms.SplitContainer.OnMouseUp(System.Windows.Forms.MouseEventArgs)" />, and <see cref="M:System.Windows.Forms.SplitContainer.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> event handlers draw the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> to show the current position of the splitter while it is moving.</para>
+          <para>The meaning of the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> values vary depending on the <see cref="P:System.Windows.Forms.SplitContainer.Orientation" />. The output of <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> is in the format {X, Y, Width, Height}. The following table shows the meaning of the <see cref="P:System.Windows.Forms.SplitContainer.SplitterRectangle" /> values for vertical and horizontal splitters.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Dimension</para>
+                </term>
+                <description>
+                  <para>Vertical Splitter </para>
+                </description>
+                <description>
+                  <para>Horizontal Splitter </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>X </para>
+              </term>
+              <description>
+                <para>The distance in pixels of the splitter from the left edge of the <see cref="T:System.Windows.Forms.SplitContainer" />. </para>
+              </description>
+              <description>
+                <para>This value is always 0 for a horizontal splitter, indicating that the splitter is flush with the left edge of the <see cref="T:System.Windows.Forms.SplitContainer" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Y </para>
+              </term>
+              <description>
+                <para>This value is always 0 for a vertical splitter, indicating that the splitter is flush with the top edge of the <see cref="T:System.Windows.Forms.SplitContainer" />. </para>
+              </description>
+              <description>
+                <para>The distance in pixels of the splitter from the top edge of the <see cref="T:System.Windows.Forms.SplitContainer" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Width </para>
+              </term>
+              <description>
+                <para>The width of the splitter. </para>
+              </description>
+              <description>
+                <para>The height of the splitter, which is equivalent to the height of the <see cref="T:System.Windows.Forms.SplitContainer" /> control. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Height </para>
+              </term>
+              <description>
+                <para>The height of the splitter, which is equivalent to the height of the <see cref="T:System.Windows.Forms.SplitContainer" /> control. </para>
+              </description>
+              <description>
+                <para>The width of the splitter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size and location of the splitter relative to the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1240,10 +1703,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.SplitContainer.SplitterWidth" /> property to change the width of the splitter itself, not the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the splitter in pixels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1264,10 +1733,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the user presses the TAB key, the input focus is set to the next control in the tab order of the form. Set <see cref="P:System.Windows.Forms.SplitContainer.TabStop" /> to true to give input focus to a splitter so that it can be moved with the arrow keys as well as with the mouse. Starting in the net_v40_long, setting <see cref="P:System.Windows.Forms.SplitContainer.TabStop" /> to false excludes the splitter and any of the controls that are contained in the <see cref="T:System.Windows.Forms.SplitContainer" /> from the collection of controls in the tab order. To enable controls to get focus by using the TAB key, create a control that inherits from <see cref="T:System.Windows.Forms.SplitContainer" />. Create a new property named TabStop and override the <see cref="M:System.Windows.Forms.SplitContainer.ProcessTabKey(System.Boolean)" /> method. The following example demonstrates how to accomplish this.</para>
+          <para>code reference: SplitContainerTabStop#1</para>
+          <para>You can manipulate the tab order by setting the control's <see cref="P:System.Windows.Forms.Control.TabIndex" /> property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user can give the focus to the splitter using the TAB key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1291,10 +1768,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1318,8 +1801,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WndProc">

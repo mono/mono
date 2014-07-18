@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataReader" FullName="System.Data.SqlClient.SqlDataReader">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SqlDataReader : System.Data.Common.DbDataReader" />
   <AssemblyInfo>
@@ -14,8 +15,22 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create a <see cref="T:System.Data.SqlClient.SqlDataReader" />, you must call the <see cref="M:System.Data.SqlClient.SqlCommand.ExecuteReader" /> method of the <see cref="T:System.Data.SqlClient.SqlCommand" /> object, instead of directly using a constructor.</para>
+      <para>While the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is being used, the associated <see cref="T:System.Data.SqlClient.SqlConnection" /> is busy serving the <see cref="T:System.Data.SqlClient.SqlDataReader" />, and no other operations can be performed on the <see cref="T:System.Data.SqlClient.SqlConnection" /> other than closing it. This is the case until the <see cref="M:System.Data.SqlClient.SqlDataReader.Close" /> method of the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is called. For example, you cannot retrieve output parameters until after you call <see cref="M:System.Data.SqlClient.SqlDataReader.Close" />.</para>
+      <para>Changes made to a result set by another process or thread while data is being read may be visible to the user of the SqlDataReader. However, the precise behavior is timing dependent.</para>
+      <para>
+        <see cref="P:System.Data.SqlClient.SqlDataReader.IsClosed" /> and <see cref="P:System.Data.SqlClient.SqlDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is closed. Although the <see cref="P:System.Data.SqlClient.SqlDataReader.RecordsAffected" /> property may be accessed while the <see cref="T:System.Data.SqlClient.SqlDataReader" /> exists, always call <see cref="M:System.Data.SqlClient.SqlDataReader.Close" /> before returning the value of <see cref="P:System.Data.SqlClient.SqlDataReader.RecordsAffected" /> to guarantee an accurate return value.</para>
+      <para>When using sequential access (<see cref="CommandBehavior.SequentialAccess" />), an <see cref="T:System.InvalidOperationException" /> will be raised if the <see cref="T:System.Data.SqlClient.SqlDataReader" /> position is advanced and another read operation is attempted on the previous column.</para>
+      <block subset="none" type="note">
+        <para>For optimal performance, <see cref="T:System.Data.SqlClient.SqlDataReader" /> avoids creating unnecessary objects or making unnecessary copies of data. Therefore, multiple calls to methods such as <see cref="M:System.Data.SqlClient.SqlDataReader.GetValue(System.Int32)" /> return a reference to the same object. Use caution if you are modifying the underlying value of the objects returned by methods such as <see cref="M:System.Data.SqlClient.SqlDataReader.GetValue(System.Int32)" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way of reading a forward-only stream of rows from a SQL Server database. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -26,8 +41,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must explicitly call the <see cref="M:System.Data.SqlClient.SqlDataReader.Close" /> method when you are through using the <see cref="T:System.Data.SqlClient.SqlDataReader" /> to use the associated <see cref="T:System.Data.SqlClient.SqlConnection" /> for any other purpose.</para>
+          <para>The Close method fills in the values for output parameters, return values and RecordsAffected, increasing the time that it takes to close a SqlDataReader that was used to process a large or complex query. When the return values and the number of records affected by a query are not significant, the time that it takes to close the SqlDataReader can be reduced by calling the <see cref="M:System.Data.SqlClient.SqlCommand.Cancel" /> method of the associated <see cref="T:System.Data.SqlClient.SqlCommand" /> object before calling the Close method.</para>
+          <block subset="none" type="note">
+            <para>Do not call Close or Dispose on a Connection, a DataReader, or any other managed object in the Finalize method of your class. In a finalizer, you should only release unmanaged resources that your class owns directly. If your class does not own any unmanaged resources, do not include a Finalize method in your class definition. For more information, see <format type="text/html"><a href="22B6CB97-0C80-4EEB-A2CF-5ED7655E37F9">Garbage Collection</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.Data.SqlClient.SqlDataReader" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +69,12 @@
         <ReturnType>System.Data.SqlClient.SqlConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.SqlClient.SqlConnection" /> associated with the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Depth">
@@ -56,9 +84,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outermost table has a depth of zero. The .NET Framework Data Provider for SQL Server does not support nesting and always returns zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the depth of nesting for the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,9 +106,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executing a query that, by its nature, does not return rows (such as a DELETE query), sets <see cref="P:System.Data.SqlClient.SqlDataReader.FieldCount" /> to 0. However. this should not be confused with a query that returns 0 rows (such as SELECT * FROM table WHERE 1 = 2) in which case <see cref="P:System.Data.SqlClient.SqlDataReader.FieldCount" /> returns the number of columns in the table, including hidden fields. Use <see cref="P:System.Data.SqlClient.SqlDataReader.VisibleFieldCount" /> to exclude hidden fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns in the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,10 +131,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a Boolean, or an exception is generated.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a Boolean.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,10 +162,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a byte.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a byte.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a byte.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,14 +197,31 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <param name="dataIndex">To be added: an object of type 'long'</param>
-        <param name="buffer">To be added: an object of type 'byte []'</param>
-        <param name="bufferIndex">To be added: an object of type 'int'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the number of available bytes in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if GetBytes has already been used to obtain bytes from the field. This may be the case, for example, if the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>If you pass a buffer that is null, <see cref="M:System.Data.SqlClient.SqlDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the length of the entire field in bytes, not the remaining size based on the buffer offset parameter.</para>
+          <para>No conversions are performed; therefore, the data retrieved must already be a byte array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of bytes from the specified column offset into the buffer an array starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to begin the read operation.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length to copy into the buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,10 +238,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for <see cref="N:System.Data.SqlClient" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a single character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,14 +277,34 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <param name="dataIndex">To be added: an object of type 'long'</param>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="bufferIndex">To be added: an object of type 'int'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the number of available characters in the field. Frequently this is the exact length of the field. However, the number returned may be less than the true length of the field if GetChars has already been used to obtain characters from the field. This may be the case, for example, if the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>The actual number of characters read can be less than the requested length, if the end of the field is reached. If you pass a buffer that is null, <see cref="M:System.Data.SqlClient.SqlDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the length of the entire field in characters, not the remaining size based on the buffer offset parameter.</para>
+          <para>No conversions are performed; therefore. the data retrieved must already be a character array.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Data.SqlClient.SqlDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> method returns 0 when <paramref name="dataIndex" /> is negative.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of characters from the specified column offset into the buffer as an array starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to begin the read operation.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length to copy into the buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,10 +321,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.IDataReader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Data.IDataReader" /> for the specified column ordinal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.IDataReader" /> instance for the specified column ordinal.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />A column ordinal.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -236,10 +352,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the back-end data type.</para>
+          <para>numeric is a synonym in SQL Server for the decimal data type. GetDataTypeName will return "decimal" for a column defined as either decimal or numeric.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representing the data type of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representing the data type of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based ordinal position of the column to find.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,10 +383,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a <see cref="T:System.DateTime" /> object.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,10 +414,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a <see cref="T:System.Decimal" /> object.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Decimal" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,10 +445,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed. Therefore, the data retrieved must already be a double-precision floating point number.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a double-precision floating point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -317,9 +477,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although you can use this method to retrieve an explicit enumerator, in languages that support a foreach construct, it is simpler to use the looping construct directly in order to iterate through the rows in the data reader.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that iterates through the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFieldType">
@@ -332,10 +501,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object. If the type does not exist on the client, in the case of a User-Defined Type (UDT) returned from the database, GetFieldType returns null.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,10 +528,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed. Therefore, the data retrieved must already be a single-precision floating point number.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a single-precision floating point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -372,10 +559,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Guid'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a GUID.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a globally unique identifier (GUID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,10 +590,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 16-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 16-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -412,10 +621,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 32-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -432,10 +652,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 64-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -452,10 +683,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -472,10 +710,22 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetOrdinal performs a case-sensitive lookup first. If it fails, a second, case-insensitive search occurs (a case-insensitive comparison is done using the database collation). Unexpected results can occur when comparisons are affected by culture-specific casing rules. For example, in Turkish, the following example yields the wrong results because the file system in Turkish does not use linguistic casing rules for the letter 'i' in "file". The method throws an IndexOutOfRange exception if the zero-based column ordinal is not found.</para>
+          <para>GetOrdinal is kana-width insensitive.</para>
+          <para>Because ordinal-based lookups are more efficient than named lookups, it is inefficient to call GetOrdinal within a loop. Save time by calling GetOrdinal once and assigning the results to an integer variable for use within the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column ordinal, given the name of the column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based column ordinal.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -495,10 +745,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an Object that is a representation of the underlying provider-specific field type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Object" /> that is a representation of the underlying provider-specific field type.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> representing the column ordinal. </param>
       </Docs>
     </Member>
     <Member MemberName="GetProviderSpecificValue">
@@ -514,10 +771,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an Object that is a representation of the underlying provider specific value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that is a representation of the underlying provider specific value.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> representing the column ordinal. </param>
       </Docs>
     </Member>
     <Member MemberName="GetProviderSpecificValues">
@@ -533,10 +797,17 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of objects that are a representation of the underlying provider specific values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array of objects that are a representation of the underlying provider specific values.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> into which to copy the column values.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSchemaTable">
@@ -547,9 +818,283 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="M:System.Data.SqlClient.SqlDataReader.GetSchemaTable" /> method returns metadata about each column in the following order: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DataReader column </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>AllowDBNull</para>
+              </term>
+              <description>
+                <para>Set if the consumer can set the column to a null value or if the provider cannot determine whether the consumer can set the column to a null value. Otherwise, not set. A column may contain null values, even if it cannot be set to a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseCatalogName</para>
+              </term>
+              <description>
+                <para>The name of the catalog in the data store that contains the column. NULL if the base catalog name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseColumnName</para>
+              </term>
+              <description>
+                <para>The name of the column in the data store. This might be different than the column name returned in the ColumnName column if an alias was used. A null value if the base column name cannot be determined or if the rowset column is derived, but not identical to, a column in the data store. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseSchemaName</para>
+              </term>
+              <description>
+                <para>The name of the schema in the data store that contains the column. A null value if the base schema name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseServerName</para>
+              </term>
+              <description>
+                <para>The name of the instance of Microsoft SQL Server used by the <see cref="T:System.Data.SqlClient.SqlDataReader" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseTableName</para>
+              </term>
+              <description>
+                <para>The name of the table or view in the data store that contains the column. A null value if the base table name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnName</para>
+              </term>
+              <description>
+                <para>The name of the column; this might not be unique. If this cannot be determined, a null value is returned. This name always reflects the most recent renaming of the column in the current view or command text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnOrdinal</para>
+              </term>
+              <description>
+                <para>The zero-based ordinal of the column. This column cannot contain a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnSize</para>
+              </term>
+              <description>
+                <para>The maximum possible length of a value in the column. For columns that use a fixed-length data type, this is the size of the data type. For nvarchar(MAX), varchar(MAX), and varbinary(MAX) columns stored in a SQL Server database, the maximum size is 2GB. If these columns are stored and accessed as files, the limit on maximum size is imposed by the file system. This value changes when using the Type System Version keyword in the connection string.  For new types they are represented as downlevel types. The MAX data types return the normal 4k for nvarchar and 8000 for varchar. For more information, see the Transact-SQL reference in SQL Server Books Online. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataTypeName</para>
+              </term>
+              <description>
+                <para>Returns a string representing the data type of the specified column.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsAliased</para>
+              </term>
+              <description>
+                <para>true: The column name is an alias.</para>
+                <para>false: The column name is not an alias.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsAutoIncrement</para>
+              </term>
+              <description>
+                <para>true: The column assigns values to new rows in fixed increments. </para>
+                <para>false: The column does not assign values to new rows in fixed increments. The default of this column is false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsColumnSet</para>
+              </term>
+              <description>
+                <para>true: The column is a sparse column that is a member of a column set.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsExpression</para>
+              </term>
+              <description>
+                <para>true: The column is an expression.</para>
+                <para>false: The column is not an expression.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsHidden</para>
+              </term>
+              <description>
+                <para>true: The column is hidden.</para>
+                <para>false: The column is not hidden.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsIdentity</para>
+              </term>
+              <description>
+                <para>true: The column is an identity column.</para>
+                <para>false: The column is not an identity column.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsKey</para>
+              </term>
+              <description>
+                <para>true: The column is one of a set of columns in the rowset that, taken together, uniquely identify the row. The set of columns with IsKey set to true must uniquely identify a row in the rowset. There is no requirement that this set of columns is a minimal set of columns. This set of columns may be generated from a base table primary key, a unique constraint or a unique index. </para>
+                <para>false: The column is not required to uniquely identify the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsLong</para>
+              </term>
+              <description>
+                <para>true: The column contains a Binary Long Object (BLOB) that contains very long data. The definition of very long data is provider-specific.</para>
+                <para>false: The column does not contain a Binary Long Object (BLOB) that contains very long data.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsReadOnly </para>
+              </term>
+              <description>
+                <para>true: The column cannot be modified.</para>
+                <para>false: The column can be modified.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsRowVersion</para>
+              </term>
+              <description>
+                <para>true: The column contains a persistent row identifier that cannot be written to, and has no meaningful value except to identity the row.</para>
+                <para>false: The column does not contain a persistent row identifier that cannot be written to, and has no meaningful value except to identity the row.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsUnique</para>
+              </term>
+              <description>
+                <para>true: Column is of type timestamp.</para>
+                <para>false: Column is not of type timestamp.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NonVersionedProviderType</para>
+              </term>
+              <description>
+                <para>The type of the column irrespective of the current Type System Version specified in the connection string. The returned value is from the <see cref="T:System.Data.SqlDbType" /> enumeration.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericPrecision</para>
+              </term>
+              <description>
+                <para>If ProviderType is a numeric data type, this is the maximum precision of the column. The precision depends on the definition of the column. If ProviderType is not a numeric data type, this is 255.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericScale</para>
+              </term>
+              <description>
+                <para>If ProviderType is DBTYPE_DECIMAL or DBTYPE_NUMERIC, the number of digits to the right of the decimal point. Otherwise, this is 255. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProviderSpecificDataType</para>
+              </term>
+              <description>
+                <para>Returns the provider-specific data type of the column based on the Type System Version keyword in the connection string.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProviderType</para>
+              </term>
+              <description>
+                <para>The indicator of the column's data type. If the data type of the column varies from row to row, this must be Object. This column cannot contain a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UdtAssemblyQualifiedName</para>
+              </term>
+              <description>
+                <para>If the column is a user-defined type (UDT), this is the qualified name of the UDT's assembly as per <see cref="P:System.Type.AssemblyQualifiedName" />. If the column is not a UDT, this is null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlSchemaCollectionDatabase</para>
+              </term>
+              <description>
+                <para>The name of the database where the schema collection for this XML instance is located, if the row contains information about an XML column. This value is null (Nothing in Visual Basic) if the collection is defined within the current database. It is also null if there is no schema collection, in which case the XmlSchemaCollectionName and XmlSchemaCollectionOwningSchema columns are also null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlSchemaCollectionName</para>
+              </term>
+              <description>
+                <para>The name of the schema collection for this XML instance, if the row contains information about an XML column. This value is null (Nothing in Visual Basic) if there is no associated schema collection. If the value is null, the XmlSchemaCollectionDatabase and XmlSchemaCollectionOwningSchema columns are also null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlSchemaCollectionOwningSchema</para>
+              </term>
+              <description>
+                <para>The owning relational schema where the schema collection for this XML instance is located, if the row contains information about an XML column. This value is null (Nothing in Visual Basic) if the collection is defined within the current database. It is also null if there is no schema collection, in which case the XmlSchemaCollectionDatabase and XmlSchemaCollectionName columns are also null.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>To make sure that metadata columns return the correct information, you must call <see cref="M:System.Data.SqlClient.SqlCommand.ExecuteReader" /> with the <paramref name="behavior" /> parameter set to KeyInfo. Otherwise, some of the columns in the schema table may return default, null, or incorrect data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that describes the column metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -566,10 +1111,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlBinary'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a binary structure or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlBinary" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlBinary" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -586,10 +1141,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlBoolean'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a Boolean or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlBoolean" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -606,10 +1171,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlByte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a byte, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlByte" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a  <see cref="T:System.Data.SqlTypes.SqlByte" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -629,10 +1204,17 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as <see cref="T:System.Data.SqlTypes.SqlBytes" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlBytes" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSqlDateTime">
@@ -645,10 +1227,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlDateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a date/time value, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlDateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a  <see cref="T:System.Data.SqlTypes.SqlDateTime" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,10 +1257,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlDecimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a decimal value, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlDecimal" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlDecimal" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -685,10 +1287,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlDouble'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a double-precision floating-point number, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlDouble" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a  <see cref="T:System.Data.SqlTypes.SqlDouble" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -705,10 +1317,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlGuid'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a GUID, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlGuid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a  <see cref="T:System.Data.SqlTypes.SqlGuid" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -725,10 +1347,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlInt16'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 16-bit signed integer, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlInt16" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlInt16" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -745,10 +1377,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlInt32'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a 32-bit signed integer, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlInt32" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlInt32" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -765,10 +1407,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlInt64'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 64-bit signed integer, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlInt64" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlInt64" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -785,10 +1437,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlMoney'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a decimal value, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlMoney" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlMoney" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -805,10 +1467,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlSingle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a single precision floating point number, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlSingle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlSingle" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -825,10 +1497,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.SqlTypes.SqlString'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a string, or an exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Data.SqlTypes.SqlString" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlTypes.SqlString" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -845,10 +1527,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlDataReader.GetSqlValue(System.Int32)" /> returns data using the native SQL Server types. To retrieve data using the .NET Framework types, see <see cref="M:System.Data.SqlClient.SqlDataReader.GetValue(System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data value in the specified column as a SQL Server type. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column expressed as a <see cref="T:System.Data.SqlDbType" />.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -865,10 +1558,20 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the values for all the columns in the record in a single call, using the SQL type system instead of the CLR type system. The length of the <see cref="T:System.Object" /> array does not need to match the number of columns in the record. You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns contained in the record. Only the amount of data the <see cref="T:System.Object" /> array holds is copied to the array, starting at the column with ordinal 0. You can also pass an <see cref="T:System.Object" /> array whose length is more than the number of columns contained in the resulting row. Any remaining columns are untouched.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills an array of <see cref="T:System.Object" /> that contains the values for all the columns in the record, expressed as SQL Server types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer indicating the number of columns copied.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> into which to copy the values. The column values are expressed as SQL Server types.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -888,10 +1591,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be an XML value.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as an XML value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.SqlTypes.SqlXml" /> value that contains the XML stored within the corresponding field. </para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal.</param>
       </Docs>
     </Member>
     <Member MemberName="GetString">
@@ -904,10 +1618,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a string.</para>
+          <para>Call <see cref="M:System.Data.SqlClient.SqlDataReader.IsDBNull(System.Int32)" /> to check for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -924,10 +1649,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlDataReader.GetValue(System.Int32)" /> returns data using the .NET Framework types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column in its native format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -944,10 +1680,22 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most applications, this method provides an efficient means for retrieving all columns, instead of retrieving each column individually.</para>
+          <para>You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns contained in the resulting row. Only the amount of data the <see cref="T:System.Object" /> array holds is copied to the array. You can also pass an <see cref="T:System.Object" /> array whose length is more than the number of columns contained in the resulting row.</para>
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates an array of objects with the column values of the current row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> into which to copy the attribute columns. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -965,9 +1713,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.SqlClient.SqlDataReader" /> contains one or more rows.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsClosed">
@@ -977,9 +1728,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not possible to read from a <see cref="T:System.Data.SqlClient.SqlDataReader" /> instance that is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a Boolean value that indicates whether the specified <see cref="T:System.Data.SqlClient.SqlDataReader" /> instance has been closed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -999,10 +1756,20 @@
         <Parameter Name="condition" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Data.CommandBehavior" /> matches that of the <see cref="T:System.Data.SqlClient.SqlDataReader" /> .</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Data.CommandBehavior" /> is true, false otherwise.</para>
+        </returns>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.CommandBehavior" /> enumeration.</param>
       </Docs>
     </Member>
     <Member MemberName="IsDBNull">
@@ -1015,10 +1782,21 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to check for null column values before calling the typed get methods (for example, <see cref="M:System.Data.SqlClient.SqlDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.SqlClient.SqlDataReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
+          <para>code reference: SqlDataReader_IsDbNull#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the column contains non-existent or missing values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified column value is equivalent to <see cref="T:System.DBNull" />; otherwise false.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1073,9 +1851,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to process multiple results, which can be generated by executing batch Transact-SQL statements.</para>
+          <para>By default, the data reader is positioned on the first result.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the data reader to the next result, when reading the results of batch Transact-SQL statements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more result sets; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1090,9 +1878,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default position of the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is before the first record. Therefore, you must call <see cref="M:System.Data.SqlClient.SqlDataReader.Read" /> to begin accessing any data.</para>
+          <para>Only one SqlDataReader per associated <see cref="T:System.Data.SqlClient.SqlConnection" /> may be open at a time, and any attempt to open another will fail until the first one is closed. Similarly, while the SqlDataReader is being used, the associated SqlConnection is busy serving it until you call <see cref="M:System.Data.SqlClient.SqlDataReader.Close" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.SqlClient.SqlDataReader" /> to the next record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more rows; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1106,9 +1904,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlDataReader.RecordsAffected" /> property is not set until all rows are read and you close the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+          <para>The value of this property is cumulative. For example, if two records are inserted in batch mode, the value of RecordsAffected will be two.</para>
+          <para>
+            <see cref="P:System.Data.SqlClient.SqlDataReader.IsClosed" /> and <see cref="P:System.Data.SqlClient.SqlDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows changed, inserted, or deleted by execution of the Transact-SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1126,9 +1933,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can be used to iterate through the item collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerator that can be used to iterate through the item collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -1142,8 +1955,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources that are used by the data reader.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VisibleFieldCount">
@@ -1156,9 +1972,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is used to determine how many fields in the <see cref="T:System.Data.SqlClient.SqlDataReader" /> are visible. For example, a SELECT on a partial primary key returns the remaining parts of the key as hidden fields. The hidden fields are always appended behind the visible fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of fields in the <see cref="T:System.Data.SqlClient.SqlDataReader" /> that are not hidden. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

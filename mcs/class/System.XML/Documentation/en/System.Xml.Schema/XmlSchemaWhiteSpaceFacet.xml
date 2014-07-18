@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaWhiteSpaceFacet" FullName="System.Xml.Schema.XmlSchemaWhiteSpaceFacet">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaWhiteSpaceFacet : System.Xml.Schema.XmlSchemaFacet" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaWhiteSpaceFacet extends System.Xml.Schema.XmlSchemaFacet" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Schema.XmlSchemaWhiteSpaceFacet" /> class defines how the simpleType value's white space will be treated. The whiteSpace facet value can be one of preserve, replace, or collapse.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the World Wide Web Consortium (W3C) whiteSpace facet.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaWhiteSpaceFacet" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

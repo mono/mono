@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Compiler" FullName="System.Web.Configuration.Compiler">
   <TypeSignature Language="C#" Value="public sealed class Compiler : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.Compiler" /> class provides a way to programmatically access a compiler configuration element. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a compiler that is used to support the compilation infrastructure of Web applications. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +32,22 @@
         <Parameter Name="warningLevel" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="compilerOptions">To be added.</param>
-        <param name="extension">To be added.</param>
-        <param name="language">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="warningLevel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a <see cref="T:System.Web.Configuration.Compiler" /> initialized to the provided values.</para>
+        </summary>
+        <param name="compilerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Lists additional compiler-specific options to pass during compilation.</param>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />Provides a semicolon-separated list of file-name extensions used for dynamic code-behind files. For example, ".cs".</param>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />Provides a semicolon-separated list of languages used in dynamic compilation files. For example, "c#;cs;csharp".</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies a comma-separated class/assembly combination that indicates the .NET Framework class.</param>
+        <param name="warningLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies compiler warning levels.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +65,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of compiler-specific options to use during compilation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +89,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the list of file-name extensions includes more than one extension, the list is semicolon-separated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of file-name extensions used for dynamic code-behind files. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +116,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the list of programming languages includes more than one language, the list is semicolon-separated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of programming languages to use in dynamic compilation files.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -129,10 +159,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the type name of the language provider, including the name of the assembly containing the provider implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the compiler type name of the language provider for dynamic compilation files. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +189,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default compiler warning level; determines the level at which the language provider treats compilation warnings as errors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the compiler warning level.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

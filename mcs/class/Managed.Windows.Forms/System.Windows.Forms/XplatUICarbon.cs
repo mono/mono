@@ -2261,6 +2261,14 @@ namespace System.Windows.Forms {
 				return new Rectangle ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 			}
 		}
+
+		[MonoTODO]
+		internal override Screen[] AllScreens {
+			get {
+				return null;
+			}
+		}
+
 		internal override bool ThemesEnabled {
 			get {
 				return XplatUICarbon.themes_enabled;

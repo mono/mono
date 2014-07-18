@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationCatalog" FullName="System.ComponentModel.Composition.Hosting.ApplicationCatalog">
   <TypeSignature Language="C#" Value="public class ApplicationCatalog : System.ComponentModel.Composition.Primitives.ComposablePartCatalog, System.ComponentModel.Composition.Primitives.ICompositionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ApplicationCatalog extends System.ComponentModel.Composition.Primitives.ComposablePartCatalog implements class System.ComponentModel.Composition.Primitives.ICompositionElement" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Discovers attributed parts in the dynamic link library (DLL) and EXE files in an application's directory and path.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +49,13 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> class by using the specified source for parts.</para>
+        </summary>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the source for parts.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,9 +69,13 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <param name="reflectionContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> class by using the specified reflection context.</para>
+        </summary>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reflection context.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,10 +90,15 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="reflectionContext">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> class by using the specified reflection context and source for parts.</para>
+        </summary>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reflection context.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element used by diagnostics to identify the source for parts.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -95,9 +115,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Composition.Hosting.DirectoryCatalog" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -112,9 +136,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -131,10 +161,17 @@
         <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the export definitions that match the constraint expressed by the specified import definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects that contain the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> objects and their associated <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" /> objects that match the specified constraint.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.ExportDefinition" /> objects to be returned.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.DisplayName">
@@ -148,9 +185,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display name of the application catalog.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.Origin">
@@ -164,9 +207,15 @@
         <ReturnType>System.ComponentModel.Composition.Primitives.ICompositionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.ApplicationCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the composition element from which the application catalog originated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -181,9 +230,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a string representation of the application catalog.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the catalog.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

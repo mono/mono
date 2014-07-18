@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICriticalNotifyCompletion" FullName="System.Runtime.CompilerServices.ICriticalNotifyCompletion">
   <TypeSignature Language="C#" Value="public interface ICriticalNotifyCompletion : System.Runtime.CompilerServices.INotifyCompletion" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICriticalNotifyCompletion implements class System.Runtime.CompilerServices.INotifyCompletion" />
@@ -11,8 +12,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an awaiter that schedules continuations when an await operation completes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="UnsafeOnCompleted">
@@ -29,9 +33,16 @@
         <Parameter Name="continuation" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="continuation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike OnCompleted, UnsafeOnCompleted doesn't have to propagate ExecutionContext information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schedules the continuation action that's invoked when the instance completes.</para>
+        </summary>
+        <param name="continuation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to invoke when the operation completes.</param>
       </Docs>
     </Member>
   </Members>

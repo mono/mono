@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlValuePropertyAttribute" FullName="System.Web.UI.ControlValuePropertyAttribute">
   <TypeSignature Language="C#" Value="public sealed class ControlValuePropertyAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When defining a <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object, you typically bind a control's property to a parameter by setting both the <see cref="P:System.Web.UI.WebControls.ControlParameter.ControlID" /> and <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> properties. If the <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property is not set, a default property is used. The <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> attribute is applied to a control to specify its default property that a <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to at run time.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class, see the <see cref="Overload:System.Web.UI.ControlValuePropertyAttribute.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the default property of a control that a <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object binds to at run time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +36,37 @@
       </Parameters>
       <Docs>
         <param name="propName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name. The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="name" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,9 +82,47 @@
       <Docs>
         <param name="propName">To be added.</param>
         <param name="propValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name and default value. The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="name" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.ControlValuePropertyAttribute.DefaultValue" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="defaultValue" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name and default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,11 +138,50 @@
       </Parameters>
       <Docs>
         <param name="propName">To be added.</param>
-        <param name="type">To be added.</param>
         <param name="propValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name and default value. This version of the constructor also attempts to convert the default value to the data type specified by the <paramref name="type" /> parameter. If the default value cannot be converted, the <see cref="P:System.Web.UI.ControlValuePropertyAttribute.DefaultValue" /> property is not set. The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="name" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.ControlValuePropertyAttribute.DefaultValue" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="defaultValue" /> parameter, if the value can be converted to the data type specified by the <paramref name="type" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> class using the specified property name and default value. The default value is also converted to the specified data type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which the default value is converted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,10 +194,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the property specified by the <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" /> property is not set, use the <see cref="P:System.Web.UI.ControlValuePropertyAttribute.DefaultValue" /> property to determine the default value for the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default value for the default property of a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,11 +219,32 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.ControlValuePropertyAttribute.Equals(System.Object)" /> method to determine whether the current instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> object is equal to the specified object. For the objects to be equal, they must meet the following criteria:</para>
+          <list type="ordered">
+            <item>
+              <para>The object contained in the <paramref name="obj" /> parameter must be a <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> object.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" /> and <see cref="P:System.Web.UI.ControlValuePropertyAttribute.DefaultValue" /> properties of both objects must be equal.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current instance of the <see cref="T:System.Web.UI.ControlValuePropertyAttribute" /> object is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object contained in the <paramref name="obj" /> parameter is equal to the current instance of <see cref="T:System.Web.UI.ControlValuePropertyAttribute" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with this instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,10 +258,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,10 +280,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object is defined without its <see cref="P:System.Web.UI.WebControls.ControlParameter.PropertyName" /> property set, use the <see cref="P:System.Web.UI.ControlValuePropertyAttribute.Name" /> property to determine the default property that is bound to the <see cref="T:System.Web.UI.WebControls.ControlParameter" /> object at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default property for a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

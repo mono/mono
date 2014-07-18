@@ -89,6 +89,7 @@ namespace System.Net {
 		static int Fill (ushort [] addr, string ipString)
 		{
 			int p = 0;
+			int pdigits = 0;
 			int slot = 0;
 
 			if (ipString.Length == 0)
@@ -103,6 +104,10 @@ namespace System.Net {
 				int n;
 
 				if (c == ':'){
+					// Leading : is not allowed.
+					if (i == 0)
+                                               return -1;
+				       
 					// Trailing : is not allowed.
 					if (i == ipString.Length-1)
 						return -1;
@@ -112,8 +117,13 @@ namespace System.Net {
 					
 					addr [slot++] = (ushort) p;
 					p = 0;
+					pdigits = 0;
 					continue;
-				} if ('0' <= c && c <= '9')
+				}
+				pdigits++;
+				if (pdigits > 4)
+					return -1;
+				if ('0' <= c && c <= '9')
 					n = (int) (c - '0');
 				else if ('a' <= c && c <= 'f')
 					n = (int) (c - 'a' + 10);
@@ -182,7 +192,6 @@ namespace System.Net {
 			//
 			// Is there an ipv4 address at the end?
 			//
-			bool ipv4 = false;
 			int pos2 = ipString.LastIndexOf (':');
 			if (pos2 == -1)
 				return false;
@@ -203,7 +212,6 @@ namespace System.Net {
 						ipString = ipString.Substring (0, pos2 + 1);
 					else
 						ipString = ipString.Substring (0, pos2);
-					ipv4 = true;
 					slots = 2;
 				}
 			}	
@@ -237,24 +245,6 @@ namespace System.Net {
 					return false;
 			} else {
 				if (Fill (addr, ipString) != 8-slots)
-					return false;
-			}
-
-			// Now check the results in the ipv6-address range only
-			bool ipv6 = false;
-			for (int i = 0; i < slots; i++){
-				if (addr [i] != 0 || i == 5 && addr [i] != 0xffff)
-					ipv6 = true;
-			}
-			
-			// check IPv4 validity
-			if (ipv4 && !ipv6) {
-				for (int i = 0; i < 5; i++) {
-					if (addr [i] != 0)
-						return false;
-				}
-
-				if (addr [5] != 0 && addr [5] != 0xffff)
 					return false;
 			}
 
@@ -313,9 +303,10 @@ namespace System.Net {
 		}
 
 		// Convert the address into a format expected by the IPAddress (long) ctor
-		private int AsIPv4Int ()
+		// This needs to be unsigned to satisfy the '> 1' test in IsIPv4Compatible()
+		private uint AsIPv4Int ()
 		{
-			return (SwapUShort (address [7]) << 16) + SwapUShort (address [6]);
+			return (uint)(SwapUShort (address [7]) << 16) + SwapUShort (address [6]);
 		}			
 
 		public bool IsIPv4Compatible ()
@@ -323,6 +314,12 @@ namespace System.Net {
 			for (int i = 0; i < 6; i++) 
 				if (address [i] != 0)
 					return false;
+			/* MS .net only seems to format the last 4
+			 * bytes as an IPv4 address if address[6] is
+			 * non-zero
+			 */
+			if (address[6] == 0)
+				return false;
 			return (AsIPv4Int () > 1);
 		}
 		
@@ -331,6 +328,13 @@ namespace System.Net {
 			for (int i = 0; i < 5; i++) 
 				if (address [i] != 0)
 					return false;
+			/* MS .net only seems to format the last 4
+			 * bytes as an IPv4 address if address[6] is
+			 * non-zero
+			 */
+			if (address[6] == 0)
+				return false;
+			
 			return address [5] == 0xffff;
 		}
 		

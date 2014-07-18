@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormClosingEventArgs" FullName="System.Windows.Forms.FormClosingEventArgs">
   <TypeSignature Language="C#" Value="public class FormClosingEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.Form.FormClosing" /> event occurs just before a form is closed, either by the user, through the user interface (UI), or programmatically, through calls to methods such as <see cref="M:System.Windows.Forms.Form.Close" /> in the <see cref="T:System.Windows.Forms.Form" /> class, or <see cref="M:System.Windows.Forms.Application.Exit" /> in the <see cref="T:System.Windows.Forms.Application" /> class. </para>
+      <para>If a form has any child or owned forms, a <see cref="E:System.Windows.Forms.Form.FormClosing" /> event is also raised for each one. If any one of the forms cancels the event, none of the forms are closed. Therefore the corresponding <see cref="E:System.Windows.Forms.Form.FormClosed" /> events are not sent to any of the forms.</para>
+      <para>The <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> class provides data for this event. Two important members are the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> and <see cref="P:System.Windows.Forms.FormClosingEventArgs.CloseReason" /> properties. The event can be canceled by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. The <see cref="P:System.Windows.Forms.FormClosingEventArgs.CloseReason" /> property provides a reason why the form is being closed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +31,19 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="closeReason">To be added.</param>
-        <param name="cancel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="closeReason" /> and <paramref name="cancel" /> parameters are used to initialize the <see cref="P:System.Windows.Forms.FormClosingEventArgs.CloseReason" /> and <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> properties, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> class.</para>
+        </summary>
+        <param name="closeReason">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.CloseReason" /> value that represents the reason why the form is being closed.</param>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cancel the event; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +56,16 @@
         <ReturnType>System.Windows.Forms.CloseReason</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Form" /> can be closed because of a variety of reasons, both user-initiated and programmatic. The <see cref="P:System.Windows.Forms.FormClosingEventArgs.CloseReason" /> property indicates a reason for the closure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates why the form is being closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

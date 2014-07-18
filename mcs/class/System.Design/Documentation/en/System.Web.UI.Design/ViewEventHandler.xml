@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewEventHandler" FullName="System.Web.UI.Design.ViewEventHandler">
   <TypeSignature Language="C#" Value="public delegate void ViewEventHandler(object sender, ViewEventArgs e);" />
   <AssemblyInfo>
@@ -17,7 +18,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+      <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is raised by the designer host for certain actions on a control on the design surface. The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is handled by a <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method, which takes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object as a parameter.</para>
+      <para>Typically, control designer classes do not directly implement or assign a <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. The <see cref="T:System.Web.UI.Design.ControlDesigner" /> base class supplies a default delegate for the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. Custom control designers override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" />, <see cref="M:System.Web.UI.Design.ControlDesigner.OnPaint(System.Windows.Forms.PaintEventArgs)" />, and <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> methods to process those events for the control on the design surface. The <see cref="M:System.Web.UI.Design.ControlDesigner.Initialize(System.ComponentModel.IComponent)" /> method sets the default event delegate for the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> delegate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event that is raised by visual design tools, such as vsprvslong, implementing the <see cref="T:System.Web.UI.Design.IControlDesignerView" /> interface. This class cannot be inherited.</para>
+    </summary>
   </Docs>
 </Type>

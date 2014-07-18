@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IResourceService" FullName="System.ComponentModel.Design.IResourceService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IResourceService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IResourceService" />
@@ -12,8 +13,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A resource writer or resource reader can be used to serialize or deserialze objects or data according to the specified <see cref="T:System.Globalization.CultureInfo" /> resource settings.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for designers to access resource readers and writers for specific <see cref="T:System.Globalization.CultureInfo" /> resource types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetResourceReader">
@@ -32,10 +39,20 @@
         <Parameter Name="info" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Resources.IResourceReader'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no resources are associated with the designer for the specified culture, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the resource reader for the specified culture and returns it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Resources.IResourceReader" /> interface that contains the resources for the culture, or null if no resources for the culture exist.</para>
+        </returns>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> of the resource for which to retrieve a resource reader. </param>
       </Docs>
     </Member>
     <Member MemberName="GetResourceWriter">
@@ -54,10 +71,20 @@
         <Parameter Name="info" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a new resource for the specified culture and destroys an existing resource, if one already exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the resource writer for the specified culture and returns it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Resources.IResourceWriter" /> interface for the specified culture.</para>
+        </returns>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> of the resource for which to create a resource writer. </param>
       </Docs>
     </Member>
   </Members>

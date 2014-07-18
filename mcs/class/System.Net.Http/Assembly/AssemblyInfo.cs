@@ -44,10 +44,18 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
+
+#if MOBILE
+[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: SatelliteContractVersion ("4.0.0.0")]
+[assembly: AssemblyInformationalVersion ("4.0.50524.0")]
+[assembly: AssemblyFileVersion ("4.0.50524.0")]
+#else
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+#endif
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
