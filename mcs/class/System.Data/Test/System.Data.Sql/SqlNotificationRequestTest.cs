@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 
 using System;
 using System.Data.Sql;
@@ -224,4 +225,5 @@ namespace MonoTests.System.Data.Sql
 	}
 }
 
+#endif
 #endif

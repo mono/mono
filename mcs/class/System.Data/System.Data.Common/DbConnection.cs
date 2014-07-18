@@ -42,7 +42,11 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbConnection : Component, IDbConnection, IDisposable
+	public abstract class DbConnection : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		Component, 
+#endif
+		IDbConnection, IDisposable
 	{
 		#region Constructors
 
@@ -53,18 +57,24 @@ namespace System.Data.Common {
 		#endregion // Constructors
 
 		#region Properties
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		[DefaultValue ("")]
 		public abstract string ConnectionString { get; set; }
 
 		public abstract string Database { get; }
 		public abstract string DataSource { get; }
 		
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public abstract string ServerVersion { get; }
 		
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public abstract ConnectionState State { get; }
 
 		public virtual int ConnectionTimeout { 
@@ -494,7 +504,7 @@ namespace System.Data.Common {
 			int length = restrictionValues == null ? 0 : restrictionValues.Length;
 
 			foreach (DataRow row in schemaTable.Rows) {
-				if (String.Compare ((string) row ["CollectionName"], collectionName, true) == 0) {
+				if (String.Compare ((string) row ["CollectionName"], collectionName, StringComparison.CurrentCultureIgnoreCase) == 0) {
 					if (length > (int) row ["NumberOfRestrictions"]) {
 						throw new ArgumentException ("More restrictions were provided " +
 									     "than the requested schema ('" +
@@ -766,6 +776,18 @@ namespace System.Data.Common {
 			} catch (Exception e) {
 				return TaskHelper.CreateExceptionTask (e);
 			}
+		}
+#endif
+
+#if WINDOWS_PHONE || NETFX_CORE
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool release_all)
+		{
+
 		}
 #endif
 

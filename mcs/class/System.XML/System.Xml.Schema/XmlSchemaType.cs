@@ -35,12 +35,21 @@ using System.Xml.Serialization;
 using MS.Internal.Xml;
 #endif
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaType.
 	/// </summary>
-	public class XmlSchemaType : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaType : XmlSchemaAnnotated
 	{
 		private XmlSchemaDerivationMethod final;
 		private bool isMixed;

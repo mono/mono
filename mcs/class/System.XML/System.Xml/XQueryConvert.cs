@@ -100,7 +100,11 @@ namespace System.Xml
 
 		public static byte [] Base64BinaryToHexBinary (byte [] value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.FromBinHexString (Convert.ToBase64String (value));
+#else
+			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+#endif
 		}
 
 		public static string Base64BinaryToString (byte [] value)
@@ -357,7 +361,11 @@ namespace System.Xml
 
 		public static string HexBinaryToString (byte [] data)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToBinHexString (data);
+#else
+			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+#endif
 		}
 
 		public static byte [] HexBinaryToBase64Binary (byte [] data)
@@ -478,12 +486,20 @@ namespace System.Xml
 
 		public static DateTime StringToDate (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static DateTime StringToDateTime (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static TimeSpan StringToDayTimeDuration (string value)
@@ -513,32 +529,56 @@ namespace System.Xml
 
 		public static DateTime StringToGDay (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static DateTime StringToGMonth (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static DateTime StringToGMonthDay (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static DateTime StringToGYear (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static DateTime StringToGYearMonth (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static byte [] StringToHexBinary (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.FromBinHexString (value);
+#else
+			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+#endif
 		}
 
 		public static int StringToInt (string value)
@@ -563,7 +603,11 @@ namespace System.Xml
 
 		public static DateTime StringToTime (string value)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (value);
+#else
+			return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		public static UInt32 StringToUnsignedInt (string value)

@@ -12,8 +12,15 @@ using System.Runtime.Serialization;
 
 namespace System.Transactions
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public class TransactionException : SystemException
+#endif
+	public class TransactionException : 
+#if !NETFX_CORE
+		SystemException
+#else
+		Exception
+#endif
 	{
 		protected TransactionException ()
 		{
@@ -29,11 +36,13 @@ namespace System.Transactions
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected TransactionException (SerializationInfo info,
 			StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }
 

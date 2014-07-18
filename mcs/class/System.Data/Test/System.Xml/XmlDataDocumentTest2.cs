@@ -29,6 +29,7 @@
 //
 
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.Data;
 using System.IO;
@@ -311,3 +312,4 @@ namespace MonoTests.System.Xml
 		}
 	}
 }
+#endif

@@ -22,6 +22,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
 #if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
@@ -932,7 +933,7 @@ namespace System.Data.Common
 					return ((IComparable)obj1).CompareTo (obj2);
 				} catch {
 					if (obj2 is IComparable) {
-						obj2 = Convert.ChangeType (obj2, Type.GetTypeCode (obj1.GetType ()));
+						obj2 = Convert.ChangeType (obj2, Type.GetTypeCode (obj1.GetType ()), CultureInfo.CurrentCulture);
 						return ((IComparable)obj1).CompareTo (obj2);
 					}
 				}
@@ -1004,7 +1005,7 @@ namespace System.Data.Common
 		protected override int DoCompareValues (int index1, int index2)
 		{
 			DataTable table = Column.Table;
-			return String.Compare ((string) this [index1], (string) this [index2], !table.CaseSensitive, table.Locale);
+			return String.Compare ((string) this [index1], (string) this [index2], table.Locale, table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
 		}
 	}
 }

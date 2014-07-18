@@ -40,8 +40,12 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("long")]
+#endif
 #endif
 	public struct SqlInt64 : INullable, IComparable
 #if NET_2_0
@@ -478,6 +482,7 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -489,6 +494,7 @@ namespace System.Data.SqlTypes
 			}
 			return new XmlQualifiedName ("long", "http://www.w3.org/2001/XMLSchema");
 		}
+#endif
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

@@ -34,9 +34,18 @@ using System.Text;
 using System.Xml;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public abstract class XmlSchemaDatatype
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	abstract class XmlSchemaDatatype
 	{
 		protected XmlSchemaDatatype()
 		{

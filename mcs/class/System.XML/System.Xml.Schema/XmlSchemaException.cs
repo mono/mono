@@ -27,17 +27,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Xml;
 using System.Globalization;
 using System.Runtime.Serialization;
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Security.Permissions;
+#endif
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaException.
 	/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
+#if !INCLUDE_MONO_XML_SCHEMA
 	public class XmlSchemaException : System.SystemException
+#else
+	internal class XmlSchemaException : Exception
+#endif
 	{
 		//fields
 		private bool hasLineInfo;
@@ -63,6 +77,7 @@ namespace System.Xml.Schema
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -72,6 +87,7 @@ namespace System.Xml.Schema
 			this.sourceUri = info.GetString ("sourceUri");
 			this.sourceObj = info.GetValue ("sourceObj", typeof (XmlSchemaObject)) as XmlSchemaObject;
 		}
+#endif
 
 #if NET_2_0
 		public XmlSchemaException (string message, Exception innerException, int lineNumber, int linePosition)
@@ -177,6 +193,7 @@ namespace System.Xml.Schema
 
 		// Methods
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
@@ -187,5 +204,6 @@ namespace System.Xml.Schema
 			info.AddValue ("sourceUri", sourceUri);
 			info.AddValue ("sourceObj", sourceObj);
 		}
+#endif
 	}
 }

@@ -31,9 +31,14 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Xml;
+#if !INCLUDE_MONO_XML_SCHEMA
 using System.Xml.Schema;
 using System.Globalization;
 using System.Security.Cryptography;
+#else
+using System.Globalization;
+using Mono.Xml.Schema;
+#endif
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
@@ -1386,10 +1391,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, NSResolver nsmgr)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 		        // If it isnt ASCII it isnt valid base64 data
 			byte[] inArr = new System.Text.ASCIIEncoding().GetBytes(s);
 			FromBase64Transform t = new FromBase64Transform();
 			return t.TransformFinalBlock(inArr, 0, inArr.Length);
+#else
+			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+#endif
 		}
 
 
@@ -1486,7 +1495,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, NSResolver nsmgr)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.FromBinHexString (Normalize (s));
+#else
+			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+#endif
 		}
 		
 		internal override int Length(string s) {
@@ -1532,7 +1545,11 @@ namespace Mono.Xml.Schema
 				throw new ArgumentNullException ("name table");
 			if (nsmgr == null)
 				throw new ArgumentNullException ("namespace manager");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			XmlQualifiedName name = XmlQualifiedName.Parse (s, nsmgr, true);
+#else
+			XmlQualifiedName name = XmlSchemaUtil.Parse (s, nsmgr, true);
+#endif
 			nameTable.Add (name.Name);
 			nameTable.Add (name.Namespace);
 			return name;
@@ -1665,7 +1682,11 @@ namespace Mono.Xml.Schema
 		}
 
 		private XmlSchemaUri (string src, bool formal)
+#if !WINDOWS_PHONE && !NETFX_CORE
 			: base (formal ? src : "anyuri:" + src, !formal)
+#else
+			: base (formal ? src : "anyuri:" + src)
+#endif
 		{
 			value = src;
 		}
@@ -1895,7 +1916,11 @@ namespace Mono.Xml.Schema
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			return XmlConvert.ToDateTime (Normalize (s));
+#else
+			return XmlConvert.ToDateTime (Normalize (s), XmlDateTimeSerializationMode.Unspecified);
+#endif
 		}
 
 		internal override XsdOrdering Compare(object x, object y) {

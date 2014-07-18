@@ -29,7 +29,26 @@
 //
 
 
+using MonoTests.System.Data.Utils;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 using System.Data.Common;
@@ -77,11 +96,12 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
 		public void AddException1()
 		{
 			DataColumnMappingCollection c=new DataColumnMappingCollection();
+			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
 			columnMapCollection.Add((Object)c);
+			});
 		}
 		
 		[Test]
@@ -149,11 +169,12 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
 		public void ContainsException1()
 		{
 			Object o = new Object();
+			AssertHelpers.AssertThrowsException<InvalidCastException> (() => { 
 			bool a = columnMapCollection.Contains(o);
+			});
 		}
 		
 		[Test]
@@ -262,10 +283,11 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetColumnMappingBySchemaActionException1()
 		{
+			AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
 			DataColumnMappingCollection.GetColumnMappingBySchemaAction(columnMapCollection, "sourceName", MissingMappingAction.Error);
+			});
 		}
 		
 		[Test]
@@ -313,8 +335,9 @@ namespace MonoTests.System.Data.Common
 			Assert.AreEqual (3, ind, "test1");
 		}
 		
+		// This test is wrong. A mapping in a DataColumnMappingCollection must be identical.
 		[Test]
-		[Ignore ("This test is wrong. A mapping in a DataColumnMappingCollection must be identical.")]
+		[Ignore]
 		public void Remove()
 		{
 			columnMapCollection.AddRange(cols);
@@ -326,21 +349,23 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
 		public void RemoveException1()
 		{
 			String te="testingdata";
 			columnMapCollection.AddRange(cols);
+			AssertHelpers.AssertThrowsException<InvalidCastException>(() => { 
 			columnMapCollection.Remove(te);			
+			});	
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void RemoveException2()
 		{
 			columnMapCollection.AddRange(cols);
 			DataColumnMapping mymap=new DataColumnMapping("sourceAge", "dataSetAge");
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			columnMapCollection.Remove(mymap);
+			});
 		}
 		
 		[Test]
@@ -362,17 +387,19 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void RemoveAtException1()
 		{
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			columnMapCollection.RemoveAt(3);			
+			});
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void RemoveAtException2()
 		{
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			columnMapCollection.RemoveAt("sourceAge");			
+			});
 		}
 		
 		[Test]

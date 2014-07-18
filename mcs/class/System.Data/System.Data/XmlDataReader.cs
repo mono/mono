@@ -28,6 +28,14 @@ using System.Data;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+using XmlNodeList = System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>;
+using XmlAttributeCollection = System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>;
+#endif
 
 namespace System.Data
 {
@@ -134,10 +142,9 @@ namespace System.Data
 			if (dt == null)
 				return true;
 
-			XmlDocument doc = new XmlDocument ();
-			XmlElement el = (XmlElement) doc.ReadNode (reader);
-			doc.AppendChild (el);
-			reader = new XmlNodeReader (el);
+			XmlDocument doc = XmlHelper.CreateXmlDocument (reader);
+			XmlElement el = doc.GetRootElement ();
+			reader = doc.CreateReader ();
 			reader.MoveToContent ();
 
 			return !XmlDataInferenceLoader.IsDocumentElementTable (
@@ -309,7 +316,9 @@ namespace System.Data
 						IXmlSerializable obj = (IXmlSerializable) Activator.CreateInstance (col.DataType, new object [0]);
 						if (!reader.IsEmptyElement) {
 							obj.ReadXml (reader);
+							if (reader.NodeType == XmlNodeType.EndElement) {
    							reader.ReadEndElement ();
+							}
 						} else {
    							reader.Skip ();
 						}						

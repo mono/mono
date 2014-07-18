@@ -35,7 +35,25 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data
 {
@@ -73,6 +91,10 @@ namespace MonoTests.System.Data
 	</xs:element>
 </xs:schema>";
 		const string schema2 = schema1 + xml8;
+		const string schema3 = schema1 + "<!-- some comment -->" + xml8;
+		const string schema4 = schema1 + "some text" + xml8;
+		const string schema5 = schema1 + "<![CDATA[ some stuff here ]]>" + xml8;
+		const string schema6 = schema1 + "<!-- some comment -->some text" + xml8;
 
 		[Test]
 		public void ReadSimpleAuto ()
@@ -564,6 +586,71 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "ReadSchema", schema2,
 				XmlReadMode.ReadSchema, XmlReadMode.ReadSchema,
 				"NewDataSet", 1, ReadState.Interactive);
+			AssertDataTable ("readschema", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
+		}
+
+		[Test]
+		public void TestSimpleSchemaPlusContentWithNonElementAll ()
+		{
+			DataSet ds;
+
+			// Fragment ... consumed both, skipping the comment in the middle
+			ds = new DataSet ();
+			AssertReadXml (ds, "read skip comment", schema3,
+				XmlReadMode.Fragment, XmlReadMode.Fragment,
+				"NewDataSet", 1);
+			AssertDataTable ("assert skip comment", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
+
+			// Fragment ... consumed both, skipping the text in the middle
+			ds = new DataSet ();
+			AssertReadXml (ds, "read skip text", schema4,
+				XmlReadMode.Fragment, XmlReadMode.Fragment,
+				"NewDataSet", 1);
+			AssertDataTable ("assert skip text", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
+
+			// Fragment ... consumed both, skipping the CDATA in the middle
+			ds = new DataSet ();
+			AssertReadXml (ds, "read skip cdata", schema5,
+				XmlReadMode.Fragment, XmlReadMode.Fragment,
+				"NewDataSet", 1);
+			AssertDataTable ("assert skip cdata", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
+
+			// Fragment ... consumed both, skipping the comment and the text in the middle
+			ds = new DataSet ();
+			AssertReadXml (ds, "read skip comment and text", schema6,
+				XmlReadMode.Fragment, XmlReadMode.Fragment,
+				"NewDataSet", 1);
+			AssertDataTable ("assert skip comment and text", ds.Tables [0], "Root", 1, 0, 0, 0, 0, 0);
+		}
+
+		[Test]
+		public void TestSimpleSchemaPlusContentWithComments ()
+		{
+			const string xml =
+@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<!-- structure for dataset starts here -->
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+	<xs:element name='Root'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name='Child' type='xs:string' />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+<!-- data for dataset starts here -->
+<dataset>
+	<Root>
+		<Child>Row One!</Child>
+	</Root>
+</dataset>
+<!-- end xml -->";
+			TextReader stringReader = new StringReader(xml);
+			XmlReader reader = XmlReader.Create(stringReader, new XmlReaderSettings {
+				ConformanceLevel = ConformanceLevel.Fragment
+			});
+			DataSet ds = new DataSet();
+			ds.ReadXml(reader, XmlReadMode.Fragment);
 		}
 
 		[Test]

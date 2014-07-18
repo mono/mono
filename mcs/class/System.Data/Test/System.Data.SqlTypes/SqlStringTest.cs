@@ -33,6 +33,7 @@
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
+using MonoTests.System.Data.Utils;
 #if NET_2_0
 using System.IO;
 #endif
@@ -42,7 +43,25 @@ using System.Xml;
 using System.Xml.Serialization;
 #endif
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -78,49 +97,59 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlString TestString = new SqlString ("Test");
 			Assert.AreEqual ("Test", TestString.Value, "#A01");
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			// SqlString (String, int)
 			TestString = new SqlString ("Test", 2057);
 			Assert.AreEqual (2057, TestString.LCID, "#A02");
+#endif
 
 			// SqlString (int, SqlCompareOptions, byte[])
 			TestString = new SqlString (2057,
 				SqlCompareOptions.BinarySort|SqlCompareOptions.IgnoreCase,
 				new byte [2] {123, 221});
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual (2057, TestString.CompareInfo.LCID, "#A03");
+#endif
 
 			// SqlString(string, int, SqlCompareOptions)
 			TestString = new SqlString ("Test", 2057, SqlCompareOptions.IgnoreNonSpace);
 			Assert.IsTrue (!TestString.IsNull, "#A04");
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			// SqlString (int, SqlCompareOptions, byte[], bool)
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [4] {100, 100, 200, 45}, true);
 			Assert.AreEqual ((byte)63, TestString.GetNonUnicodeBytes () [0], "#A05");
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, false);
 			Assert.AreEqual ((String)"qd", TestString.Value, "#A06");
+#endif
 
 			// SqlString (int, SqlCompareOptions, byte[], int, int)
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 2);
 			Assert.IsTrue (!TestString.IsNull, "#A07");
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			// SqlString (int, SqlCompareOptions, byte[], int, int, bool)
 			TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {100, 111, 50}, 1, 2, false);
 			Assert.AreEqual ("o2", TestString.Value, "#A08");
 			TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {123, 111, 222}, 1, 2, true);
 			Assert.IsTrue (!TestString.IsNull, "#A09");
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void CtorArgumentOutOfRangeException1 ()
 		{
+			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException>(() => {
 			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void CtorArgumentOutOfRangeException2 ()
 		{
+			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException>(() => {
 			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 4);
+			});
 		}
 
 		// Test public fields
@@ -150,6 +179,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void Properties()
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			// CompareInfo
 			Assert.AreEqual (3081, Test1.CompareInfo.LCID, "#C01");
 
@@ -158,6 +188,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// LCID
 			Assert.AreEqual (3081, Test1.LCID, "#C05");
+#endif
 
 			// IsNull
 			Assert.IsTrue (!Test1.IsNull, "#C03");
@@ -174,20 +205,22 @@ namespace MonoTests.System.Data.SqlTypes
 		// PUBLIC METHODS
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CompareToArgumentException ()
 		{
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			SqlByte Test = new SqlByte (1);
 			Test1.CompareTo (Test);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(SqlTypeException))]
 		public void CompareToSqlTypeException ()
 		{
+			AssertHelpers.AssertThrowsException<SqlTypeException>(() => {
 			SqlString T1 = new SqlString ("test", 2057, SqlCompareOptions.IgnoreCase);
 			SqlString T2 = new SqlString ("TEST", 2057, SqlCompareOptions.None);
 			T1.CompareTo (T2);
+			});
 		}
 
 		[Test]
@@ -211,9 +244,11 @@ namespace MonoTests.System.Data.SqlTypes
 			T2 = new SqlString ("TEST", 2057, SqlCompareOptions.IgnoreCase);
 			Assert.IsTrue (T2.CompareTo (T1) == 0, "#D09");
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			T1 = new SqlString ("test", 2057);
 			T2 = new SqlString ("TEST", 2057);
 			Assert.IsTrue (T2.CompareTo (T1) == 0, "#D10");
+#endif
 
 			T1 = new SqlString ("test", 2057, SqlCompareOptions.None);
 			T2 = new SqlString ("TEST", 2057, SqlCompareOptions.None);
@@ -357,19 +392,31 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void UnicodeBytes()
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)105, Test1.GetNonUnicodeBytes () [1], "#N01");
 			Assert.AreEqual ((byte)32, Test1.GetNonUnicodeBytes () [5], "#N02");
+#endif
 
 			Assert.AreEqual ((byte)70, Test1.GetUnicodeBytes () [0], "#N03");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)70, Test1.GetNonUnicodeBytes () [0], "#N03b");
+#endif
 			Assert.AreEqual ((byte)0, Test1.GetUnicodeBytes () [1], "#N03c");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)105, Test1.GetNonUnicodeBytes () [1], "#N03d");
+#endif
 			Assert.AreEqual ((byte)105, Test1.GetUnicodeBytes () [2], "#N03e");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)114, Test1.GetNonUnicodeBytes () [2], "#N03f");
+#endif
 			Assert.AreEqual ((byte)0, Test1.GetUnicodeBytes () [3], "#N03g");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)115, Test1.GetNonUnicodeBytes () [3], "#N03h");
+#endif
 			Assert.AreEqual ((byte)114, Test1.GetUnicodeBytes () [4], "#N03i");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Assert.AreEqual ((byte)116, Test1.GetNonUnicodeBytes () [4], "#N03j");
+#endif
 
 			Assert.AreEqual ((byte)105, Test1.GetUnicodeBytes () [2], "#N04");
 
@@ -386,101 +433,114 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionBoolFormatException1 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			bool test = Test1.ToSqlBoolean ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionByteFormatException ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			byte test = Test1.ToSqlByte ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionDecimalFormatException1 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			Decimal d = Test1.ToSqlDecimal ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionDecimalFormatException2 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlDecimal test = String9E300.ToSqlDecimal ();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionGuidFormatException ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlGuid test = String9E300.ToSqlGuid ();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionInt16FormatException ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt16 test = String9E300.ToSqlInt16().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionInt32FormatException1 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt32 test = String9E300.ToSqlInt32 ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionInt32FormatException2 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlInt32 test = Test1.ToSqlInt32 ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionInt64FormatException ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt64 test = String9E300.ToSqlInt64 ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void ConversionIntMoneyFormatException2 ()
 		{
+			AssertHelpers.AssertThrowsException<FormatException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlMoney test = String9E300.ToSqlMoney ().Value;
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(OverflowException))]
 		public void ConversionByteOverflowException ()
 		{
+			AssertHelpers.AssertThrowsException<OverflowException>(() => {
 			SqlByte b = (new SqlString ("2500")).ToSqlByte ();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(OverflowException))]
 		public void ConversionDoubleOverflowException ()
 		{
+			AssertHelpers.AssertThrowsException<OverflowException>(() => {
 			SqlDouble test = (new SqlString ("4e400")).ToSqlDouble ();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(OverflowException))]
 		public void ConversionSingleOverflowException ()
 		{
+			AssertHelpers.AssertThrowsException<OverflowException>(() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlSingle test = String9E300.ToSqlSingle().Value;
+			});
 		}
 
 		[Test]
@@ -724,12 +784,14 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.IsTrue (SqlString.Add (Test1, null).IsNull, "#AE03");
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlString.GetXsdType (null);
-			NUnit.Framework.Assert.AreEqual ("string", qualifiedName.Name, "#A01");
+			Assert.AreEqual ("string", qualifiedName.Name, "#A01");
 		}
+#endif
 
 		internal void ReadWriteXmlTestInternal (string xml, 
 						       string testval, 
@@ -739,21 +801,21 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlString test1;
 			XmlSerializer ser;
 			StringWriter sw;
-			XmlTextWriter xw;
+			XmlWriter xw;
 			StringReader sr;
-			XmlTextReader xr;
+			XmlReader xr;
 
 			test = new SqlString (testval);
 			ser = new XmlSerializer(typeof(SqlString));
 			sw = new StringWriter ();
-			xw = new XmlTextWriter (sw);
+			xw = XmlWriter.Create (sw);
 			
 			ser.Serialize (xw, test);
 
 			Assert.AreEqual (xml, sw.ToString (), unit_test_id);
 
 			sr = new StringReader (xml);
-			xr = new XmlTextReader (sr);
+			xr = XmlReader.Create (sr);
 			test1 = (SqlString)ser.Deserialize (xr);
 
 			Assert.AreEqual (testval, test1.Value, unit_test_id);

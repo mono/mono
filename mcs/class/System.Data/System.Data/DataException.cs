@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -57,3 +58,4 @@ namespace System.Data
 		}
 	}
 }
+#endif

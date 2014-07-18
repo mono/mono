@@ -23,12 +23,21 @@
 //
 using System;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaNumericFacet.
 	/// </summary>
-	public abstract class XmlSchemaNumericFacet : XmlSchemaFacet
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	abstract class XmlSchemaNumericFacet : XmlSchemaFacet
 	{
 		protected XmlSchemaNumericFacet()
 		{

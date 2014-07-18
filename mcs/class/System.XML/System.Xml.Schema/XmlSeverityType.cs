@@ -23,12 +23,21 @@
 //
 using System;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSeverityType.
 	/// </summary>
-	public enum XmlSeverityType 
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	enum XmlSeverityType 
 	{
 		Error = 0x00000000, 
 		Warning = 0x00000001, 

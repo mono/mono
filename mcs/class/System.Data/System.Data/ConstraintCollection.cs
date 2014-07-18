@@ -36,18 +36,23 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Data {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Editor]
 	[Serializable]
+#endif
 	internal delegate void DelegateValidateRemoveConstraint (ConstraintCollection sender, Constraint constraintToRemove, ref bool fail,ref string failReason);
 
 	/// <summary>
 	/// hold collection of constraints for data table
 	/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[DefaultEvent ("CollectionChanged")]
 	[Editor ("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#endif
 	public partial class ConstraintCollection : InternalDataCollectionBase {
 		public event CollectionChangeEventHandler CollectionChanged;
 		private DataTable table;
@@ -105,7 +110,7 @@ namespace System.Data {
 			foreach (Constraint cst in List) {
 				if (cst == excludeFromComparison)
 					continue;
-				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0)
+				if (String.Compare (constraintName, cst.ConstraintName, Table.Locale, CompareOptions.None) == 0)
 					return true;
 			}
 
@@ -313,7 +318,7 @@ namespace System.Data {
 
 			int index = 0;
 			foreach (Constraint con in List) {
-				if (String.Compare (constraintName, con.ConstraintName, !Table.CaseSensitive, Table.Locale) == 0)
+				if (String.Compare (constraintName, con.ConstraintName, Table.Locale, Table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) == 0)
 					return index;
 				index++;
 			}
@@ -358,7 +363,12 @@ namespace System.Data {
 			Remove (this [index]);
 		}
 
-		protected override ArrayList List {
+#if !WINDOWS_PHONE && !NETFX_CORE
+		protected 
+#else
+		internal
+#endif
+		override ArrayList List {
 			get { return base.List; }
 		}
 

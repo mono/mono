@@ -104,8 +104,10 @@ namespace System.Data.Common
 		    set { ((DbDataAdapter)this).InsertCommand = (DbCommand)value; }
 		}
 		
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand SelectCommand {
 		    get {
 					return (DbCommand) _selectCommand;
@@ -119,8 +121,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand DeleteCommand {
 		    get {
 					return (DbCommand) _deleteCommand;
@@ -134,8 +138,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand InsertCommand {
 		    get {
 					return (DbCommand) _insertCommand;
@@ -149,8 +155,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand UpdateCommand {
 		    get {
 					return (DbCommand) _updateCommand;

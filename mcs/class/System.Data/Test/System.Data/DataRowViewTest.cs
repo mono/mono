@@ -28,15 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 using System.ComponentModel;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataRowViewTest : Assertion
+	public class DataRowViewTest
 	{
 		private DataView CreateTestView ()
 		{
@@ -48,30 +67,33 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CreateChildViewNullStringArg ()
 		{
 			DataView dv = CreateTestView ();
 			DataRowView dvr = dv [0];
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dvr.CreateChildView ((string) null);
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CreateChildViewNullDataRelationArg ()
 		{
 			DataView dv = CreateTestView ();
 			DataRowView dvr = dv [0];
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dvr.CreateChildView ((DataRelation) null);
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CreateChildViewNonExistentName ()
 		{
 			DataView dv = CreateTestView ();
 			DataRowView dvr = dv [0];
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dvr.CreateChildView ("nothing");
+			});
 		}
 
 		[Test]
@@ -96,8 +118,8 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt1);
 			DataRowView dvr = dv [0];
 			DataView v = dvr.CreateChildView (dr);
-			AssertEquals ("RowFilter", "", v.RowFilter);
-			AssertEquals ("Sort", "", v.Sort);
+			Assert.AreEqual ("", v.RowFilter, "RowFilter");
+			Assert.AreEqual ("", v.Sort, "Sort");
 		}
 
 		[Test]
@@ -110,12 +132,12 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv [0];
 			dt.Rows [0].BeginEdit ();
-			AssertEquals ("DataView.Item", true, drv.IsEdit);
+			Assert.AreEqual (true, drv.IsEdit, "DataView.Item");
 
 			drv = dv.AddNew ();
 			drv.Row ["col"] = "test";
 			drv.Row.CancelEdit ();
-			AssertEquals ("AddNew", false, drv.IsEdit);
+			Assert.AreEqual (false, drv.IsEdit, "AddNew");
 		}
 
 		[Test]
@@ -127,11 +149,10 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv [0];
 			dt.Rows [0].BeginEdit ();
-			AssertEquals ("DataView.Item", "val", drv ["col"]);
+			Assert.AreEqual ("val", drv ["col"], "DataView.Item");
 		}
 
 		[Test]
-		[ExpectedException (typeof (RowNotInTableException))]
 		public void ItemException ()
 		{
 			DataTable dt = new DataTable ("table");
@@ -141,7 +162,9 @@ namespace MonoTests.System.Data
 			DataRowView drv = dv.AddNew ();
 			drv.Row ["col"] = "test";
 			drv.Row.CancelEdit ();
+			AssertHelpers.AssertThrowsException<RowNotInTableException> (() => { 
 			object o = drv ["col"];
+			});
 		}
 
 		[Test]
@@ -153,18 +176,18 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {1});
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv.AddNew ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			drv ["col"] = "mod";
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			dt.AcceptChanges ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			drv.EndEdit ();
 			dv [0].EndEdit ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 		}
 	}
 }

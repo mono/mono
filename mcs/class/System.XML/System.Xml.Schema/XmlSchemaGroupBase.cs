@@ -29,10 +29,22 @@
 using System;
 using System.Collections;
 using System.Xml.Serialization;
+#if WINDOWS_PHONE || NETFX_CORE
+using Stack = System.Collections.Generic.Stack<System.Object>;
+#endif
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public abstract class XmlSchemaGroupBase : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	abstract class XmlSchemaGroupBase : XmlSchemaParticle
 	{
 		private XmlSchemaObjectCollection compiledItems;
 

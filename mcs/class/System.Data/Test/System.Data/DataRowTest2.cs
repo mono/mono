@@ -35,7 +35,29 @@ using System.IO;
 
 using MonoTests.System.Data.Utils;
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data
 {
@@ -182,7 +204,7 @@ namespace MonoTests.System.Data
 			drArrResult = dr.GetChildRows(dRel);
 
 			// GetChildRows_D
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW10");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW10");
 		}
 
 		[Test] public void GetChildRows_ByDataRealtionDataRowVersion()
@@ -208,21 +230,21 @@ namespace MonoTests.System.Data
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows(dRel,DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW11");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW11");
 
 			// Teting: DataRow.GetParentRows_D_D
 			//Get Excepted result
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.OriginalRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows(dRel,DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW12");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW12");
 
 			// Teting: DataRow.GetParentRows_D_D
 			//Get Excepted result, in this case Current = Default
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows);
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows(dRel,DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW13");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW13");
 
 			// Teting: DataRow.GetParentRows_D_D
 			drParent.BeginEdit();
@@ -231,7 +253,7 @@ namespace MonoTests.System.Data
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows(dRel,DataRowVersion.Proposed  );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW14");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW14");
 		}
 
 		[Test] public void GetChildRows_ByName()
@@ -259,7 +281,7 @@ namespace MonoTests.System.Data
 			drArrResult = dr.GetChildRows("Parent-Child");
 
 			// GetChildRows_S
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW15");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW15");
 		}
 
 		[Test] public void GetChildRows_ByNameDataRowVersion()
@@ -285,21 +307,21 @@ namespace MonoTests.System.Data
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows("Parent-Child",DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW16");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW16");
 
 			// GetChildRows_SD 2
 			//Get Excepted result
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.OriginalRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows("Parent-Child",DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW17");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW17");
 
 			// GetParentRows_SD 3
 			//Get Excepted result, in this case Current = Default
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows);
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows("Parent-Child",DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW18");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW18");
 
 			// GetParentRows_SD 4
 			drParent.BeginEdit();
@@ -308,7 +330,7 @@ namespace MonoTests.System.Data
 			drArrExcepted = dtChild.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drParent.GetChildRows("Parent-Child",DataRowVersion.Proposed  );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW19");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW19");
 		}
 
 		[Test] public void GetColumnError_ByIndex()
@@ -430,7 +452,7 @@ namespace MonoTests.System.Data
 			drResult = drChild.GetParentRow(dRel);
 
 			// GetParentRow_D
-			Assert.AreEqual(drExcepted.ItemArray,  drResult.ItemArray , "DRW30");
+			AssertHelpers.AreEqualArray(drExcepted.ItemArray,  drResult.ItemArray , "DRW30");
 		}
 
 		[Test] public void GetParentRow_ByDataRelationDataRowVersion()
@@ -457,21 +479,21 @@ namespace MonoTests.System.Data
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow(dRel,DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW31");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW31");
 
 			// GetParentRow_DD 2
 			//Get Excepted result
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow(dRel,DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW32");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW32");
 
 			// GetParentRow_DD 3
 			//Get Excepted result, in this case Current = Default
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow(dRel,DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW33");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW33");
 
 			// GetParentRow_DD 4
 			drChild.BeginEdit();
@@ -480,7 +502,7 @@ namespace MonoTests.System.Data
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow(dRel,DataRowVersion.Proposed  );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW34");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW34");
 		}
 
 		[Test] public void GetParentRow_ByName()
@@ -509,7 +531,7 @@ namespace MonoTests.System.Data
 			drResult = drChild.GetParentRow("Parent-Child");
 
 			// GetParentRow_S
-			Assert.AreEqual(drExcepted.ItemArray,  drResult.ItemArray , "DRW35");
+			AssertHelpers.AreEqualArray(drExcepted.ItemArray,  drResult.ItemArray , "DRW35");
 		}
 
 		[Test] public void GetParentRow_ByNameDataRowVersion()
@@ -536,21 +558,21 @@ namespace MonoTests.System.Data
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow("Parent-Child",DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW36");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW36");
 
 			// GetParentRow_SD 2
 			//Get Excepted result
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow("Parent-Child",DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW37");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW37");
 
 			// GetParentRow_SD 3
 			//Get Excepted result, in this case Current = Default
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow("Parent-Child",DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW38");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW38");
 
 			// GetParentRow_SD 4
 			drChild.BeginEdit();
@@ -559,7 +581,7 @@ namespace MonoTests.System.Data
 			drArrExcepted = drParent;
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRow("Parent-Child",DataRowVersion.Proposed  );
-			Assert.AreEqual(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW39");
+			AssertHelpers.AreEqualArray(drArrExcepted.ItemArray,  drArrResult.ItemArray , "DRW39");
 		}
 
 		[Test] public void GetParentRows_ByDataRelation()
@@ -593,7 +615,7 @@ namespace MonoTests.System.Data
 			drArrResult = dr.GetParentRows(dRel);
 
 			// GetParentRows_D
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW40");
+			AssertHelpers.AreEqualArray(drArrExcepted, drArrResult, "DRW40");
 		}
 
 		[Test] public void GetParentRows_ByName()
@@ -627,7 +649,7 @@ namespace MonoTests.System.Data
 			drArrResult = dr.GetParentRows("Parent-Child");
 
 			// GetParentRows_S
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW41");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW41");
 		}
 
 		[Test] public void GetParentRows_ByNameDataRowVersion()
@@ -680,19 +702,19 @@ namespace MonoTests.System.Data
 			//Check DataRowVersion.Current 
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			drArrResult = drChild.GetParentRows("Parent-Child",DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW42");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW42");
 
 			//Check DataRowVersion.Current 
 			// Teting: DataRow.GetParentRows_D_D ,DataRowVersion.Original
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.OriginalRows );
 			drArrResult = drChild.GetParentRows("Parent-Child",DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW43");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW43");
 
 			//Check DataRowVersion.Default
 			// Teting: DataRow.GetParentRows_D_D ,DataRowVersion.Default
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows);
 			drArrResult = drChild.GetParentRows("Parent-Child",DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted,  drArrResult, "DRW44");
+			AssertHelpers.AreEqualArray(drArrExcepted,  drArrResult, "DRW44");
 
 		/* .Net don't work as expected
 			//Check DataRowVersion.Proposed
@@ -2495,8 +2517,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ( dr.RowError , "Err" );
 		}
 		
-		[Test] 
-		[ExpectedException (typeof (ConstraintException))]
 		public void DataRow_RowError2()
 		{
 			DataTable dt1 = DataProvider.CreateUniqueConstraint();
@@ -2506,17 +2526,20 @@ namespace MonoTests.System.Data
 			DataRow  dr = dt1.NewRow();
 			dr[0] = 3;
 			dt1.Rows.Add(dr);
+			AssertHelpers.AssertThrowsException<ConstraintException>(() => {
 			dt1.EndLoadData();
+			});
 		}
 		
 		[Test] 
-		[ExpectedException (typeof (ConstraintException))]
 		public void DataRow_RowError3()
 		{
 			DataSet ds= DataProvider.CreateForigenConstraint();
 			ds.Tables[0].BeginLoadData();
 			ds.Tables[0].Rows[0][0] = 10; 
+			AssertHelpers.AssertThrowsException<ConstraintException>(() => {
 			ds.Tables[0].EndLoadData(); //Foreign constraint violation
+			});
 		}
 
 
@@ -2624,7 +2647,7 @@ namespace MonoTests.System.Data
 			//Get Result
 			drArrResult = dr.GetChildRows(dRel);
 			
-			Assert.AreEqual(drArrExcepted, drArrResult, "DRW125");
+			AssertHelpers.AreEqualArray(drArrExcepted, drArrResult, "DRW125");
 		}
 
 		[Test]
@@ -2657,19 +2680,19 @@ namespace MonoTests.System.Data
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Current);
-			Assert.AreEqual(drArrExcepted, drArrResult, "DRW126");
+			AssertHelpers.AreEqualArray(drArrExcepted, drArrResult, "DRW126");
 
 			//Get Excepted result
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.OriginalRows );
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Original );
-			Assert.AreEqual(drArrExcepted, drArrResult, "DRW127");
+			AssertHelpers.AreEqualArray(drArrExcepted, drArrResult, "DRW127");
 
 			//Get Excepted result, in this case Current = Default
 			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows);
 			//Get Result DataRowVersion.Current
 			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Default  );
-			Assert.AreEqual(drArrExcepted, drArrResult, "DRW128");
+			AssertHelpers.AreEqualArray(drArrExcepted, drArrResult, "DRW128");
 			
 			try
 			{

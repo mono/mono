@@ -33,6 +33,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using Mono.Data.Tds.Protocol;
 using System;
 using System.Data;
@@ -82,3 +83,4 @@ namespace System.Data.SqlClient {
 		#endregion // Methods
 	}
 }
+#endif

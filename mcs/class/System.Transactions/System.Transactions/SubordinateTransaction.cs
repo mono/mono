@@ -12,7 +12,9 @@ using System.Runtime.Serialization;
 
 namespace System.Transactions
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public sealed class SubordinateTransaction : Transaction
 	{
 		public SubordinateTransaction (IsolationLevel level,

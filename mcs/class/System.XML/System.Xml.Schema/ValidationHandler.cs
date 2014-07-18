@@ -21,11 +21,20 @@
 //
 using System;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// </summary>
-	public delegate void ValidationEventHandler(object sender,ValidationEventArgs e);
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	delegate void ValidationEventHandler(object sender,ValidationEventArgs e);
 
 	/// <summary>
 	/// Docs say we need to raise an exception if ValidationEventHandler is not set(null)

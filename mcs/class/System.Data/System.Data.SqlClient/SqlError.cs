@@ -33,6 +33,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -123,3 +124,4 @@ namespace System.Data.SqlClient {
 		
 	}
 }
+#endif

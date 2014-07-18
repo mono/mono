@@ -23,12 +23,21 @@
 //
 using System;
 using System.Xml.Serialization;
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaForm.
 	/// </summary>
-	public enum XmlSchemaForm 
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	enum XmlSchemaForm 
 	{
 		[XmlIgnore]
 		None = 0x00000000, 

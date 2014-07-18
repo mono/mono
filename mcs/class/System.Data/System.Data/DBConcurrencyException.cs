@@ -34,8 +34,15 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public sealed class DBConcurrencyException : SystemException
+#endif
+	public sealed class DBConcurrencyException :
+#if !WINDOWS_PHONE && !NETFX_CORE
+		SystemException
+#else
+		Exception
+#endif
 	{
 		DataRow [] rows;
 
@@ -69,9 +76,11 @@ namespace System.Data
 			rows = dataRows;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private DBConcurrencyException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
+#endif
 
 		#endregion // Constructors
 
@@ -113,6 +122,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 #endif
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			if (si == null)
@@ -120,6 +130,7 @@ namespace System.Data
 
 			base.GetObjectData (si, context);
 		}
+#endif
 
 		#endregion // Methods
 	}

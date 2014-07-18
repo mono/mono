@@ -30,7 +30,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
@@ -970,12 +988,14 @@ namespace MonoTests.System.Data.SqlTypes
 
 		}
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlBoolean.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("boolean", qualifiedName.Name, "#A01");
 		}
+#endif
 
 		[Test]
 		public void GreaterThanTest ()
@@ -985,18 +1005,18 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean z = new SqlBoolean ();
 			SqlBoolean z1 = new SqlBoolean (0);
 
-			NUnit.Framework.Assert.IsFalse ((x > y).Value, "#A01");
-			NUnit.Framework.Assert.AreEqual (x > z, SqlBoolean.Null, "#A02");
-			NUnit.Framework.Assert.IsTrue ((x > z1).Value, "#A03");
-			NUnit.Framework.Assert.AreEqual (y > z, SqlBoolean.Null, "#A04");
-			NUnit.Framework.Assert.IsFalse ((y > x).Value, "#A05");
-			NUnit.Framework.Assert.IsTrue ((y > z1).Value, "#A06");
-			NUnit.Framework.Assert.AreEqual (z > z1, SqlBoolean.Null, "#A07");
-			NUnit.Framework.Assert.AreEqual (z > x, SqlBoolean.Null, "#A08");
-			NUnit.Framework.Assert.AreEqual (z > y, SqlBoolean.Null, "#A09");
-			NUnit.Framework.Assert.AreEqual (z1 > z, SqlBoolean.Null, "#A10");
-			NUnit.Framework.Assert.IsFalse ((z1 > x).Value, "#A11");
-			NUnit.Framework.Assert.IsFalse ((z1 > y).Value, "#A12");
+			Assert.IsFalse ((x > y).Value, "#A01");
+			Assert.AreEqual (x > z, SqlBoolean.Null, "#A02");
+			Assert.IsTrue ((x > z1).Value, "#A03");
+			Assert.AreEqual (y > z, SqlBoolean.Null, "#A04");
+			Assert.IsFalse ((y > x).Value, "#A05");
+			Assert.IsTrue ((y > z1).Value, "#A06");
+			Assert.AreEqual (z > z1, SqlBoolean.Null, "#A07");
+			Assert.AreEqual (z > x, SqlBoolean.Null, "#A08");
+			Assert.AreEqual (z > y, SqlBoolean.Null, "#A09");
+			Assert.AreEqual (z1 > z, SqlBoolean.Null, "#A10");
+			Assert.IsFalse ((z1 > x).Value, "#A11");
+			Assert.IsFalse ((z1 > y).Value, "#A12");
 		}
 
 		[Test]
@@ -1007,18 +1027,18 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean z = new SqlBoolean ();
 			SqlBoolean z1 = new SqlBoolean (0);
 
-			NUnit.Framework.Assert.IsTrue ((x >= y).Value, "#A01");
-			NUnit.Framework.Assert.AreEqual (x >= z, SqlBoolean.Null, "#A02");
-			NUnit.Framework.Assert.IsTrue ((x >= z1).Value, "#A03");
-			NUnit.Framework.Assert.AreEqual (y >= z, SqlBoolean.Null, "#A04");
-			NUnit.Framework.Assert.IsTrue ((y >= x).Value, "#A05");
-			NUnit.Framework.Assert.IsTrue ((y >= z1).Value, "#A06");
-			NUnit.Framework.Assert.AreEqual (z >= z1, SqlBoolean.Null, "#A07");
-			NUnit.Framework.Assert.AreEqual (z >= x, SqlBoolean.Null, "#A08");
-			NUnit.Framework.Assert.AreEqual (z >= y, SqlBoolean.Null, "#A09");
-			NUnit.Framework.Assert.AreEqual (z1 >= z, SqlBoolean.Null, "#A10");
-			NUnit.Framework.Assert.IsFalse ((z1 >= x).Value, "#A11");
-			NUnit.Framework.Assert.IsFalse ((z1 >= y).Value, "#A12");
+			Assert.IsTrue ((x >= y).Value, "#A01");
+			Assert.AreEqual (x >= z, SqlBoolean.Null, "#A02");
+			Assert.IsTrue ((x >= z1).Value, "#A03");
+			Assert.AreEqual (y >= z, SqlBoolean.Null, "#A04");
+			Assert.IsTrue ((y >= x).Value, "#A05");
+			Assert.IsTrue ((y >= z1).Value, "#A06");
+			Assert.AreEqual (z >= z1, SqlBoolean.Null, "#A07");
+			Assert.AreEqual (z >= x, SqlBoolean.Null, "#A08");
+			Assert.AreEqual (z >= y, SqlBoolean.Null, "#A09");
+			Assert.AreEqual (z1 >= z, SqlBoolean.Null, "#A10");
+			Assert.IsFalse ((z1 >= x).Value, "#A11");
+			Assert.IsFalse ((z1 >= y).Value, "#A12");
 		}
 
 		[Test]
@@ -1029,18 +1049,18 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean z = new SqlBoolean ();
 			SqlBoolean z1 = new SqlBoolean (0);
 
-			NUnit.Framework.Assert.IsFalse ((x < y).Value, "#A01");
-			NUnit.Framework.Assert.AreEqual (x < z, SqlBoolean.Null, "#A02");
-			NUnit.Framework.Assert.IsFalse ((x < z1).Value, "#A03");
-			NUnit.Framework.Assert.AreEqual (y < z, SqlBoolean.Null, "#A04");
-			NUnit.Framework.Assert.IsFalse ((y < x).Value, "#A05");
-			NUnit.Framework.Assert.IsFalse ((y < z1).Value, "#A06");
-			NUnit.Framework.Assert.AreEqual (z < z1, SqlBoolean.Null, "#A07");
-			NUnit.Framework.Assert.AreEqual (z < x, SqlBoolean.Null, "#A08");
-			NUnit.Framework.Assert.AreEqual (z < y, SqlBoolean.Null, "#A09");
-			NUnit.Framework.Assert.AreEqual (z1 < z, SqlBoolean.Null, "#A10");
-			NUnit.Framework.Assert.IsTrue ((z1 < x).Value, "#A11");
-			NUnit.Framework.Assert.IsTrue ((z1 < y).Value, "#A12");
+			Assert.IsFalse ((x < y).Value, "#A01");
+			Assert.AreEqual (x < z, SqlBoolean.Null, "#A02");
+			Assert.IsFalse ((x < z1).Value, "#A03");
+			Assert.AreEqual (y < z, SqlBoolean.Null, "#A04");
+			Assert.IsFalse ((y < x).Value, "#A05");
+			Assert.IsFalse ((y < z1).Value, "#A06");
+			Assert.AreEqual (z < z1, SqlBoolean.Null, "#A07");
+			Assert.AreEqual (z < x, SqlBoolean.Null, "#A08");
+			Assert.AreEqual (z < y, SqlBoolean.Null, "#A09");
+			Assert.AreEqual (z1 < z, SqlBoolean.Null, "#A10");
+			Assert.IsTrue ((z1 < x).Value, "#A11");
+			Assert.IsTrue ((z1 < y).Value, "#A12");
 		}
 
 		[Test]
@@ -1051,18 +1071,18 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean z = new SqlBoolean ();
 			SqlBoolean z1 = new SqlBoolean (0);
 
-			NUnit.Framework.Assert.IsTrue ((x <= y).Value, "#A01");
-			NUnit.Framework.Assert.AreEqual (x <= z, SqlBoolean.Null, "#A02");
-			NUnit.Framework.Assert.IsFalse ((x <= z1).Value, "#A03");
-			NUnit.Framework.Assert.AreEqual (y <= z, SqlBoolean.Null, "#A04");
-			NUnit.Framework.Assert.IsTrue ((y <= x).Value, "#A05");
-			NUnit.Framework.Assert.IsFalse ((y <= z1).Value, "#A06");
-			NUnit.Framework.Assert.AreEqual (z <= z1, SqlBoolean.Null, "#A07");
-			NUnit.Framework.Assert.AreEqual (z <= x, SqlBoolean.Null, "#A08");
-			NUnit.Framework.Assert.AreEqual (z <= y, SqlBoolean.Null, "#A09");
-			NUnit.Framework.Assert.AreEqual (z1 <= z, SqlBoolean.Null, "#A10");
-			NUnit.Framework.Assert.IsTrue ((z1 <= x).Value, "#A11");
-			NUnit.Framework.Assert.IsTrue ((z1 <= y).Value, "#A12");
+			Assert.IsTrue ((x <= y).Value, "#A01");
+			Assert.AreEqual (x <= z, SqlBoolean.Null, "#A02");
+			Assert.IsFalse ((x <= z1).Value, "#A03");
+			Assert.AreEqual (y <= z, SqlBoolean.Null, "#A04");
+			Assert.IsTrue ((y <= x).Value, "#A05");
+			Assert.IsFalse ((y <= z1).Value, "#A06");
+			Assert.AreEqual (z <= z1, SqlBoolean.Null, "#A07");
+			Assert.AreEqual (z <= x, SqlBoolean.Null, "#A08");
+			Assert.AreEqual (z <= y, SqlBoolean.Null, "#A09");
+			Assert.AreEqual (z1 <= z, SqlBoolean.Null, "#A10");
+			Assert.IsTrue ((z1 <= x).Value, "#A11");
+			Assert.IsTrue ((z1 <= y).Value, "#A12");
 		}
 #endif
 	}

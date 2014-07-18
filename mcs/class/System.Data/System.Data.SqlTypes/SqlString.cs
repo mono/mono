@@ -49,8 +49,12 @@ namespace System.Data.SqlTypes
 	/// to be stored in or retrieved from the database
 	/// </summary>
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("string")]
+#endif
 #endif
 	public struct SqlString : INullable, IComparable 
 #if NET_2_0
@@ -65,7 +69,11 @@ namespace System.Data.SqlTypes
 		private bool notNull;
 
 		// FIXME: locale id is not working yet
-		private int lcid;
+#if !WINDOWS_PHONE && !NETFX_CORE
+		int lcid;
+#else
+		CultureInfo lcid;
+#endif
 		private SqlCompareOptions compareOptions;
 
 		public static readonly int BinarySort = 0x8000;
@@ -91,7 +99,11 @@ namespace System.Data.SqlTypes
 		public SqlString (string data) 
 		{
 			this.value = data;
+#if !WINDOWS_PHONE && !NETFX_CORE
 			lcid = CultureInfo.CurrentCulture.LCID;
+#else
+			lcid = CultureInfo.CurrentCulture;
+#endif
 			if (value != null)
 				notNull = true;
 			else
@@ -101,6 +113,7 @@ namespace System.Data.SqlTypes
 				SqlCompareOptions.IgnoreWidth;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		// init with a string data and locale id values.
 		public SqlString (string data, int lcid) 
 		{
@@ -114,6 +127,7 @@ namespace System.Data.SqlTypes
 				SqlCompareOptions.IgnoreKanaType |
 				SqlCompareOptions.IgnoreWidth;
 		}
+#endif
 
 		// init with locale id, compare options, 
 		// and an array of bytes data
@@ -124,7 +138,12 @@ namespace System.Data.SqlTypes
 		public SqlString (string data, int lcid, SqlCompareOptions compareOptions) 
 		{
 			this.value = data;
-			this.lcid = lcid;
+			this.lcid = 
+#if !WINDOWS_PHONE && !NETFX_CORE
+				lcid;
+#else
+				CultureInfo.CurrentCulture;
+#endif
 			this.compareOptions = compareOptions;
 			if (value != null)
 				notNull = true;
@@ -132,13 +151,35 @@ namespace System.Data.SqlTypes
 				notNull = false;
 		}
 
+#if WINDOWS_PHONE || NETFX_CORE
+		SqlString(string data, CultureInfo culture, SqlCompareOptions compareOptions)
+			: this (data, 0, compareOptions)
+		{
+			this.lcid = culture;
+		}
+#endif
+
 		// init with locale id, compare options, array of bytes data,
 		// and whether unicode is encoded or not
-		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public 
+#endif
+		SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
-			this.value = encoding.GetString (data);
+#else
+			Encoding encoding = Encoding.Unicode;
+#endif
+			if (data.Length == 0)
+				value = String.Empty;
+			else
+				value = encoding.GetString (data, 0, data.Length);
+#if !WINDOWS_PHONE && !NETFX_CORE
 			this.lcid = lcid;
+#else
+			this.lcid = CultureInfo.CurrentCulture;
+#endif
 			this.compareOptions = compareOptions;
 			if (value != null)
 				notNull = true;
@@ -156,11 +197,22 @@ namespace System.Data.SqlTypes
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, number of byte to copy,
 		// and whether unicode is encoded or not
-		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode) 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public 
+#endif
+		SqlString(int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode)
 		{		       
+#if !WINDOWS_PHONE && !NETFX_CORE
 			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
+#else
+			Encoding encoding = Encoding.Unicode;
+#endif
 			this.value = encoding.GetString (data, index, count);
+#if !WINDOWS_PHONE && !NETFX_CORE
 			this.lcid = lcid;
+#else
+			this.lcid = CultureInfo.CurrentCulture;
+#endif
 			this.compareOptions = compareOptions;
 			if (value != null)
 				notNull = true;
@@ -175,13 +227,17 @@ namespace System.Data.SqlTypes
 
 		public CompareInfo CompareInfo {
 			get { 
-				return new CultureInfo (lcid).CompareInfo;
+				return CultureInfo.CompareInfo;
 			}
 		}
 
 		public CultureInfo CultureInfo {
 			get { 
+#if !WINDOWS_PHONE && !NETFX_CORE
 				return new CultureInfo (lcid);
+#else
+				return (CultureInfo) lcid.Clone ();
+#endif
 			}
 		}
 
@@ -189,12 +245,14 @@ namespace System.Data.SqlTypes
 			get { return !notNull; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		// geographics location and language (locale id)
 		public int LCID {
 			get { 
 				return lcid;
 			}
 		}
+#endif
 	
 		public SqlCompareOptions SqlCompareOptions {
 			get { 
@@ -314,10 +372,12 @@ namespace System.Data.SqlTypes
 			return result;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public byte[] GetNonUnicodeBytes() 
 		{
 			return Encoding.ASCII.GetBytes (value);
 		}
+#endif
 
 		public byte[] GetUnicodeBytes() 
 		{
@@ -600,6 +660,7 @@ namespace System.Data.SqlTypes
 
 		#endregion // Public Methods
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -611,6 +672,7 @@ namespace System.Data.SqlTypes
 			}
 			return new XmlQualifiedName ("string", "http://www.w3.org/2001/XMLSchema");
 		}
+#endif
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

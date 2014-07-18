@@ -72,7 +72,9 @@ namespace System.Data {
 		private int _rowId;
 		internal bool _rowChanged = false;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private XmlDataDocument.XmlDataElement mappedElement;
+#endif
 		internal bool _inExpressionEvaluation = false;
 
 		#endregion // Fields
@@ -561,6 +563,7 @@ namespace System.Data {
 			throw new ArgumentException (String.Format ("The index {0} does not belong to this row.", index));
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		internal XmlDataDocument.XmlDataElement DataElement {
 			get {
 				if (mappedElement != null || _table.DataSet == null || _table.DataSet._xmlDataDocument == null)
@@ -574,6 +577,7 @@ namespace System.Data {
 			}
 			set { mappedElement = value; }
 		}
+#endif
 
 		internal void SetOriginalValue (string columnName, object val)
 		{

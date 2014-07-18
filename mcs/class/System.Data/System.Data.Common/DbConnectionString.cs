@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 #if NET_2_0
 
 using System.Collections;
@@ -110,4 +111,5 @@ namespace System.Data.Common {
 	}
 }
 
+#endif
 #endif

@@ -36,7 +36,27 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Xml;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using MonoTests.System.Data.Utils;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -266,7 +286,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void NestedReferenceNotAllowed ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
@@ -289,7 +308,9 @@ namespace MonoTests.System.Data
 			// DataSet element cannot be converted into a DataTable.
 			// (i.e. cannot be referenced in any other elements)
 			DataSet ds = new DataSet ();
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.ReadXmlSchema (new StringReader (xs));
+			});
 		}
 
 		[Test]
@@ -467,12 +488,12 @@ namespace MonoTests.System.Data
 
 			// ReadXmlSchema()
 			ds = new DataSet ();
-			ds.ReadXmlSchema (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds.ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds);
 
 			// ReadXml() should also be the same
 			ds = new DataSet ();
-			ds.ReadXml (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds.ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds);
 		}
 
@@ -606,10 +627,9 @@ namespace MonoTests.System.Data
 		public void TestSampleFileImportSimple ()
 		{
 			DataSet ds = new DataSet ();
-			XmlTextReader xtr = null;
+			XmlReader xtr = null;
 			try {
-				xtr = new XmlTextReader ("Test/System.Data/schemas/test010.xsd");
-				xtr.XmlResolver = null;
+				xtr = XmlReader.Create ("Test/System.Data/schemas/test010.xsd");
 				ds.ReadXmlSchema (xtr);
 			} finally {
 				if (xtr != null)

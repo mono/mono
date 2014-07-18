@@ -27,7 +27,16 @@ using Mono.Xml;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using System.Xml.Linq;
+using XmlAttribute = System.Xml.Linq.XAttribute;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	///  All Methods in this class should use XmlConvert. Some Methods are not present in the
@@ -47,7 +56,11 @@ namespace System.Xml.Schema
 		internal static XmlSchemaDerivationMethod FinalAllowed;
 		internal static XmlSchemaDerivationMethod ElementBlockAllowed;
 		internal static XmlSchemaDerivationMethod ComplexTypeBlockAllowed;
+#if !WINDOWS_PHONE && !NETFX_CORE
 		internal static readonly bool StrictMsCompliant = Environment.GetEnvironmentVariable ("MONO_STRICT_MS_COMPLIANT") == "yes";
+#else
+		internal static readonly bool StrictMsCompliant = true;
+#endif
 
 
 		public static void AddToTable (XmlSchemaObjectTable table, XmlSchemaObject obj,
@@ -124,11 +137,15 @@ namespace System.Xml.Schema
 
 		public static XmlParserContext GetParserContext (XmlReader reader)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			IHasXmlParserContext xctx = reader as IHasXmlParserContext;
 			if (xctx != null)
 				return xctx.ParserContext;
 
 			return null;
+#else
+			throw new NotSupportedException ("Unable to get XmlParserContext.");
+#endif
 		}
 
 		public static bool IsBuiltInDatatypeName (XmlQualifiedName qname)
@@ -305,13 +322,18 @@ namespace System.Xml.Schema
 			{
 				if(xso.unhandledAttributeList == null)
 					xso.unhandledAttributeList = new System.Collections.ArrayList();
+#if !WINDOWS_PHONE && !NETFX_CORE
 				XmlAttribute attr = new XmlDocument().CreateAttribute(reader.LocalName,reader.NamespaceURI);
 				attr.Value = reader.Value;
 				ParseWsdlArrayType (reader, attr);
+#else
+				XmlAttribute attr = new XmlAttribute(XNamespace.Get(reader.NamespaceURI) + reader.LocalName, reader.Value);
+#endif
 				xso.unhandledAttributeList.Add(attr);
 			}
 		}
 		
+#if !WINDOWS_PHONE && !NETFX_CORE
 		static void ParseWsdlArrayType (XmlReader reader, XmlAttribute attr)
 		{
 			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace && attr.LocalName == "arrayType")
@@ -322,6 +344,7 @@ namespace System.Xml.Schema
 				attr.Value = ns + type + dimensions;
 			}
 		}
+#endif
 
 		public static bool ReadBoolAttribute(XmlReader reader, out Exception innerExcpetion)
 		{
@@ -696,5 +719,26 @@ namespace System.Xml.Schema
 					return true;
 			return false;
 		}
+
+#if WINDOWS_PHONE || NETFX_CORE
+		// copied from mono source code
+		internal static XmlQualifiedName Parse(string name, IXmlNamespaceResolver resolver, bool considerDefaultNamespace)
+		{
+			int index = name.IndexOf(':');
+			if (index < 0 && !considerDefaultNamespace)
+				return new XmlQualifiedName(name);
+			string prefix = index < 0 ? String.Empty : name.Substring(0, index);
+			string localName = index < 0 ? name : name.Substring(index + 1);
+			string ns = resolver.LookupNamespace(prefix);
+			if (ns == null)
+			{
+				if (prefix.Length > 0)
+					throw new ArgumentException("Invalid qualified name.");
+				else
+					ns = String.Empty;
+			}
+			return new XmlQualifiedName(localName, ns);
+		}
+#endif
 	}
 }

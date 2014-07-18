@@ -204,6 +204,7 @@ namespace System.Data
 		}
 	}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	partial class DataRowView : ICustomTypeDescriptor {
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
@@ -287,7 +288,9 @@ namespace System.Data
 			return this;
 		}
 	}
+#endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	partial class DataRowView : IDataErrorInfo {
 		string IDataErrorInfo.Error {
 			[MonoTODO ("Not implemented, always returns String.Empty")]
@@ -299,6 +302,7 @@ namespace System.Data
 			get { return string.Empty; }
 		}
 	}
+#endif
 
 #if NET_2_0
 	partial class DataRowView : INotifyPropertyChanged {

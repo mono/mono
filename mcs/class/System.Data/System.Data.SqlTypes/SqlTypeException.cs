@@ -34,8 +34,15 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public class SqlTypeException : SystemException, ISerializable
+#endif
+	public class SqlTypeException : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		SystemException, ISerializable
+#else
+		Exception
+#endif
 	{
 		public SqlTypeException()
 			: base (Locale.GetText ("A sql exception has occured."))
@@ -52,6 +59,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected SqlTypeException (SerializationInfo si, StreamingContext sc)
 			: base (si.GetString("SqlTypeExceptionMessage"))
 		{
@@ -61,5 +69,6 @@ namespace System.Data.SqlTypes
 		{
 			si.AddValue ("SqlTypeExceptionMessage", Message, typeof(string));
 		}
+#endif
 	}
 }

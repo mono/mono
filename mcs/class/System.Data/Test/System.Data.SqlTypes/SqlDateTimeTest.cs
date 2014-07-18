@@ -32,7 +32,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
@@ -308,7 +326,11 @@ namespace MonoTests.System.Data.SqlTypes
 			t1 = SqlDateTime.Parse ("02/25/2002 05:25:13");
 			Assert.AreEqual (myTicks[4], t1.Value.Ticks, "#K12");
                         t1 = SqlDateTime.Parse ("2002-02-25 04:25:13Z");
+#if NET_3_5
+                        t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+#else
                         t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+#endif
 			Assert.AreEqual (2002, t1.Value.Year, "#K13");
 			Assert.AreEqual (02, t1.Value.Month, "#K14");
 			Assert.AreEqual (25, t1.Value.Day, "#K15");
@@ -325,7 +347,11 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert.AreEqual (t2.Value.Ticks, t1.Value.Ticks, "#K20");
 
 			t1 = SqlDateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
+#if NET_3_5
+			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+#else
 			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+#endif
 			Assert.AreEqual (2002, t1.Value.Year, "#K21");
 			Assert.AreEqual (02, t1.Value.Month, "#K22");
 			Assert.AreEqual (25, t1.Value.Day, "#K23");
@@ -358,8 +384,9 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (t2.Value.Ticks, t1.Value.Ticks, "#K32");
                 }
 
+		//This test is locale dependent.
 		[Test]
-		[Ignore ("This test is locale dependent.")]
+		[Ignore ()]
 		public void ToStringTest()
 		{
 			//
@@ -485,7 +512,11 @@ namespace MonoTests.System.Data.SqlTypes
 			t1 = (SqlDateTime) new SqlString ("02/25/2002 05:25:13");
 			Assert.AreEqual (myTicks[4], t1.Value.Ticks, "#P07");
 			t1 = (SqlDateTime) new SqlString ("2002-02-25 04:25:13Z");
+#if NET_3_5
+			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+#else
 			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+#endif
 			Assert.AreEqual (2002, t1.Value.Year, "#P08");
 			Assert.AreEqual (02, t1.Value.Month, "#P09");
 			Assert.AreEqual (25, t1.Value.Day, "#P10");
@@ -502,7 +533,11 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (t2.Value.Ticks, t1.Value.Ticks, "#P15");
 
 			t1 = (SqlDateTime) new SqlString ("Mon, 25 Feb 2002 04:25:13 GMT");
+#if NET_3_5
+			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+#else
 			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+#endif
 			Assert.AreEqual (2002, t1.Value.Year, "#P16");
 			Assert.AreEqual (02, t1.Value.Month, "#P17");
 			Assert.AreEqual (25, t1.Value.Day, "#P18");
@@ -574,12 +609,14 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlDateTime.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("dateTime", qualifiedName.Name, "#A01");
 		}
+#endif
 #endif
         }
 }

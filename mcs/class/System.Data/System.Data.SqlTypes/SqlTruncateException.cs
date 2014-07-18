@@ -34,8 +34,13 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public sealed class SqlTruncateException : SqlTypeException, ISerializable
+#endif
+	public sealed class SqlTruncateException : SqlTypeException
+#if !WINDOWS_PHONE && !NETFX_CORE
+		, ISerializable
+#endif
 	{
 		public SqlTruncateException ()
 			: base (Locale.GetText ("This value is being truncated"))
@@ -52,6 +57,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private SqlTruncateException (SerializationInfo si, StreamingContext sc)
 			: base (si.GetString("SqlTruncateExceptionMessage"))
 		{
@@ -61,5 +67,6 @@ namespace System.Data.SqlTypes
 		{
 			si.AddValue ("SqlTruncateExceptionMessage", Message, typeof(string));
 		}
+#endif
 	}
 }

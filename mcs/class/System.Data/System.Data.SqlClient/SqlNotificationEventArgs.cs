@@ -32,6 +32,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 
 using System;
 using System.Data;
@@ -84,4 +85,5 @@ namespace System.Data.SqlClient {
 	}
 }
 
+#endif
 #endif

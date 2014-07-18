@@ -27,10 +27,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public abstract class XmlSchemaContent : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	abstract class XmlSchemaContent : XmlSchemaAnnotated
 	{
 		protected XmlSchemaContent()
 		{}

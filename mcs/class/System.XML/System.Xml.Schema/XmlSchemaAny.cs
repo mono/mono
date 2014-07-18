@@ -34,12 +34,26 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using Mono.Xml.Schema;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using StringCollection = System.Collections.Generic.List<System.String>;
+using Stack = System.Collections.Generic.Stack<System.Object>;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaAny.
 	/// </summary>
-	public class XmlSchemaAny : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	class XmlSchemaAny : XmlSchemaParticle
 	{
 		static XmlSchemaAny anyTypeContent;
 		internal static XmlSchemaAny AnyTypeContent {

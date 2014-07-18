@@ -31,12 +31,21 @@ using System.Xml.Serialization;
 using System.Xml;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaSimpleType.
 	/// </summary>
-	public class XmlSchemaSimpleType : XmlSchemaType
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaSimpleType : XmlSchemaType
 	{
 		const string xmlname = "simpleType";
 		private static XmlSchemaSimpleType schemaLocationType;

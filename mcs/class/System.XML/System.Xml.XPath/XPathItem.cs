@@ -29,10 +29,16 @@
 
 using System.Collections;
 using System.Xml.Schema;
+using Mono.Xml.Schema;
 
 namespace System.Xml.XPath
 {
-	public abstract class XPathItem
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	abstract class XPathItem
 	{
 		protected XPathItem ()
 		{

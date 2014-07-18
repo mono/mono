@@ -35,6 +35,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	internal class XsdKeyEntryCollection : CollectionBase
 	{
 		public void Add (XsdKeyEntry entry)
@@ -47,6 +48,7 @@ namespace Mono.Xml.Schema
 			set { List [i] = value; }
 		}
 	}
+#endif
 
 	// Created per constraining element.
 	internal class XsdKeyTable
@@ -59,10 +61,12 @@ namespace Mono.Xml.Schema
 		private XmlQualifiedName qname;
 		private XmlQualifiedName refKeyName;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public XsdKeyEntryCollection Entries =
 			new XsdKeyEntryCollection ();
 		public XsdKeyEntryCollection FinishedEntries =
 			new XsdKeyEntryCollection ();
+#endif
 
 		public int StartDepth;
 		public XsdKeyTable ReferencedKey;

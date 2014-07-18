@@ -40,8 +40,12 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("decimal")]
+#endif
 #endif
 	public struct SqlMoney : INullable, IComparable
 #if NET_2_0
@@ -472,11 +476,13 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("decimal", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
+#endif
 
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()

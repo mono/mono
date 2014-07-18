@@ -12,14 +12,24 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Generic;
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Security.Permissions;
+#endif
 using System.Runtime.Serialization;
+#if WINDOWS_PHONE || NETFX_CORE
+using System.Threading.Tasks;
+#endif
 using System.Threading;
 
 namespace System.Transactions
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public class Transaction : IDisposable, ISerializable
+#endif
+	public class Transaction : IDisposable
+#if !WINDOWS_PHONE && !NETFX_CORE
+		, ISerializable
+#endif
 	{
 		[ThreadStatic]
 		static Transaction ambient;
@@ -27,7 +37,7 @@ namespace System.Transactions
 		IsolationLevel level;
 		TransactionInformation info;
 
-		ArrayList dependents = new ArrayList ();
+		List<DependentTransaction> dependents = new List<DependentTransaction>();
 
 		/* Volatile enlistments */
 		List <IEnlistmentNotification> volatiles;
@@ -86,12 +96,14 @@ namespace System.Transactions
 			pspe = other.Pspe;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public event TransactionCompletedEventHandler TransactionCompleted;
 
@@ -147,7 +159,9 @@ namespace System.Transactions
 		}
 
 		[MonoTODO ("Only SinglePhase commit supported for durable resource managers.")]
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
+#endif
 		public Enlistment EnlistDurable (Guid manager,
 			IEnlistmentNotification notification,
 			EnlistmentOptions options)
@@ -156,7 +170,9 @@ namespace System.Transactions
 		}
 
 		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction. Only EnlistmentOptions.None supported yet.")]
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
+#endif
 		public Enlistment EnlistDurable (Guid manager,
 			ISinglePhaseNotification notification,
 			EnlistmentOptions options)
@@ -437,13 +453,21 @@ namespace System.Transactions
 			foreach (IEnlistmentNotification enlist in Volatiles)
 			{
 				PreparingEnlistment pe = new PreparingEnlistment (this, enlist);
+#if WINDOWS_PHONE || NETFX_CORE
+				Task.Run(() => PrepareCallbackWrapper(pe));
+#else
 				ThreadPool.QueueUserWorkItem (new WaitCallback(PrepareCallbackWrapper), pe);
+#endif
 
 				/* Wait (with timeout) for manager to prepare */
 				TimeSpan timeout = Scope != null ? Scope.Timeout : TransactionManager.DefaultTimeout;
 
 				// FIXME: Should we managers in parallel or on-by-one?
+#if WINDOWS_PHONE || NETFX_CORE
+				if (!pe.WaitHandle.WaitOne(timeout))
+#else
 				if (!pe.WaitHandle.WaitOne(timeout, true))
+#endif
 				{
 					this.Aborted = true;
 					throw new TimeoutException("Transaction timedout");

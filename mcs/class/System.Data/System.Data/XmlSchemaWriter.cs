@@ -43,7 +43,7 @@ namespace System.Data
 {
 	internal class XmlSchemaWriter
 	{
-		const string xmlnsxs = System.Xml.Schema.XmlSchema.Namespace;
+		const string xmlnsxs = XmlConstants.SchemaNamespace;
 
 		public static void WriteXmlSchema (DataSet dataset,
 			XmlWriter writer)

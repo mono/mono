@@ -43,7 +43,25 @@ using System.Xml;
 using System.Xml.Serialization;
 #endif
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -591,12 +609,14 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual ((double) 64, ((SqlDouble) TestSingle64).Value, "#Y01");
 		}
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlDouble.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("double", qualifiedName.Name, "#A01");
 		}
+#endif
 
 		internal void ReadWriteXmlTestInternal (string xml, 
 						       double testval, 
@@ -606,21 +626,21 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlDouble test1;
 			XmlSerializer ser;
 			StringWriter sw;
-			XmlTextWriter xw;
+			XmlWriter xw;
 			StringReader sr;
-			XmlTextReader xr;
+			XmlReader xr;
 
 			test = new SqlDouble (testval);
 			ser = new XmlSerializer(typeof(SqlDouble));
 			sw = new StringWriter ();
-			xw = new XmlTextWriter (sw);
+			xw = XmlWriter.Create (sw);
 			
 			ser.Serialize (xw, test);
 
 			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
 
 			sr = new StringReader (xml);
-			xr = new XmlTextReader (sr);
+			xr = XmlReader.Create (sr);
 			test1 = (SqlDouble)ser.Deserialize (xr);
 
 			Assert.AreEqual (testval, test1.Value, unit_test_id);
@@ -642,9 +662,15 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, test3, "BA03");
 				Assert.Fail ("BA03");
+#if !WINDOWS_PHONE && !NETFX_CORE
 			} catch (FormatException e) {
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
+#else
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (FormatException), e.InnerException.GetType (), "#BA03");
+			}
+#endif
 		}
 #endif
 	}

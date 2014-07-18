@@ -27,9 +27,18 @@
 //
 #if NET_2_0
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public enum XmlSchemaValidity
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	enum XmlSchemaValidity
 	{
 		NotKnown,
 		Valid,

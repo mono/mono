@@ -24,12 +24,21 @@
 using System;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaMinLengthFacet.
 	/// </summary>
-	public class XmlSchemaMinLengthFacet : XmlSchemaNumericFacet
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaMinLengthFacet : XmlSchemaNumericFacet
 	{
 		const string xmlname = "minLength";
 

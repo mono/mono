@@ -34,6 +34,7 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
 	public class StrongTypingException : DataException
 	{
@@ -58,4 +59,5 @@ namespace System.Data
 		{
 		}
 	}
+#endif
 }

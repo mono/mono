@@ -26,7 +26,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 using MonoTests.System.Data.Utils;
@@ -88,7 +108,7 @@ namespace MonoTests_System.Data
 			fc = new ForeignKeyConstraint(dtParent.Columns[0],dtChild.Columns[0]);
 
 			// RelatedColumns
-			Assert.AreEqual(new DataColumn[] {dtParent.Columns[0]}, fc.RelatedColumns , "FKC5");
+			AssertHelpers.AreEqualArray(new DataColumn[] {dtParent.Columns[0]}, fc.RelatedColumns , "FKC5");
 		}
 
 		[Test] public void RelatedTable()
@@ -484,14 +504,14 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(NullReferenceException))]
 		public void ctor_DclmDclm1()
 		{
+			AssertHelpers.AssertThrowsException<NullReferenceException>(() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void ctor_DclmDclm2()
 		{
 			DataSet ds = new DataSet();
@@ -499,11 +519,12 @@ namespace MonoTests_System.Data
 			ds.Tables.Add(DataProvider.CreateChildDataTable());
 			ds.Tables["Parent"].Columns["ParentId"].Expression = "2";
 			
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(ds.Tables[0].Columns[0],ds.Tables[1].Columns[0]);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void ctor_DclmDclm3()
 		{
 			DataSet ds = new DataSet();
@@ -511,7 +532,9 @@ namespace MonoTests_System.Data
 			ds.Tables.Add(DataProvider.CreateChildDataTable());
 			ds.Tables["Child"].Columns["ParentId"].Expression = "2";
 			
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(ds.Tables[0].Columns[0],ds.Tables[1].Columns[0]);
+			});
 		}
 
 		[Test]
@@ -535,7 +558,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(ConstraintException))]
 		public void UpdateRule2()
 		{
 			DataSet ds = GetNewDataSet();
@@ -546,7 +568,9 @@ namespace MonoTests_System.Data
 
 			//Changing parent row
 
+			AssertHelpers.AssertThrowsException<ConstraintException>(() => { 
 			ds.Tables[0].Rows[0]["ParentId"] = 5;
+			});
 			
 			/*ds.Tables[0].AcceptChanges();
 			ds.Tables[1].AcceptChanges();

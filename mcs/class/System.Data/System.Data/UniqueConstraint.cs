@@ -40,11 +40,13 @@ using System.Runtime.InteropServices;
 using System.Data.Common;
 
 namespace System.Data {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Editor ("Microsoft.VSDesigner.Data.Design.UniqueConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
 #if !NET_2_0
 	[Serializable]
+#endif
 #endif
 	public class UniqueConstraint : Constraint 
 	{
@@ -102,7 +104,9 @@ namespace System.Data {
 		}
 
 		//Special case.  Can only be added to the Collection with AddRange
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
 		{
 			InitInProgress = true;
@@ -298,11 +302,13 @@ namespace System.Data {
 
 		#region Properties
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+		[ReadOnly (true)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the columns of this constraint.")]
 #endif
-		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _dataColumns; }
 			internal set {
@@ -312,7 +318,9 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates if this constraint is a primary key.")]
 #endif
@@ -325,11 +333,13 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+		[ReadOnly (true)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the table of this constraint.")]
 #endif
-		[ReadOnly (true)]
 		public override DataTable Table {
 			get { return _dataTable; }
 		}

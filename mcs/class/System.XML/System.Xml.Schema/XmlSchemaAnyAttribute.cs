@@ -34,12 +34,25 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using Mono.Xml.Schema;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using StringCollection = System.Collections.Generic.List<System.String>;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaAnyAttribute.
 	/// </summary>
-	public class XmlSchemaAnyAttribute : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	class XmlSchemaAnyAttribute : XmlSchemaAnnotated
 	{
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;

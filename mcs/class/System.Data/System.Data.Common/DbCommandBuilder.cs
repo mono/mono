@@ -38,7 +38,11 @@ using System.Globalization;
 using System.Text;
 
 namespace System.Data.Common {
-	public abstract class DbCommandBuilder : Component
+	public abstract class DbCommandBuilder :
+#if !WINDOWS_PHONE && !NETFX_CORE
+		Component,
+#endif
+		IDisposable
 	{
 		bool _setAllValues;
 		bool _disposed;
@@ -470,8 +474,10 @@ namespace System.Data.Common {
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+#endif
 		public DbDataAdapter DataAdapter {
 			get { return _dbDataAdapter; }
 			set {  if (value != null) 
@@ -543,7 +549,13 @@ namespace System.Data.Common {
 							    StatementType statementType, 
 							    bool whereClause);
 
-		protected override void Dispose (bool disposing)
+		protected 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		override 
+#else
+		virtual
+#endif
+		void Dispose (bool disposing)
 		{
 			if (!_disposed) {
 				if (disposing) {
@@ -692,6 +704,13 @@ namespace System.Data.Common {
 				typename);
 			throw new ArgumentOutOfRangeException (typename, msg);
 		}
+
+#if WINDOWS_PHONE || NETFX_CORE
+		public void Dispose ()
+		{
+			Dispose(true);
+		}
+#endif
 	}
 }
 

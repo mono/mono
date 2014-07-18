@@ -1,4 +1,5 @@
 System.Data.Test.Utils/DataProvider.cs
+System.Data.Test.Utils/AssertHelpers.cs
 System.Data.SqlTypes/SqlBinaryTest.cs
 System.Data.SqlTypes/SqlBooleanTest.cs
 System.Data.SqlTypes/SqlBytesTest.cs

@@ -31,7 +31,9 @@
 //
 
 namespace System.Data {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public enum KeyRestrictionBehavior
 	{
 		AllowOnly,

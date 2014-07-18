@@ -23,6 +23,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Mono.Data.SqlExpressions {
 	internal class Numeric {
@@ -44,16 +45,16 @@ namespace Mono.Data.SqlExpressions {
 			case TypeCode.Byte:
 			case TypeCode.Int16:
 			case TypeCode.UInt16:
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Int32);
+				return (IConvertible)Convert.ChangeType (o, TypeCode.Int32, CultureInfo.CurrentCulture);
 			
 			case TypeCode.UInt32:
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Int64);
+				return (IConvertible)Convert.ChangeType (o, TypeCode.Int64, CultureInfo.CurrentCulture);
 				
 			case TypeCode.UInt64:
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Decimal);
+				return (IConvertible)Convert.ChangeType (o, TypeCode.Decimal, CultureInfo.CurrentCulture);
 				
 			case TypeCode.Single:
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Double);
+				return (IConvertible)Convert.ChangeType (o, TypeCode.Double, CultureInfo.CurrentCulture);
 			
 			default:
 				return o;
@@ -76,12 +77,12 @@ namespace Mono.Data.SqlExpressions {
 			// is it ok to make such assumptions about the order of an enum?
 			if (tc1 < tc2)
 			{
-				o1 = (IConvertible)Convert.ChangeType (o1, tc2);
+				o1 = (IConvertible)Convert.ChangeType (o1, tc2, CultureInfo.CurrentCulture);
 				return tc2;
 			}
 			else
 			{
-				o2 = (IConvertible)Convert.ChangeType (o2, tc1);
+				o2 = (IConvertible)Convert.ChangeType (o2, tc1, CultureInfo.CurrentCulture);
 				return tc1;
 			}
 		}

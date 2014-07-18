@@ -36,12 +36,21 @@ using NSResolver = System.Xml.IXmlNamespaceResolver;
 using NSResolver = System.Xml.XmlNamespaceManager;
 #endif
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaSimpleTypeRestriction.
 	/// </summary>
-	public class XmlSchemaSimpleTypeRestriction : XmlSchemaSimpleTypeContent
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaSimpleTypeRestriction : XmlSchemaSimpleTypeContent
 	{
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;

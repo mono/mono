@@ -36,7 +36,26 @@ using System.Data;
 using System.Data.Common;
 using System.Collections;
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -82,7 +101,6 @@ namespace MonoTests.System.Data
                 }
 
                 [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
                 public void RowInAccessibleTest ()
                 {
 
@@ -91,7 +109,9 @@ namespace MonoTests.System.Data
                                 reader.Read ();
                                 reader.Read (); // 2nd row
                                 dt.Rows [1].Delete ();
+                            AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 string value = reader [1].ToString ();
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -208,7 +228,6 @@ namespace MonoTests.System.Data
                 }
 
                 [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
                 public void CloseTest ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
@@ -217,7 +236,9 @@ namespace MonoTests.System.Data
                                 while (reader.Read () && i < 1)
                                         i++;
                                 reader.Close ();
+                              AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 reader.Read ();
+                              });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -258,9 +279,9 @@ namespace MonoTests.System.Data
                 }
                 
                 [Test]
-                [ExpectedException (typeof (ArgumentException))]
                 public void NoTablesTest ()
                 {
+                    AssertHelpers.AssertThrowsException<ArgumentException> (() => {
                         DataTableReader reader = new DataTableReader (new DataTable [] {});
                         try {
                                 reader.Read ();
@@ -268,17 +289,19 @@ namespace MonoTests.System.Data
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
                         }
+                   });
                 }
 
 		[Test]
-                [ExpectedException (typeof (InvalidOperationException))]
 		public void ReadAfterClosedTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
                         try {
                                 reader.Read ();
                                 reader.Close ();
+                            AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 reader.Read ();
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -286,15 +309,16 @@ namespace MonoTests.System.Data
 		}	
 
 		[Test]
-                [ExpectedException (typeof (InvalidOperationException))]
 		public void AccessAfterClosedTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
                         try {
                                 reader.Read ();
                                 reader.Close ();
+                            AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 int i = (int) reader [0];
                                 i++; // to supress warning
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -302,13 +326,14 @@ namespace MonoTests.System.Data
 		}
 
                 [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
 		public void AccessBeforeReadTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
                         try {
+                            AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 int i = (int) reader [0];
                                 i++; // to supress warning
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -316,14 +341,15 @@ namespace MonoTests.System.Data
 		}
 
                 [Test]
-                [ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void InvalidIndexTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
                         try {
                                 reader.Read ();
+                            AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException> (() => {
                                 int i = (int) reader [90]; // kidding, ;-)
                                 i++; // to supress warning
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -423,7 +449,6 @@ namespace MonoTests.System.Data
                 }
 
                 [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
                 public void DeleteFirstCurrentAndAcceptChangesTest ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
@@ -431,7 +456,9 @@ namespace MonoTests.System.Data
                                 reader.Read (); // first row
                                 dt.Rows [0].Delete (); // delete row, where reader points to
                                 dt.AcceptChanges (); // accept the action
+                            AssertHelpers.AssertThrowsException<InvalidOperationException>(() => {
                                 Assert.AreEqual (2, (int) reader [0], "#1 should point to the first row");
+                            });
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -641,8 +668,8 @@ namespace MonoTests.System.Data
 			
 			Assert.AreEqual ("col_autoincrement", schemaTable.Rows [7]["ColumnName"], "#9");
 			Assert.IsTrue ((bool)schemaTable.Rows [7]["IsAutoIncrement"], "#41");
-			Assert.AreEqual (10, schemaTable.Rows [7]["AutoIncrementSeed"], "#42");
-			Assert.AreEqual (5, schemaTable.Rows [7]["AutoIncrementStep"], "#43");
+			Assert.AreEqual (10L, schemaTable.Rows [7]["AutoIncrementSeed"], "#42");
+			Assert.AreEqual (5L, schemaTable.Rows [7]["AutoIncrementStep"], "#43");
 			Assert.IsFalse ((bool)schemaTable.Rows [7]["IsReadOnly"], "#44");
 			
 			Assert.AreEqual ("col_pk", schemaTable.Rows [8]["ColumnName"], "#45");

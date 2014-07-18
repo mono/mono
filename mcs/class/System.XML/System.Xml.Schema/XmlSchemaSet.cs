@@ -34,14 +34,22 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Security.Policy;
-using System.Xml.Schema;
+using System.Xml;
 using System.Xml.XPath;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 #if NET_2_0
-	public class XmlSchemaSet
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaSet
 #else
 	internal sealed class XmlSchemaSet
 #endif

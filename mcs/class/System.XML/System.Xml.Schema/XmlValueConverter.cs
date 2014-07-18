@@ -31,8 +31,13 @@
 #if NET_2_0
 
 using System;
+using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	internal abstract class XmlValueConverter
 	{

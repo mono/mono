@@ -22,7 +22,11 @@
 using System;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// A wrapper around XmlReader
@@ -198,10 +202,12 @@ namespace System.Xml.Schema
 		{
 			get { return  reader.Prefix; }
 		}
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override char QuoteChar 
 		{
 			get { return  reader.QuoteChar; }
 		}
+#endif
 		public override ReadState ReadState 
 		{
 			get { return  reader.ReadState; }
@@ -314,6 +320,7 @@ namespace System.Xml.Schema
 			return reader.ReadAttributeValue(); 
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override string ReadElementString()
 		{
 			return reader.ReadElementString(); 
@@ -328,6 +335,7 @@ namespace System.Xml.Schema
 		{
 			return reader.ReadElementString(name); 
 		}
+#endif
 
 		public override void ReadEndElement()
 		{
@@ -359,10 +367,12 @@ namespace System.Xml.Schema
 			reader.ReadStartElement(name); 
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override string ReadString()
 		{
 			return reader.ReadString(); 
 		}
+#endif
 
 		public override void ResolveEntity()
 		{

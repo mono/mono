@@ -42,9 +42,16 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
-	public sealed class SqlBytes : INullable, IXmlSerializable, ISerializable
+#else
+	[XmlRoot("base64Binary")]
+#endif
+	public sealed class SqlBytes : INullable, IXmlSerializable
+#if !WINDOWS_PHONE && !NETFX_CORE
+		, ISerializable
+#endif
 	{
 		#region Fields
 
@@ -219,11 +226,13 @@ namespace System.Data.SqlTypes
 			return new SqlBinary (buffer);
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
+#endif
 		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
@@ -243,11 +252,13 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public long Read (long offset, byte [] buffer, int offsetInBuffer, int count)
 		{
@@ -271,8 +282,14 @@ namespace System.Data.SqlTypes
 			long actualCount = count;
 			if (count + offset > Length )
 				actualCount = Length - offset;
-			
-			Array.Copy (this.buffer, offset, buffer, offsetInBuffer, actualCount);
+
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (offset < Int32.MinValue || offset > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("dataIndex",
+					Locale.GetText ("Must be in the Int32 range."));
+
+			Array.Copy (this.buffer, (int) offset, buffer, offsetInBuffer, (int) actualCount);
 			
 			return actualCount;
 		}
@@ -304,7 +321,13 @@ namespace System.Data.SqlTypes
 			    count + offset <= MaxLength)
 				SetLength (count);
 			
-			Array.Copy (buffer, offsetInBuffer, this.buffer, offset, count);
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (offset < Int32.MinValue || offset > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("dataIndex",
+					Locale.GetText ("Must be in the Int32 range."));
+
+			Array.Copy (buffer, offsetInBuffer, this.buffer, (int) offset, count);
 		}
 
 		#endregion

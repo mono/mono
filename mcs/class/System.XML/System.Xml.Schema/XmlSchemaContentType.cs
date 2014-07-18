@@ -23,12 +23,21 @@
 //
 using System;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaContentType.
 	/// </summary>
-	public enum XmlSchemaContentType 
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	enum XmlSchemaContentType 
 	{
 		TextOnly	= 0, 
 		Empty		= 1, 
