@@ -1321,28 +1321,16 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		protected override Expression DoResolve (ResolveContext rc)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (rc.HasSet (ResolveContext.Options.ConstantScope)) {
-				rc.Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
+			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
+				ec.Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
 
 			//
-			// Update top-level block generated duting parsing with actual top-level block
+			// Set class type, set type
 			//
-			if (rc.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer)) {
-				var tb = rc.ConstructorBlock.ParametersBlock.TopBlock;
-				if (Block.TopBlock != tb) {
-					Block b = Block;
-					while (b.Parent != Block.TopBlock && b != Block.TopBlock)
-						b = b.Parent;
-
-					b.Parent = tb;
-					tb.IncludeBlock (Block.TopBlock);
-					b.ParametersBlock.TopBlock = tb;
-				}
-			}
 
 			eclass = ExprClass.Value;
 
@@ -1353,7 +1341,7 @@ namespace Mono.CSharp {
 			// 
 			type = InternalType.AnonymousMethod;
 
-			if (!DoResolveParameters (rc))
+			if (!DoResolveParameters (ec))
 				return null;
 
 			return this;
