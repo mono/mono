@@ -3673,9 +3673,6 @@ namespace Mono.CSharp {
 			get {
 				return top_block;
 			}
-			set {
-				top_block = value;
-			}
 		}
 
 		public bool Resolved {
@@ -4313,21 +4310,6 @@ namespace Mono.CSharp {
 
 			variable = null;
 			return false;
-		}
-
-		public void IncludeBlock (ToplevelBlock block)
-		{
-			if (block.names != null) {
-				foreach (var n in block.names) {
-					var variable = n.Value as INamedBlockVariable;
-					if (variable != null) {
-						AddLocalName (n.Key, variable, false);
-						continue;
-					}
-
-					throw new NotImplementedException ();
-				}
-			}
 		}
 
 		// <summary>

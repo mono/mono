@@ -1608,12 +1608,8 @@ namespace Mono.CSharp
 			// defined after current container
 			//
 			if (class_partial_parts != null) {
-				foreach (var pp in class_partial_parts) {
-					if (pp.PrimaryConstructorBaseArguments != null)
-						PrimaryConstructorBaseArguments = pp.PrimaryConstructorBaseArguments;
-
+				foreach (var pp in class_partial_parts)
 					pp.DoDefineBaseType ();
-				}
 
 			}
 
@@ -2669,7 +2665,7 @@ namespace Mono.CSharp
 			
 			AddConstructor (c, true);
 			if (PrimaryConstructorBlock == null) {
-				c.Block = new ToplevelBlock (Compiler, parameters, Location) {
+				c.Block = new ToplevelBlock (Compiler, c.ParameterInfo, Location) {
 					IsCompilerGenerated = true
 				};
 			} else {
