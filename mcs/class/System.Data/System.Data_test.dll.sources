@@ -1,5 +1,3 @@
-../../corlib/System.IO/FileUtil.cs
-
 System.Data.Test.Utils/DataProvider.cs
 System.Data.Test.Utils/AssertHelpers.cs
 System.Data.SqlTypes/SqlBinaryTest.cs
