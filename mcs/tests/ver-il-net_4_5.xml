@@ -67997,6 +67997,37 @@
       </method>
     </type>
   </test>
+  <test name="test-primary-ctor-09.cs">
+    <type name="A">
+      <method name="Void .ctor(Func`2)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="PC">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>50</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="PC+&lt;f1&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__0(Int32)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1(Int32)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-static-using-01.cs">
     <type name="A.B.X">
       <method name="Int32 Test()" attrs="150">
