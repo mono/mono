@@ -98,7 +98,7 @@ namespace MonoTests_System.Data
 			fc = new ForeignKeyConstraint(dtParent.Columns[0],dtChild.Columns[0]);
 
 			// RelatedColumns
-			AssertHelpers.AreEqualArray(new DataColumn[] {dtParent.Columns[0]}, fc.RelatedColumns , "FKC5");
+			AssertHelpers.AreEqualArray (new DataColumn[] { dtParent.Columns [0] }, fc.RelatedColumns, "FKC5");
 		}
 
 		[Test] public void RelatedTable()
@@ -496,7 +496,7 @@ namespace MonoTests_System.Data
 		[Test]
 		public void ctor_DclmDclm1()
 		{
-			AssertHelpers.AssertThrowsException<NullReferenceException>(() => { 
+			AssertHelpers.AssertThrowsException<NullReferenceException> (() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
 			});
 		}
@@ -509,7 +509,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Add(DataProvider.CreateChildDataTable());
 			ds.Tables["Parent"].Columns["ParentId"].Expression = "2";
 			
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => { 
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(ds.Tables[0].Columns[0],ds.Tables[1].Columns[0]);
 			});
 		}
@@ -522,7 +522,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Add(DataProvider.CreateChildDataTable());
 			ds.Tables["Child"].Columns["ParentId"].Expression = "2";
 			
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => { 
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => { 
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(ds.Tables[0].Columns[0],ds.Tables[1].Columns[0]);
 			});
 		}
@@ -558,7 +558,7 @@ namespace MonoTests_System.Data
 
 			//Changing parent row
 
-			AssertHelpers.AssertThrowsException<ConstraintException>(() => { 
+			AssertHelpers.AssertThrowsException<ConstraintException> (() => { 
 			ds.Tables[0].Rows[0]["ParentId"] = 5;
 			});
 			

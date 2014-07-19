@@ -392,8 +392,7 @@ namespace MonoTests.System.Transactions
 						//Assert.Fail ("Should not reach here.");
 						failed = true;
 					}
-				} catch (TransactionAbortedException ex)
-				{
+				} catch (TransactionAbortedException ex) {
 					expectedException = ex;
 				}
 			}
@@ -730,13 +729,10 @@ namespace MonoTests.System.Transactions
 			irm.Value = 2;
 			ct.Commit ();
 
-			try
-			{
+			try {
 				TransactionScope scope = new TransactionScope(ct);
 				Assert.Fail("Expected an exception of type InvalidOperationException");
-			}
-			catch (InvalidOperationException)
-			{
+			} catch (InvalidOperationException) {
 				// Using a already committed transaction in a new TransactionScope
 			}
 		}

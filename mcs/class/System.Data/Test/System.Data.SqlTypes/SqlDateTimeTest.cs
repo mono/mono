@@ -319,9 +319,9 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (myTicks[4], t1.Value.Ticks, "#K12");
                         t1 = SqlDateTime.Parse ("2002-02-25 04:25:13Z");
 #if NET_3_5
-                        t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+                        t1 = TimeZoneInfo.ConvertTime (t1.Value, TimeZoneInfo.Utc);
 #else
-                        t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+                        t1 = TimeZone.CurrentTimeZone.ToUniversalTime (t1.Value);
 #endif
 			Assert.AreEqual (2002, t1.Value.Year, "#K13");
 			Assert.AreEqual (02, t1.Value.Month, "#K14");
@@ -340,9 +340,9 @@ namespace MonoTests.System.Data.SqlTypes
 
 			t1 = SqlDateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
 #if NET_3_5
-			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+			t1 = TimeZoneInfo.ConvertTime (t1.Value, TimeZoneInfo.Utc);
 #else
-			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+			t1 = TimeZone.CurrentTimeZone.ToUniversalTime (t1.Value);
 #endif
 			Assert.AreEqual (2002, t1.Value.Year, "#K21");
 			Assert.AreEqual (02, t1.Value.Month, "#K22");
@@ -505,9 +505,9 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (myTicks[4], t1.Value.Ticks, "#P07");
 			t1 = (SqlDateTime) new SqlString ("2002-02-25 04:25:13Z");
 #if NET_3_5
-			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+			t1 = TimeZoneInfo.ConvertTime (t1.Value, TimeZoneInfo.Utc);
 #else
-			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+			t1 = TimeZone.CurrentTimeZone.ToUniversalTime (t1.Value);
 #endif
 			Assert.AreEqual (2002, t1.Value.Year, "#P08");
 			Assert.AreEqual (02, t1.Value.Month, "#P09");
@@ -526,9 +526,9 @@ namespace MonoTests.System.Data.SqlTypes
 
 			t1 = (SqlDateTime) new SqlString ("Mon, 25 Feb 2002 04:25:13 GMT");
 #if NET_3_5
-			t1 = TimeZoneInfo.ConvertTime(t1.Value, TimeZoneInfo.Utc);
+			t1 = TimeZoneInfo.ConvertTime (t1.Value, TimeZoneInfo.Utc);
 #else
-			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1.Value);
+			t1 = TimeZone.CurrentTimeZone.ToUniversalTime (t1.Value);
 #endif
 			Assert.AreEqual (2002, t1.Value.Year, "#P16");
 			Assert.AreEqual (02, t1.Value.Month, "#P17");

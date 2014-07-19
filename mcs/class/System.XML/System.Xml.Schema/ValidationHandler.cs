@@ -31,10 +31,8 @@ namespace Mono.Xml.Schema
 	/// </summary>
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
-	delegate void ValidationEventHandler(object sender,ValidationEventArgs e);
+	delegate void ValidationEventHandler (object sender, ValidationEventArgs e);
 
 	/// <summary>
 	/// Docs say we need to raise an exception if ValidationEventHandler is not set(null)

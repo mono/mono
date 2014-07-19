@@ -366,9 +366,9 @@ namespace MonoTests.System.Data
 			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));
 			col.DefaultValue = true;
 #if NET_2_0
-			AssertHelpers.AssertThrowsException<DataException>(() => {
+			AssertHelpers.AssertThrowsException<DataException> (() => {
 #else
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 #endif
 			col.DataType = typeof (int);
 			});

@@ -39,11 +39,7 @@ using System.Data;
 
 namespace System.Data.Common
 {
-	public sealed class DataColumnMappingCollection : 
-#if !WINDOWS_STORE_APP
-		MarshalByRefObject,
-#endif
-		IColumnMappingCollection , IList, ICollection, IEnumerable
+	public sealed class DataColumnMappingCollection : MarshalByRefObject, IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
 

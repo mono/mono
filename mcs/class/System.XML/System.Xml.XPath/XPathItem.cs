@@ -35,8 +35,6 @@ namespace System.Xml.XPath
 {
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	abstract class XPathItem
 	{

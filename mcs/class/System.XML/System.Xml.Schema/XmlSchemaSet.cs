@@ -46,8 +46,6 @@ namespace Mono.Xml.Schema
 #if NET_2_0
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	class XmlSchemaSet
 #else

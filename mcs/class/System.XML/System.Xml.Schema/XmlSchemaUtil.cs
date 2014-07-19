@@ -722,22 +722,21 @@ namespace Mono.Xml.Schema
 
 #if WINDOWS_STORE_APP
 		// copied from mono source code
-		internal static XmlQualifiedName Parse(string name, IXmlNamespaceResolver resolver, bool considerDefaultNamespace)
+		internal static XmlQualifiedName Parse (string name, IXmlNamespaceResolver resolver, bool considerDefaultNamespace)
 		{
-			int index = name.IndexOf(':');
+			int index = name.IndexOf (':');
 			if (index < 0 && !considerDefaultNamespace)
-				return new XmlQualifiedName(name);
-			string prefix = index < 0 ? String.Empty : name.Substring(0, index);
-			string localName = index < 0 ? name : name.Substring(index + 1);
-			string ns = resolver.LookupNamespace(prefix);
-			if (ns == null)
-			{
+				return new XmlQualifiedName (name);
+			string prefix = index < 0 ? String.Empty : name.Substring (0, index);
+			string localName = index < 0 ? name : name.Substring (index + 1);
+			string ns = resolver.LookupNamespace (prefix);
+			if (ns == null) {
 				if (prefix.Length > 0)
-					throw new ArgumentException("Invalid qualified name.");
+					throw new ArgumentException ("Invalid qualified name.");
 				else
 					ns = String.Empty;
 			}
-			return new XmlQualifiedName(localName, ns);
+			return new XmlQualifiedName (localName, ns);
 		}
 #endif
 	}

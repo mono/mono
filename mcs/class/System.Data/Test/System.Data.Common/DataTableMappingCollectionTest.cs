@@ -88,7 +88,7 @@ namespace MonoTests.System.Data.Common
 		public void AddException1()
 		{
 			DataTableMappingCollection c=new DataTableMappingCollection();
-			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidCastException> (() => {
 			tableMapCollection.Add((Object)c);
 			});
 		}
@@ -260,7 +260,7 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void GetTableMappingBySchemaActionException1()
 		{
-			AssertHelpers.AssertThrowsException<InvalidOperationException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
 			DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceCustomers", "dataSetCustomers", MissingMappingAction.Error);
 			});
 		}
@@ -328,7 +328,7 @@ namespace MonoTests.System.Data.Common
 		{
 			String te="testingdata";
 			tableMapCollection.AddRange(tabs);
-			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidCastException> (() => {
 			tableMapCollection.Remove(te);
 			});
 		}
@@ -338,7 +338,7 @@ namespace MonoTests.System.Data.Common
 		{
 			tableMapCollection.AddRange(tabs);
 			DataTableMapping mymap=new DataTableMapping("sourceAge", "dataSetAge");
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			tableMapCollection.Remove(mymap);
 			});
 		}
@@ -364,7 +364,7 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void RemoveAtException1()
 		{
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			tableMapCollection.RemoveAt(3);
 			});
 		}
@@ -372,7 +372,7 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void RemoveAtException2()
 		{
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			tableMapCollection.RemoveAt("sourceAge");
 			});
 		}

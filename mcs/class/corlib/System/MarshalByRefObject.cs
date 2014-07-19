@@ -29,29 +29,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System.Threading;
 using System.Runtime.Remoting;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
+#endif
 
 namespace System
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
+#endif
 	public abstract class MarshalByRefObject
 	{
+#if !WINDOWS_STORE_APP
 		[NonSerialized]
 #if DISABLE_REMOTING
 		private object _identity; //Keep layout equal to avoid runtime issues
 #else
 		private ServerIdentity _identity; // Holds marshalling iformation of the object
 #endif
+#endif
 
 		protected MarshalByRefObject ()
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 #if DISABLE_REMOTING
 		internal ServerIdentity ObjectIdentity {
 			get { throw new NotSupportedException (); }
@@ -132,5 +139,6 @@ namespace System
 			return mbr;
 #endif
 		}
+#endif
 	}
 }

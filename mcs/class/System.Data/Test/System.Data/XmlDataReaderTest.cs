@@ -127,9 +127,9 @@ namespace Monotests_System.Data
 				ds.ReadXml(xr);
 			}
 
-			Assert.AreEqual (1, ds.Tables["CustomTypesTable"].Rows.Count, "XDR2");
-			Assert.AreEqual (99, Convert.ToInt32(ds.Tables["CustomTypesTable"].Rows[0][0]), "XDR3");
-			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<Func "), "XDR4");
+			Assert.AreEqual (1, ds.Tables ["CustomTypesTable"].Rows.Count, "XDR2");
+			Assert.AreEqual (99, Convert.ToInt32 (ds.Tables ["CustomTypesTable"].Rows [0] [0]), "XDR3");
+			Assert.IsTrue (ds.Tables ["CustomTypesTable"].Rows [0] [1].ToString ().StartsWith ("<Func "), "XDR4");
 		}
 		
 #if !WINDOWS_STORE_APP

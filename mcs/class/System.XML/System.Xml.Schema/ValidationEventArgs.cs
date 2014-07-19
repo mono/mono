@@ -34,8 +34,6 @@ namespace Mono.Xml.Schema
 	/// </summary>
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 #if NET_2_0
 	class ValidationEventArgs : EventArgs

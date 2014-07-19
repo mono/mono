@@ -38,7 +38,7 @@ using System.Globalization;
 using System.Text;
 
 namespace System.Data.Common {
-	public abstract class DbCommandBuilder : Component, IDisposable
+	public abstract class DbCommandBuilder : Component
 	{
 		bool _setAllValues;
 		bool _disposed;

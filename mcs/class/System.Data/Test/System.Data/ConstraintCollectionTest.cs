@@ -448,7 +448,7 @@ namespace MonoTests.System.Data
 				_table.Constraints.Remove (_table.Constraints [0]);
 				Assert.Fail ("A1");
 			} catch (Exception e) {
-				AssertHelpers.AssertIsInstanceOfType<IndexOutOfRangeException>(e, "A2");
+				AssertHelpers.AssertIsInstanceOfType<IndexOutOfRangeException> (e, "A2");
 			}
 		}
 	}

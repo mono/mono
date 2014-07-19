@@ -32,11 +32,7 @@
 
 namespace System.Data.Common
 {
-	public abstract class DbTransaction : 
-#if !WINDOWS_STORE_APP
-		MarshalByRefObject, 
-#endif
-		IDbTransaction, IDisposable
+	public abstract class DbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
 		#region Constructors
 

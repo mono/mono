@@ -18,11 +18,10 @@ namespace System.Transactions
 #if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
-	public sealed class CommittableTransaction : Transaction,
+	public sealed class CommittableTransaction : Transaction, IDisposable, System.IAsyncResult
 #if !WINDOWS_STORE_APP
-		ISerializable, 
+		, ISerializable
 #endif
-		IDisposable, System.IAsyncResult
 	{
 		TransactionOptions options;
 

@@ -35,8 +35,6 @@ namespace Mono.Xml.Schema
 {
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	enum XmlSchemaValidity
 	{

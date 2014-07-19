@@ -35,11 +35,7 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data.Common {
-	public abstract class DbParameter : 
-#if !WINDOWS_STORE_APP
-		MarshalByRefObject, 
-#endif
-		IDbDataParameter, IDataParameter
+	public abstract class DbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter
 	{
 		#region Constructors
 		internal static Hashtable dbTypeMapping;

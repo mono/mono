@@ -249,7 +249,7 @@ namespace System.Data.Common {
 		}
 
 #endif
-
+		
 		#endregion // Methods
 
 	}

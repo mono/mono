@@ -43,8 +43,6 @@ namespace Mono.Xml.Schema
 {
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif	
 	abstract class XmlSchemaDatatype
 	{
@@ -108,10 +106,10 @@ namespace Mono.Xml.Schema
 				string methodName = "To" + targetType.Name;
 #if !NETFX_CORE
 			try {
-				return typeof (XmlConvert).InvokeMember(methodName,
+				return typeof (XmlConvert).InvokeMember (methodName,
 					System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static,
 					null, null, args);
-			} catch(MissingMethodException e) {
+			} catch (MissingMethodException e) {
 #else
 			MethodInfo method = typeof (XmlConvert).GetMethod (methodName);
 			if (method != null) {

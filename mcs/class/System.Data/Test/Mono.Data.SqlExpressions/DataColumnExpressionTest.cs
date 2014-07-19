@@ -150,7 +150,7 @@ namespace Monotests_Mono.Data.SqlExpressions
 		[Test]
 		public void Test2 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => { 
+			AssertHelpers.AssertThrowsException<FormatException> (() => { 
 			FindRow("'65'");
 			});
 		}

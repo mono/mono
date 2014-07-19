@@ -1400,7 +1400,7 @@ namespace Mono.Xml.Schema
 			FromBase64Transform t = new FromBase64Transform();
 			return t.TransformFinalBlock(inArr, 0, inArr.Length);
 #else
-			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
+			throw new NotImplementedException ("Currently not implemented for Windows Phone and Windows Store");
 #endif
 		}
 

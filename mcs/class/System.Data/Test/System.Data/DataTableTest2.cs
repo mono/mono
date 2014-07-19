@@ -704,7 +704,7 @@ namespace MonoTests_System.Data
 			drArr[2].RowError = "Error3";
 
 			// GetErrors
-			AssertHelpers.AreEqualArray(dt.GetErrors(), drArr, "DT64");
+			AssertHelpers.AreEqualArray (dt.GetErrors (), drArr, "DT64");
 		}
 
 		[Test]
@@ -1202,7 +1202,7 @@ namespace MonoTests_System.Data
 			dt.Rows.CopyTo (drResult, 0);
 
 			// Select
-			AssertHelpers.AreEqualArray(drResult, drSelect, "DT122");
+			AssertHelpers.AreEqualArray (drResult, drSelect, "DT122");
 		}
 
 		[Test]
@@ -1243,7 +1243,7 @@ namespace MonoTests_System.Data
 			}
 			// Select_S - ChildId=1
 			drSelect = dt.Select ("ChildId=1");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT123");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT123");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1253,11 +1253,11 @@ namespace MonoTests_System.Data
 			}
 			// Select_S - ChildId='1'
 			drSelect = dt.Select ("ChildId='1'");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT124");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT124");
 			//-------------------------------------------------------------
 			// Select_S - ChildId= '1'  (whitespace in filter string.
 			drSelect = dt.Select("ChildId= '1'");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT125");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT125");
 			//-------------------------------------------------------------
 			al.Clear();
 			foreach (DataRow dr in dt.Rows)
@@ -1265,7 +1265,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - String1='1-String1'
 			drSelect = dt.Select ("String1='1-String1'");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT126");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT126");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1274,7 +1274,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - ChildId=1 and String1='1-String1'
 			drSelect = dt.Select ("ChildId=1 and String1='1-String1'");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT127");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT127");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1386,7 +1386,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - SubString(Trim(String1),1,2) = '1-'
 			drSelect = dt.Select ("SubString(Trim(String1),1,2) = '1-'");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT130");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT130");
 			//-------------------------------------------------------------
 			/*
 			al.Clear();
@@ -1417,7 +1417,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - Parent.ParentId = ChildId
 			drSelect = dt.Select ("Parent.ParentId = ChildId");
-			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT134");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT134");
 		}
 
 		private void CompareUnSorted(Array a, Array b)
@@ -2210,7 +2210,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select("String1='1-String1'", "ParentId Desc");
-			AssertHelpers.AreEqualArray (al.ToArray(),drSelect, "DT194");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT194");
 
 			//get excepted resault
 			al = new List<DataRow> ();
@@ -2222,7 +2222,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("ChildId=1 and String1='1-String1'", "ParentId Desc");
-			AssertHelpers.AreEqualArray(al.ToArray (), drSelect, "DT195");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT195");
 			
 
 			//get excepted resault
@@ -2235,7 +2235,7 @@ namespace MonoTests_System.Data
 			al.Sort(new DataRowsComparer("ParentId", "Desc"));
 
 			drSelect = dt.Select("Len(String1) < 4 ", "ParentId Desc");
-			AssertHelpers.AreEqualArray(al.ToArray(),drSelect, "DT196");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT196");
 		}
 		
 		[Test]
@@ -2561,7 +2561,7 @@ namespace MonoTests_System.Data
 				return compareResult;
 			}
 
-			public int Compare(object a, object b)
+			public int Compare (object a, object b)
 			{
 				if (a == b)
 					return 0;
@@ -2571,11 +2571,11 @@ namespace MonoTests_System.Data
 					return 1;
 
 				if (a is IComparable)
-					return (a as IComparable).CompareTo(b);
+					return (a as IComparable).CompareTo (b);
 				else if (b is IComparable)
-					return -(b as IComparable).CompareTo(a);
+					return -(b as IComparable).CompareTo (a);
 
-				throw new ArgumentException("Neither 'a' nor 'b' implements IComparable.");
+				throw new ArgumentException ("Neither 'a' nor 'b' implements IComparable.");
 			}
 		}
 	}

@@ -152,7 +152,7 @@ namespace MonoTests.System.Data
 		public void InvalidConstraintException ()
 		{
 			// Parent Columns and Child Columns don't have type-matching columns.
-			AssertHelpers.AssertThrowsException<InvalidConstraintException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidConstraintException> (() => {
 			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
 			});
 		}
@@ -167,7 +167,7 @@ namespace MonoTests.System.Data
 			Set.Relations.Add (Relation);
 			Assert.AreEqual (1, Set.Relations.Count, "test#01");
 			
-			AssertHelpers.AssertThrowsException<InvalidConstraintException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidConstraintException> (() => {
 			Child.Columns [1].DataType = Type.GetType ("System.Double");
 			});
 		}

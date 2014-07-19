@@ -40,8 +40,6 @@ namespace Mono.Xml.Schema
 	[MonoTODO]
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	class XmlSchemaInfo : IXmlSchemaInfo
 	{

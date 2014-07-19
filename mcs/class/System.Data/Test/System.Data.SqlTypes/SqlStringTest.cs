@@ -130,7 +130,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void CtorArgumentOutOfRangeException1 ()
 		{
-			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException> (() => {
 			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
 			});
 		}
@@ -138,7 +138,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void CtorArgumentOutOfRangeException2 ()
 		{
-			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentOutOfRangeException> (() => {
 			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 4);
 			});
 		}
@@ -198,7 +198,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void CompareToArgumentException ()
 		{
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			SqlByte Test = new SqlByte (1);
 			Test1.CompareTo (Test);
 			});
@@ -207,7 +207,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void CompareToSqlTypeException ()
 		{
-			AssertHelpers.AssertThrowsException<SqlTypeException>(() => {
+			AssertHelpers.AssertThrowsException<SqlTypeException> (() => {
 			SqlString T1 = new SqlString ("test", 2057, SqlCompareOptions.IgnoreCase);
 			SqlString T2 = new SqlString ("TEST", 2057, SqlCompareOptions.None);
 			T1.CompareTo (T2);
@@ -426,7 +426,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionBoolFormatException1 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			bool test = Test1.ToSqlBoolean ().Value;
 			});
 		}
@@ -434,7 +434,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionByteFormatException ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			byte test = Test1.ToSqlByte ().Value;
 			});
 		}
@@ -442,7 +442,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionDecimalFormatException1 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			Decimal d = Test1.ToSqlDecimal ().Value;
 			});
 		}
@@ -450,7 +450,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionDecimalFormatException2 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlDecimal test = String9E300.ToSqlDecimal ();
 			});
@@ -459,7 +459,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionGuidFormatException ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlGuid test = String9E300.ToSqlGuid ();
 			});
@@ -468,7 +468,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionInt16FormatException ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt16 test = String9E300.ToSqlInt16().Value;
 			});
@@ -477,7 +477,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionInt32FormatException1 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt32 test = String9E300.ToSqlInt32 ().Value;
 			});
@@ -486,7 +486,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionInt32FormatException2 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlInt32 test = Test1.ToSqlInt32 ().Value;
 			});
 		}
@@ -494,7 +494,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionInt64FormatException ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlInt64 test = String9E300.ToSqlInt64 ().Value;
 			});
@@ -503,7 +503,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionIntMoneyFormatException2 ()
 		{
-			AssertHelpers.AssertThrowsException<FormatException>(() => {
+			AssertHelpers.AssertThrowsException<FormatException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlMoney test = String9E300.ToSqlMoney ().Value;
 			});
@@ -512,7 +512,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionByteOverflowException ()
 		{
-			AssertHelpers.AssertThrowsException<OverflowException>(() => {
+			AssertHelpers.AssertThrowsException<OverflowException> (() => {
 			SqlByte b = (new SqlString ("2500")).ToSqlByte ();
 			});
 		}
@@ -520,7 +520,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionDoubleOverflowException ()
 		{
-			AssertHelpers.AssertThrowsException<OverflowException>(() => {
+			AssertHelpers.AssertThrowsException<OverflowException> (() => {
 			SqlDouble test = (new SqlString ("4e400")).ToSqlDouble ();
 			});
 		}
@@ -528,7 +528,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ConversionSingleOverflowException ()
 		{
-			AssertHelpers.AssertThrowsException<OverflowException>(() => {
+			AssertHelpers.AssertThrowsException<OverflowException> (() => {
 			SqlString String9E300 = new SqlString ("9E+300");
 			SqlSingle test = String9E300.ToSqlSingle().Value;
 			});

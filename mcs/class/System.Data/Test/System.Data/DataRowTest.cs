@@ -398,10 +398,10 @@ namespace MonoTests.System.Data
                                 //Test done
                                 return ;
                         }catch(Exception e){
-                                Assert.Fail("#A51, InvalidConstraintException expected, got : " + e);
+                                Assert.Fail ("#A51, InvalidConstraintException expected, got : " + e);
                         }
                         
-                        Assert.Fail("#A52, InvalidConstraintException expected but got none.");
+                        Assert.Fail ("#A52, InvalidConstraintException expected but got none.");
                 }
 
                 [Test]
@@ -490,10 +490,10 @@ namespace MonoTests.System.Data
                             //Test done
                             return ;
                         }catch(Exception e){
-                            Assert.Fail("#A53, InvalidConstraintException expected, got : " + e);
+                            Assert.Fail ("#A53, InvalidConstraintException expected, got : " + e);
                         }
                         
-                        Assert.Fail("#A54, InvalidConstraintException expected but got none.");
+                        Assert.Fail ("#A54, InvalidConstraintException expected but got none.");
                 }
 
                 [Category ("NotWorking")] //Mismatch in Exception namespace/class reference
@@ -547,7 +547,7 @@ namespace MonoTests.System.Data
                             Assert.Fail ("#A57, VersionNotFoundException expected, got : " + e);
                         }
                         
-                        Assert.Fail("#A58, VersionNotFoundException expected but got none.");
+                        Assert.Fail ("#A58, VersionNotFoundException expected but got none.");
                 }
 
 		// tests item at row, column in table to be DBNull.Value
@@ -600,7 +600,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Assert.Fail("DR1: Exception Caught: " + e1);
+				Assert.Fail ("DR1: Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -618,7 +618,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR2: Exception Caught: " + e2);
+				Assert.Fail ("DR2: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -636,7 +636,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR3: Exception Caught: " + e3);
+				Assert.Fail ("DR3: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -658,7 +658,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR4: Exception Caught: " + e3);
+				Assert.Fail ("DR4: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -710,7 +710,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Assert.Fail("DR17: Exception Caught: " + e1);
+				Assert.Fail ("DR17: Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -727,7 +727,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR18: Exception Caught: " + e2);
+				Assert.Fail ("DR18: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -745,7 +745,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR19: Exception Caught: " + e3);
+				Assert.Fail ("DR19: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -765,7 +765,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR20: Exception Caught: " + e3);
+				Assert.Fail ("DR20: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -814,7 +814,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Assert.Fail("DR28:  Exception Caught: " + e1);
+				Assert.Fail ("DR28:  Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -831,7 +831,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR29:  Exception Caught: " + e2);
+				Assert.Fail ("DR29:  Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -848,7 +848,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR30: Exception Caught: " + e2);
+				Assert.Fail ("DR30: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -865,7 +865,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR31: Exception Caught: " + e2);
+				Assert.Fail ("DR31: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -884,7 +884,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR32: Exception Caught: " + e3);
+				Assert.Fail ("DR32: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -901,7 +901,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Assert.Fail("DR48: Exception Caught: " + e2);
+				Assert.Fail ("DR48: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -921,7 +921,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Assert.Fail("DR33: Exception Caught: " + e3);
+				Assert.Fail ("DR33: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -1016,7 +1016,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (DataRowState.Detached, dr.RowState);
 			dr.CancelEdit ();
 			Assert.AreEqual (DataRowState.Detached, dr.RowState);
-			AssertHelpers.AssertThrowsException<RowNotInTableException>(() => {
+			AssertHelpers.AssertThrowsException<RowNotInTableException> (() => {
 			object o = dr ["col"];
 			});
 		}

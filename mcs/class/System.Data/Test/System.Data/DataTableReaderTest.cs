@@ -447,7 +447,7 @@ namespace MonoTests.System.Data
                                 reader.Read (); // first row
                                 dt.Rows [0].Delete (); // delete row, where reader points to
                                 dt.AcceptChanges (); // accept the action
-                            AssertHelpers.AssertThrowsException<InvalidOperationException>(() => {
+                            AssertHelpers.AssertThrowsException<InvalidOperationException> (() => {
                                 Assert.AreEqual (2, (int) reader [0], "#1 should point to the first row");
                             });
                         } finally {

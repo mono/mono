@@ -312,7 +312,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 
-			AssertHelpers.AssertThrowsException<ArgumentNullException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentNullException> (() => {
 			ds.Tables.Add((DataTable)null);
 			});
 		}
@@ -324,7 +324,7 @@ namespace MonoTests_System.Data
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add();
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables.Add(ds1.Tables[0]);
 			});
 		}
@@ -336,7 +336,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Add();
 
 			DataTable dt = new DataTable("Table1");
-			AssertHelpers.AssertThrowsException<DuplicateNameException>(() => {
+			AssertHelpers.AssertThrowsException<DuplicateNameException> (() => {
 			ds.Tables.Add(dt);
 			});
 		}
@@ -357,7 +357,7 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			ds.Tables.Add("NewTable1");
 
-			AssertHelpers.AssertThrowsException<DuplicateNameException>(() => {
+			AssertHelpers.AssertThrowsException<DuplicateNameException> (() => {
 			ds.Tables.Add("NewTable1");
 			});
 		}
@@ -381,7 +381,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Add();
 			ds.Tables.Clear();
 
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			ds.Tables[0].TableName = "Error";
 			});
 		}
@@ -407,7 +407,7 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			DataTable dt = new DataTable("NewTable1");
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables.Remove(dt);
 			});
 		}
@@ -417,7 +417,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 
-			AssertHelpers.AssertThrowsException<ArgumentNullException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentNullException> (() => {
 			ds.Tables.Remove((DataTable)null);
 			});
 		}
@@ -442,7 +442,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables.Remove("NewTable2");
 			});
 		}
@@ -452,7 +452,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables.Remove((string)null);
 			});
 		}
@@ -476,7 +476,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			ds.Tables.RemoveAt(-1);
 			});
 		}
@@ -486,7 +486,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = DataProvider.CreateForigenConstraint();
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables.RemoveAt(0); //Parent table
 			});
 		}

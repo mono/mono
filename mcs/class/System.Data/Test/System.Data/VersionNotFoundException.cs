@@ -54,7 +54,7 @@ namespace MonoTests_System.Data
 			drParent.Delete();
 			tbl.AcceptChanges();
 	        
-			AssertHelpers.AssertThrowsException<VersionNotFoundException>(() => {
+			AssertHelpers.AssertThrowsException<VersionNotFoundException> (() => {
 			object obj = drParent[0,DataRowVersion.Proposed];
 			});
 		}
@@ -67,7 +67,7 @@ namespace MonoTests_System.Data
 			drParent.Delete();
 			tbl.AcceptChanges();
 	        
-			AssertHelpers.AssertThrowsException<VersionNotFoundException>(() => {
+			AssertHelpers.AssertThrowsException<VersionNotFoundException> (() => {
 			object obj = drParent[0,DataRowVersion.Current];
 			});
 		}
@@ -80,7 +80,7 @@ namespace MonoTests_System.Data
 			drParent.Delete();
 			tbl.AcceptChanges();
 	        
-			AssertHelpers.AssertThrowsException<VersionNotFoundException>(() => {
+			AssertHelpers.AssertThrowsException<VersionNotFoundException> (() => {
 			object obj = drParent[0,DataRowVersion.Original];
 			});
 		}

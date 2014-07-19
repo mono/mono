@@ -62,9 +62,8 @@ namespace System.Data {
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
 #endif
-	public class DataColumn : MarshalByValueComponent, IDisposable {
-
-		#region Events
+	public class DataColumn : MarshalByValueComponent {
+#region Events
 		EventHandlerList _eventHandlers = new EventHandlerList ();
 
 		//used for constraint validation
@@ -997,6 +996,7 @@ namespace System.Data {
 #endif
 			return DBNull.Value;
 		}
+
 		#endregion // Methods
 	}
 }

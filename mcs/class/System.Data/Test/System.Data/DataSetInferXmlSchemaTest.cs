@@ -497,7 +497,7 @@ namespace MonoTests.System.Data
 			// attribute "data" becomes DataTable, and when column "data"
 			// appears, it cannot be DataColumn, since the name is 
 			// already allocated for DataTable.
-			AssertHelpers.AssertThrowsException<DataException>(() => {
+			AssertHelpers.AssertThrowsException<DataException> (() => {
 			DataSet ds = GetDataSet (xml21, null);
 			});
 		}
@@ -513,7 +513,7 @@ namespace MonoTests.System.Data
 			ds.Tables [0].PrimaryKey = new DataColumn [] {c};
 			XmlReader xtr = XmlReader.Create (new StringReader (xml22), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document});
 			xtr.Read ();
-			AssertHelpers.AssertThrowsException<ConstraintException>(() => {
+			AssertHelpers.AssertThrowsException<ConstraintException> (() => {
 			ds.ReadXml (xtr, XmlReadMode.InferSchema);
 			});
 		}
@@ -565,7 +565,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, doc.DocumentElement.ChildNodes.Count);
 #else
 			XDocument doc = XDocument.Parse (sw.ToString ());
-			Assert.AreEqual (2, doc.Root.Elements().Count());
+			Assert.AreEqual (2, doc.Root.Elements ().Count ());
 #endif
 		}
 	}

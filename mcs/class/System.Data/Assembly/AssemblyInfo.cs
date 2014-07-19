@@ -59,7 +59,9 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
+#if !WINDOWS_STORE_APP
 [assembly: AllowPartiallyTrustedCallers]
+#endif
 
 #if WINDOWS_STORE_APP
 [assembly: AssemblyDelaySign(false)]

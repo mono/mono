@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Transactions;
 #if WINDOWS_STORE_APP
@@ -72,11 +73,9 @@ namespace MonoTests.System.Transactions
                     actual = value;
                     return;
                 }
-#if !WINDOWS_STORE_APP
                 /* FIXME: Do what in this case? */
                 if (transaction != null)
-                    Console.WriteLine ("WARNING: Setting value more than once");
-#endif
+                    Debug.WriteLine ("WARNING: Setting value more than once");
 
                 if (transaction != Transaction.Current) {
                     transaction = Transaction.Current;

@@ -91,7 +91,7 @@ namespace MonoTests.System.Data.Common
 		public void AddException1()
 		{
 			DataColumnMappingCollection c=new DataColumnMappingCollection();
-			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidCastException> (() => {
 			columnMapCollection.Add((Object)c);
 			});
 		}
@@ -345,7 +345,7 @@ namespace MonoTests.System.Data.Common
 		{
 			String te="testingdata";
 			columnMapCollection.AddRange(cols);
-			AssertHelpers.AssertThrowsException<InvalidCastException>(() => { 
+			AssertHelpers.AssertThrowsException<InvalidCastException> (() => { 
 			columnMapCollection.Remove(te);			
 			});	
 		}
@@ -355,7 +355,7 @@ namespace MonoTests.System.Data.Common
 		{
 			columnMapCollection.AddRange(cols);
 			DataColumnMapping mymap=new DataColumnMapping("sourceAge", "dataSetAge");
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			columnMapCollection.Remove(mymap);
 			});
 		}
@@ -381,7 +381,7 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void RemoveAtException1()
 		{
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			columnMapCollection.RemoveAt(3);			
 			});
 		}
@@ -389,7 +389,7 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void RemoveAtException2()
 		{
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			columnMapCollection.RemoveAt("sourceAge");			
 			});
 		}

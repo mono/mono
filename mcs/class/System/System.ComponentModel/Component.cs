@@ -41,11 +41,10 @@ namespace System.ComponentModel {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 #endif
-	public class Component : 
+	public class Component : MarshalByRefObject, IDisposable
 #if !WINDOWS_STORE_APP
-		MarshalByRefObject, IComponent, 
+		, IComponent
 #endif
-		IDisposable
 	{
 
 		private EventHandlerList event_handlers;

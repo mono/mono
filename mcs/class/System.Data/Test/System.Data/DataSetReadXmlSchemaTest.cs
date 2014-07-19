@@ -298,7 +298,7 @@ namespace MonoTests.System.Data
 			// DataSet element cannot be converted into a DataTable.
 			// (i.e. cannot be referenced in any other elements)
 			DataSet ds = new DataSet ();
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.ReadXmlSchema (new StringReader (xs));
 			});
 		}

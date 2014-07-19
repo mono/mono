@@ -305,45 +305,45 @@ namespace MonoTests.System.Data
 			try
 			{
 				fkc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
-				Assert.Fail("Failed to throw ArgumentNullException.");
+				Assert.Fail ("Failed to throw ArgumentNullException.");
 			}
 			catch (NullReferenceException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("A1: Wrong Exception type. " + exc.ToString ());
 			}
 
 			//zero length collection
 			try
 			{
 				fkc = new ForeignKeyConstraint(new DataColumn[]{},new DataColumn[]{});
-				Assert.Fail("B1: Failed to throw ArgumentException.");
+				Assert.Fail ("B1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("A2: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("A2: Wrong Exception type. " + exc.ToString ());
 			}
 
 			//different datasets
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[0]);
-				Assert.Fail("Failed to throw InvalidOperationException.");
+				Assert.Fail ("Failed to throw InvalidOperationException.");
 			}
 			catch (InvalidOperationException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("A3: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("A3: Wrong Exception type. " + exc.ToString ());
 			}
 
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
-				Assert.Fail("Failed to throw InvalidConstraintException.");
+				Assert.Fail ("Failed to throw InvalidConstraintException.");
 			}
 			// tables in different datasets
 			catch (InvalidOperationException) {}
@@ -353,7 +353,7 @@ namespace MonoTests.System.Data
                         try                                           
                         {                                             
                                 fkc = new ForeignKeyConstraint(new DataColumn [] {_ds.Tables[0].Columns[0], _ds.Tables[0].Columns[1]}, new DataColumn [] {localTable.Columns[1], _ds.Tables[1].Columns [0]});    
-                                Assert.Fail("Failed to throw InvalidOperationException.");                                         
+                                Assert.Fail ("Failed to throw InvalidOperationException.");                                         
                         }                                             
                         catch (InvalidConstraintException) {}         
                         catch (AssertionException exc) {throw exc;} 
@@ -370,7 +370,7 @@ namespace MonoTests.System.Data
 			try 
 			{
 				fkc = new ForeignKeyConstraint(col, _ds.Tables[0].Columns[0]);
-				Assert.Fail("FTT1: Failed to throw ArgumentException.");
+				Assert.Fail ("FTT1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
@@ -390,13 +390,13 @@ namespace MonoTests.System.Data
 								 _ds.Tables[0].Columns[1],
 								_ds.Tables[0].Columns[0]});
 					
-				Assert.Fail("FTT2: Failed to throw InvalidConstraintException.");
+				Assert.Fail ("FTT2: Failed to throw InvalidConstraintException.");
 			}
 			catch (InvalidConstraintException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("WET2: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("WET2: Wrong Exception type. " + exc.ToString ());
 			}
 
 
@@ -411,13 +411,13 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint(twoCol, 
 					new DataColumn[] { _ds.Tables[0].Columns[0]});
 					
-				Assert.Fail("FTT3: Failed to throw ArgumentException.");
+				Assert.Fail ("FTT3: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("WET3: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("WET3: Wrong Exception type. " + exc.ToString ());
 			}
 
 			//InvalidOperation: Parent and child are the same column.
@@ -426,13 +426,13 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint( _ds.Tables[0].Columns[0],
 					_ds.Tables[0].Columns[0] );
 					
-				Assert.Fail("FTT4: Failed to throw InvalidOperationException.");
+				Assert.Fail ("FTT4: Failed to throw InvalidOperationException.");
 			}
 			catch (InvalidOperationException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assert.Fail("WET4: Wrong Exception type. " + exc.ToString());
+				Assert.Fail ("WET4: Wrong Exception type. " + exc.ToString ());
 			}
 
 		}
@@ -454,14 +454,14 @@ namespace MonoTests.System.Data
 			ForeignKeyConstraint fkcDiff = 
 				new ForeignKeyConstraint( tbl.Columns[1], tbl.Columns[2]);
 		
-			Assert.IsTrue( fkc.Equals(fkc2) , "Equals failed. 1" );
-			Assert.IsTrue( fkc2.Equals(fkc) , "Equals failed. 2" );
-			Assert.IsTrue( fkc.Equals(fkc) , "Equals failed. 3" );
+			Assert.IsTrue (fkc.Equals (fkc2), "Equals failed. 1");
+			Assert.IsTrue (fkc2.Equals (fkc), "Equals failed. 2");
+			Assert.IsTrue (fkc.Equals (fkc), "Equals failed. 3");
 
-			Assert.IsTrue( fkc.Equals(fkcDiff) == false , "Equals failed diff. 1" );
+			Assert.IsTrue (fkc.Equals (fkcDiff) == false, "Equals failed diff. 1");
 
-			Assert.IsTrue( fkc.GetHashCode() == fkc2.GetHashCode() , "Hash Code Failed. 1" );
-			Assert.IsTrue( fkc.GetHashCode() != fkcDiff.GetHashCode() , "Hash Code Failed. 2" );
+			Assert.IsTrue (fkc.GetHashCode () == fkc2.GetHashCode (), "Hash Code Failed. 1");
+			Assert.IsTrue (fkc.GetHashCode () != fkcDiff.GetHashCode (), "Hash Code Failed. 2");
 	
 		}
 
@@ -521,7 +521,7 @@ namespace MonoTests.System.Data
 			t2.Rows.Add (new object [] {10});
 
 			t1.Rows [0][0]=20;
-			Assert.IsTrue((int)t2.Rows [0][0] == 20, "#1");
+			Assert.IsTrue ((int)t2.Rows [0] [0] == 20, "#1");
 		}
 
 		[Test]

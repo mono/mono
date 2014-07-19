@@ -48,8 +48,7 @@ namespace System.Data
 	[Serializable]
 #endif
 #endif
-	public class PropertyCollection : Hashtable
-	{
+	public class PropertyCollection : Hashtable {
 		public PropertyCollection() 
 		{
 		}

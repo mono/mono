@@ -49,8 +49,6 @@ namespace Mono.Xml.Schema
 #endif
 #if !INCLUDE_MONO_XML_SCHEMA
     public
-#else
-	internal
 #endif	
 	sealed class XmlSchemaCollection : ICollection, IEnumerable
 	{

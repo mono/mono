@@ -686,7 +686,7 @@ namespace MonoTests.System.Data
 			ds.Tables[1].Columns.Add ("col2", typeof(int));
 
 			ds.Relations.Add ("rel1",  ds.Tables[0].Columns[0], ds.Tables[1].Columns[0]);
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables[0].Columns.RemoveAt (0);
 			});
 		}	

@@ -231,7 +231,7 @@ namespace MonoTests.System.Data
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
 			AssertDataTable ("dt", ds.Tables[0], "Root", 1, 0, 0, 0, 0, 0);
 			// Here "unusedType" table is never imported.
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables[1].ReadXmlSchema (new StringReader (xs));
 			});
 		}
@@ -261,7 +261,7 @@ namespace MonoTests.System.Data
 			xs = String.Format (xsbase, "true");
 			ds = new DataSet ();
 			ds.Tables.Add (new DataTable ("Root"));
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
 			});
 		}
@@ -290,7 +290,7 @@ namespace MonoTests.System.Data
 			// (i.e. cannot be referenced in any other elements)
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (new DataTable ());
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
 			});
 		}
@@ -392,16 +392,16 @@ namespace MonoTests.System.Data
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (new DataTable("Table1"));
 			ds1.Tables.Add (new DataTable("Table2"));
-			ds1.Tables[0].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
-			ds1.Tables[1].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
+			ds1.Tables[0].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
+			ds1.Tables[1].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
 			ReadTest1Check (ds1);
 
 			// ReadXml() should also be the same
 			DataSet ds2 = new DataSet ();
 			ds2.Tables.Add (new DataTable ("Table1"));
 			ds2.Tables.Add (new DataTable ("Table2"));
-			ds2.Tables[0].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
-			ds2.Tables[1].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
+			ds2.Tables[0].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
+			ds2.Tables[1].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
 			ReadTest1Check (ds2);
 		}
 
@@ -496,7 +496,7 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("attr", dt.Columns [0], "a", true, false, 0, 1, "a", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://xsdtesting", 0, String.Empty, false, false);
 			AssertDataColumn ("simple", dt.Columns [1], "e_text", false, false, 0, 1, "e_text", MappingType.SimpleContent, typeof (decimal), DBNull.Value, String.Empty, -1, "", 1, String.Empty, false, false);
 			AssertDataColumn ("hidden", dt.Columns [2], "root_Id", true, false, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, "", 2, String.Empty, false, false);
-			AssertHelpers.AssertThrowsException<NullReferenceException>(() => {
+			AssertHelpers.AssertThrowsException<NullReferenceException> (() => {
 			ds.Tables[1].ReadXmlSchema ("Test/System.Data/schemas/test011.xsd");
 			});
 		}

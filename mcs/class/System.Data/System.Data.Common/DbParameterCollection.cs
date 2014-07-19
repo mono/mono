@@ -37,11 +37,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
-	public abstract class DbParameterCollection : 
-#if !WINDOWS_STORE_APP
-		MarshalByRefObject,
-#endif
-		IDataParameterCollection, IList, ICollection, IEnumerable
+	public abstract class DbParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Constructors
 

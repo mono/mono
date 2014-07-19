@@ -43,11 +43,7 @@ namespace System.Data.Common {
 	[TypeConverterAttribute (typeof (DataColumnMappingConverter))]
 #endif
 #endif
-	public sealed class DataColumnMapping : 
-#if !WINDOWS_STORE_APP
-		MarshalByRefObject,
-#endif
-		IColumnMapping, ICloneable
+	public sealed class DataColumnMapping : MarshalByRefObject, IColumnMapping, ICloneable
 	{
 		#region Fields
 

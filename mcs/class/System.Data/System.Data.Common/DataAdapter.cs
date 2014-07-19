@@ -46,7 +46,7 @@ namespace System.Data.Common
 #if ONLY_1_1
 	abstract
 #endif
-	class DataAdapter : Component, IDataAdapter, IDisposable
+	class DataAdapter : Component, IDataAdapter
 	{
 		#region Fields
 

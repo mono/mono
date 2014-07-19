@@ -130,7 +130,7 @@ namespace MonoTests.System.Data
 		public void DataRowCollection_Add_D2()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dt.Rows.Add(dt.Rows[0]);			
 			});
 		}
@@ -139,7 +139,7 @@ namespace MonoTests.System.Data
 		public void DataRowCollection_Add_D3()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
-			AssertHelpers.AssertThrowsException<ArgumentNullException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentNullException> (() => {
 			dt.Rows.Add((DataRow)null);
 			});
 		}
@@ -150,7 +150,7 @@ namespace MonoTests.System.Data
 			DataTable dt = DataProvider.CreateParentDataTable();
 			DataTable dt1 = DataProvider.CreateParentDataTable();
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dt.Rows.Add(dt1.Rows[0]);
 			});
 		}
@@ -192,7 +192,7 @@ namespace MonoTests.System.Data
 		public void DataRowCollection_Add_O4()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
-			AssertHelpers.AssertThrowsException<NullReferenceException>(() => {
+			AssertHelpers.AssertThrowsException<NullReferenceException> (() => {
 			dt.Rows.Add((Object[])null);
 			});
 		}
@@ -272,7 +272,7 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = DataProvider.CreateForigenConstraint();
 
-			AssertHelpers.AssertThrowsException<InvalidConstraintException>(() => {
+			AssertHelpers.AssertThrowsException<InvalidConstraintException> (() => {
 			ds.Tables[0].Rows.Clear(); //Try to clear the parent table			
 			});
 		}
@@ -291,7 +291,7 @@ namespace MonoTests.System.Data
 		public void DataRowCollection_Contains_O2()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
-			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException> (() => {
 			Assert.AreEqual(false,dt.Rows.Contains(1),"DRWC18");
 			}, "DRWC18");
 		}
@@ -325,7 +325,7 @@ namespace MonoTests.System.Data
 			object[] arr = new object[1];
 			arr[0] = 1;
 
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			Assert.AreEqual(false,dt.Rows.Contains((object[]) arr),"DRWC21");
 			}, "DRWC21");
 		}
@@ -345,7 +345,7 @@ namespace MonoTests.System.Data
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
 
-			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException> (() => {
 			Assert.AreEqual(null,dt.Rows.Find(1),"DRWC24");
 			}, "DRWC24");
 		}
@@ -379,7 +379,7 @@ namespace MonoTests.System.Data
 			object[] arr = new object[1];
 			arr[0] = 1;
 			
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			Assert.AreEqual(null,dt.Rows.Find((object[]) arr),"DRWC27");
 			}, "DRWC27");
 		}
@@ -420,7 +420,7 @@ namespace MonoTests.System.Data
 			DataTable dt = DataProvider.CreateParentDataTable();
 			DataRow dr =  GetNewDataRow(dt);
 
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			dt.Rows.InsertAt(dr,-1);
 			});
 		}
@@ -455,7 +455,7 @@ namespace MonoTests.System.Data
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
 
-			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException> (() => {
 			DataRow dr =  dt.Rows[-1];
 			});
 		}

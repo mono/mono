@@ -39,10 +39,10 @@ using System.Threading.Tasks;
 #endif
 #endif
 
-namespace System.Xml {
-
-	public abstract class XmlResolver {
-
+namespace System.Xml
+{
+	public abstract class XmlResolver
+	{
 #if !NETFX_CORE
 #if NET_4_5
 		public virtual ICredentials Credentials {

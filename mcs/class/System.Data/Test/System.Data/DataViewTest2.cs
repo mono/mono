@@ -240,7 +240,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count];
 			// CopyTo from index 0
 			dv.CopyTo(drvResult,0);
-			AssertHelpers.AreEqualArray(drvResult, drvExpected , "DV27");
+			AssertHelpers.AreEqualArray (drvResult, drvExpected, "DV27");
 
 			// ------- Copy from Index=3
 			drvExpected = new DataRowView[dv.Count+3];
@@ -252,7 +252,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count+3];
 			// CopyTo from index 3
 			dv.CopyTo(drvResult,3);
-			AssertHelpers.AreEqualArray(drvResult , drvExpected , "DV28");
+			AssertHelpers.AreEqualArray (drvResult, drvExpected, "DV28");
 
 			// ------- Copy from Index=3,larger array
 			drvExpected = new DataRowView[dv.Count+9];
@@ -264,7 +264,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count+9];
 			// CopyTo from index 3,larger array
 			dv.CopyTo(drvResult,3);
-			AssertHelpers.AreEqualArray(drvResult, drvExpected , "DV29");
+			AssertHelpers.AreEqualArray (drvResult, drvExpected, "DV29");
 
 			// ------- CopyTo smaller array, check exception
 			drvResult = new DataRowView[dv.Count-1];
@@ -667,7 +667,7 @@ namespace MonoTests_System.Data
 			// this test also check DataView.Count property
 
 			DataRowView[] drvResult = null;
-			ArrayList al = new ArrayList();
+			ArrayList al = new ArrayList ();
 
 			//create the source datatable
 			DataTable dt = DataProvider.CreateChildDataTable();
@@ -784,7 +784,7 @@ namespace MonoTests_System.Data
 			 */
 
 			//DataRowView[] drvResult = null;
-			ArrayList al = new ArrayList();
+			ArrayList al = new ArrayList ();
 
 			DataTable dt = DataProvider.CreateParentDataTable();
 
@@ -842,7 +842,7 @@ namespace MonoTests_System.Data
 		private DataRow[] GetResultRows(DataTable dt,DataRowState State)
 		{
 			//get expected rows
-			ArrayList al = new ArrayList();
+			ArrayList al = new ArrayList ();
 			DataRowVersion drVer = DataRowVersion.Current;
 
 			//From MSDN -	The row the default version for the current DataRowState.
@@ -870,7 +870,7 @@ namespace MonoTests_System.Data
 #if !WINDOWS_STORE_APP
 			DataRow[] result = (DataRow[])al.ToArray((typeof(DataRow)));
 #else
-			DataRow[] result = al.Cast<DataRow>().ToArray();
+			DataRow[] result = al.Cast<DataRow> ().ToArray ();
 #endif
 			return result; 
 		}

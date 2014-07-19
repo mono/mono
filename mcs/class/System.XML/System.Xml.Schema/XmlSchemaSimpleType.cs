@@ -42,8 +42,6 @@ namespace Mono.Xml.Schema
 	/// </summary>
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	class XmlSchemaSimpleType : XmlSchemaType
 	{

@@ -1062,7 +1062,7 @@ namespace MonoTests.System.Data
 			// Xamarin bug 666
 			DataTable table1 = new DataTable("Table1") ;
 
-			AssertHelpers.AssertThrowsException<EvaluateException>(() => {
+			AssertHelpers.AssertThrowsException<EvaluateException> (() => {
 			DataColumn c1 = table1.Columns.Add("c1", typeof(string), "'hello ' + c2") ; /* Should cause an exception */
 			});
 		}
@@ -3366,14 +3366,14 @@ namespace MonoTests.System.Data
 			OriginalDataSet.AcceptChanges ();
 
 			StringWriter sw = new StringWriter ();
-			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings { OmitXmlDeclaration = true });
 			OriginalDataSet.WriteXml (xtw);
 			string result = sw.ToString ();
 
 			Assert.AreEqual (xml, result.Replace ("\"", "'"));
 
 			sw = new StringWriter ();
-			xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true});
+			xtw = XmlWriter.Create (sw, new XmlWriterSettings { Indent = true });
 			OriginalDataSet.Tables[0].WriteXmlSchema (xtw);
 			result = sw.ToString ();
 
@@ -3809,13 +3809,13 @@ namespace MonoTests.System.Data
 			ds.Namespace = "urn:bar";
 
 			StringWriter sw1 = new StringWriter ();
-			XmlWriter xw1 = XmlWriter.Create (sw1, new XmlWriterSettings{Indent=true});
+			XmlWriter xw1 = XmlWriter.Create (sw1, new XmlWriterSettings { Indent = true });
 			ds.Tables[0].WriteXmlSchema (xw1);
 			string result1 = sw1.ToString ();
 			Assert.AreEqual (schema.Replace ("\"", "'"), result1.Replace ("\r\n", "\n"), "#1");
 
 			StringWriter sw2 = new StringWriter ();
-			XmlWriter xw2 = XmlWriter.Create (sw2, new XmlWriterSettings{Indent=true});
+			XmlWriter xw2 = XmlWriter.Create (sw2, new XmlWriterSettings { Indent = true });
 			ds.Tables[0].WriteXmlSchema (xw2);
 			string result2 = sw2.ToString ();
 			Assert.AreEqual (schema.Replace ("\"", "'"), result2.Replace ("\r\n", "\n"), "#2");

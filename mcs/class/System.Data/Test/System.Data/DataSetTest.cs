@@ -454,8 +454,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionID>1</RegionID>", substring, "test#03");
 			
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+                        substring = TextString.Substring (0, TextString.IndexOf (EOL));
+                        TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionDescription>Eastern", substring, "test#04");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -474,8 +474,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionID>2</RegionID>", substring, "test#08");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+                        substring = TextString.Substring (0, TextString.IndexOf (EOL));
+                        TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionDescription>Western", substring, "test#09");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -531,8 +531,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionID>64</RegionID>", substring, "test#06");
 
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+		        substring = TextString.Substring (0, TextString.IndexOf (EOL));
+                        TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionDescription>Eastern", substring, "test#07");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -551,8 +551,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionID>2</RegionID>", substring, "test#10");
 
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+		        substring = TextString.Substring (0, TextString.IndexOf (EOL));
+                        TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionDescription>Western", substring, "test#11");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -1055,7 +1055,7 @@ namespace MonoTests.System.Data
 			dt.Columns.Add (col);
 			dt.Rows.Add (new object [] {"test"});
 			StringWriter sw = new StringWriter ();
-			ds.WriteXml (XmlWriter.Create (sw, new XmlWriterSettings{OmitXmlDeclaration=true}));
+			ds.WriteXml (XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration = true }));
 			string xml = @"<DS xmlns=""urn:foo""><tab><TEST>test</TEST></tab></DS>";
 			Assert.AreEqual (xml, sw.ToString ());
 		}
@@ -1188,7 +1188,7 @@ namespace MonoTests.System.Data
 </DataSet>";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
 			ser.Deserialize (XmlReader.Create (
-				new StringReader(xml), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
+				new StringReader (xml), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
 		}
 
 		/* To be added
@@ -1490,7 +1490,7 @@ namespace MonoTests.System.Data
 			dt = ds.Tables [1];
 			AssertDataTable ("dt2", dt, "AvailResponse", 3, 2, 1, 0, 1, 0);
 			StringWriter sw = new StringWriter ();
-			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings{OmitXmlDeclaration=true});
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings { OmitXmlDeclaration = true });
 			ds.WriteXml (xtw);
 			Assert.AreEqual (xml, sw.ToString ().Replace ("\"", "'"));
 		}
@@ -1509,7 +1509,7 @@ namespace MonoTests.System.Data
 			ds.ReadXml (new StringReader (input));
 
 			StringWriter sw = new StringWriter ();
-			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true,OmitXmlDeclaration=true});
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true });
 			ds.WriteXml (xtw);
 			xtw.Flush ();
 			Assert.AreEqual (input.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n").Replace ("\"", "'"));
@@ -1561,14 +1561,14 @@ namespace MonoTests.System.Data
 			OriginalDataSet.AcceptChanges ();
 
 			StringWriter sw = new StringWriter ();
-			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings { OmitXmlDeclaration = true });
 			OriginalDataSet.WriteXml (xtw);
 			string result = sw.ToString ().Replace ("\"", "'");
 
 			Assert.AreEqual (xml, result);
 
 			sw = new StringWriter ();
-			xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true});
+			xtw = XmlWriter.Create (sw, new XmlWriterSettings { Indent = true });
 			OriginalDataSet.WriteXmlSchema (xtw);
 			result = sw.ToString ();
 
@@ -2413,7 +2413,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void CreateDataReaderNoTable () {
 			DataSet dsr = new DataSet ();
-			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			DataTableReader dtr = dsr.CreateDataReader ();
 			});
 		}

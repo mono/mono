@@ -42,8 +42,6 @@ namespace Mono.Xml.Schema
 	/// </summary>
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif	
 	class XmlSchemaDocumentation : XmlSchemaObject
 	{
@@ -135,15 +133,13 @@ namespace Mono.Xml.Schema
 				}
 			}
 #else
-			XDocument xmldoc = new XDocument();
-			xmldoc.Add(XNode.ReadFrom(reader));
+			XDocument xmldoc = new XDocument ();
+			xmldoc.Add (XNode.ReadFrom (reader));
 			XElement root = xmldoc.FirstNode as XElement;
 			if (root != null && root.Nodes ().Any ())
-			{
 				doc.Markup = root.Nodes().ToArray();
-			}
 #endif
-			if(reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
+			if (reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
 				skip = true;
 
 			return doc;

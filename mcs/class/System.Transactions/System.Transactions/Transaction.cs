@@ -37,7 +37,7 @@ namespace System.Transactions
 		IsolationLevel level;
 		TransactionInformation info;
 
-		List<DependentTransaction> dependents = new List<DependentTransaction>();
+		List<DependentTransaction> dependents = new List<DependentTransaction> ();
 
 		/* Volatile enlistments */
 		List <IEnlistmentNotification> volatiles;

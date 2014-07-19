@@ -50,8 +50,6 @@ namespace Mono.Xml.Schema
 	[XmlRoot ("schema",Namespace=XmlSchema.Namespace)]
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
-#else
-	internal
 #endif
 	class XmlSchema : XmlSchemaObject
 	{

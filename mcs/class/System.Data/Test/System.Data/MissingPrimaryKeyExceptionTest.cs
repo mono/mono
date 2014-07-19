@@ -52,7 +52,7 @@ namespace MonoTests_System.Data
 			DataTable tbl = DataProvider.CreateParentDataTable();
 			//can't invoke Find method with no primary key
 
-			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException> (() => {
 			tbl.Rows.Find("Something");
 			});
 		}
@@ -63,7 +63,7 @@ namespace MonoTests_System.Data
 			DataTable tbl = DataProvider.CreateParentDataTable();	
 			//can't invoke Contains method with no primary key
 
-			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException> (() => {
 			tbl.Rows.Contains("Something");
 			});
 		}
