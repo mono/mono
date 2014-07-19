@@ -31,7 +31,11 @@ using System.Collections;
 using System.Xml;
 
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaCollection.
@@ -43,7 +47,12 @@ namespace System.Xml.Schema
 #if NET_2_0
 	[Obsolete ("Use XmlSchemaSet.")]
 #endif
-	public sealed class XmlSchemaCollection : ICollection, IEnumerable
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	sealed class XmlSchemaCollection : ICollection, IEnumerable
 	{
 		//private fields
 		private XmlSchemaSet schemaSet;
@@ -96,7 +105,13 @@ namespace System.Xml.Schema
 		// Methods
 		public XmlSchema Add (string ns, XmlReader reader)
 		{
-			return Add (ns, reader, new XmlUrlResolver ());
+			return Add (ns, reader, 
+#if !WINDOWS_STORE_APP
+				new XmlUrlResolver ()
+#else
+				null
+#endif
+				);
 		}
 
 		public XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
@@ -112,17 +127,20 @@ namespace System.Xml.Schema
 
 		public XmlSchema Add (string ns, string uri)
 		{
-			XmlReader reader = new XmlTextReader (uri);
-			try {
+			using (XmlReader reader = XmlReader.Create (uri)) {
 				return Add (ns, reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
 		public XmlSchema Add (XmlSchema schema)
 		{
-			return Add (schema, new XmlUrlResolver ());
+			return Add (schema,
+#if !WINDOWS_STORE_APP
+				new XmlUrlResolver ()
+#else
+				null
+#endif				
+				);
 		}
 
 		public XmlSchema Add (XmlSchema schema, XmlResolver resolver)

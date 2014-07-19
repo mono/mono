@@ -42,14 +42,18 @@ using System.Runtime.Serialization;
 using System.Data.Common;
 
 namespace System.Data {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	internal delegate void DelegateConstraintNameChange (object sender, string newName);
 
+#if !WINDOWS_STORE_APP
 	[DefaultProperty ("ConstraintName")]
 #if !NET_2_0
 	[Serializable]
 #endif
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
+#endif
 	public abstract class Constraint {
 		static readonly object beforeConstraintNameChange = new object ();
 
@@ -86,7 +90,9 @@ namespace System.Data {
 			get { return dataSet; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the name of this constraint.")]
 #endif
@@ -103,8 +109,10 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
 #endif

@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 using System;
 
@@ -63,4 +64,5 @@ namespace Microsoft.SqlServer.Server {
 	}
 }
 
+#endif
 #endif

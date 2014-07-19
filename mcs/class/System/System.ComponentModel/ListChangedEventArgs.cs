@@ -36,7 +36,9 @@ namespace System.ComponentModel {
 		ListChangedType changedType;
 		int oldIndex;
 		int newIndex;
+#if !WINDOWS_STORE_APP
 		PropertyDescriptor propDesc;
+#endif
 
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex)
@@ -44,12 +46,14 @@ namespace System.ComponentModel {
 		{
 		}
 	
+#if !WINDOWS_STORE_APP
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     PropertyDescriptor propDesc)
 		{
 			this.changedType = listChangedType;
 			this.propDesc = propDesc;
 		}
+#endif
 		
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex, int oldIndex)
@@ -59,6 +63,7 @@ namespace System.ComponentModel {
 			this.oldIndex = oldIndex;
 		}
 
+#if !WINDOWS_STORE_APP
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex,
 					     PropertyDescriptor propDesc)
@@ -68,6 +73,7 @@ namespace System.ComponentModel {
 			this.oldIndex = newIndex;
 			this.propDesc = propDesc;
 		}
+#endif
 
 		public ListChangedType ListChangedType {
 			get { return changedType; }
@@ -81,8 +87,10 @@ namespace System.ComponentModel {
 			get { return newIndex; }
 		}
 
+#if !WINDOWS_STORE_APP
 		public PropertyDescriptor PropertyDescriptor {
 			get { return propDesc; }
 		}
+#endif
 	}
 }

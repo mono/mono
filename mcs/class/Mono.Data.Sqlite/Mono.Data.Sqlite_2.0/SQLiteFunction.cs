@@ -11,6 +11,7 @@ namespace Mono.Data.Sqlite
   using System.Collections;
   using System.Collections.Generic;
   using System.Runtime.InteropServices;
+  using System.Reflection;
   using System.Globalization;
 
   /// <summary>
@@ -169,15 +170,17 @@ namespace Mono.Data.Sqlite
     /// <param name="nArgs">The number of arguments</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
     /// <returns>An object array of the arguments once they've been converted to .NET values</returns>
-    internal object[] ConvertParams(int nArgs, IntPtr argsptr)
+    internal object[] ConvertParams (int nArgs, IntPtr[] argsptr)
     {
-      object[] parms = new object[nArgs];
+      object[] parms = new object [nArgs];
 #if !PLATFORM_COMPACTFRAMEWORK
-      IntPtr[] argint = new IntPtr[nArgs];
+      IntPtr[] argint = argsptr;
 #else
       int[] argint = new int[nArgs];
+      for (int i = 0; i < nArgs; i++) {
+        argint [i] = argsptr [i].ToInt32 ();
+      }
 #endif
-      Marshal.Copy(argsptr, argint, 0, nArgs);
 
       for (int n = 0; n < nArgs; n++)
       {
@@ -270,7 +273,7 @@ namespace Mono.Data.Sqlite
     /// <param name="context">A raw context pointer</param>
     /// <param name="nArgs">Number of arguments passed in</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
-    internal void ScalarCallback(IntPtr context, int nArgs, IntPtr argsptr)
+    internal void ScalarCallback (IntPtr context, int nArgs, IntPtr[] argsptr)
     {
       _context = context;
       SetReturnValue(context, Invoke(ConvertParams(nArgs, argsptr)));
@@ -307,7 +310,7 @@ namespace Mono.Data.Sqlite
     /// <param name="context">A raw context pointer</param>
     /// <param name="nArgs">Number of arguments passed in</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
-    internal void StepCallback(IntPtr context, int nArgs, IntPtr argsptr)
+    internal void StepCallback (IntPtr context, int nArgs, IntPtr[] argsptr)
     {
       long nAux;
       AggregateData data;
@@ -392,7 +395,7 @@ namespace Mono.Data.Sqlite
     /// Using reflection, enumerate all assemblies in the current appdomain looking for classes that
     /// have a SqliteFunctionAttribute attribute, and registering them accordingly.
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [global::System.Security.Permissions.FileIOPermission(global::System.Security.Permissions.SecurityAction.Assert, AllFiles = global::System.Security.Permissions.FileIOPermissionAccess.PathDiscovery)]
 #endif
     static SqliteFunction()
@@ -401,17 +404,20 @@ namespace Mono.Data.Sqlite
       {
 #if !PLATFORM_COMPACTFRAMEWORK
         SqliteFunctionAttribute at;
-        System.Reflection.Assembly[] arAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+        Assembly[] arAssemblies = AppDomain.CurrentDomain.GetAssemblies ();
         int w = arAssemblies.Length;
-        System.Reflection.AssemblyName sqlite = System.Reflection.Assembly.GetCallingAssembly().GetName();
+#if !WINDOWS_STORE_APP
+        AssemblyName sqlite = Assembly.GetCallingAssembly ().GetName ();
+#endif
 
         for (int n = 0; n < w; n++)
         {
           Type[] arTypes;
           bool found = false;
-          System.Reflection.AssemblyName[] references;
+          AssemblyName[] references;
           try
           {
+#if !WINDOWS_STORE_APP
             // Inspect only assemblies that reference SQLite
             references = arAssemblies[n].GetReferencedAssemblies();
             int t = references.Length;
@@ -426,10 +432,11 @@ namespace Mono.Data.Sqlite
 
             if (found == false)
               continue;
+#endif
 
             arTypes = arAssemblies[n].GetTypes();
           }
-          catch (global::System.Reflection.ReflectionTypeLoadException e)
+          catch (ReflectionTypeLoadException e)
           {
             arTypes = e.Types;
           }
@@ -595,7 +602,7 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 #endif
-  internal delegate void SQLiteCallback(IntPtr context, int nArgs, IntPtr argsptr);
+  internal delegate void SQLiteCallback (IntPtr context, int nArgs, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] IntPtr[] argsptr);
   /// <summary>
   /// An internal final callback delegate declaration.
   /// </summary>

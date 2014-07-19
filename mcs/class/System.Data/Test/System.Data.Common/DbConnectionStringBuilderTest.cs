@@ -40,11 +40,23 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if !WINDOWS_STORE_APP
 using System.Data.SqlClient;
+#endif
 using System.Reflection;
 using System.Text;
-
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 #endregion
 
@@ -1694,14 +1706,14 @@ namespace MonoTests.System.Data.Common
                 }
 
                 [Test]
-                [ExpectedException (typeof (ArgumentException))]
                 public void NegICollectionCopyToTest ()
                 {
                         KeyValuePair<string, object> [] dict = new KeyValuePair<string, object> [1];
                         builder.Add (SERVER, SERVER_VALUE);
                         builder.Add (SERVER + "1", SERVER_VALUE + "1");
+        AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			((ICollection) builder).CopyTo (dict, 0);
-                        Assert.Fail ("Exception Destination Array not enough is not thrown!");
+        }, "Exception Destination Array not enough is not thrown!");
                 }
 
 		[Test]
@@ -1790,6 +1802,7 @@ namespace MonoTests.System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
                 [Test]
 				[NUnit.Framework.Category ("MobileNotWorking")] // DefaultMemberAttribute is removed by the tuner, causing #3 to fail
                 public void ICTD_GetClassNameTest ()
@@ -1819,6 +1832,7 @@ namespace MonoTests.System.Data.Common
                         PropertyDescriptor property = ictd.GetDefaultProperty ();
                         Assert.IsNull (property, "#7");
                 }
+#endif
 
 		[Test]
 		public void EmbeddedCharTest1 ()

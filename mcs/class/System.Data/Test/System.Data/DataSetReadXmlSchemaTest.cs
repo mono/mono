@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.IO;
 using System.Data;
@@ -36,7 +35,18 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Xml;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -266,7 +276,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void NestedReferenceNotAllowed ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
@@ -289,7 +298,9 @@ namespace MonoTests.System.Data
 			// DataSet element cannot be converted into a DataTable.
 			// (i.e. cannot be referenced in any other elements)
 			DataSet ds = new DataSet ();
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.ReadXmlSchema (new StringReader (xs));
+			});
 		}
 
 		[Test]
@@ -331,7 +342,12 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
-			Assert.AreEqual ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
+			string locale = "fi-FI";
+#if NETFX_CORE
+			// windows store apps only have the two letter code for the thread locale
+			locale = "fi"; 
+#endif
+			Assert.AreEqual (locale, ds.Locale.Name); // DataSet's Locale comes from current thread
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0, 0, 0, 0, 0);
 			Assert.AreEqual ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
@@ -467,12 +483,12 @@ namespace MonoTests.System.Data
 
 			// ReadXmlSchema()
 			ds = new DataSet ();
-			ds.ReadXmlSchema (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds.ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds);
 
 			// ReadXml() should also be the same
 			ds = new DataSet ();
-			ds.ReadXml (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds.ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds);
 		}
 
@@ -606,14 +622,9 @@ namespace MonoTests.System.Data
 		public void TestSampleFileImportSimple ()
 		{
 			DataSet ds = new DataSet ();
-			XmlTextReader xtr = null;
-			try {
-				xtr = new XmlTextReader ("Test/System.Data/schemas/test010.xsd");
-				xtr.XmlResolver = null;
+			using (Stream file = File.OpenRead ("Test/System.Data/schemas/test010.xsd"))
+			using (XmlReader xtr = XmlReader.Create (file)) {
 				ds.ReadXmlSchema (xtr);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
 			}
 			AssertDataSet ("010", ds, "NewDataSet", 1, 0);
 

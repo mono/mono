@@ -44,8 +44,15 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.IO;
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using XmlConvertUtil = System.Xml.XmlConvert;
+#else
+using System.Linq;
+using System.Xml.Linq;
+using XmlDocument = System.Xml.Linq.XDocument;
+#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -53,23 +60,30 @@ using System.Data.Common;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[Serializable]
-	public partial class DataSet : MarshalByValueComponent, IListSource, ISupportInitialize,
-			       ISerializable, IXmlSerializable {
-		private string dataSetName;
-		private string _namespace = string.Empty;
-		private string prefix;
-		private bool caseSensitive;
-		private bool enforceConstraints = true;
-		private DataTableCollection tableCollection;
-		private DataRelationCollection relationCollection;
-		private PropertyCollection properties;
-		private DataViewManager defaultView;
-		private CultureInfo locale;
+#endif
+	public partial class DataSet : MarshalByValueComponent, IXmlSerializable, IDisposable
+#if !WINDOWS_STORE_APP
+		, IListSource, ISerializable, ISupportInitialize
+#endif
+	{
+		string dataSetName;
+		string _namespace = string.Empty;
+		string prefix;
+		bool caseSensitive;
+		bool enforceConstraints = true;
+		DataTableCollection tableCollection;
+		DataRelationCollection relationCollection;
+		PropertyCollection properties;
+		DataViewManager defaultView;
+		CultureInfo locale;
+#if !WINDOWS_STORE_APP
 		internal XmlDataDocument _xmlDataDocument;
+#endif
 
 #if NET_2_0
 		internal TableAdapterSchemaInfo tableAdapterSchemaInfo;
@@ -92,6 +106,7 @@ namespace System.Data
 			prefix = String.Empty;
 		}
 
+#if !WINDOWS_STORE_APP
 		protected DataSet (SerializationInfo info, StreamingContext context)
 			: this ()
 		{
@@ -108,12 +123,15 @@ namespace System.Data
 
 			GetSerializationData (info, context);
 		}
+#endif
 
 		#endregion // Constructors
 
 		#region Public Properties
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
 #endif
@@ -136,7 +154,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The name of this DataSet.")]
 #endif
@@ -149,7 +169,9 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
 #endif
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public DataViewManager DefaultViewManager {
 			get {
 				if (defaultView == null)
@@ -167,8 +189,10 @@ namespace System.Data
 			set { InternalEnforceConstraints (value, true); }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
 #endif
@@ -176,7 +200,9 @@ namespace System.Data
 			get { return properties; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates that the DataSet has errors.")]
 #endif
@@ -190,12 +216,14 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
 #endif
 		public CultureInfo Locale {
-			get { return locale != null ? locale : Thread.CurrentThread.CurrentCulture; }
+			get { return locale != null ? locale : CultureInfo.CurrentCulture; }
 			set {
 				if (locale == null || !locale.Equals (value)) {
 					// TODO: check if the new locale is valid
@@ -297,7 +325,7 @@ namespace System.Data
 			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
 		}
 
-		private static bool IsLegalSchemaAction (MissingSchemaAction missingSchemaAction)
+		static bool IsLegalSchemaAction (MissingSchemaAction missingSchemaAction)
 		{
 			if (missingSchemaAction == MissingSchemaAction.Add || missingSchemaAction == MissingSchemaAction.AddWithKey
 				|| missingSchemaAction == MissingSchemaAction.Error || missingSchemaAction == MissingSchemaAction.Ignore)
@@ -305,7 +333,9 @@ namespace System.Data
 			return false;
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
 #endif
@@ -322,7 +352,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
 #endif
@@ -344,27 +376,33 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			get { return relationCollection; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ISite Site {
 			get { return base.Site; }
 			set { base.Site = value; }
 		}
+#endif
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds the tables for this DataSet.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableCollection Tables {
 			get { return tableCollection; }
 		}
@@ -384,8 +422,10 @@ namespace System.Data
 		/// </summary>
 		public void Clear ()
 		{
+#if !WINDOWS_STORE_APP
 			if (_xmlDataDocument != null)
 				throw new NotSupportedException ("Clear function on dataset and datatable is not supported when XmlDataDocument is bound to the DataSet.");
+#endif
 			bool enforceConstraints = this.EnforceConstraints;
 			this.EnforceConstraints = false;
 			for (int t = 0; t < tableCollection.Count; t++)
@@ -396,7 +436,7 @@ namespace System.Data
 		public virtual DataSet Clone ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
+			DataSet Copy = (DataSet) TypeUtil.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -418,7 +458,7 @@ namespace System.Data
 		public DataSet Copy ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
+			DataSet Copy = (DataSet) TypeUtil.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -439,7 +479,7 @@ namespace System.Data
 			return Copy;
 		}
 
-		private void CopyProperties (DataSet Copy)
+		void CopyProperties (DataSet Copy)
 		{
 			Copy.CaseSensitive = CaseSensitive;
 			//Copy.Container = Container
@@ -449,7 +489,7 @@ namespace System.Data
 			Copy.EnforceConstraints = EnforceConstraints;
 			if(ExtendedProperties.Count > 0) {
 				// Cannot copy extended properties directly as the property does not have a set accessor
-				Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
+				object[] tgtArray = new object[ExtendedProperties.Count];
 				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
 				for (int i = 0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
@@ -461,7 +501,7 @@ namespace System.Data
 		}
 
 
-		private void CopyRelations (DataSet Copy)
+		void CopyRelations (DataSet Copy)
 		{
 
 			//Creation of the relation contains some of the properties, and the constructor
@@ -548,7 +588,7 @@ namespace System.Data
 			return copySet;
 		}
 
-		private void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
+		void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
 		{
 			if (addedRows.ContainsKey (row))
 				return;
@@ -620,33 +660,29 @@ namespace System.Data
 		{
 			if (reader == null)
 				return;
-			XmlDocument doc = new XmlDocument ();
-			doc.Load (reader);
+			XmlDocument doc = XmlHelper.CreateXmlDocument (reader);
 			InferXmlSchema (doc, nsArray);
 		}
 
-		private void InferXmlSchema (XmlDocument doc, string [] nsArray)
+		void InferXmlSchema (XmlDocument doc, string [] nsArray)
 		{
 			XmlDataInferenceLoader.Infer (this, doc, XmlReadMode.InferSchema, nsArray);
 		}
 
 		public void InferXmlSchema (Stream stream, string[] nsArray)
 		{
-			InferXmlSchema (new XmlTextReader (stream), nsArray);
+			InferXmlSchema (XmlReader.Create (stream), nsArray);
 		}
 
 		public void InferXmlSchema (TextReader reader, string[] nsArray)
 		{
-			InferXmlSchema (new XmlTextReader (reader), nsArray);
+			InferXmlSchema (XmlReader.Create (reader), nsArray);
 		}
 
 		public void InferXmlSchema (string fileName, string[] nsArray)
 		{
-			XmlTextReader reader = new XmlTextReader (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				InferXmlSchema (reader, nsArray);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -681,32 +717,27 @@ namespace System.Data
 
 		public void WriteXml (Stream stream)
 		{
-			XmlTextWriter writer = new XmlTextWriter (stream, null);
-			writer.Formatting = Formatting.Indented;
+			XmlWriter writer = XmlWriter.Create (stream, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
 			WriteXml (writer);
 		}
 
 		///<summary>
 		/// Writes the current data for the DataSet to the specified file.
 		/// </summary>
-		/// <param name="filename">Fully qualified filename to write to</param>
+		/// <param name="fileName">Fully qualified filename to write to</param>
 		public void WriteXml (string fileName)
 		{
-			XmlTextWriter writer = new XmlTextWriter (fileName, null);
-			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument (true);
-			try {
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create(file, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true })) { 
+				writer.WriteStartDocument (true);
 				WriteXml (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
 			}
 		}
 
 		public void WriteXml (TextWriter writer)
 		{
-			XmlTextWriter xwriter = new XmlTextWriter (writer);
-			xwriter.Formatting = Formatting.Indented;
+			XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
 			WriteXml (xwriter);
 		}
 
@@ -717,29 +748,23 @@ namespace System.Data
 
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
-			XmlTextWriter writer = new XmlTextWriter (fileName, null);
-			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument (true);
-
-			try {
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true})) {
+				writer.WriteStartDocument (true);
 				WriteXml (writer, mode);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
 			}
 		}
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
-			XmlTextWriter writer = new XmlTextWriter (stream, null);
-			writer.Formatting = Formatting.Indented;
+			XmlWriter writer = XmlWriter.Create (stream, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
 			WriteXml (writer, mode);
 		}
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
-			XmlTextWriter xwriter = new XmlTextWriter (writer);
-			xwriter.Formatting = Formatting.Indented;
+			XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
 			WriteXml (xwriter, mode);
 		}
 
@@ -782,32 +807,24 @@ namespace System.Data
 
 		public void WriteXmlSchema (Stream stream)
 		{
-			XmlTextWriter writer = new XmlTextWriter (stream, null );
-			writer.Formatting = Formatting.Indented;
+			XmlWriter writer = XmlWriter.Create (stream, new XmlWriterSettings {Indent = true});
 			WriteXmlSchema (writer);
 		}
 
 		public void WriteXmlSchema (string fileName)
 		{
-			XmlTextWriter writer = new XmlTextWriter (fileName, null);
-			try {
-				writer.Formatting = Formatting.Indented;
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true})) {
 				writer.WriteStartDocument (true);
 				WriteXmlSchema (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
 			}
 		}
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			XmlTextWriter xwriter = new XmlTextWriter (writer);
-			try {
-				xwriter.Formatting = Formatting.Indented;
+			using (XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true})) {
 				WriteXmlSchema (xwriter);
-			} finally {
-				xwriter.Close ();
 			}
 		}
 
@@ -820,23 +837,20 @@ namespace System.Data
 
 		public void ReadXmlSchema (Stream stream)
 		{
-			XmlReader reader = new XmlTextReader (stream, null);
+			XmlReader reader = XmlReader.Create (stream);
 			ReadXmlSchema (reader);
 		}
 
 		public void ReadXmlSchema (string fileName)
 		{
-			XmlReader reader = new XmlTextReader (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				ReadXmlSchema (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
 		public void ReadXmlSchema (TextReader reader)
 		{
-			XmlReader xr = new XmlTextReader (reader);
+			XmlReader xr = XmlReader.Create (reader);
 			ReadXmlSchema (xr);
 		}
 
@@ -856,22 +870,19 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (Stream stream)
 		{
-			return ReadXml (new XmlTextReader (stream));
+			return ReadXml (XmlReader.Create (stream));
 		}
 
 		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlTextReader reader = new XmlTextReader (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
 		public XmlReadMode ReadXml (TextReader reader)
 		{
-			return ReadXml (new XmlTextReader (reader));
+			return ReadXml (XmlReader.Create (reader));
 		}
 
 		public XmlReadMode ReadXml (XmlReader reader)
@@ -881,22 +892,19 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
 		{
-			return ReadXml (new XmlTextReader (stream), mode);
+			return ReadXml (XmlReader.Create (stream), mode);
 		}
 
 		public XmlReadMode ReadXml (string fileName, XmlReadMode mode)
 		{
-			XmlTextReader reader = new XmlTextReader (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader, mode);
-			} finally {
-				reader.Close ();
 			}
 		}
 
 		public XmlReadMode ReadXml (TextReader reader, XmlReadMode mode)
 		{
-			return ReadXml (new XmlTextReader (reader), mode);
+			return ReadXml (XmlReader.Create (reader), mode);
 		}
 
 		// LAMESPEC: XmlReadMode.Fragment is far from presisely
@@ -917,10 +925,12 @@ namespace System.Data
 			if (reader.EOF)
 				return mode;
 
+#if !WINDOWS_STORE_APP
 			if (reader is XmlTextReader) {
 				// we dont need whitespace
 				((XmlTextReader) reader).WhitespaceHandling = WhitespaceHandling.None;
 			}
+#endif
 
 			XmlDiffLoader DiffLoader = null;
 
@@ -946,7 +956,7 @@ namespace System.Data
 			}
 
 			// If schema, then read the first element as schema
-			if (reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace) {
+			if (reader.LocalName == "schema" && reader.NamespaceURI == XmlConstants.SchemaNamespace) {
 				switch (mode) {
 					case XmlReadMode.IgnoreSchema:
 					case XmlReadMode.InferSchema:
@@ -973,12 +983,15 @@ namespace System.Data
 				}
 			}
 
+			while (reader.NodeType != XmlNodeType.Element && !reader.EOF)
+				reader.Skip ();
 			if (reader.EOF)
 				return mode;
 
 			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
 
 			XmlDocument doc = new XmlDocument ();
+#if !WINDOWS_STORE_APP
 			XmlElement root = doc.CreateElement(reader.Prefix, reader.LocalName, reader.NamespaceURI);
 			if (reader.HasAttributes) {
 				for (int i = 0; i < reader.AttributeCount; i++) {
@@ -1045,28 +1058,55 @@ namespace System.Data
 				XmlNode n = doc.ReadNode(reader);
 				root.AppendChild(n);
 			}
+#else
+			XElement root = XNode.ReadFrom (reader) as XElement;
+
+			XmlReadMode retMode = mode;
+			bool schemaLoaded = false;
+
+			XElement schema = root.Element (XNamespace.Get (XmlConstants.SchemaNamespace) + "schema");
+			if (schema != null) {
+				schema.Remove ();
+				if (mode != XmlReadMode.IgnoreSchema && mode != XmlReadMode.InferSchema) {
+					ReadXmlSchema (schema.CreateReader ());
+					retMode = XmlReadMode.ReadSchema;
+					schemaLoaded = true;
+				}
+			}
+
+			XElement diffgram = root.Element (XNamespace.Get (XmlConstants.DiffgrNamespace) + "diffgram");
+			if (diffgram != null) {
+				diffgram.Remove ();
+				if (mode == XmlReadMode.DiffGram || mode == XmlReadMode.IgnoreSchema || mode == XmlReadMode.Auto) {
+					if (DiffLoader == null) 
+						DiffLoader = new XmlDiffLoader (this);
+					DiffLoader.Load (diffgram.CreateReader ());
+					retMode = XmlReadMode.DiffGram;
+				}
+			}
+#endif
 
 			if (reader.NodeType == XmlNodeType.EndElement)
 				reader.Read ();
-			reader.MoveToContent();
+			reader.MoveToContent ();
 
 			if (mode == XmlReadMode.DiffGram) {
 				return retMode;
 			}
 
-			doc.AppendChild(root);
+			doc.AppendChild (root);
 
 			if (!schemaLoaded &&
 				retMode != XmlReadMode.ReadSchema &&
 				mode != XmlReadMode.IgnoreSchema &&
 				mode != XmlReadMode.Fragment &&
 				(Tables.Count == 0 || mode == XmlReadMode.InferSchema)) {
-				InferXmlSchema(doc, null);
+				InferXmlSchema (doc.CreateReader (), null);
 				if (mode == XmlReadMode.Auto)
 					retMode = XmlReadMode.InferSchema;
 			}
 
-			reader = new XmlNodeReader (doc);
+			reader = doc.CreateReader ();
 			XmlDataReader.ReadXml (this, reader, mode);
 
 			return retMode == XmlReadMode.Auto ?
@@ -1076,7 +1116,9 @@ namespace System.Data
 
 		#region Public Events
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Action")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs when it is not possible to merge schemas for two tables with the same name.")]
 #endif
@@ -1084,6 +1126,7 @@ namespace System.Data
 
 		#endregion // Public Events
 
+#if !WINDOWS_STORE_APP
 		#region IListSource methods
 		IList IListSource.GetList ()
 		{
@@ -1096,6 +1139,7 @@ namespace System.Data
 			}
 		}
 		#endregion IListSource methods
+#endif
 
 		#region ISupportInitialize methods
 
@@ -1132,6 +1176,7 @@ namespace System.Data
 		}
 		#endregion
 
+#if !WINDOWS_STORE_APP
 		#region ISerializable
 #if NET_2_0
 		public virtual
@@ -1164,8 +1209,10 @@ namespace System.Data
 #endif
 		}
 		#endregion
+#endif
 
 		#region Protected Methods
+#if !WINDOWS_STORE_APP
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
 			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
@@ -1179,6 +1226,7 @@ namespace System.Data
 		{
 			return null;
 		}
+#endif
 
 		protected virtual void ReadXmlSerializable (XmlReader reader)
 		{
@@ -1198,13 +1246,17 @@ namespace System.Data
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
+#if !WINDOWS_STORE_APP
 			if (GetType() == typeof(DataSet))
 				return null;
 			MemoryStream stream = new MemoryStream();
-			XmlTextWriter writer = new XmlTextWriter(stream, null);
+			XmlWriter writer = XmlWriter.Create(stream, null);
 			WriteXmlSchema(writer);
 			stream.Position = 0;
-			return XmlSchema.Read(new XmlTextReader(stream), (ValidationEventHandler)null);
+			return XmlSchema.Read(XmlReader.Create(stream), (ValidationEventHandler)null);
+#else
+			return null;
+#endif
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -1254,7 +1306,7 @@ namespace System.Data
 
 		internal static string WriteObjectXml (object o)
 		{
-			switch (Type.GetTypeCode (o.GetType ())) {
+			switch (TypeUtil.GetTypeCode (o.GetType ())) {
 				case TypeCode.Boolean:
 					return XmlConvert.ToString ((Boolean) o);
 				case TypeCode.Byte:
@@ -1263,7 +1315,7 @@ namespace System.Data
 					return XmlConvert.ToString ((Char) o);
 				case TypeCode.DateTime:
 #if NET_2_0
-					return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
+					return XmlConvertUtil.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
 #else
 					return XmlConvert.ToString ((DateTime) o);
 #endif
@@ -1295,7 +1347,7 @@ namespace System.Data
 			return o.ToString ();
 		}
 
-		private void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
+		void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
 		{
 			//WriteTable takes care of skipping a table if it has a
 			//Nested Parent Relationship
@@ -1409,7 +1461,10 @@ namespace System.Data
 					throw new InvalidOperationException ();
 				((IXmlSerializable)rowObject).WriteXml (writer);				
 			} else {
-				writer.WriteString (WriteObjectXml (rowObject));
+				string objectXml = WriteObjectXml (rowObject);
+				if (!string.IsNullOrEmpty (objectXml)) {
+					writer.WriteString (objectXml);
+				}
 			}
 
 			writer.WriteEndElement ();
@@ -1486,7 +1541,7 @@ namespace System.Data
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
 
-		private void DoWriteXmlSchema (XmlWriter writer)
+		void DoWriteXmlSchema (XmlWriter writer)
 		{
 			if (writer.WriteState == WriteState.Start)
 				writer.WriteStartDocument ();
@@ -1536,7 +1591,7 @@ namespace System.Data
 			WriteAttributeString (writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
 		}
 
-		private void SetRowsID ()
+		void SetRowsID ()
 		{
 			foreach (DataTable table in Tables)
 				table.SetRowsID ();
@@ -1546,12 +1601,20 @@ namespace System.Data
 	}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[XmlSchemaProvider ("GetDataSetSchema")]
+#else
 	[XmlRoot ("DataSet")]
-	partial class DataSet : ISupportInitializeNotification {
-		private bool dataSetInitialized = true;
+#endif
+	partial class DataSet
+#if !WINDOWS_STORE_APP
+		: ISupportInitializeNotification 
+#endif
+	{
+		bool dataSetInitialized = true;
 		public event EventHandler Initialized;
 
+#if !WINDOWS_STORE_APP
 		protected DataSet (SerializationInfo info, StreamingContext context, bool ConstructSchema)
 			: this ()
 		{
@@ -1573,6 +1636,7 @@ namespace System.Data
 				GetSerializationData (info, context);
 			}
 		}
+#endif
 
 		SerializationFormat remotingFormat = SerializationFormat.Xml;
 		[DefaultValue (SerializationFormat.Xml)]
@@ -1581,13 +1645,17 @@ namespace System.Data
 			set { remotingFormat = value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public bool IsInitialized {
 			get { return dataSetInitialized; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+#endif
 		public virtual SchemaSerializationMode SchemaSerializationMode {
 			get { return SchemaSerializationMode.IncludeSchema; }
 			set {
@@ -1607,10 +1675,12 @@ namespace System.Data
 			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
 		}
 
+#if !WINDOWS_STORE_APP
 		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
 		{
 			return new XmlSchemaComplexType ();
 		}
+#endif
 
 		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
 		{
@@ -1656,6 +1726,7 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		void BinarySerialize (SerializationInfo si)
 		{
 			Version vr = new Version(2, 0);
@@ -1759,14 +1830,15 @@ namespace System.Data
 					       false);
 			}
 		}
+#endif
 
-		private void OnDataSetInitialized (EventArgs e)
+		void OnDataSetInitialized (EventArgs e)
 		{
 			if (null != Initialized)
 				Initialized (this, e);
 		}
 
-		private void DataSetInitialized ()
+		void DataSetInitialized ()
 		{
 			EventArgs e = new EventArgs ();
 			OnDataSetInitialized (e);
@@ -1781,6 +1853,7 @@ namespace System.Data
 			return SchemaSerializationMode.IncludeSchema;
 		}
 
+#if !WINDOWS_STORE_APP
 		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
 		{
 			SerializationInfoEnumerator e = info.GetEnumerator ();
@@ -1802,6 +1875,7 @@ namespace System.Data
 			}
 			return false;
 		}
+#endif
 	}
 #endif
 }

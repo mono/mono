@@ -31,12 +31,21 @@ using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaObject.
 	/// </summary>
-	public abstract class XmlSchemaObject
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	abstract class XmlSchemaObject
 	{
 		private int lineNumber;
 		private int linePosition;

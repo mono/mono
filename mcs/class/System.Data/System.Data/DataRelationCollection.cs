@@ -45,10 +45,12 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
 	/// </summary>
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[DefaultProperty ("Table")]
+#endif
 	public abstract partial class DataRelationCollection : InternalDataCollectionBase {
 		/// <summary>
 		/// Summary description for DataTableRelationCollection.
@@ -128,7 +130,12 @@ namespace System.Data {
 				mostRecentRelations = null;
 			}
 
-			protected override ArrayList List {
+#if !WINDOWS_STORE_APP
+			protected 
+#else
+			internal
+#endif			
+			override ArrayList List {
 				get { return base.List; }
 			}
 
@@ -216,7 +223,12 @@ namespace System.Data {
 				base.RemoveCore (relation);
 			}
 
-			protected override ArrayList List {
+#if !WINDOWS_STORE_APP
+			protected 
+#else
+			internal
+#endif
+			override ArrayList List {
 				get { return base.List; }
 			}
 		}
@@ -278,8 +290,10 @@ namespace System.Data {
 				if (relation.RelationName == string.Empty)
 					relation.RelationName = GenerateRelationName ();
 
+#if !WINDOWS_STORE_APP
 				relation.ParentTable.ResetPropertyDescriptorsCache ();
 				relation.ChildTable.ResetPropertyDescriptorsCache ();
+#endif
 
 				e = new CollectionChangeEventArgs (CollectionChangeAction.Add, relation);
 				OnCollectionChanged (e);
@@ -544,8 +558,8 @@ namespace System.Data {
 			int count = 0, match = -1;
 			for (int i = 0; i < List.Count; i++) {
 				String name2 = ((DataRelation) List[i]).RelationName;
-				if (String.Compare (name, name2, true) == 0) {
-					if (String.Compare (name, name2, false) == 0)
+				if (String.Compare (name, name2, StringComparison.CurrentCultureIgnoreCase) == 0) {
+					if (String.Compare (name, name2, StringComparison.CurrentCulture) == 0)
 						return i;
 					match = i;
 					count++;
@@ -626,14 +640,18 @@ namespace System.Data {
 
 		#region Events
 
+#if !WINDOWS_STORE_APP
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
+#endif
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		#endregion
 	}
 
 #if !NET_2_0
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	partial class DataRelationCollection {
 	}
 #else
@@ -643,6 +661,7 @@ namespace System.Data {
 			CopyTo ((Array) array, index);
 		}
 
+#if !WINDOWS_STORE_APP
 		internal void BinarySerialize (SerializationInfo si)
 		{
 			ArrayList l = new ArrayList ();
@@ -668,6 +687,7 @@ namespace System.Data {
 			}
 			si.AddValue ("DataSet.Relations", l, typeof (ArrayList));
 		}
+#endif
 	}
 #endif
 }

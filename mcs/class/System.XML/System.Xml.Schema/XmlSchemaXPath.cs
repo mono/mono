@@ -29,12 +29,21 @@ using System.Xml;
 using Mono.Xml;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaXPath.
 	/// </summary>
-	public class XmlSchemaXPath : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaXPath : XmlSchemaAnnotated
 	{
 		private string xpath;
 		XmlNamespaceManager nsmgr;
@@ -200,7 +209,7 @@ namespace System.Xml.Schema
 					string prefix = xpath.Substring (nameStart, pos - nameStart);
 					pos++;
 					if (xpath.Length > pos && xpath [pos] == '*') {
-						string ns = nsmgr.LookupNamespace (prefix, false);
+						string ns = nsmgr.LookupNamespace (prefix);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -217,7 +226,7 @@ namespace System.Xml.Schema
 								pos++;
 						}
 						step.Name = xpath.Substring (localNameStart, pos - localNameStart);
-						string ns = nsmgr.LookupNamespace (prefix, false);
+						string ns = nsmgr.LookupNamespace (prefix);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -301,7 +310,11 @@ namespace System.Xml.Schema
 			path.LinePosition = reader.LinePosition;
 			path.SourceUri = reader.BaseURI;
 
+#if !WINDOWS_STORE_APP
 			XmlNamespaceManager currentMgr = XmlSchemaUtil.GetParserContext (reader.Reader).NamespaceManager;
+#else
+			XmlNamespaceManager currentMgr = new XmlNamespaceManager (reader.Reader.NameTable);
+#endif
 			if (currentMgr != null) {
 				path.nsmgr = new XmlNamespaceManager (reader.NameTable);
 				IEnumerator e = currentMgr.GetEnumerator ();
@@ -312,7 +325,7 @@ namespace System.Xml.Schema
 					case "xmlns":
 						continue;
 					default:
-						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix, false));
+						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix));
 						break;
 					}
 				}

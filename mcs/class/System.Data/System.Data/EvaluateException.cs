@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public class EvaluateException : InvalidExpressionException
 	{
 		public EvaluateException ()
@@ -54,9 +56,11 @@ namespace System.Data
 		}
 #endif
 
+#if !WINDOWS_STORE_APP
 		protected EvaluateException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

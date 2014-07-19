@@ -28,33 +28,44 @@
 
 using System;
 using System.Data;
-
-using NUnit.Framework;
 using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests_System.Data
 {
 	[TestFixture]
-	class MissingPrimaryKeyExceptionTest
+	public class MissingPrimaryKeyExceptionTest
 	{
 		[Test]
-		[ExpectedException(typeof(MissingPrimaryKeyException))]
 		public void Generate1()
 		{
 			DataTable tbl = DataProvider.CreateParentDataTable();
 			//can't invoke Find method with no primary key
 
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
 			tbl.Rows.Find("Something");
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(MissingPrimaryKeyException))]
 		public void Generate2()
 		{
 			DataTable tbl = DataProvider.CreateParentDataTable();	
 			//can't invoke Contains method with no primary key
 
+			AssertHelpers.AssertThrowsException<MissingPrimaryKeyException>(() => {
 			tbl.Rows.Contains("Something");
+			});
 		}
 	}
 }

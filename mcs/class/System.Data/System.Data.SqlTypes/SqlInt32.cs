@@ -48,8 +48,12 @@ namespace System.Data.SqlTypes
 	/// of data from a database
 	/// </summary>
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("int")]
+#endif
 #endif
 	public struct SqlInt32 : INullable, IComparable 
 #if NET_2_0
@@ -499,6 +503,7 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -510,6 +515,7 @@ namespace System.Data.SqlTypes
 			}
 			return new XmlQualifiedName ("int", "http://www.w3.org/2001/XMLSchema");
 		}
+#endif
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

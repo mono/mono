@@ -59,10 +59,10 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
         int n = UnsafeNativeMethods.sqlite3_open16_interop(ToUTF8(strFilename), (int)flags, out db);
 #else
-        if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && System.IO.File.Exists(strFilename) == false)
+        if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && SqliteConnection.FileExists(strFilename) == false)
           throw new SqliteException((int)SQLiteErrorCode.CantOpen, strFilename);
 
-        int n = UnsafeNativeMethods.sqlite3_open16(strFilename, out db);
+        int n = UnsafeNativeMethods.sqlite3_open16 (ToUTF16 (strFilename), out db);
 #endif
         if (n > 0) throw new SqliteException(n, null);
 
@@ -78,7 +78,8 @@ namespace Mono.Data.Sqlite
 
     internal override void Bind_Text(SqliteStatement stmt, int index, string value)
     {
-      int n = UnsafeNativeMethods.sqlite3_bind_text16(stmt._sqlite_stmt, index, value, value.Length * 2, (IntPtr)(-1));
+      int length;
+      int n = UnsafeNativeMethods.sqlite3_bind_text16 (stmt._sqlite_stmt, index, ToUTF16 (value, out length), length, (IntPtr)(-1));
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
@@ -149,12 +150,14 @@ namespace Mono.Data.Sqlite
 
     internal override void ReturnError(IntPtr context, string value)
     {
-      UnsafeNativeMethods.sqlite3_result_error16(context, value, value.Length * 2);
+      int length;
+      UnsafeNativeMethods.sqlite3_result_error16 (context, ToUTF16 (value, out length), length);
     }
 
     internal override void ReturnText(IntPtr context, string value)
     {
-      UnsafeNativeMethods.sqlite3_result_text16(context, value, value.Length * 2, (IntPtr)(-1));
+      int length;
+      UnsafeNativeMethods.sqlite3_result_text16 (context, ToUTF16 (value, out length), length, (IntPtr)(-1));
     }
   }
 }

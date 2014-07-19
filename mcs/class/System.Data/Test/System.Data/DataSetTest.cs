@@ -33,8 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -45,6 +43,18 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using System.Threading;
 using System.Text;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -116,7 +126,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("first", column.ColumnName, "test#17");
 			Assert.AreEqual ("System.String", column.DataType.ToString (), "test#18");
 			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column.DesignMode, "test#20");
+#endif
 			Assert.AreEqual ("", column.Expression, "test#21");
 			Assert.AreEqual (100, column.MaxLength, "test#22");
 			Assert.AreEqual ("", column.Namespace, "test#23");
@@ -139,7 +151,9 @@ namespace MonoTests.System.Data
 #else
 			Assert.AreEqual (DBNull.Value, column2.DefaultValue, "test#36");
 #endif
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column2.DesignMode, "test#37");
+#endif
 			Assert.AreEqual ("", column2.Expression, "test#38");
 			Assert.AreEqual (-1, column2.MaxLength, "test#39");
 			Assert.AreEqual ("", column2.Namespace, "test#40");
@@ -167,7 +181,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
 			Assert.AreEqual ("System.String", column3.DataType.ToString (), "test#59");
 			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column3.DesignMode, "test#61");
+#endif
 			Assert.AreEqual ("", column3.Expression, "test#62");
 			Assert.AreEqual (100, column3.MaxLength, "test#63");
 			Assert.AreEqual ("", column3.Namespace, "test#64");
@@ -425,7 +441,7 @@ namespace MonoTests.System.Data
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
-			string TextString = writer.ToString ();
+			string TextString = writer.ToString ().Replace ("\r\n", "\n").Replace ("\n", EOL);
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("<Root>", substring, "test#01");
@@ -437,9 +453,9 @@ namespace MonoTests.System.Data
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionID>1</RegionID>", substring, "test#03");
-			// Here the end of line is text markup "\n"
-                        substring = TextString.Substring (0, TextString.IndexOf('\n'));
-                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
+			
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionDescription>Eastern", substring, "test#04");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -458,9 +474,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionID>2</RegionID>", substring, "test#08");
 
-			// Here the end of line is text markup "\n"
-                        substring = TextString.Substring (0, TextString.IndexOf('\n'));
-                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("    <RegionDescription>Western", substring, "test#09");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -499,7 +514,7 @@ namespace MonoTests.System.Data
 			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
 			ds.WriteXml (writer, XmlWriteMode.DiffGram);
 			
-			TextString = writer.ToString ();
+			TextString = writer.ToString ().Replace ("\r\n", "\n").Replace ("\n", EOL);
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\">", substring, "test#03");
@@ -516,9 +531,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionID>64</RegionID>", substring, "test#06");
 
-			// not EOL but literal '\n'
-		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
-                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionDescription>Eastern", substring, "test#07");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -537,9 +551,8 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionID>2</RegionID>", substring, "test#10");
 
-			// not EOL but literal '\n'
-		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
-                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <RegionDescription>Western", substring, "test#11");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -642,8 +655,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("</xs:schema>", TextString, "test#17");
 		}
 		
+		//MS behavior is far from consistent to be regarded as a reference implementation.
 		[Test]
-		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		[Ignore ()]
 		// MS ReadXmlSchema() is too inconsistent to regard as a 
 		// reference implementation. To find the reason why, try to
 		// read store2.xsd and store4.xsd, write and compare for each
@@ -795,8 +809,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("</xs:schema>", TextString, "test#30");
 		}
 		
+		//MS behavior is far from consistent to be regarded as a reference implementation.
 		[Test]
-		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		[Ignore ()]
 		// See comments on ReadWriteXmlSchemaIgnoreSchema().
 		public void ReadWriteXmlSchema ()
 		{
@@ -1021,13 +1036,11 @@ namespace MonoTests.System.Data
 			ds.Tables.Add (dt2);
 			ds.Namespace = "urn:bar";
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xw = new XmlTextWriter (sw);
-			xw.Formatting = Formatting.Indented;
-			xw.QuoteChar = '\'';
+			XmlWriter xw = XmlWriter.Create (sw, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true });
 			ds.WriteXmlSchema (xw);
 
 			string result = sw.ToString ();
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), schema.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n").Replace ("\"", "'"), schema.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1042,7 +1055,7 @@ namespace MonoTests.System.Data
 			dt.Columns.Add (col);
 			dt.Rows.Add (new object [] {"test"});
 			StringWriter sw = new StringWriter ();
-			ds.WriteXml (new XmlTextWriter (sw));
+			ds.WriteXml (XmlWriter.Create (sw, new XmlWriterSettings{OmitXmlDeclaration=true}));
 			string xml = @"<DS xmlns=""urn:foo""><tab><TEST>test</TEST></tab></DS>";
 			Assert.AreEqual (xml, sw.ToString ());
 		}
@@ -1063,12 +1076,11 @@ namespace MonoTests.System.Data
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xw = new XmlTextWriter (sw);
-			xw.QuoteChar = '\'';
+			XmlWriter xw = XmlWriter.Create(sw);
 			ser.Serialize (xw, ds);
 
 			string result = sw.ToString ();
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n").Replace ("\"", "'"), xml.Replace ("\r\n", "\n"));
 		}
 
 		// bug #70961
@@ -1175,8 +1187,8 @@ namespace MonoTests.System.Data
   </diffgr:diffgram>
 </DataSet>";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
-			ser.Deserialize (new XmlTextReader (
-				xml, XmlNodeType.Document, null));
+			ser.Deserialize (XmlReader.Create (
+				new StringReader(xml), new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Document }));
 		}
 
 		/* To be added
@@ -1478,10 +1490,9 @@ namespace MonoTests.System.Data
 			dt = ds.Tables [1];
 			AssertDataTable ("dt2", dt, "AvailResponse", 3, 2, 1, 0, 1, 0);
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xtw = new XmlTextWriter (sw);
-			xtw.QuoteChar = '\'';
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings{OmitXmlDeclaration=true});
 			ds.WriteXml (xtw);
-			Assert.AreEqual (xml, sw.ToString ());
+			Assert.AreEqual (xml, sw.ToString ().Replace ("\"", "'"));
 		}
 
 		// bug #53959.
@@ -1498,12 +1509,10 @@ namespace MonoTests.System.Data
 			ds.ReadXml (new StringReader (input));
 
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xtw = new XmlTextWriter (sw);
-			xtw.Formatting = Formatting.Indented;
-			xtw.QuoteChar = '\'';
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true,OmitXmlDeclaration=true});
 			ds.WriteXml (xtw);
 			xtw.Flush ();
-			Assert.AreEqual (input.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (input.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n").Replace ("\"", "'"));
 		}
 
 		[Test] // bug #60469
@@ -1552,16 +1561,14 @@ namespace MonoTests.System.Data
 			OriginalDataSet.AcceptChanges ();
 
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xtw = new XmlTextWriter (sw);
-			xtw.QuoteChar = '\'';
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			OriginalDataSet.WriteXml (xtw);
-			string result = sw.ToString ();
+			string result = sw.ToString ().Replace ("\"", "'");
 
 			Assert.AreEqual (xml, result);
 
 			sw = new StringWriter ();
-			xtw = new XmlTextWriter (sw);
-			xtw.Formatting = Formatting.Indented;
+			xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true});
 			OriginalDataSet.WriteXmlSchema (xtw);
 			result = sw.ToString ();
 
@@ -2082,13 +2089,12 @@ namespace MonoTests.System.Data
                                                                                                                              
 			XmlSerializer serializer = new XmlSerializer (typeof (DataSet));
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xw = new XmlTextWriter (sw);
-			xw.QuoteChar = '\'';
+			XmlWriter xw = XmlWriter.Create (sw);
 			serializer.Serialize (xw, prevDs);
 
                         // Deserialization begins
-			StringReader sr = new StringReader (sw.ToString ());
-			XmlTextReader reader = new XmlTextReader (sr);
+			StringReader sr = new StringReader (sw.ToString ().Replace ("\"", "'"));
+			XmlReader reader = XmlReader.Create (sr);
 			XmlSerializer serializer1 = new XmlSerializer (typeof (DataSet));
 			DataSet ds = serializer1.Deserialize (reader) as DataSet;
                         Assert.AreEqual (
@@ -2101,6 +2107,7 @@ namespace MonoTests.System.Data
 				"deserialization after modification oes not give current values");
                 }
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void Bug420862 ()
 		{
@@ -2127,6 +2134,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.Fail ();
 		}
+#endif
 
                 /// <summary>
                 /// Test for testing DataSet.Clear method with foriegn key relations
@@ -2294,6 +2302,7 @@ namespace MonoTests.System.Data
 
 #if NET_2_0
 
+#if !WINDOWS_STORE_APP
 		// it is basically a test for XmlSerializer, but I need it
 		// here to not add dependency on sys.data.dll in sys.xml test.
 		[Test]
@@ -2303,6 +2312,7 @@ namespace MonoTests.System.Data
 			// it used to cause "missing GetDataSetSchema" error.
 			imp.ImportTypeMapping (typeof (MonkeyDataSet));
 		}
+#endif
 
 		#region DataSet.CreateDataReader Tests and DataSet.Load Tests
 
@@ -2401,10 +2411,11 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CreateDataReaderNoTable () {
 			DataSet dsr = new DataSet ();
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			DataTableReader dtr = dsr.CreateDataReader ();
+			});
 		}
 
 		internal struct fillErrorStruct {
@@ -2442,7 +2453,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Load_TableUnknown () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadTableUnknown");
@@ -2451,7 +2461,9 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			// table2 is not added to dsLoad [dsLoad.Tables.Add (table2);]
 			DataTableReader dtr = ds.CreateDataReader ();
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
+			});
 		}
 
 		[Test]
@@ -2475,7 +2487,6 @@ namespace MonoTests.System.Data
 				     fillErrorHandler, table1, table2);
 		}
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Load_TableConflictF () {
 			fillErrCounter = 0;
 			fillErr[0].init ("Table1", 1, false,
@@ -2488,8 +2499,10 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			dsLoad.Load (dtr, LoadOption.Upsert,
 				     fillErrorHandler, table1, table2);
+			});
 		}
 
 		[Test]

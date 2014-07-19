@@ -33,9 +33,13 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-#if NET_2_0
+#if NET_2_0 && !INCLUDE_MONO_XML_SCHEMA
 	public
 #else
 	internal

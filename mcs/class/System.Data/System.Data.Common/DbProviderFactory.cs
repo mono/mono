@@ -34,7 +34,9 @@
 
 using System.Collections;
 using System.Security;
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbProviderFactory
@@ -93,10 +95,12 @@ namespace System.Data.Common {
 			throw CreateNotImplementedException ();
 		}
 
+#if !WINDOWS_STORE_APP
 		public virtual CodeAccessPermission CreatePermission (PermissionState state)
 		{
 			throw CreateNotImplementedException ();
 		}
+#endif
 
 		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{

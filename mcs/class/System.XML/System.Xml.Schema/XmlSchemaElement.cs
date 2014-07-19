@@ -32,12 +32,21 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaElement.
 	/// </summary>
-	public class XmlSchemaElement : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	class XmlSchemaElement : XmlSchemaParticle
 	{
 		private XmlSchemaDerivationMethod block;
 		private XmlSchemaObjectCollection constraints;

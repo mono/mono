@@ -28,13 +28,16 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public abstract class DbException : ExternalException
 	{
 		protected DbException ()
@@ -50,15 +53,19 @@ namespace System.Data.Common {
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		protected DbException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
-		protected DbException (string message, int errorCode) : base(message,errorCode) 
+		protected DbException (string message, int errorCode) 
+			: base(message, errorCode) 
 		{
 		}
 	}
 }
 
+#endif
 #endif

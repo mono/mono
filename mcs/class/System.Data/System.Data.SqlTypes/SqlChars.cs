@@ -42,9 +42,16 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
-	public sealed class SqlChars : INullable, IXmlSerializable, ISerializable
+#else
+	[XmlRoot("string")]
+#endif
+	public sealed class SqlChars : INullable, IXmlSerializable
+#if !WINDOWS_STORE_APP
+		, ISerializable
+#endif
 	{
 		#region Fields
 
@@ -225,7 +232,13 @@ namespace System.Data.SqlTypes
 			if (count + offset > Length)
 				actualCount = Length - offset;
 			
-			Array.Copy (this.buffer, offset, buffer, offsetInBuffer, actualCount);
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (offset < Int32.MinValue || offset > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("dataIndex",
+					Locale.GetText ("Must be in the Int32 range."));
+
+			Array.Copy (this.buffer, (int) offset, buffer, offsetInBuffer, (int) actualCount);
 			
 			return actualCount;
 		}
@@ -257,9 +270,16 @@ namespace System.Data.SqlTypes
 			    count + offset <= MaxLength)
 				SetLength (count);
 			
-			Array.Copy (buffer, offsetInBuffer, this.buffer, offset, count);
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (offset < Int32.MinValue || offset > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("dataIndex",
+					Locale.GetText ("Must be in the Int32 range."));
+
+			Array.Copy (buffer, offsetInBuffer, this.buffer, (int) offset, count);
 		}
 
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -271,6 +291,7 @@ namespace System.Data.SqlTypes
 			}
 			return new XmlQualifiedName ("string", "http://www.w3.org/2001/XMLSchema");
 		}
+#endif
 		
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
@@ -316,11 +337,13 @@ namespace System.Data.SqlTypes
 			writer.WriteString (this.buffer.ToString ());
 		}
 
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		#endregion
 	}

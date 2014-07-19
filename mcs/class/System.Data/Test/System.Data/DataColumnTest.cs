@@ -40,8 +40,20 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlTypes;
-
+using System.IO;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+#endif
 
 namespace MonoTests.System.Data 
 {
@@ -348,16 +360,18 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (DataException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
+		[Category("NotWorking")]
 		public void ChangeTypeAfterSettingDefaultValue ()
 		{
 			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));
 			col.DefaultValue = true;
+#if NET_2_0
+			AssertHelpers.AssertThrowsException<DataException>(() => {
+#else
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
+#endif
 			col.DataType = typeof (int);
+			});
 		}
 
 		[Test]
@@ -758,10 +772,10 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, table.Rows [0] ["result_min"], "#E1");
 			Assert.AreEqual (DBNull.Value, table.Rows [1] ["result_min"], "#E2");
 
-			Assert.AreEqual (0, table.Rows [0] ["result_var"], "#F1");
+			Assert.AreEqual (0D, table.Rows [0] ["result_var"], "#F1");
 			Assert.AreEqual (DBNull.Value, table.Rows [1] ["result_var"], "#F2");
 
-			Assert.AreEqual (0, table.Rows [0] ["result_stdev"], "#G1");
+			Assert.AreEqual (0D, table.Rows [0] ["result_stdev"], "#G1");
 			Assert.AreEqual (DBNull.Value, table.Rows [1] ["result_stdev"], "#G2");
 		}
 
@@ -836,8 +850,9 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		//passes in ms.net but looks more like a bug in ms.net
 		[Test]
-		[Ignore ("passes in ms.net but looks more like a bug in ms.net")]
+		[Ignore]
 		public void ExpressionColumns_CheckConversions ()
 		{
 			DataTable table = new DataTable ();

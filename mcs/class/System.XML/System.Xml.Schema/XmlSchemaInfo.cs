@@ -29,10 +29,21 @@
 //
 
 #if NET_2_0
+using System;
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	[MonoTODO]
-	public class XmlSchemaInfo : IXmlSchemaInfo
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaInfo : IXmlSchemaInfo
 	{
 		bool isDefault;
 		bool isNil;

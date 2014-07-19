@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 namespace System.Data.SqlClient
 {
@@ -75,5 +76,6 @@ namespace System.Data.SqlClient
 	}
 }
 
+#endif
 #endif
 

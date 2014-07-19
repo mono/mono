@@ -23,13 +23,25 @@
 //
 using System;
 using System.Collections;
+#if WINDOWS_STORE_APP
+using CollectionBase = System.Collections.Generic.List<Mono.Xml.Schema.XmlSchemaObject>;
+#endif
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaObjectCollection.
 	/// </summary>
-	public class XmlSchemaObjectCollection : System.Collections.CollectionBase
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaObjectCollection : CollectionBase
 	{
 //		private XmlSchemaObject parent;
 
@@ -43,6 +55,7 @@ namespace System.Xml.Schema
 //			this.parent = parent;
 		}
 
+#if !WINDOWS_STORE_APP
 		// Properties
 		public virtual XmlSchemaObject this[ int index ] 
 		{  
@@ -107,5 +120,6 @@ namespace System.Xml.Schema
 		{
 			this.List.Remove(item);
 		}
+#endif
 	}
 }

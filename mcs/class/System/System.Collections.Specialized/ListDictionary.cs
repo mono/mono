@@ -29,7 +29,9 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Specialized
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public class ListDictionary : IDictionary, ICollection, IEnumerable {
 		private int count;
 		private int version;
@@ -223,7 +225,9 @@ namespace System.Collections.Specialized
 		}
 
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 		private class DictionaryNode {
 			public object key;
 			public object value;

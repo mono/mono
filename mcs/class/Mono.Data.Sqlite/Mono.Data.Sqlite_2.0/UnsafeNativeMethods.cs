@@ -10,12 +10,16 @@ namespace Mono.Data.Sqlite
   using System;
   using System.Security;
   using System.Runtime.InteropServices;
+#if WINDOWS_PHONE
+  using Mono.Data.Sqlite.DllImport;
+#endif
 
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   [SuppressUnmanagedCodeSecurity]
 #endif
   internal static class UnsafeNativeMethods
   {
+#if !WINDOWS_PHONE
 #if !SQLITE_STANDARD
 
 #if !USE_INTEROP_DLL
@@ -175,7 +179,7 @@ namespace Mono.Data.Sqlite
 #else
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
 #endif
-    internal static extern int sqlite3_open16(string fileName, out IntPtr db);
+    internal static extern int sqlite3_open16 (byte[] fileName, out IntPtr db);
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
@@ -621,21 +625,21 @@ namespace Mono.Data.Sqlite
 #else
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
 #endif
-    internal static extern int sqlite3_bind_text16(IntPtr stmt, int index, string value, int nlen, IntPtr pvReserved);
+    internal static extern int sqlite3_bind_text16 (IntPtr stmt, int index, byte[] value, int nlen, IntPtr pvReserved);
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 #else
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
 #endif
-    internal static extern void sqlite3_result_error16(IntPtr context, string strName, int nLen);
+    internal static extern void sqlite3_result_error16 (IntPtr context, byte[] strName, int nLen);
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 #else
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
 #endif
-    internal static extern void sqlite3_result_text16(IntPtr context, string strName, int nLen, IntPtr pvReserved);
+    internal static extern void sqlite3_result_text16 (IntPtr context, byte[] strName, int nLen, IntPtr pvReserved);
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
@@ -715,6 +719,335 @@ namespace Mono.Data.Sqlite
     internal static extern int sqlite3_free (IntPtr ptr);
 
     #endregion
+#else
+    internal static int sqlite3_close (IntPtr db)
+    {
+        return NativeWrapper.sqlite3_close (db.ToInt64 ());
+    }
+    internal static int sqlite3_create_function (IntPtr db, byte[] strName, int nArgs, int nType, IntPtr pvUser, SQLiteCallback func, SQLiteCallback fstep, SQLiteFinalCallback ffinal)
+    {
+        return NativeWrapper.sqlite3_create_function (db.ToInt64 (), strName, nArgs, nType, pvUser.ToInt64 (), GetFunctionPtr (func), GetFunctionPtr (fstep), GetFunctionPtr (ffinal));
+    }
+    internal static int sqlite3_finalize (IntPtr stmt)
+    {
+        return NativeWrapper.sqlite3_finalize (stmt.ToInt64 ());
+    }
+    internal static int sqlite3_open_v2 (byte[] utf8Filename, out IntPtr db, int flags, IntPtr vfs)
+    {
+      long dbPtr;
+      int res = NativeWrapper.sqlite3_open_v2 (utf8Filename, out dbPtr, flags, vfs.ToInt64 ());
+      db = new IntPtr (dbPtr);
+      return res;
+    }
+    internal static int sqlite3_open (byte[] utf8Filename, out IntPtr db)
+    {
+      long dbPtr;
+      int res = NativeWrapper.sqlite3_open (utf8Filename, out dbPtr);
+      db = new IntPtr (dbPtr);
+      return res;
+    }
+    internal static int sqlite3_open16 (byte[] fileName, out IntPtr db)
+    {
+      long dbPtr;
+      int res = NativeWrapper.sqlite3_open16 (fileName, out dbPtr);
+      db = new IntPtr (dbPtr);
+      return res;
+    }
+    internal static int sqlite3_reset (IntPtr stmt)
+    {
+        return NativeWrapper.sqlite3_reset (stmt.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_bind_parameter_name (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_bind_parameter_name (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_database_name (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_database_name (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_database_name16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_database_name16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_decltype (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_decltype (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_decltype16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_decltype16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_name (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_name (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_name16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_name16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_origin_name (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_origin_name (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_origin_name16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_origin_name16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_table_name (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_table_name (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_table_name16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_table_name16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_text (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_text (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_text16 (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_text16 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_errmsg (IntPtr db)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_errmsg (db.ToInt64 ());
+    }
+    internal static int sqlite3_prepare (IntPtr db, IntPtr pSql, int nBytes, out IntPtr stmt, out IntPtr ptrRemain)
+    {
+        long stmtPtr;
+        long ptrRemainPtr;
+        int res = NativeWrapper.sqlite3_prepare (db.ToInt64 (), pSql.ToInt64 (), nBytes, out stmtPtr, out ptrRemainPtr);
+        stmt = new IntPtr (stmtPtr);
+        ptrRemain = new IntPtr (ptrRemainPtr);
+        return res;
+    }
+    internal static int sqlite3_table_column_metadata (IntPtr db, byte[] dbName, byte[] tblName, byte[] colName, out IntPtr ptrDataType, out IntPtr ptrCollSeq, out int notNull, out int primaryKey, out int autoInc)
+    {
+        long ptrDataTypePtr;
+        long ptrCollSeqPtr;
+        int res = NativeWrapper.sqlite3_table_column_metadata (db.ToInt64 (), dbName, tblName, colName, out ptrDataTypePtr, out ptrCollSeqPtr, out notNull, out primaryKey, out autoInc);
+        ptrDataType = new IntPtr (ptrDataTypePtr);
+        ptrCollSeq = new IntPtr (ptrCollSeqPtr);
+        return res;
+    }
+    internal static IntPtr sqlite3_value_text (IntPtr p)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_value_text (p.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_value_text16 (IntPtr p)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_value_text16 (p.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_libversion ()
+    {
+        return (IntPtr)NativeWrapper.sqlite3_libversion ();
+    }
+    internal static void sqlite3_interrupt (IntPtr db)
+    {
+        NativeWrapper.sqlite3_interrupt (db.ToInt64 ());
+    }
+    internal static int sqlite3_changes (IntPtr db)
+    {
+        return NativeWrapper.sqlite3_changes (db.ToInt64 ());
+    }
+    internal static int sqlite3_busy_timeout (IntPtr db, int ms)
+    {
+        return NativeWrapper.sqlite3_busy_timeout (db.ToInt64 (), ms);
+    }
+    internal static int sqlite3_bind_blob (IntPtr stmt, int index, Byte[] value, int nSize, IntPtr nTransient)
+    {
+        return NativeWrapper.sqlite3_bind_blob (stmt.ToInt64 (), index, value, nSize, nTransient.ToInt64 ());
+    }
+    internal static int sqlite3_bind_double (IntPtr stmt, int index, double value)
+    {
+        return NativeWrapper.sqlite3_bind_double (stmt.ToInt64 (), index, value);
+    }
+    internal static int sqlite3_bind_int (IntPtr stmt, int index, int value)
+    {
+        return NativeWrapper.sqlite3_bind_int (stmt.ToInt64 (), index, value);
+    }
+    internal static int sqlite3_bind_int64 (IntPtr stmt, int index, long value)
+    {
+        return NativeWrapper.sqlite3_bind_int64 (stmt.ToInt64 (), index, value);
+    }
+    internal static int sqlite3_bind_null (IntPtr stmt, int index)
+    {
+        return NativeWrapper.sqlite3_bind_null (stmt.ToInt64 (), index);
+    }
+    internal static int sqlite3_bind_text (IntPtr stmt, int index, byte[] value, int nlen, IntPtr pvReserved)
+    {
+        return NativeWrapper.sqlite3_bind_text (stmt.ToInt64 (), index, value, nlen, pvReserved.ToInt64 ());
+    }
+    internal static int sqlite3_bind_parameter_count (IntPtr stmt)
+    {
+        return NativeWrapper.sqlite3_bind_parameter_count (stmt.ToInt64 ());
+    }
+    internal static int sqlite3_bind_parameter_index (IntPtr stmt, byte[] strName)
+    {
+        return NativeWrapper.sqlite3_bind_parameter_index (stmt.ToInt64 (), strName);
+    }
+    internal static int sqlite3_column_count (IntPtr stmt)
+    {
+        return NativeWrapper.sqlite3_column_count (stmt.ToInt64 ());
+    }
+    internal static int sqlite3_step (IntPtr stmt)
+    {
+        return NativeWrapper.sqlite3_step (stmt.ToInt64 ());
+    }
+    internal static double sqlite3_column_double (IntPtr stmt, int index)
+    {
+        return NativeWrapper.sqlite3_column_double (stmt.ToInt64 (), index);
+    }
+    internal static int sqlite3_column_int (IntPtr stmt, int index)
+    {
+        return NativeWrapper.sqlite3_column_int (stmt.ToInt64 (), index);
+    }
+    internal static long sqlite3_column_int64 (IntPtr stmt, int index)
+    {
+        return NativeWrapper.sqlite3_column_int64 (stmt.ToInt64 (), index);
+    }
+    internal static IntPtr sqlite3_column_blob (IntPtr stmt, int index)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_column_blob (stmt.ToInt64 (), index);
+    }
+    internal static int sqlite3_column_bytes (IntPtr stmt, int index)
+    {
+        return NativeWrapper.sqlite3_column_bytes (stmt.ToInt64 (), index);
+    }
+    internal static TypeAffinity sqlite3_column_type (IntPtr stmt, int index)
+    {
+        return (TypeAffinity)NativeWrapper.sqlite3_column_type (stmt.ToInt64 (), index);
+    }
+    internal static int sqlite3_create_collation (IntPtr db, byte[] strName, int nType, IntPtr pvUser, SQLiteCollation func)
+    {
+        return NativeWrapper.sqlite3_create_collation (db.ToInt64 (), strName, nType, pvUser.ToInt64 (), GetFunctionPtr (func));
+    }
+    internal static int sqlite3_aggregate_count (IntPtr context)
+    {
+        return NativeWrapper.sqlite3_aggregate_count (context.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_value_blob (IntPtr p)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_value_blob (p.ToInt64 ());
+    }
+    internal static int sqlite3_value_bytes (IntPtr p)
+    {
+        return NativeWrapper.sqlite3_value_bytes (p.ToInt64 ());
+    }
+    internal static double sqlite3_value_double (IntPtr p)
+    {
+        return NativeWrapper.sqlite3_value_double (p.ToInt64 ());
+    }
+    internal static int sqlite3_value_int (IntPtr p)
+    {
+        return NativeWrapper.sqlite3_value_int (p.ToInt64 ());
+    }
+    internal static long sqlite3_value_int64 (IntPtr p)
+    {
+        return NativeWrapper.sqlite3_value_int64 (p.ToInt64 ());
+    }
+    internal static TypeAffinity sqlite3_value_type (IntPtr p)
+    {
+        return (TypeAffinity)NativeWrapper.sqlite3_value_type (p.ToInt64 ());
+    }
+    internal static void sqlite3_result_blob (IntPtr context, byte[] value, int nSize, IntPtr pvReserved)
+    {
+        NativeWrapper.sqlite3_result_blob (context.ToInt64 (), value, nSize, pvReserved.ToInt64 ());
+    }
+    internal static void sqlite3_result_double (IntPtr context, double value)
+    {
+        NativeWrapper.sqlite3_result_double (context.ToInt64 (), value);
+    }
+    internal static void sqlite3_result_error (IntPtr context, byte[] strErr, int nLen)
+    {
+        NativeWrapper.sqlite3_result_error (context.ToInt64 (), strErr, nLen);
+    }
+    internal static void sqlite3_result_int (IntPtr context, int value)
+    {
+        NativeWrapper.sqlite3_result_int (context.ToInt64 (), value);
+    }
+    internal static void sqlite3_result_int64 (IntPtr context, long value)
+    {
+        NativeWrapper.sqlite3_result_int64 (context.ToInt64 (), value);
+    }
+    internal static void sqlite3_result_null (IntPtr context)
+    {
+        NativeWrapper.sqlite3_result_null (context.ToInt64 ());
+    }
+    internal static void sqlite3_result_text (IntPtr context, byte[] value, int nLen, IntPtr pvReserved)
+    {
+        NativeWrapper.sqlite3_result_text (context.ToInt64 (), value, nLen, pvReserved.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_aggregate_context (IntPtr context, int nBytes)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_aggregate_context (context.ToInt64 (), nBytes);
+    }
+    internal static int sqlite3_bind_text16 (IntPtr stmt, int index, byte[] value, int nlen, IntPtr pvReserved)
+    {
+        return NativeWrapper.sqlite3_bind_text16 (stmt.ToInt64 (), index, value, nlen, pvReserved.ToInt64 ());
+    }
+    internal static void sqlite3_result_error16 (IntPtr context, byte[] strName, int nLen)
+    {
+        NativeWrapper.sqlite3_result_error16 (context.ToInt64 (), strName, nLen);
+    }
+    internal static void sqlite3_result_text16 (IntPtr context, byte[] strName, int nLen, IntPtr pvReserved)
+    {
+        NativeWrapper.sqlite3_result_text16 (context.ToInt64 (), strName, nLen, pvReserved.ToInt64 ());
+    }
+    internal static int sqlite3_key (IntPtr db, byte[] key, int keylen)
+    {
+        return NativeWrapper.sqlite3_key (db.ToInt64 (), key, keylen);
+    }
+    internal static int sqlite3_rekey (IntPtr db, byte[] key, int keylen)
+    {
+        return NativeWrapper.sqlite3_rekey (db.ToInt64 (), key, keylen);
+    }
+    internal static IntPtr sqlite3_update_hook (IntPtr db, SQLiteUpdateCallback func, IntPtr pvUser)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_update_hook (db.ToInt64 (), GetFunctionPtr (func), pvUser.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_commit_hook (IntPtr db, SQLiteCommitCallback func, IntPtr pvUser)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_commit_hook (db.ToInt64 (), GetFunctionPtr (func), pvUser.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_rollback_hook (IntPtr db, SQLiteRollbackCallback func, IntPtr pvUser)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_rollback_hook (db.ToInt64 (), GetFunctionPtr (func), pvUser.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_db_handle (IntPtr stmt)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_db_handle (stmt.ToInt64 ());
+    }
+    internal static IntPtr sqlite3_next_stmt (IntPtr db, IntPtr stmt)
+    {
+        return (IntPtr)NativeWrapper.sqlite3_next_stmt (db.ToInt64 (), stmt.ToInt64 ());
+    }
+    internal static int sqlite3_exec (IntPtr db, byte[] strSql, IntPtr pvCallback, IntPtr pvParam, out IntPtr errMsg)
+    {
+        long errMsgPtr;
+        int res = NativeWrapper.sqlite3_exec (db.ToInt64 (), strSql, pvCallback.ToInt64 (), pvParam.ToInt64 (), out errMsgPtr);
+        errMsg = new IntPtr (errMsgPtr);
+        return res;
+    }
+    internal static int sqlite3_config (SQLiteConfig config)
+    {
+        return NativeWrapper.sqlite3_config ((int)config);
+    }
+    internal static int sqlite3_free (IntPtr ptr)
+    {
+        NativeWrapper.sqlite3_free (ptr.ToInt64 ());
+        return 0;
+    }
+    private static long GetFunctionPtr (Delegate d)
+    {
+        if (d == null)
+        {
+            return IntPtr.Zero.ToInt64 ();
+        }
+        return Marshal.GetFunctionPointerForDelegate (d).ToInt64 ();
+    }
+#endif
   }
 
 #if PLATFORM_COMPACTFRAMEWORK

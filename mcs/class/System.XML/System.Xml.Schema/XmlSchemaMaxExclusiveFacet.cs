@@ -24,12 +24,21 @@
 using System;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaMaxExclusiveFacet.
 	/// </summary>
-	public class XmlSchemaMaxExclusiveFacet : XmlSchemaFacet
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaMaxExclusiveFacet : XmlSchemaFacet
 	{
 		const string xmlname = "maxExclusive";
 

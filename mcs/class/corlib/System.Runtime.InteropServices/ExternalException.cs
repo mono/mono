@@ -35,8 +35,10 @@ using System.Globalization;
 
 namespace System.Runtime.InteropServices
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
 	[ComVisible (true)]
+#endif
 	public class ExternalException : SystemException
 	{
 		public ExternalException ()
@@ -51,9 +53,11 @@ namespace System.Runtime.InteropServices
 			HResult = -2147467259;
 		}
 
+#if !WINDOWS_STORE_APP
 		protected ExternalException(SerializationInfo info, StreamingContext context)
 			: base (info, context) {
 		}
+#endif
 
 		public ExternalException (string message, Exception inner)
 			: base (message, inner)

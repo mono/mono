@@ -35,6 +35,10 @@ using System.Collections;
 using System.Data;
 using System.ComponentModel;
 
+#if NETFX_CORE
+using IConvertible = System.Object;
+#endif
+
 namespace Mono.Data.SqlExpressions {
 	internal enum ReferencedTable {
 		Self,

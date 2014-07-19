@@ -37,7 +37,9 @@ namespace System.Data
 	/// <summary>
 	/// Specifies how a DataColumn is mapped.
 	/// </summary>
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public enum MappingType
 	{
 		Element = 1,

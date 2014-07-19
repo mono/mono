@@ -58,13 +58,19 @@ using Mono.Data.SqlExpressions;
 
 namespace System.Data {
 	//[Designer]
+#if !WINDOWS_STORE_APP
 	[ToolboxItem (false)]
 	[DefaultEvent ("RowChanging")]
 	[DefaultProperty ("TableName")]
 	[DesignTimeVisible (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	[Serializable]
-	public partial class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable {
+#endif
+	public partial class DataTable : MarshalByValueComponent, IDisposable
+#if !WINDOWS_STORE_APP
+		, IListSource, ISerializable, ISupportInitialize
+#endif
+	{
 		#region Fields
 
 		internal DataSet dataSet;
@@ -85,7 +91,9 @@ namespace System.Data {
 		private string _prefix;
 		private UniqueConstraint _primaryKeyConstraint;
 		private DataRowCollection _rows;
+#if !WINDOWS_STORE_APP
 		private ISite _site;
+#endif
 		private string _tableName;
 		internal bool _duringDataLoad;
 		internal bool _nullConstraintViolationDuringDataLoad;
@@ -101,7 +109,9 @@ namespace System.Data {
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
 		private bool _virginCaseSensitive = true;
 
+#if !WINDOWS_STORE_APP
 		private PropertyDescriptorCollection _propertyDescriptorsCache;
+#endif
 		static DataColumn[] _emptyColumnArray = new DataColumn[0];
 
 		// Regex to parse the Sort string.
@@ -126,7 +136,9 @@ namespace System.Data {
 			_caseSensitive = false;	 	//default value
 			_displayExpression = null;
 			_primaryKeyConstraint = null;
+#if !WINDOWS_STORE_APP
 			_site = null;
+#endif
 			_rows = new DataRowCollection (this);
 			_indexes = new ArrayList();
 			_recordCache = new RecordCache(this);
@@ -147,6 +159,7 @@ namespace System.Data {
 			_tableName = tableName;
 		}
 
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
@@ -191,6 +204,7 @@ namespace System.Data {
 			}
 #endif
 		}
+#endif
 
 		/// <summary>
 		/// Indicates whether string comparisons within the table are case-sensitive.
@@ -258,11 +272,13 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Returns the child relations for this table.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ChildRelations {
 			get { return _childRelations; }
 		}
@@ -270,11 +286,13 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds the columns for this table.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataColumnCollection Columns {
 			get { return _columnCollection; }
 		}
@@ -282,11 +300,13 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of constraints maintained by this table.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds the constraints for this table.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ConstraintCollection Constraints {
 			get { return _constraintCollection; }
 #if NET_2_0
@@ -297,11 +317,13 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the DataSet to which this table belongs.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
 		}
@@ -310,7 +332,9 @@ namespace System.Data {
 		/// Gets a customized view of the table which may
 		/// include a filtered view, or a cursor position.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("This is the default DataView for the table.")]
 #endif
@@ -335,7 +359,9 @@ namespace System.Data {
 		/// Gets or sets the expression that will return
 		/// a value used to represent this table in the user interface.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The expression used to compute the data-bound value of this row.")]
 #endif
@@ -348,8 +374,10 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of customized user information.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
 #endif
@@ -362,7 +390,9 @@ namespace System.Data {
 		/// any of the_rows in any of the tables of the DataSet to
 		/// which the table belongs.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Returns whether the table has errors.")]
 #endif
@@ -412,7 +442,9 @@ namespace System.Data {
 		/// <summary>
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates an initial starting size for this table.")]
 #endif
@@ -426,7 +458,9 @@ namespace System.Data {
 		/// Gets or sets the namespace for the XML represenation
 		/// of the data stored in the DataTable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
 #endif
@@ -445,11 +479,13 @@ namespace System.Data {
 		/// Gets the collection of parent relations for
 		/// this DataTable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Returns the parent relations for this table.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ParentRelations {
 			get { return _parentRelations; }
 		}
@@ -458,7 +494,9 @@ namespace System.Data {
 		/// Gets or sets the namespace for the XML represenation
 		///  of the data stored in the DataTable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the Prefix of the namespace used for this table in XML representation.")]
 #endif
@@ -479,12 +517,14 @@ namespace System.Data {
 		/// Gets or sets an array of columns that function as
 		/// primary keys for the data table.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
 #endif
-		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
 		public DataColumn[] PrimaryKey {
 			get {
 				if (_primaryKeyConstraint == null)
@@ -553,7 +593,9 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the collection that holds the rows of data for this table.")]
 #endif
@@ -561,6 +603,7 @@ namespace System.Data {
 			get { return _rows; }
 		}
 
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// Gets or sets an System.ComponentModel.ISite
 		/// for the DataTable.
@@ -571,25 +614,30 @@ namespace System.Data {
 			get { return _site; }
 			set { _site = value; }
 		}
+#endif
 
 		/// <summary>
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the name used to look up this table in the Tables collection of a DataSet.")]
 #endif
 		[DefaultValue ("")]
-		[RefreshProperties (RefreshProperties.All)]
 		public string TableName {
 			get { return _tableName == null ? "" : _tableName; }
 			set { _tableName = value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		bool IListSource.ContainsListCollection {
 			// the collection is a DataView
 			get { return false; }
 		}
+#endif
 
 		internal RecordCache RecordCache {
 			get { return _recordCache; }
@@ -780,7 +828,7 @@ namespace System.Data {
 		public virtual DataTable Clone ()
 		{
 			 // Use Activator so we can use non-public constructors.
-			DataTable Copy = (DataTable) Activator.CreateInstance (GetType (), true);
+			DataTable Copy = CreateInstance ();
 			CopyProperties (Copy);
 			return Copy;
 		}
@@ -855,7 +903,7 @@ namespace System.Data {
 			Copy.DisplayExpression = DisplayExpression;
 			if (ExtendedProperties.Count > 0) {
 				//  Cannot copy extended properties directly as the property does not have a set accessor
-				Array tgtArray = Array.CreateInstance (typeof (object), ExtendedProperties.Count);
+				object[] tgtArray = new object[ExtendedProperties.Count];
 				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
 				for (int i=0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
@@ -865,7 +913,9 @@ namespace System.Data {
 			Copy.Namespace = Namespace;
 			// Copy.ParentRelations
 			Copy.Prefix = Prefix;
+#if !WINDOWS_STORE_APP
 			Copy.Site = Site;
+#endif
 			Copy.TableName = TableName;
 
 			bool isEmpty = Copy.Columns.Count == 0;
@@ -1026,7 +1076,7 @@ namespace System.Data {
 		/// </summary>
 		protected virtual DataTable CreateInstance ()
 		{
-			return Activator.CreateInstance (this.GetType (), true) as DataTable;
+			return TypeUtil.CreateInstance (GetType ()) as DataTable;
 		}
 
 		/// <summary>
@@ -1037,6 +1087,7 @@ namespace System.Data {
 			return typeof (DataRow);
 		}
 
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure
 		///
@@ -1050,6 +1101,7 @@ namespace System.Data {
 			IList list = (IList) DefaultView;
 			return list;
 		}
+#endif
 
 		/// <summary>
 		/// Copies a DataRow into a DataTable, preserving any
@@ -1095,6 +1147,7 @@ namespace System.Data {
 			get { return _defaultValuesRowIndex; }
 		}
 
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure
 		/// </summary>
@@ -1145,6 +1198,7 @@ namespace System.Data {
 			}
 #endif
 		}
+#endif
 
 		/// <summary>
 		/// Finds and updates a specific row. If no matching row
@@ -1646,7 +1700,9 @@ namespace System.Data {
 		/// Occurs when after a value has been changed for
 		/// the specified DataColumn in a DataRow.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs when a value has been changed for this column.")]
 #endif
@@ -1656,7 +1712,9 @@ namespace System.Data {
 		/// Occurs when a value is being changed for the specified
 		/// DataColumn in a DataRow.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs when a value has been submitted for this column.  The user can modify the proposed value and should throw an exception to cancel the edit.")]
 #endif
@@ -1665,7 +1723,9 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after a DataRow has been changed successfully.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs after a row in the table has been successfully edited.")]
 #endif
@@ -1674,7 +1734,9 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs when a DataRow is changing.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs when the row is being changed so that the event handler can modify or cancel the change. The user can modify values in the row and should throw an  exception to cancel the edit.")]
 #endif
@@ -1683,7 +1745,9 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after a row in the table has been deleted.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs after a row in the table has been successfully deleted.")]
 #endif
@@ -1692,7 +1756,9 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Occurs when a row in the table marked for deletion.  Throw an exception to cancel the deletion.")]
 #endif
@@ -1733,7 +1799,7 @@ namespace System.Data {
 					columns.Add (dc);
 
 					g = match.Groups["Order"];
-					if (!g.Success || String.Compare (g.Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
+					if (!g.Success || CultureInfo.InvariantCulture.CompareInfo.Compare (g.Value, "ASC", CompareOptions.IgnoreCase) == 0)
 						sorts.Add(ListSortDirection.Ascending);
 					else
 						sorts.Add (ListSortDirection.Descending);
@@ -1755,6 +1821,7 @@ namespace System.Data {
 			return sortColumns;
 		}
 
+#if !WINDOWS_STORE_APP
 		private void UpdatePropertyDescriptorsCache ()
 		{
 			PropertyDescriptor[] descriptors = new PropertyDescriptor[Columns.Count + ChildRelations.Count];
@@ -1779,6 +1846,7 @@ namespace System.Data {
 		{
 			_propertyDescriptorsCache = null;
 		}
+#endif
 
 		internal void SetRowsID()
 		{
@@ -1791,7 +1859,9 @@ namespace System.Data {
 	}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[XmlSchemaProvider ("GetDataTableSchema")]
+#endif
 	partial class DataTable : IXmlSerializable {
 		[MonoNotSupported ("")]
 		XmlSchema IXmlSerializable.GetSchema ()
@@ -1830,29 +1900,28 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
+#if !WINDOWS_STORE_APP
 		public static XmlSchemaComplexType GetDataTableSchema (XmlSchemaSet schemaSet)
 		{
 			return new XmlSchemaComplexType ();
 		}
+#endif
 
 		public XmlReadMode ReadXml (Stream stream)
 		{
-			return ReadXml (new XmlTextReader(stream, null));
+			return ReadXml (XmlReader.Create (stream));
 		}
 
 		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlReader reader = new XmlTextReader (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader);
-			} finally {
-				reader.Close();
 			}
 		}
 
 		public XmlReadMode ReadXml (TextReader reader)
 		{
-			return ReadXml (new XmlTextReader (reader));
+			return ReadXml (XmlReader.Create (reader));
 		}
 
 		public XmlReadMode ReadXml (XmlReader reader)
@@ -1978,23 +2047,18 @@ namespace System.Data {
 
 		public void ReadXmlSchema (Stream stream)
 		{
-			ReadXmlSchema (new XmlTextReader (stream));
+			ReadXmlSchema (XmlReader.Create (stream));
 		}
 
 		public void ReadXmlSchema (TextReader reader)
 		{
-			ReadXmlSchema (new XmlTextReader (reader));
+			ReadXmlSchema (XmlReader.Create (reader));
 		}
 
 		public void ReadXmlSchema (string fileName)
 		{
-			XmlTextReader reader = null;
-			try {
-				reader = new XmlTextReader (fileName);
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				ReadXmlSchema (reader);
-			} finally {
-				if (reader != null)
-					reader.Close ();
 			}
 		}
 
@@ -2100,13 +2164,9 @@ namespace System.Data {
 
 		public void WriteXml (string fileName, XmlWriteMode mode, bool writeHierarchy)
 		{
-			XmlWriter xw = null;
-			try {
-				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter xw = XmlWriter.Create (file, GetWriterSettings ())) {
 				WriteXml (xw, mode, writeHierarchy);
-			} finally {
-				if (xw != null)
-					xw.Close ();
 			}
 		}
 
@@ -2239,16 +2299,11 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlTextWriter writer = null;
-			try {
-				XmlWriterSettings s = GetWriterSettings ();
-				s.OmitXmlDeclaration = false;
-				writer = new XmlTextWriter (fileName, null);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file)) {
 				WriteXmlSchema (writer);
-			} finally {
-				if (writer != null) {
-					writer.Close ();
-				}
 			}
 		}
 
@@ -2330,24 +2385,25 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlTextWriter writer = null;
-			try {
-				XmlWriterSettings s = GetWriterSettings ();
-				s.OmitXmlDeclaration = false;
-				writer = new XmlTextWriter (fileName, null);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file)) {
 				WriteXmlSchema (writer, writeHierarchy);
-			} finally {
-				if (writer != null) {
-					writer.Close ();
-				}
 			}
 		}
 	}
 
-	partial class DataTable : ISupportInitializeNotification {
+	partial class DataTable
+#if !WINDOWS_STORE_APP
+		: ISupportInitializeNotification 
+#endif
+	{
 		private bool tableInitialized = true;
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public bool IsInitialized {
 			get { return tableInitialized; }
 		}
@@ -2528,6 +2584,7 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		void BinaryDeserializeTable (SerializationInfo info)
 		{
 			ArrayList arrayList = null;
@@ -2819,6 +2876,7 @@ namespace System.Data {
 			info.AddValue (prefix + "ColumnErrors",
 				       htColumnErrors, typeof (Hashtable));
 		}
+#endif
 
 		public DataTableReader CreateDataReader ()
 		{
@@ -2961,10 +3019,14 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after the Clear method is called on the datatable.
 		/// </summary>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 		public event DataTableClearEventHandler TableCleared;
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 		public event DataTableClearEventHandler TableClearing;
 
 		public event DataTableNewRowEventHandler TableNewRow;

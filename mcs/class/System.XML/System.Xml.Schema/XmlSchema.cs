@@ -34,13 +34,26 @@ using System.IO;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+#if WINDOWS_STORE_APP
+using XmlAttribute = System.Xml.Linq.XAttribute;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchema.
 	/// </summary>
 	[XmlRoot ("schema",Namespace=XmlSchema.Namespace)]
-	public class XmlSchema : XmlSchemaObject
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchema : XmlSchemaObject
 	{
 		//public constants
 		public const string Namespace = "http://www.w3.org/2001/XMLSchema";
@@ -269,7 +282,13 @@ namespace System.Xml.Schema
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
 		public void Compile (ValidationEventHandler validationEventHandler)
 		{
-			Compile (validationEventHandler, new XmlUrlResolver ());
+			Compile (validationEventHandler, 
+#if !WINDOWS_STORE_APP
+				new XmlUrlResolver ()
+#else
+				null
+#endif
+				);
 		}
 
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
@@ -372,10 +391,12 @@ namespace System.Xml.Schema
 				compilationItems.Add (Items [i]);
 			}
 
+#if !WINDOWS_STORE_APP
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++)
 				ProcessExternal (handler, handledUris, resolver, Includes [i] as XmlSchemaExternal, col);
+#endif
 
 			// Compilation phase.
 			// At least each Compile() must give unique (qualified) name for each component.
@@ -470,6 +491,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		private string GetResolvedUri (XmlResolver resolver, string relativeUri)
 		{
 			Uri baseUri = null;
@@ -537,13 +559,8 @@ namespace System.Xml.Schema
 					missedSubComponents = true;
 					return;
 				} else {
-					XmlTextReader xtr = null;
-					try {
-						xtr = new XmlTextReader (url, stream, nameTable);
+					using (XmlReader xtr = XmlReader.Create (stream, new XmlReaderSettings () { NameTable = nameTable}, url)) {
 						includedSchema = XmlSchema.Read (xtr, handler);
-					} finally {
-						if (xtr != null)
-							xtr.Close ();
 					}
 					includedSchema.schemas = schemas;
 				}
@@ -607,6 +624,7 @@ namespace System.Xml.Schema
 				if (!items.Contains (obj))
 					items.Add (obj);
 		}
+#endif
 
 		internal bool IsNamespaceAbsent (string ns)
 		{
@@ -687,11 +705,11 @@ namespace System.Xml.Schema
 		// We cannot use xml deserialization, since it does not provide line info, qname context, and so on.
 		public static XmlSchema Read (TextReader reader, ValidationEventHandler validationEventHandler)
 		{
-			return Read (new XmlTextReader (reader),validationEventHandler);
+			return Read (XmlReader.Create (reader),validationEventHandler);
 		}
 		public static XmlSchema Read (Stream stream, ValidationEventHandler validationEventHandler)
 		{
-			return Read (new XmlTextReader (stream),validationEventHandler);
+			return Read (XmlReader.Create (stream),validationEventHandler);
 		}
 
 		public static XmlSchema Read (XmlReader reader, ValidationEventHandler validationEventHandler)
@@ -911,6 +929,7 @@ namespace System.Xml.Schema
 
 		#region write
 
+#if !WINDOWS_STORE_APP
 		public void Write(System.IO.Stream stream)
 		{
 			Write(stream,null);
@@ -983,9 +1002,11 @@ namespace System.Xml.Schema
 			}
 			writer.Flush();
 		}
+#endif
 		#endregion
 	}
 
+#if !WINDOWS_STORE_APP
 	class XmlSchemaSerializer : XmlSerializer
 	{
 		protected override void Serialize (object o, XmlSerializationWriter writer)
@@ -999,6 +1020,7 @@ namespace System.Xml.Schema
 			return new XmlSchemaSerializationWriter ();
 		}
 	}
+#endif
 	
 	class CompiledSchemaMemo
 	{

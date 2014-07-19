@@ -2,41 +2,37 @@
 //
 // Author(s):	Thomas Zoechling <thomas.zoechling@gmx.at>
 
-
 using System;
 using System.Data;
 using System.IO;
 using System.Text;
 using Mono.Data.Sqlite;
-using NUnit.Framework;
-
-namespace MonoTests.Mono.Data.Sqlite
-{
-	[TestFixture]
-	public class SqliteExceptionUnitTests
-	{
-		readonly static string _uri = "SqliteTest.db";
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
-
-		public SqliteExceptionUnitTests()
-		{
-		}
-		
-		[Test]
-#if NET_2_0
-		[ExpectedException(typeof(SqliteException))]
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
 #else
-		[ExpectedException(typeof(SqliteSyntaxException))]
+using NUnit.Framework;
 #endif
-		public void WrongSyntax()
+
+namespace MonoTests.Mono.Data.Sqlite {
+	[TestFixture]
+	public class SqliteExceptionUnitTests : SqliteUnitTestsBaseWithT1 {
+		[Test]
+		public void WrongSyntax ()
 		{
-			SqliteCommand insertCmd = new SqliteCommand("INSERT INTO t1 VALUES (,')",_conn);
-			using(_conn)
-			{
-				_conn.Open();
-				int res = insertCmd.ExecuteNonQuery();
-				Assert.AreEqual(res,1);
+			SqliteCommand insertCmd = new SqliteCommand ("INSERT INTO t1 VALUES (,')", _conn);
+			using (_conn) {
+				_conn.Open ();
+				try { 
+					int res = insertCmd.ExecuteNonQuery ();
+					insertCmd.Dispose ();
+					Assert.Fail ("Expected an exception due to incorrect syntax");
+				} catch (SqliteException) {
+				}
 			}
 		}
 	}

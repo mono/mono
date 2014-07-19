@@ -28,18 +28,28 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaAny.
 	/// </summary>
-	public class XmlSchemaAny : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	class XmlSchemaAny : XmlSchemaParticle
 	{
 		static XmlSchemaAny anyTypeContent;
 		internal static XmlSchemaAny AnyTypeContent {
@@ -51,7 +61,7 @@ namespace System.Xml.Schema
 					anyTypeContent.CompileOccurence (null, null);
 					anyTypeContent.Namespace = "##any";
 					anyTypeContent.wildcard.HasValueAny = true;
-					anyTypeContent.wildcard.ResolvedNamespaces = new StringCollection ();
+					anyTypeContent.wildcard.ResolvedNamespaces = new List<String> ();
 					// It is not documented by W3C but it should be.
 					anyTypeContent.wildcard.ResolvedProcessing =
 						anyTypeContent.ProcessContents = XmlSchemaContentProcessing.Lax;
@@ -104,7 +114,7 @@ namespace System.Xml.Schema
 			get { return wildcard.HasValueTargetNamespace; }
 		}
 
-		internal StringCollection ResolvedNamespaces {
+		internal List<String> ResolvedNamespaces {
 			get { return wildcard.ResolvedNamespaces; }
 		}
 
@@ -226,7 +236,7 @@ namespace System.Xml.Schema
 		}
 
 
-		internal override void CheckRecursion (Stack depth, ValidationEventHandler h, XmlSchema schema)
+		internal override void CheckRecursion (Stack<XmlSchemaParticle> depth, ValidationEventHandler h, XmlSchema schema)
 		{
 			// do nothing
 		}

@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 using System;
 using System.IO;
@@ -125,4 +126,5 @@ namespace MonoTests.System.Data
 		}
 	}
 }
+#endif
 #endif

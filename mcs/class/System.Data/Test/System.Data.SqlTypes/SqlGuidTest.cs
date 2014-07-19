@@ -32,10 +32,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -339,12 +349,14 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (new SqlGuid("0000c864-0000-0000-0000-000007650000"), (SqlGuid)TestGuid, "#Q01");
 		}
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlGuid.GetXsdType (null);
 			Assert.AreEqual ("string", qualifiedName.Name, "#A01");
 		}
+#endif
 #endif
         }
 }

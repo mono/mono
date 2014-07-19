@@ -30,11 +30,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using NUnit.Framework;
+
 using System;
 using System.Data;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
+#endif
 #endif
 
 namespace MonoTests.System.Data
@@ -72,7 +84,7 @@ namespace MonoTests.System.Data
 
 				Assert.Fail ("Failed to throw ArgumentException.");
 			} catch (Exception e) {
-				Assert.That (e, Is.TypeOf (typeof(ArgumentException)), "test#02");
+				AssertHelpers.AssertIsInstanceOfType (e, typeof(ArgumentException), "test#02");
 			}        
 
 			//Null exception
@@ -80,7 +92,7 @@ namespace MonoTests.System.Data
 				//Should throw argument null exception
 				cst = new UniqueConstraint ((DataColumn)null);
 			} catch (Exception e) {
-				Assert.That (e, Is.TypeOf (typeof(NullReferenceException)), "test#05");
+				AssertHelpers.AssertIsInstanceOfType (e, typeof(NullReferenceException), "test#05");
 			}
 			
 			try {
@@ -144,43 +156,43 @@ namespace MonoTests.System.Data
 			//table is set on ctor
 			cst = new UniqueConstraint (_table.Columns [0]);
 			
-			Assert.That (cst.Table, Is.SameAs (_table), "B1");
+			Assert.AreSame (cst.Table, _table, "B1");
 
 			//table is set on ctor
 			cst = new UniqueConstraint (new DataColumn [] {
 				      _table.Columns[0], _table.Columns[1]});
-			Assert.That (cst.Table, Is.SameAs (_table), "B2");
+			Assert.AreSame (cst.Table, _table, "B2");
 
 			cst = new UniqueConstraint ("MyName", _table.Columns [0], true);
 
 			//Test ctor parm set for ConstraintName & IsPrimaryKey
-			Assert.That (cst.ConstraintName, Is.EqualTo ("MyName"), "ConstraintName not set in ctor.");
-			Assert.That (cst.IsPrimaryKey, Is.False, "IsPrimaryKey already set.");
+			Assert.AreEqual ("MyName", cst.ConstraintName, "ConstraintName not set in ctor.");
+			Assert.IsFalse (cst.IsPrimaryKey, "IsPrimaryKey already set.");
                 
 			_table.Constraints.Add (cst);
 
-			Assert.That (cst.IsPrimaryKey, Is.True, "IsPrimaryKey not set set.");
+			Assert.IsTrue (cst.IsPrimaryKey, "IsPrimaryKey not set set.");
                 	
-			Assert.That (_table.PrimaryKey.Length, Is.EqualTo (1), "PrimaryKey not set.");
-			Assert.That (_table.PrimaryKey [0].Unique, Is.True, "Not unigue.");
+			Assert.AreEqual (1, _table.PrimaryKey.Length, "PrimaryKey not set.");
+			Assert.IsTrue (_table.PrimaryKey [0].Unique, "Not unigue.");
 		}
 
 		[Test]
 		public void Unique ()
 		{                                                     
 			UniqueConstraint U = new UniqueConstraint (_table.Columns [0]);
-			Assert.That (_table.Columns [0].Unique, Is.False, "test#01"); 
+			Assert.IsFalse (_table.Columns [0].Unique, "test#01"); 
 			
 			U = new UniqueConstraint (new DataColumn [] {_table.Columns [0],_table.Columns [1]});     
 			
-			Assert.That (_table.Columns [0].Unique, Is.False, "test#02");
-			Assert.That (_table.Columns [1].Unique, Is.False, "test#03");
-			Assert.That (_table.Columns [2].Unique, Is.False, "test#04");
+			Assert.IsFalse (_table.Columns [0].Unique, "test#02");
+			Assert.IsFalse (_table.Columns [1].Unique, "test#03");
+			Assert.IsFalse (_table.Columns [2].Unique, "test#04");
 			
 			_table.Constraints.Add (U);
-			Assert.That (_table.Columns [0].Unique, Is.False, "test#05");
-			Assert.That (_table.Columns [1].Unique, Is.False, "test#06");
-			Assert.That (_table.Columns [2].Unique, Is.False, "test#07");
+			Assert.IsFalse (_table.Columns [0].Unique, "test#05");
+			Assert.IsFalse (_table.Columns [1].Unique, "test#06");
+			Assert.IsFalse (_table.Columns [2].Unique, "test#07");
 		}                                                     
 
 		[Test]
@@ -195,19 +207,19 @@ namespace MonoTests.System.Data
 			UniqueConstraint cst4 = new UniqueConstraint (_table.Columns [2]);
 			
 			//true
-			Assert.That (cst.Equals (cst2), Is.True, "A0");
+			Assert.IsTrue (cst.Equals (cst2), "A0");
 			
 			//false
-			Assert.That (cst.Equals (23), Is.False, "A1");
-			Assert.That (cst.Equals (cst3), Is.False, "A2");
-			Assert.That (cst3.Equals (cst), Is.False, "A3");
-			Assert.That (cst.Equals (cst4), Is.False, "A4");
+			Assert.IsFalse (cst.Equals (23), "A1");
+			Assert.IsFalse (cst.Equals (cst3), "A2");
+			Assert.IsFalse (cst3.Equals (cst), "A3");
+			Assert.IsFalse (cst.Equals (cst4), "A4");
 
 			//true
-			Assert.That (cst.GetHashCode (), Is.EqualTo (cst2.GetHashCode ()), "HashEquals");
+			Assert.AreEqual (cst2.GetHashCode (), cst.GetHashCode (), "HashEquals");
 
 			//false
-			Assert.That (cst.GetHashCode (), Is.Not.EqualTo (cst3.GetHashCode ()), "Hash Not Equals");
+			Assert.AreNotEqual (cst.GetHashCode (), cst3.GetHashCode (), "Hash Not Equals");
 		}
 
 		[Test]

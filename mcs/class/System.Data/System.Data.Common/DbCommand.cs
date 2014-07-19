@@ -48,18 +48,24 @@ namespace System.Data.Common {
 		#region Properties
 
 		[DefaultValue ("")]
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public abstract string CommandText { get; set; }
 
 		public abstract int CommandTimeout { get; set; }
 
 		[DefaultValue (CommandType.Text)]
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public abstract CommandType CommandType { get; set; }
 
 		[DefaultValue (null)]
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbConnection Connection {
 			get { return DbConnection; }
 			set { DbConnection = value; }
@@ -70,9 +76,11 @@ namespace System.Data.Common {
 		protected abstract DbTransaction DbTransaction { get; set; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[Browsable (false)]
 		[DefaultValue (true)]
+#if !WINDOWS_STORE_APP
+		[Browsable (false)]
 		[DesignOnly (true)]
+#endif
 		public abstract bool DesignTimeVisible { get; set; }
 
 		IDbConnection IDbCommand.Connection {
@@ -89,15 +97,19 @@ namespace System.Data.Common {
 			set { Transaction = (DbTransaction) value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbParameterCollection Parameters {
 			get { return DbParameterCollection; }
 		}
 
-		[Browsable (false)]
 		[DefaultValue (null)]
+#if !WINDOWS_STORE_APP
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbTransaction Transaction {
 			get { return DbTransaction; }
 			set { DbTransaction = value; }
@@ -237,7 +249,7 @@ namespace System.Data.Common {
 		}
 
 #endif
-		
+
 		#endregion // Methods
 
 	}

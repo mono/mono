@@ -35,7 +35,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public class TypedDataSetGeneratorException : DataException
 	{
 		readonly ArrayList errorList;
@@ -47,12 +49,18 @@ namespace System.Data
 		{
 		}
 
-		public TypedDataSetGeneratorException (ArrayList list)
+#if !WINDOWS_STORE_APP
+		public 
+#else
+		internal
+#endif
+		TypedDataSetGeneratorException (ArrayList list)
 			: base (Locale.GetText ("System error."))
 		{
 			errorList = list;
 		}
 
+#if !WINDOWS_STORE_APP
 		protected TypedDataSetGeneratorException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -62,6 +70,7 @@ namespace System.Data
 			for (int i=0; i < count; i++)
 				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
+#endif
 
 #if NET_2_0
 		public TypedDataSetGeneratorException (String message) : base (message)
@@ -75,12 +84,18 @@ namespace System.Data
 #endif
 		#endregion //Constructors
 
-		public ArrayList ErrorList {
+#if !WINDOWS_STORE_APP
+		public 
+#else
+		internal
+#endif		
+		ArrayList ErrorList {
 			get { return errorList; }
 		}
 
 		#region Methods
 
+#if !WINDOWS_STORE_APP
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
@@ -91,6 +106,7 @@ namespace System.Data
 			for (int i=0; i < count; i++)
 				info.AddValue ("KEY_ARRAYVALUES" + i, ErrorList [i]);
 		}
+#endif
 
 		#endregion // Methods
 	}

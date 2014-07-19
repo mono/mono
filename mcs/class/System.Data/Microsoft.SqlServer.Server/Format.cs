@@ -31,6 +31,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 namespace Microsoft.SqlServer.Server {
 	public enum Format
@@ -41,4 +42,5 @@ namespace Microsoft.SqlServer.Server {
 	}
 }
 
+#endif
 #endif

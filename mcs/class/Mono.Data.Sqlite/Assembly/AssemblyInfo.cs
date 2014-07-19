@@ -2,10 +2,12 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
+#endif
 using System.Security;
 
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
 using System.Runtime.ConstrainedExecution;
 #endif
 
@@ -32,7 +34,7 @@ using System.Runtime.ConstrainedExecution;
 [assembly: CLSCompliant(true)]
 //[assembly: InternalsVisibleTo("System.Data.SQLite.Linq, PublicKey=002400000480000094000000060200000024000052534131000400000100010005a288de5687c4e1b621ddff5d844727418956997f475eb829429e411aff3e93f97b70de698b972640925bdd44280df0a25a843266973704137cbb0e7441c1fe7cae4e2440ae91ab8cde3933febcb1ac48dd33b40e13c421d8215c18a4349a436dd499e3c385cc683015f886f6c10bd90115eb2bd61b67750839e3a19941dc9c")]
 
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
   #if NET_4_0
@@ -64,5 +66,10 @@ using System.Runtime.ConstrainedExecution;
 [assembly: AssemblyFileVersion("1.0.61.0")]
 #endif
 
+#if WINDOWS_STORE_APP
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("../mono.snk")]
+#else
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
+#endif // WINDOWS_STORE_APP

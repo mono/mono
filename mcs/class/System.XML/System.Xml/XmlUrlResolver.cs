@@ -35,10 +35,9 @@ using System.Net.Cache;
 using System.Threading.Tasks;
 #endif
 
-namespace System.Xml
-{
-	public class XmlUrlResolver : XmlResolver
-	{
+namespace System.Xml {
+
+	public class XmlUrlResolver : XmlResolver {
 		// Field
 		ICredentials credential;
 #if NET_4_5

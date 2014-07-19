@@ -47,13 +47,20 @@ namespace System.Data
 	/// Contains a default DataViewSettingCollection for each DataTable in a DataSet.
 	/// </summary>
 	//[Designer]
+#if !WINDOWS_STORE_APP
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewManagerDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-	public class DataViewManager : MarshalByValueComponent, IBindingList, ICollection, IList, ITypedList, IEnumerable
+#endif
+	public class DataViewManager : MarshalByValueComponent, IDisposable
+#if !WINDOWS_STORE_APP
+		, IBindingList, ITypedList, ICollection, IList, IEnumerable
+#endif
 	{
 		#region Fields
 
 		DataSet dataSet;
+#if !WINDOWS_STORE_APP
 		DataViewManagerListItemTypeDescriptor descriptor;
+#endif
 		DataViewSettingCollection settings;
 		string xml;
 
@@ -104,11 +111,14 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
 #endif
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 		public DataViewSettingCollection DataViewSettings {
 			get { return settings; }
 		}
 
+#if !WINDOWS_STORE_APP
 		int ICollection.Count {
 			get { return 1; }
 		}
@@ -175,6 +185,7 @@ namespace System.Data
 		bool IBindingList.SupportsSorting {
 			get { return false; }
 		}
+#endif
 
 		#endregion // Properties
 
@@ -199,8 +210,8 @@ namespace System.Data
 
 		private void ParseSettingString (string source)
 		{
-			XmlTextReader xtr = new XmlTextReader (source,
-				XmlNodeType.Element, null);
+			XmlReader xtr = XmlReader.Create (new StringReader (source),
+				new XmlReaderSettings {ConformanceLevel = ConformanceLevel.Fragment, IgnoreWhitespace = true});
 
 			xtr.Read ();
 			if (xtr.Name != "DataViewSettingCollectionString")
@@ -294,6 +305,7 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		void IBindingList.AddIndex (PropertyDescriptor property)
 		{
 		}
@@ -400,17 +412,23 @@ namespace System.Data
 			if (ListChanged != null)
 				ListChanged (this, e);
 		}
+#endif
 
 		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
+#if !WINDOWS_STORE_APP
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
+#endif
 		}
 
 		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
+#if !WINDOWS_STORE_APP
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
+#endif
 		}
 
+#if !WINDOWS_STORE_APP
 		private ListChangedEventArgs CollectionToListChangeEventArgs (CollectionChangeEventArgs e)
 		{
 			ListChangedEventArgs args;
@@ -435,12 +453,14 @@ namespace System.Data
 			
 			return args;
 		}
-
+#endif
 		#endregion // Methods
 
 		#region Events
 
+#if !WINDOWS_STORE_APP
 		public event ListChangedEventHandler ListChanged;
+#endif
 
 		#endregion // Events
 	}

@@ -24,13 +24,22 @@
 using System;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaDerivationMethod.
 	/// </summary>
 	[Flags]
-	public enum XmlSchemaDerivationMethod
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	enum XmlSchemaDerivationMethod
 	{
 		[XmlEnum("")]
 		Empty		= 0x00000000, 

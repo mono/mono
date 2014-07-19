@@ -30,17 +30,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NETFX_CORE
 using System.IO;
 using System.Net;
 using System.Security.Permissions;
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
+#endif
 
-namespace System.Xml
-{
-	public abstract class XmlResolver
-	{
+namespace System.Xml {
+
+	public abstract class XmlResolver {
+
+#if !NETFX_CORE
 #if NET_4_5
 		public virtual ICredentials Credentials {
 			set { throw new NotImplementedException (); }
@@ -94,6 +97,7 @@ namespace System.Xml
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 #endif
 	}
 }

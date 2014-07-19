@@ -297,7 +297,9 @@ namespace Mono.Data.Sqlite
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DbProviderSpecificTypeProperty(true)]
+#if !WINDOWS_STORE_APP
     [RefreshProperties(RefreshProperties.All)]
+#endif
 #endif
     public override DbType DbType
     {
@@ -424,7 +426,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets and sets the parameter value.  If no datatype was specified, the datatype will assume the type from the value given.
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [TypeConverter(typeof(StringConverter)), RefreshProperties(RefreshProperties.All)]
 #endif
     public override object Value

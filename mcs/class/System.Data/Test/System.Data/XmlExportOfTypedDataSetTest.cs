@@ -1,12 +1,14 @@
+#if NET_2_0
+#if !WINDOWS_STORE_APP
+
 using System.Xml.Serialization;
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
-{
+namespace MonoTests.System.Data {
+
 	[TestFixture]
-	public class XmlExportOfTypedDataSetTest
-	{
-#if NET_2_0
+	public class XmlExportOfTypedDataSetTest {
+
 		[Test]
 		public void ExportXmlSerializable_NestedClassMapping () {
 
@@ -29,8 +31,9 @@ namespace MonoTests.System.Data
 				new XmlReflectionMember [] { xmlReflectionMember }, true);
 
 			xmlSchemaExporter.ExportMembersMapping (xmlMembersMapping);
-
 		}
-#endif
 	}
 }
+
+#endif
+#endif

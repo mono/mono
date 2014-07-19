@@ -37,13 +37,21 @@ using System.Data.SqlTypes;
 #if TARGET_JVM
 using DivideByZeroException = System.ArithmeticException;
 #endif
-
 #if NET_2_0
 using System.Xml.Serialization;
 using System.IO;
 #endif
-
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -666,12 +674,14 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual ((long) 14, ((SqlInt64) TestShort).Value, "#G01");
 		}
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlInt64.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("long", qualifiedName.Name, "#A01");
 		}
+#endif
 
 		internal void ReadWriteXmlTestInternal (string xml, 
 						       long testval, 
@@ -681,21 +691,21 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlInt64 test1;
 			XmlSerializer ser;
 			StringWriter sw;
-			XmlTextWriter xw;
+			XmlWriter xw;
 			StringReader sr;
-			XmlTextReader xr;
+			XmlReader xr;
 
 			test = new SqlInt64 (testval);
 			ser = new XmlSerializer(typeof(SqlInt64));
 			sw = new StringWriter ();
-			xw = new XmlTextWriter (sw);
+			xw = XmlWriter.Create (sw);
 			
 			ser.Serialize (xw, test);
 
 			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
 
 			sr = new StringReader (xml);
-			xr = new XmlTextReader (sr);
+			xr = XmlReader.Create (sr);
 			test1 = (SqlInt64)ser.Deserialize (xr);
 
 			Assert.AreEqual (testval, test1.Value, unit_test_id);
@@ -717,9 +727,15 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, lngtest3, "BA03");
 				Assert.Fail ("BA03");
+#if !WINDOWS_STORE_APP
 			} catch (FormatException e) {
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
+#else
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (FormatException), e.InnerException.GetType (), "#BA03");
+			}
+#endif
 		}
 #endif
 	}

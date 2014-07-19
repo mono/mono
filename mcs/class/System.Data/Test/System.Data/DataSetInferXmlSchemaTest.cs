@@ -34,7 +34,22 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Xml;
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+#endif
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -173,7 +188,7 @@ namespace MonoTests.System.Data
 		private DataSet GetDataSet (string xml, string [] nss)
 		{
 			DataSet ds = new DataSet ();
-			ds.InferXmlSchema (new XmlTextReader (xml, XmlNodeType.Document, null), nss);
+			ds.InferXmlSchema (XmlReader.Create (new StringReader (xml), new XmlReaderSettings {ConformanceLevel=ConformanceLevel.Document}), nss);
 			return ds;
 		}
 
@@ -344,11 +359,18 @@ namespace MonoTests.System.Data
 			// using XmlNodeReader (that does not have xml:space attribute
 			// column).
 			DataSet ds = new DataSet ();
+#if !WINDOWS_STORE_APP
 			XmlDocument doc = new XmlDocument ();
 			doc.AppendChild (doc.CreateElement ("root"));
 			doc.DocumentElement.AppendChild (doc.CreateSignificantWhitespace
 			("      \n\n"));
 			XmlReader xr = new XmlNodeReader (doc);
+#else
+			XDocument doc = new XDocument ();
+			doc.Add (new XElement ("root"));
+			doc.Root.Add (new XText("      \n\n"));
+			XmlReader xr = doc.CreateReader();
+#endif
 			ds.InferXmlSchema (xr, null);
 			AssertDataSet ("pure_whitespace", ds, "root", 0, 0);
 		}
@@ -374,13 +396,14 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof (ArgumentException))]
 		// The same table cannot be the child table in two nested relations.
 		public void ComplexElementTable1 ()
 		{
 			// TODO: Also test ReadXml (, XmlReadMode.InferSchema) and
 			// make sure that ReadXml() stores DataRow to el1 (and maybe to others)
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			DataSet ds = GetDataSet (xml16, null);
+			});
 /*
 			AssertDataSet ("ds", ds, "NewDataSet", 4, 0);
 
@@ -469,17 +492,17 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
 		public void ConflictAttributeDataTable ()
 		{
 			// attribute "data" becomes DataTable, and when column "data"
 			// appears, it cannot be DataColumn, since the name is 
 			// already allocated for DataTable.
+			AssertHelpers.AssertThrowsException<DataException>(() => {
 			DataSet ds = GetDataSet (xml21, null);
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof (ConstraintException))]
 		public void ConflictExistingPrimaryKey ()
 		{
 			// <wrong>The 'col' DataTable tries to create another primary key (and fails)</wrong> The data violates key constraint.
@@ -488,9 +511,11 @@ namespace MonoTests.System.Data
 			DataColumn c = new DataColumn ("pk");
 			ds.Tables [0].Columns.Add (c);
 			ds.Tables [0].PrimaryKey = new DataColumn [] {c};
-			XmlTextReader xtr = new XmlTextReader (xml22, XmlNodeType.Document, null);
+			XmlReader xtr = XmlReader.Create (new StringReader (xml22), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document});
 			xtr.Read ();
+			AssertHelpers.AssertThrowsException<ConstraintException>(() => {
 			ds.ReadXml (xtr, XmlReadMode.InferSchema);
+			});
 		}
 
 		[Test]
@@ -534,9 +559,14 @@ namespace MonoTests.System.Data
 			ds.ReadXml(new StringReader (sw.ToString ()));
 			sw = new StringWriter ();
 			ds.WriteXml(sw);
+#if !WINDOWS_STORE_APP
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (sw.ToString ());
 			Assert.AreEqual (2, doc.DocumentElement.ChildNodes.Count);
+#else
+			XDocument doc = XDocument.Parse (sw.ToString ());
+			Assert.AreEqual (2, doc.Root.Elements().Count());
+#endif
 		}
 	}
 }

@@ -1,3 +1,4 @@
+#if !WINDOWS_STORE_APP
 using System;
 using System.ComponentModel;
 
@@ -97,3 +98,4 @@ namespace System.Data
 		#endregion // Methods
 	}
 }
+#endif

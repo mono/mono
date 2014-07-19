@@ -31,7 +31,9 @@
 //
 
 namespace System.Data {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public enum KeyRestrictionBehavior
 	{
 		AllowOnly,

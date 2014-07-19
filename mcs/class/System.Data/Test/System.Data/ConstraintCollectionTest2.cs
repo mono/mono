@@ -26,12 +26,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
-using MonoTests.System.Data.Utils;
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -474,15 +484,17 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ConstraintException))]
 		public void Add_SDB4()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
 			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],false);
 			//Break the constraint --> but we shouldn't get the excption --> wrong assumpation
 			//TODO:check the right thing
+		  AssertHelpers.AssertThrowsException<ConstraintException>(() => 
+		  {
 			DataProvider.TryToBreakUniqueConstraint();
 			Assert.AreEqual(2,dt.Select("ParentId=1").Length,"CN36");
+		  });
 		}
 
 		[Test]
@@ -529,7 +541,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(1,ds.Tables[0].Constraints.Count,"ccarc#3");
 		}
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddRange_C3()
 		{
 			DataSet ds = new DataSet();
@@ -537,17 +548,12 @@ namespace MonoTests.System.Data
 			ds.Tables.Add(DataProvider.CreateChildDataTable());
 			Constraint badConstraint = new UniqueConstraint(ds.Tables[0].Columns[0]);
 
+		  AssertHelpers.AssertThrowsException<ArgumentException>(() =>
+		  {
 			ds.Tables[1].Constraints.AddRange(new Constraint[] {badConstraint}); //Cuz foreign key belongs to child table			
+		  }); 
 		}
 		
-		[Test]
-		public void AddRange_C4()
-		{
-			ArrayList arr = new ArrayList(1);
-			arr.Add(new ArgumentException());
-			TestException(new testExceptionMethodCallback(AddRange_C3),arr);
-		}
-
 		private Constraint[] GetConstraintArray(DataSet ds)
 		{
 			DataTable parent = ds.Tables[0]; 

@@ -32,14 +32,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+#endif
 
 namespace System
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class DBNull : ISerializable, IConvertible
+#endif
+	public sealed class DBNull
+#if !WINDOWS_STORE_APP
+		: ISerializable, IConvertible
+#endif
 	{
 		// Fields
 		public static readonly DBNull Value = new DBNull ();
@@ -49,6 +56,7 @@ namespace System
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		private DBNull (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotSupportedException ();
@@ -143,6 +151,7 @@ namespace System
 		{
 			throw new InvalidCastException ();
 		}
+#endif
 
 		public override string ToString ()
 		{

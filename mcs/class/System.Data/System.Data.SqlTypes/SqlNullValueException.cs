@@ -34,8 +34,13 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
-	public sealed class SqlNullValueException : SqlTypeException, ISerializable
+#endif
+	public sealed class SqlNullValueException : SqlTypeException
+#if !WINDOWS_STORE_APP
+		, ISerializable
+#endif
 	{
 		public SqlNullValueException ()
 			: base (Locale.GetText ("Data is Null. This method or property cannot be called on Null values."))
@@ -52,6 +57,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		private SqlNullValueException (SerializationInfo si, StreamingContext sc) 
 			: base (si.GetString("SqlNullValueExceptionMessage"))
 		{
@@ -61,5 +67,6 @@ namespace System.Data.SqlTypes
 		{
 			si.AddValue ("SqlNullValueExceptionMessage", Message, typeof(string));
 		}
+#endif
 	}
 }

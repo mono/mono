@@ -44,10 +44,12 @@ namespace System.Data
 	/// <summary>
 	/// Contains a read-only collection of DataViewSetting objects for each DataTable in a DataSet.
 	/// </summary>
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataViewSettingsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
 	[Serializable]
+#endif
 #endif
 	public class DataViewSettingCollection : ICollection, IEnumerable 
 	{
@@ -72,17 +74,23 @@ namespace System.Data
 
 		#region Properties
 	
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public virtual int Count {
 			get { return settingList.Count; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public bool IsReadOnly {
 			get { return settingList.IsReadOnly; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public bool IsSynchronized {
 			get { return settingList.IsSynchronized; }
 		}
@@ -117,7 +125,9 @@ namespace System.Data
 			set { settingList [index] = value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+#endif
 		public object SyncRoot {
 			get { return settingList.SyncRoot; }
 		}

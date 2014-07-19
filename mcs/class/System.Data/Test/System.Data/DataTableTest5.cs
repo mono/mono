@@ -31,8 +31,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace Monotests_System.Data
 {
@@ -49,7 +59,7 @@ namespace Monotests_System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-			tempFile = Path.GetTempFileName ();
+			tempFile = AssertHelpers.GetTempFileName ();
 		}
 
 		[TearDown]
@@ -67,7 +77,6 @@ namespace Monotests_System.Data
 				xw.WriteStartElement ("start");
 				idt.WriteXml (xw);
 				xw.WriteEndElement ();
-				xw.Close ();
 			}
 		}
 
@@ -80,15 +89,17 @@ namespace Monotests_System.Data
 
 		private static void ReadXmlSerializable (DataTable dt, XmlReader xr)
 		{
-			XmlSerializer serializer = new XmlSerializer (dt.GetType ());
-			IXmlSerializable idt = dt;
-			idt.ReadXml (xr);
-			xr.Close ();
+			using (xr) {
+				XmlSerializer serializer = new XmlSerializer (dt.GetType ());
+				IXmlSerializable idt = dt;
+				idt.ReadXml (xr);
+			}
 		}
 
 		void ReadXmlSerializable (string fileName, DataTable dt)
 		{
-			using (XmlReader xr = XmlReader.Create (fileName)) {
+			using (Stream file = File.OpenRead (fileName))
+			using (XmlReader xr = XmlReader.Create (file)) {
 				ReadXmlSerializable (dt, xr);
 			}
 		}
@@ -404,7 +415,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("id", col.ColumnName, "#24");
 			Assert.AreEqual (typeof (int), col.DataType, "#25");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#26");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#27");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#28");
 			Assert.AreEqual (-1, col.MaxLength, "#29");
 			Assert.AreEqual (0, col.Ordinal, "#30");
@@ -423,7 +436,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ParentItem", col.ColumnName, "#40");
 			Assert.AreEqual (typeof (string), col.DataType, "#41");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#42");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#43");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#44");
 			Assert.AreEqual (-1, col.MaxLength, "#45");
 			Assert.AreEqual (1, col.Ordinal, "#46");
@@ -442,7 +457,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("DepartmentID", col.ColumnName, "#56");
 			Assert.AreEqual (typeof (int), col.DataType, "#57");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#58");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#59");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#60");
 			Assert.AreEqual (-1, col.MaxLength, "#61");
 			Assert.AreEqual (2, col.Ordinal, "#62");
@@ -476,7 +493,7 @@ namespace Monotests_System.Data
 			MakeParentTable1 ();
 			dataSet.Tables.Remove (parentTable1);
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -491,7 +508,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -514,7 +531,7 @@ namespace Monotests_System.Data
 			//Relate the parent and the children
 			MakeDataRelation ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -533,7 +550,7 @@ namespace Monotests_System.Data
 			//Relate the parent and the children
 			MakeDataRelation ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				//WriteXml on any of the children
 				WriteXmlSerializable (stream, childTable);
 			}
@@ -566,7 +583,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ChildID", col.ColumnName, "#19");
 			Assert.AreEqual (typeof (int), col.DataType, "#20");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#21");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#22");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#23");
 			Assert.AreEqual (-1, col.MaxLength, "#24");
 			Assert.AreEqual (0, col.Ordinal, "#25");
@@ -584,7 +603,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ChildItem", col.ColumnName, "#34");
 			Assert.AreEqual (typeof (string), col.DataType, "#35");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#36");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#37");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#38");
 			Assert.AreEqual (-1, col.MaxLength, "#39");
 			Assert.AreEqual (1, col.Ordinal, "#40");
@@ -603,7 +624,9 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ParentID", col.ColumnName, "#50");
 			Assert.AreEqual (typeof (int), col.DataType, "#51");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#52");
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#53");
+#endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#54");
 			Assert.AreEqual (-1, col.MaxLength, "#55");
 			Assert.AreEqual (2, col.Ordinal, "#56");
@@ -651,9 +674,8 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
-				stream.Close ();
 			}
 
 			DataTable table = new DataTable ("ParentTable");
@@ -661,7 +683,7 @@ namespace Monotests_System.Data
 			dataSet.Tables.Add (table);
 			table.Columns.Add (new DataColumn ("id", typeof (string)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -687,9 +709,8 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
-				stream.Close ();
 			}
 
 			//Create a target table which has nomatching column(s) names
@@ -698,7 +719,7 @@ namespace Monotests_System.Data
 			dataSet.Tables.Add (table);
 			table.Columns.Add (new DataColumn ("sid", typeof (string)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				// ReadXml does not read anything as the column 
 				// names are not matching
 				ReadXmlSerializable (stream, table);
@@ -717,9 +738,8 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
-				stream.Close ();
 			}
 
 			//Create a target table which has matching
@@ -732,7 +752,7 @@ namespace Monotests_System.Data
 			DataSet dataSet = new DataSet ("XmlDataSet");
 			dataSet.Tables.Add (table);
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -776,7 +796,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -786,7 +806,7 @@ namespace Monotests_System.Data
 			table.Columns.Add (new DataColumn ("id", typeof (int)));
 			table.Columns.Add (new DataColumn ("DepartmentID", typeof (int)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -816,7 +836,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -825,7 +845,7 @@ namespace Monotests_System.Data
 			table.Columns.Add (new DataColumn ("id", typeof (int)));
 			ds.Tables.Add (table);
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -852,7 +872,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable1 ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -862,7 +882,7 @@ namespace Monotests_System.Data
 			table.Columns.Add (new DataColumn ("DepartmentID", typeof (string)));
 			ds.Tables.Add (table);
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -892,7 +912,7 @@ namespace Monotests_System.Data
 		{
 			MakeDummyTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, dummyTable);
 			}
 
@@ -901,7 +921,7 @@ namespace Monotests_System.Data
 			//define the table schame partially
 			table.Columns.Add (new DataColumn ("DummyItem", typeof (string)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -930,7 +950,7 @@ namespace Monotests_System.Data
 		{
 			MakeDummyTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, dummyTable);
 			}
 
@@ -942,7 +962,7 @@ namespace Monotests_System.Data
 			//Add an extra column which does not match any column in the source diffram
 			table.Columns.Add (new DataColumn ("ExtraColumn", typeof (double)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -979,7 +999,7 @@ namespace Monotests_System.Data
 		{
 			MakeDummyTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, dummyTable);
 			}
 
@@ -989,7 +1009,7 @@ namespace Monotests_System.Data
 			//table columns in the diffgram
 			table.Columns.Add (new DataColumn ("WrongColumnName", typeof (string)));
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				ReadXmlSerializable (stream, table);
 			}
 
@@ -1011,7 +1031,7 @@ namespace Monotests_System.Data
 			MakeSecondChildTable ();
 			MakeDataRelation ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parentTable1);
 			}
 
@@ -1053,7 +1073,7 @@ namespace Monotests_System.Data
 		{
 			MakeDummyTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, dummyTable);
 			}
 
@@ -1132,7 +1152,7 @@ namespace Monotests_System.Data
 			relation = new DataRelation ("Relation2", child1.Columns [2], child2.Columns [0]);
 			child1.ChildRelations.Add (relation);
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				WriteXmlSerializable (stream, parent);
 			}
 

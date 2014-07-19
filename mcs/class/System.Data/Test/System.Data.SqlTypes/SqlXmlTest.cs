@@ -37,8 +37,17 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -60,6 +69,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Thread.CurrentThread.CurrentCulture = originalCulture;
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test] // .ctor (Stream)
 		[Category ("NotWorking")]
 		public void Constructor2_Stream_ASCII ()
@@ -70,6 +80,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.IsFalse (xmlSql.IsNull, "#1");
 			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
 		}
+#endif
 
 		// Test constructor
 		[Test] // .ctor (Stream)
@@ -83,6 +94,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test] // .ctor (Stream)
 		[Category ("NotWorking")]
 		public void Constructor2_Stream_UTF8 ()
@@ -93,6 +105,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.IsFalse (xmlSql.IsNull, "#1");
 			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
 		}
+#endif
 
 		[Test] // .ctor (Stream)
 		public void Constructor2_Stream_Empty ()
@@ -120,7 +133,7 @@ namespace MonoTests.System.Data.SqlTypes
 		public void Constructor3 ()
 		{
 			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
-			XmlReader xrdr = new XmlTextReader (new StringReader (xmlStr));
+			XmlReader xrdr = XmlReader.Create (new StringReader (xmlStr));
 			SqlXml xmlSql = new SqlXml (xrdr);
 			Assert.IsFalse (xmlSql.IsNull, "#1");
 			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
@@ -150,6 +163,7 @@ namespace MonoTests.System.Data.SqlTypes
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		[Category ("NotWorking")]
 		public void CreateReader_Stream_ASCII ()
@@ -163,6 +177,7 @@ namespace MonoTests.System.Data.SqlTypes
 			
 			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#1");
 		}
+#endif
 
 		[Test]
 		[Category ("NotDotNet")] // Name cannot begin with the '.' character, hexadecimal value 0x00. Line 1, position 2
@@ -178,6 +193,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#A05");
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		[Category ("NotWorking")]
 		public void CreateReader_Stream_UTF8 ()
@@ -191,12 +207,13 @@ namespace MonoTests.System.Data.SqlTypes
 			
 			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#1");
 		}
+#endif
 
 		[Test]
 		public void SqlXml_fromXmlReader_CreateReaderTest()
 		{
 			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
-			XmlReader rdr = new XmlTextReader (new StringReader (xmlStr));
+			XmlReader rdr = XmlReader.Create (new StringReader (xmlStr));
 			SqlXml xmlSql = new SqlXml (rdr);
 
 			XmlReader xrdr = xmlSql.CreateReader ();
@@ -233,7 +250,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void SqlXml_fromZeroLengthXmlReader_CreateReaderTest()
 		{
-			XmlReader rdr = new XmlTextReader (new StringReader (String.Empty));
+			XmlReader rdr = XmlReader.Create (new StringReader (String.Empty));
 			try {
 				new SqlXml (rdr);
 				Assert.Fail ("#1");

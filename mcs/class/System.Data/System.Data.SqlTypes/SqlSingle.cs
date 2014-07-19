@@ -40,8 +40,12 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("float")]
+#endif
 #endif
 	public struct SqlSingle : INullable, IComparable
 #if NET_2_0
@@ -426,11 +430,13 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("float", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
+#endif
 
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()

@@ -31,11 +31,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using NUnit.Framework;
+
 using System;
 using System.Data;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
+#endif
 #endif
 
 namespace MonoTests.System.Data
@@ -111,12 +123,11 @@ namespace MonoTests.System.Data
 					Assert.Fail ("Wrong exception type thrown.");
 				}
 				
-				Assert.That (exceptionCaught, Is.True, "Failed to throw exception.");
+				Assert.IsTrue (exceptionCaught, "Failed to throw exception.");
 			}	
 		}
 
 		[Test]
-		[ExpectedException (typeof (DuplicateNameException))]
 		public void SetConstraintNameDuplicateException ()
 		{
 			_constraint1.ConstraintName = "Dog";
@@ -126,18 +137,20 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add (_constraint2);
 
 			//Should throw DuplicateNameException
+			AssertHelpers.AssertThrowsException<DuplicateNameException> (() => {
 			_constraint2.ConstraintName = "Dog";
+			});
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
 			_constraint1.ConstraintName = "Test";
-			Assert.That (_constraint1.ConstraintName, Is.EqualTo (_constraint1.ToString ()),
+			Assert.AreEqual (_constraint1.ToString (), _constraint1.ConstraintName,
 				"ToString is the same as constraint name.");
 			
 			_constraint1.ConstraintName = null;
-			Assert.That (_constraint1.ToString (), Is.Not.Null, "ToString should return empty.");
+			Assert.IsNotNull (_constraint1.ToString (), "ToString should return empty.");
 		}
 
 		[Test]
@@ -146,7 +159,7 @@ namespace MonoTests.System.Data
 			PropertyCollection col = _constraint1.ExtendedProperties as
 				PropertyCollection;
 
-			Assert.That (col, Is.Not.Null, "ExtendedProperties returned null or didn't " +
+			Assert.IsNotNull (col, "ExtendedProperties returned null or didn't " +
 				"return the correct type");
 		}
 	}

@@ -28,15 +28,25 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// refers to the named group
 	/// </summary>
-	public class XmlSchemaGroup : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaGroup : XmlSchemaAnnotated
 	{
 		private string name;
 		private XmlSchemaGroupBase particle;
@@ -133,7 +143,7 @@ namespace System.Xml.Schema
 				Particle.parentIsGroupDefinition = true;
 
 				try {
-					Particle.CheckRecursion (new Stack (), h, schema);
+					Particle.CheckRecursion (new Stack<XmlSchemaParticle> (), h, schema);
 				} catch (XmlSchemaException ex) {
 					error (h, ex.Message, ex);
 					this.isCircularDefinition = true;

@@ -25,12 +25,21 @@ using System;
 using System.Collections;
 
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaCollectionEnumerator.
 	/// </summary>
-	public sealed class XmlSchemaCollectionEnumerator : IEnumerator
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	sealed class XmlSchemaCollectionEnumerator : IEnumerator
 	{
 		private IEnumerator xenum;
 

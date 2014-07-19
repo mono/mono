@@ -38,15 +38,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 using System.Threading;
 using System.Xml;
-
 using MonoTests.System.Data.Utils;
-
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -76,7 +87,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, dt.Prefix, "pf");
 			Assert.IsNotNull (dt.PrimaryKey, "pk");
 			Assert.IsNotNull (dt.Rows, "rows");
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (dt.Site, "Site");
+#endif
 			Assert.AreEqual (string.Empty, dt.TableName, "tname");
 		}
 
@@ -1044,13 +1057,14 @@ namespace MonoTests.System.Data
 		}
 	
 		[Test]
-		[ExpectedException (typeof (EvaluateException))]
 		public void CloneExtendedProperties1 ()
 		{
 			// Xamarin bug 666
 			DataTable table1 = new DataTable("Table1") ;
 
+			AssertHelpers.AssertThrowsException<EvaluateException>(() => {
 			DataColumn c1 = table1.Columns.Add("c1", typeof(string), "'hello ' + c2") ; /* Should cause an exception */
+			});
 		}
 
 		[Test]
@@ -1827,6 +1841,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("</xs:schema>", TextString, "test#33");
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void Serialize ()
 		{
@@ -1873,6 +1888,7 @@ namespace MonoTests.System.Data
 			doc.LoadXml (sw.ToString ());
 			Assert.AreEqual (5, doc.DocumentElement.FirstChild.ChildNodes.Count);
 		}
+#endif
 
 		[Test]
 		public void SetPrimaryKeyAssertsNonNull ()
@@ -2941,7 +2957,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("first", column.ColumnName, "test#17");
 			Assert.AreEqual (typeof (string), column.DataType, "test#18");
 			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column.DesignMode, "test#20");
+#endif
 			Assert.AreEqual ("", column.Expression, "test#21");
 			Assert.AreEqual (100, column.MaxLength, "test#22");
 			Assert.AreEqual ("", column.Namespace, "test#23");
@@ -2961,7 +2979,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (typeof (SqlGuid), column2.DataType, "test#35");
 			Assert.AreEqual (SqlGuid.Null, column2.DefaultValue, "test#36");
 			Assert.AreEqual (typeof (SqlGuid), column2.DefaultValue.GetType (), "test#36-2");
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column2.DesignMode, "test#37");
+#endif
 			Assert.AreEqual ("", column2.Expression, "test#38");
 			Assert.AreEqual (-1, column2.MaxLength, "test#39");
 			Assert.AreEqual ("", column2.Namespace, "test#40");
@@ -2991,7 +3011,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
 			Assert.AreEqual (typeof (string), column3.DataType, "test#59");
 			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column3.DesignMode, "test#61");
+#endif
 			Assert.AreEqual ("", column3.Expression, "test#62");
 			Assert.AreEqual (100, column3.MaxLength, "test#63");
 			Assert.AreEqual ("", column3.Namespace, "test#64");
@@ -3052,8 +3074,8 @@ namespace MonoTests.System.Data
 			ds1.Tables[0].WriteXmlSchema (ms1);
 			ds1.Tables[1].WriteXmlSchema (ms2);
 
-			MemoryStream ms11 = new MemoryStream (ms1.GetBuffer ());
-			MemoryStream ms22 = new MemoryStream (ms2.GetBuffer ());
+			MemoryStream ms11 = new MemoryStream (ms1.ToArray ());
+			MemoryStream ms22 = new MemoryStream (ms2.ToArray ());
 			//copy schema
 			//DataSet ds2 = new DataSet ();
 			DataTable dt1 = new DataTable ();
@@ -3091,8 +3113,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ReadWriteXmlSchema_ByFileName ()
 		{
-			string sTempFileName1 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-1.xml");
-			string sTempFileName2 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-2.xml");
+			string sTempFileName1 = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899-1.xml");
+			string sTempFileName2 = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899-2.xml");
 
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
@@ -3176,9 +3198,9 @@ namespace MonoTests.System.Data
 			ds1.Tables.Add (DataProvider.CreateChildDataTable ());
 
 			StringWriter sw1 = new StringWriter ();
-			XmlTextWriter xmlTW1 = new XmlTextWriter (sw1);
+			XmlWriter xmlTW1 = XmlWriter.Create (sw1);
 			StringWriter sw2 = new StringWriter ();
-			XmlTextWriter xmlTW2 = new XmlTextWriter (sw2);
+			XmlWriter xmlTW2 = XmlWriter.Create (sw2);
 
 			//write xml file, schema only
 			ds1.Tables[0].WriteXmlSchema (xmlTW1);
@@ -3187,9 +3209,9 @@ namespace MonoTests.System.Data
 			xmlTW2.Flush ();
 
 			StringReader sr1 = new StringReader (sw1.ToString ());
-			XmlTextReader xmlTR1 = new XmlTextReader (sr1);
+			XmlReader xmlTR1 = XmlReader.Create (sr1);
 			StringReader sr2 = new StringReader (sw2.ToString ());
-			XmlTextReader xmlTR2 = new XmlTextReader (sr2);
+			XmlReader xmlTR2 = XmlReader.Create (sr2);
 
 			//copy both data and schema
 			//DataSet ds2 = new DataSet ();
@@ -3228,6 +3250,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteXmlSchema ()
 		{
+			EOL = Environment.NewLine;
 			DataSet ds = new DataSet ();
 			ds.ReadXml ("Test/System.Data/region.xml");
 			TextWriter writer = new StringWriter ();
@@ -3236,7 +3259,6 @@ namespace MonoTests.System.Data
 			string TextString = GetNormalizedSchema (writer.ToString ());
 			//string TextString = writer.ToString ();
 
-			EOL = "\n";
 			string substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
@@ -3344,16 +3366,14 @@ namespace MonoTests.System.Data
 			OriginalDataSet.AcceptChanges ();
 
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xtw = new XmlTextWriter (sw);
-			xtw.QuoteChar = '\'';
+			XmlWriter xtw = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			OriginalDataSet.WriteXml (xtw);
 			string result = sw.ToString ();
 
-			Assert.AreEqual (xml, result);
+			Assert.AreEqual (xml, result.Replace ("\"", "'"));
 
 			sw = new StringWriter ();
-			xtw = new XmlTextWriter (sw);
-			xtw.Formatting = Formatting.Indented;
+			xtw = XmlWriter.Create (sw, new XmlWriterSettings{Indent=true});
 			OriginalDataSet.Tables[0].WriteXmlSchema (xtw);
 			result = sw.ToString ();
 
@@ -3724,11 +3744,11 @@ namespace MonoTests.System.Data
 			ms2 = new MemoryStream ();
 			ds1.Tables[1].WriteXmlSchema (ms2);
 
-			msA = new MemoryStream (ms1.GetBuffer ());
+			msA = new MemoryStream (ms1.ToArray ());
 			DataTable dtA = new DataTable ();
 			dtA.ReadXmlSchema (msA);
 
-			msB = new MemoryStream (ms2.GetBuffer ());
+			msB = new MemoryStream (ms2.ToArray ());
 			DataTable dtB = new DataTable ();
 			dtB.ReadXmlSchema (msB);
 
@@ -3789,20 +3809,16 @@ namespace MonoTests.System.Data
 			ds.Namespace = "urn:bar";
 
 			StringWriter sw1 = new StringWriter ();
-			XmlTextWriter xw1 = new XmlTextWriter (sw1);
-			xw1.Formatting = Formatting.Indented;
-			xw1.QuoteChar = '\'';
+			XmlWriter xw1 = XmlWriter.Create (sw1, new XmlWriterSettings{Indent=true});
 			ds.Tables[0].WriteXmlSchema (xw1);
 			string result1 = sw1.ToString ();
-			Assert.AreEqual (schema, result1.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (schema.Replace ("\"", "'"), result1.Replace ("\r\n", "\n"), "#1");
 
 			StringWriter sw2 = new StringWriter ();
-			XmlTextWriter xw2 = new XmlTextWriter (sw2);
-			xw2.Formatting = Formatting.Indented;
-			xw2.QuoteChar = '\'';
+			XmlWriter xw2 = XmlWriter.Create (sw2, new XmlWriterSettings{Indent=true});
 			ds.Tables[0].WriteXmlSchema (xw2);
 			string result2 = sw2.ToString ();
-			Assert.AreEqual (schema, result2.Replace ("\r\n", "\n"), "#2");
+			Assert.AreEqual (schema.Replace ("\"", "'"), result2.Replace ("\r\n", "\n"), "#2");
 		}
 
 		[Test]
@@ -3838,8 +3854,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (expected2, writer2.ToString ().Replace("\r\n", "\n"), "#2");
 		}
 
+		// MS behavior is far from consistent to be regarded as a reference implementation.
 		[Test]
-		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		[Ignore ()]
 		// See the same-named tests in DataSetTest.cs
 #if TARGET_JVM
 		[Category ("NotWorking")]
@@ -3954,8 +3971,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(expected4, TextString4.Replace("\r\n", "").Replace("  ", ""), "#4");
 		}
 
+		// MS behavior is far from consistent to be regarded as a reference implementation.
 		[Test]
-		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		[Ignore ()]
 		// See the same-named tests in DataSetTest.cs
 #if TARGET_JVM
 		[Category ("NotWorking")]
@@ -3993,7 +4011,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			Console.WriteLine ("{0} - {1}", TextString1, expected1);
+			Debug.WriteLine (TextString1 + " - " + expected1);
 			Assert.AreEqual (expected1, TextString1.Replace ("\r\n", "").Replace ("  ", "").Replace ("\n", ""), "#1");
 
 			TextWriter writer2 = new StringWriter ();
@@ -4071,8 +4089,8 @@ namespace MonoTests.System.Data
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add ();
 			ds1.Tables.Add ();
-			ds1.Tables[0].ReadXmlSchema (new MemoryStream (ms1.GetBuffer ()));
-			ds1.Tables[1].ReadXmlSchema (new MemoryStream (ms2.GetBuffer ()));
+			ds1.Tables[0].ReadXmlSchema (new MemoryStream (ms1.ToArray ()));
+			ds1.Tables[1].ReadXmlSchema (new MemoryStream (ms2.ToArray ()));
 
 			Assert.AreEqual (0, ds1.Relations.Count, "#1");
 			Assert.AreEqual (1, ds1.Tables[0].Columns.Count, "#2");
@@ -4103,6 +4121,7 @@ namespace MonoTests.System.Data
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void ReadWriteXmlSchemaExp_NoFileName ()
 		{
@@ -4113,6 +4132,7 @@ namespace MonoTests.System.Data
 			} catch (ArgumentException) {
 			}
 		}
+#endif
 
 		[Test]
 		public void ReadWriteXmlSchemaExp_TableNameConflict ()
@@ -4143,7 +4163,9 @@ namespace MonoTests.System.Data
 		}
 	}
 
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	[TestFixture]
 	public class AppDomainsAndFormatInfo
 	{
@@ -4153,7 +4175,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !TARGET_JVM && !MONOTOUCH
+#if !TARGET_JVM && !MONOTOUCH && !WINDOWS_STORE_APP
 		[Test]
 		public void NFIFromBug55978 ()
 		{

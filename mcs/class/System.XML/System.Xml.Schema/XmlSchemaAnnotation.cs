@@ -26,12 +26,25 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_STORE_APP
+using XmlAttribute = System.Xml.Linq.XAttribute;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaAnnotation.
 	/// </summary>
-	public class XmlSchemaAnnotation : XmlSchemaObject
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif
+	class XmlSchemaAnnotation : XmlSchemaObject
 	{
 		private string id;
 		private XmlSchemaObjectCollection items;

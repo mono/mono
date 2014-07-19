@@ -1,4 +1,5 @@
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 using System;
 using System.Data;
@@ -9,7 +10,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-
 using NUnit.Framework;
 
 [TestFixture]
@@ -762,4 +762,5 @@ public class BinarySerializationTest
 	}
 }
 
+#endif
 #endif

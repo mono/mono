@@ -36,7 +36,9 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public sealed class OperationAbortedException : SystemException
 	{
 		#region Constructors
@@ -56,10 +58,12 @@ namespace System.Data {
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		internal OperationAbortedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 		#endregion // Constructors
 	}

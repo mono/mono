@@ -38,8 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
+#if !WINDOWS_STORE_APP
 	[ComVisible (true)]
 	[Serializable]
+#endif
 	public enum TypeCode {
 
 		Empty = 0,

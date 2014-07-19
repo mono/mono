@@ -39,7 +39,11 @@ using System.Data;
 
 namespace System.Data.Common
 {
-	public sealed class DataColumnMappingCollection : MarshalByRefObject, IColumnMappingCollection , IList, ICollection, IEnumerable
+	public sealed class DataColumnMappingCollection : 
+#if !WINDOWS_STORE_APP
+		MarshalByRefObject,
+#endif
+		IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
 
@@ -62,20 +66,24 @@ namespace System.Data.Common
 
 		#region Properties
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The number of items in the collection")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return list.Count; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The specified DataColumnMapping object.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [int index] {
 			get { return (DataColumnMapping)(list[index]); }
 			set { 
@@ -86,11 +94,13 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The specified DataColumnMapping object.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [string sourceColumn] {
 			get {
 				if (!Contains(sourceColumn))

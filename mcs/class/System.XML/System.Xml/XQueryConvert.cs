@@ -35,6 +35,12 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+#if NETFX_CORE
+using Mono.Xml.Schema;
+#endif
+#if !WINDOWS_STORE_APP
+using XmlConvertUtil = System.Xml.XmlConvert;
+#endif
 
 namespace System.Xml
 {
@@ -100,7 +106,7 @@ namespace System.Xml
 
 		public static byte [] Base64BinaryToHexBinary (byte [] value)
 		{
-			return XmlConvert.FromBinHexString (Convert.ToBase64String (value));
+			return XmlConvertUtil.FromBinHexString (Convert.ToBase64String (value));
 		}
 
 		public static string Base64BinaryToString (byte [] value)
@@ -357,7 +363,7 @@ namespace System.Xml
 
 		public static string HexBinaryToString (byte [] data)
 		{
-			return XmlConvert.ToBinHexString (data);
+			return XmlConvertUtil.ToBinHexString (data);
 		}
 
 		public static byte [] HexBinaryToBase64Binary (byte [] data)
@@ -478,12 +484,12 @@ namespace System.Xml
 
 		public static DateTime StringToDate (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static DateTime StringToDateTime (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static TimeSpan StringToDayTimeDuration (string value)
@@ -513,32 +519,32 @@ namespace System.Xml
 
 		public static DateTime StringToGDay (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static DateTime StringToGMonth (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static DateTime StringToGMonthDay (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static DateTime StringToGYear (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static DateTime StringToGYearMonth (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static byte [] StringToHexBinary (string value)
 		{
-			return XmlConvert.FromBinHexString (value);
+			return XmlConvertUtil.FromBinHexString (value);
 		}
 
 		public static int StringToInt (string value)
@@ -563,7 +569,7 @@ namespace System.Xml
 
 		public static DateTime StringToTime (string value)
 		{
-			return XmlConvert.ToDateTime (value);
+			return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		public static UInt32 StringToUnsignedInt (string value)

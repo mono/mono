@@ -14,14 +14,22 @@
 namespace MonoTests.System.Data {
     
     
+#if !WINDOWS_STORE_APP
+	using global::System.Xml.Schema;
+#else
+	using global::Mono.Xml.Schema;
+#endif
+
     /// <summary>
     ///Represents a strongly typed in-memory cache of data.
     ///</summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+#if !WINDOWS_STORE_APP
     [global::System.Serializable()]
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
+#endif
     [global::System.Xml.Serialization.XmlRootAttribute("DataSet1")]
 //    [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
     public partial class DataSet1 : global::System.Data.DataSet {
@@ -40,6 +48,7 @@ namespace MonoTests.System.Data {
             this.EndInit();
         }
         
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         protected DataSet1(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
@@ -74,10 +83,13 @@ namespace MonoTests.System.Data {
             base.Tables.CollectionChanged += schemaChangedHandler;
             this.Relations.CollectionChanged += schemaChangedHandler;
         }
+#endif
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+#endif
         public DataTable1DataTable DataTable1 {
             get {
                 return this.tableDataTable1;
@@ -85,8 +97,10 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
+#endif
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
             get {
                 return this._schemaSerializationMode;
@@ -97,7 +111,9 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+#endif
         public new global::System.Data.DataTableCollection Tables {
             get {
                 return base.Tables;
@@ -105,7 +121,9 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+#endif
         public new global::System.Data.DataRelationCollection Relations {
             get {
                 return base.Relations;
@@ -161,13 +179,15 @@ namespace MonoTests.System.Data {
             }
         }
         
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         protected override global::System.Xml.Schema.XmlSchema GetSchemaSerializable() {
             global::System.IO.MemoryStream stream = new global::System.IO.MemoryStream();
             this.WriteXmlSchema(new global::System.Xml.XmlTextWriter(stream, null));
             stream.Position = 0;
-            return global::System.Xml.Schema.XmlSchema.Read(new global::System.Xml.XmlTextReader(stream), null);
+            return XmlSchema.Read(new global::System.Xml.XmlTextReader(stream), null);
         }
+#endif
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         internal void InitVars() {
@@ -207,18 +227,20 @@ namespace MonoTests.System.Data {
             }
         }
         
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+        public static XmlSchemaComplexType GetTypedDataSetSchema(XmlSchemaSet xs) {
             DataSet1 ds = new DataSet1();
-            global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
-            global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+            XmlSchemaSequence sequence = new XmlSchemaSequence();
             xs.Add(ds.GetSchemaSerializable());
-            global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
+            XmlSchemaAny any = new XmlSchemaAny();
             any.Namespace = ds.Namespace;
             sequence.Items.Add(any);
             type.Particle = sequence;
             return type;
         }
+#endif
         
         public delegate void DataTable1RowChangeEventHandler(object sender, DataTable1RowChangeEvent e);
         
@@ -226,7 +248,9 @@ namespace MonoTests.System.Data {
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+#if !WINDOWS_STORE_APP
         [global::System.Serializable()]
+#endif
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class DataTable1DataTable : global::System.Data.DataTable, global::System.Collections.IEnumerable {
             
@@ -256,11 +280,13 @@ namespace MonoTests.System.Data {
                 this.MinimumCapacity = table.MinimumCapacity;
             }
             
+#if !WINDOWS_STORE_APP
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected DataTable1DataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
+#endif
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public global::System.Data.DataColumn Column1Column {
@@ -270,7 +296,9 @@ namespace MonoTests.System.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_STORE_APP
             [global::System.ComponentModel.Browsable(false)]
+#endif
             public int Count {
                 get {
                     return this.Rows.Count;
@@ -387,34 +415,36 @@ namespace MonoTests.System.Data {
                 this.Rows.Remove(row);
             }
             
+#if !WINDOWS_STORE_APP
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
-                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+            public static XmlSchemaComplexType GetTypedTableSchema(XmlSchemaSet xs) {
+                XmlSchemaComplexType type = new XmlSchemaComplexType();
+                XmlSchemaSequence sequence = new XmlSchemaSequence();
                 DataSet1 ds = new DataSet1();
                 xs.Add(ds.GetSchemaSerializable());
-                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                XmlSchemaAny any1 = new XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
                 any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                any1.ProcessContents = XmlSchemaContentProcessing.Lax;
                 sequence.Items.Add(any1);
-                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                XmlSchemaAny any2 = new XmlSchemaAny();
                 any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
                 any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                any2.ProcessContents = XmlSchemaContentProcessing.Lax;
                 sequence.Items.Add(any2);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                XmlSchemaAttribute attribute1 = new XmlSchemaAttribute();
                 attribute1.Name = "namespace";
                 attribute1.FixedValue = ds.Namespace;
                 type.Attributes.Add(attribute1);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                XmlSchemaAttribute attribute2 = new XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "DataTable1DataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 return type;
             }
+#endif
         }
         
         /// <summary>
@@ -453,7 +483,7 @@ namespace MonoTests.System.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetColumn1Null() {
-                this[this.tableDataTable1.Column1Column] = global::System.Convert.DBNull;
+                this[this.tableDataTable1.Column1Column] = global::System.DBNull.Value;
             }
         }
         

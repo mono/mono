@@ -35,8 +35,13 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
-	public sealed class SqlNotFilledException : SqlTypeException, ISerializable
+#endif
+	public sealed class SqlNotFilledException : SqlTypeException
+#if !WINDOWS_STORE_APP
+		, ISerializable
+#endif
 	{
 		public SqlNotFilledException()
 			: base (Locale.GetText ("A SqlNotFilled exception has occured."))
@@ -53,10 +58,12 @@ namespace System.Data.SqlTypes
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("SqlNotFilledExceptionMessage", Message, typeof(string));
 		}
+#endif
 	}
 }
 

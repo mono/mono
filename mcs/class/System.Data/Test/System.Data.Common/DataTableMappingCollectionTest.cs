@@ -28,11 +28,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
 using System.Data;
 using System.Data.Common;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
+
 namespace MonoTests.System.Data.Common
 {
 	[TestFixture]
@@ -74,11 +85,12 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
 		public void AddException1()
 		{
 			DataTableMappingCollection c=new DataTableMappingCollection();
+			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
 			tableMapCollection.Add((Object)c);
+			});
 		}
 		
 		[Test]
@@ -246,10 +258,11 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetTableMappingBySchemaActionException1()
 		{
+			AssertHelpers.AssertThrowsException<InvalidOperationException>(() => {
 			DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceCustomers", "dataSetCustomers", MissingMappingAction.Error);
+			});
 		}
 		
 		[Test]
@@ -297,8 +310,9 @@ namespace MonoTests.System.Data.Common
 			Assert.AreEqual(3, ind, "test1");
 		}
 		
+		// This test is invalid; a mapping in a mapcollection must be identical.
 		[Test]
-		[Ignore ("This test is invalid; a mapping in a mapcollection must be identical.")]
+		[Ignore]
 		public void Remove()
 		{
 			tableMapCollection.AddRange(tabs);
@@ -310,21 +324,23 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
 		public void RemoveException1()
 		{
 			String te="testingdata";
 			tableMapCollection.AddRange(tabs);
+			AssertHelpers.AssertThrowsException<InvalidCastException>(() => {
 			tableMapCollection.Remove(te);
+			});
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void RemoveException2()
 		{
 			tableMapCollection.AddRange(tabs);
 			DataTableMapping mymap=new DataTableMapping("sourceAge", "dataSetAge");
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			tableMapCollection.Remove(mymap);
+			});
 		}
 		
 		[Test]
@@ -346,17 +362,19 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void RemoveAtException1()
 		{
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			tableMapCollection.RemoveAt(3);
+			});
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void RemoveAtException2()
 		{
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			tableMapCollection.RemoveAt("sourceAge");
+			});
 		}
 		
 		[Test]

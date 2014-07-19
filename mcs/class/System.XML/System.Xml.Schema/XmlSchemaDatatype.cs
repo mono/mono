@@ -30,13 +30,23 @@
 //
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public abstract class XmlSchemaDatatype
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	abstract class XmlSchemaDatatype
 	{
 		protected XmlSchemaDatatype()
 		{
@@ -95,14 +105,20 @@ namespace System.Xml.Schema
 				? new object [] { value, XmlDateTimeSerializationMode.RoundtripKind }
 				: new object [] { value };
 
-			try
-			{
-				return typeof (XmlConvert).InvokeMember("To" + targetType.Name,
+				string methodName = "To" + targetType.Name;
+#if !NETFX_CORE
+			try {
+				return typeof (XmlConvert).InvokeMember(methodName,
 					System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static,
 					null, null, args);
-			}
-			catch(MissingMethodException e)
-			{
+			} catch(MissingMethodException e) {
+#else
+			MethodInfo method = typeof (XmlConvert).GetMethod (methodName);
+			if (method != null) {
+				return method.Invoke (null, args);
+			} else {
+				Exception e = new Exception ("Method with name " + methodName + " not found.");
+#endif
 				throw new InvalidCastException (string.Format ("Cast from {0}.{1} to {2}.{3} is not supported.",
 					value.GetType ().Namespace, value.GetType ().Name,
 					targetType.Namespace, targetType.Name), e);

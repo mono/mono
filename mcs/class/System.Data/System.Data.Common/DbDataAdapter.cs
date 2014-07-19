@@ -104,8 +104,10 @@ namespace System.Data.Common
 		    set { ((DbDataAdapter)this).InsertCommand = (DbCommand)value; }
 		}
 		
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand SelectCommand {
 		    get {
 					return (DbCommand) _selectCommand;
@@ -119,8 +121,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand DeleteCommand {
 		    get {
 					return (DbCommand) _deleteCommand;
@@ -134,8 +138,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand InsertCommand {
 		    get {
 					return (DbCommand) _insertCommand;
@@ -149,8 +155,10 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public DbCommand UpdateCommand {
 		    get {
 					return (DbCommand) _updateCommand;
@@ -208,7 +216,7 @@ namespace System.Data.Common
 			if (Events ["RowUpdated"] != null) {
 				Delegate [] rowUpdatedList = Events ["RowUpdated"].GetInvocationList ();
 				foreach (Delegate rowUpdated in rowUpdatedList) {
-					MethodInfo rowUpdatedMethod = rowUpdated.Method;
+					MethodInfo rowUpdatedMethod = rowUpdated.GetMethodInfo ();
 					rowUpdatedMethod.Invoke (value, null);
 				}
 			}
@@ -219,7 +227,7 @@ namespace System.Data.Common
 			if (Events ["RowUpdating"] != null) {
 				Delegate [] rowUpdatingList = Events ["RowUpdating"].GetInvocationList ();
 				foreach (Delegate rowUpdating in rowUpdatingList) {
-					MethodInfo rowUpdatingMethod = rowUpdating.Method;
+					MethodInfo rowUpdatingMethod = rowUpdating.GetMethodInfo ();
 					rowUpdatingMethod.Invoke (value, null);
 				}
 			}

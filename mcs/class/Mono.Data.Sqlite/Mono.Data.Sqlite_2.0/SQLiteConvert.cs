@@ -15,7 +15,7 @@ namespace Mono.Data.Sqlite
   using System.Globalization;
   using System.Text;
 
-#if !PLATFORM_COMPACTFRAMEWORK 
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   using System.ComponentModel.Design;
 #endif
 
@@ -57,6 +57,10 @@ namespace Mono.Data.Sqlite
     /// </summary>
     private static Encoding _utf8 = new UTF8Encoding();
     /// <summary>
+    /// An Unicode Encoding instance, so we can convert strings to and from UTF-16
+    /// </summary>
+    static Encoding _utf16 = new UnicodeEncoding();
+    /// <summary>
     /// The default DateTime format for this instance
     /// </summary>
     internal SQLiteDateFormats _datetimeFormat;
@@ -75,14 +79,41 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="sourceText">The string to convert to UTF-8</param>
     /// <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
-    public static byte[] ToUTF8(string sourceText)
+    public static byte[] ToUTF8 (string sourceText)
+    {
+      int size;
+      return ToUTF8 (sourceText, out size);
+    }
+    public static byte[] ToUTF8 (string sourceText, out int nlen)
     {
       Byte[] byteArray;
-      int nlen = _utf8.GetByteCount(sourceText) + 1;
+      nlen = _utf8.GetByteCount (sourceText) + 1;
 
       byteArray = new byte[nlen];
       nlen = _utf8.GetBytes(sourceText, 0, sourceText.Length, byteArray, 0);
       byteArray[nlen] = 0;
+
+      return byteArray;
+    }
+
+    /// <summary>
+    /// Converts a string to a UTF-16 encoded byte array sized to include a null-terminating character.
+    /// </summary>
+    /// <param name="sourceText">The string to convert to UTF-16</param>
+    /// <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
+    public static byte[] ToUTF16 (string sourceText)
+    {
+      int size;
+      return ToUTF16 (sourceText, out size);
+    }
+    public static byte[] ToUTF16 (string sourceText, out int nlen)
+    {
+      Byte[] byteArray;
+      nlen = _utf16.GetByteCount (sourceText) + 1;
+
+      byteArray = new byte [nlen];
+      nlen = _utf16.GetBytes (sourceText, 0, sourceText.Length, byteArray, 0);
+      byteArray [nlen] = 0;
 
       return byteArray;
     }
@@ -99,6 +130,10 @@ namespace Mono.Data.Sqlite
     public byte[] ToUTF8(DateTime dateTimeValue)
     {
       return ToUTF8(ToString(dateTimeValue));
+    }
+    public byte[] ToUTF8 (DateTime dateTimeValue, out int size)
+    {
+      return ToUTF8 (ToString (dateTimeValue), out size);
     }
 
     /// <summary>
@@ -176,9 +211,36 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="julianDay">The value to convert</param>
     /// <returns>A .NET DateTime</returns>
-    public DateTime ToDateTime(double julianDay)
+    /// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    public static DateTime ToDateTime(double julianDay)
     {
-      return DateTime.FromOADate(julianDay - 2415018.5);
+      int Z, A, B, C, D, E, X1;
+      julianDay *= 86400000.0;
+      
+      Z = (int)((julianDay + 43200000) / 86400000);
+      A = (int)((Z - 1867216.25) / 36524.25);
+      A = Z + 1 + A - (A / 4);
+      B = A + 1524;
+      C = (int)((B - 122.1) / 365.25);
+      D = (36525 * C) / 100;
+      E = (int)((B - D) / 30.6001);
+      X1 = (int)(30.6001 * E);
+      
+      int day = B - D - X1;
+      int month = E < 14 ? E - 1 : E - 13;
+      int year = month > 2 ? C - 4716 : C - 4715;
+      
+      int tms = (int)((julianDay + 43200000) % 86400000);
+      double s = tms / 1000.0;
+      int ms = (int)s;
+      s -= ms;
+      int h = ms / 3600;
+      ms -= h * 3600;
+      int m = ms / 60;
+      s += ms - m * 60;
+      ms = (int)Math.Round ((s - (int)s) * 1000.0);
+      
+      return new DateTime (year, month, day, h, m, (int)s, ms);
     }
 
     /// <summary>
@@ -186,9 +248,29 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="value">The DateTime to convert</param>
     /// <returns>The JulianDay value the Datetime represents</returns>
-    public double ToJulianDay(DateTime value)
+    /// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    public static double ToJulianDay(DateTime value)
     {
-      return value.ToOADate() + 2415018.5;
+      int Y, M, D, A, B, X1, X2;
+      long iJD;
+      
+      Y = value.Year;
+      M = value.Month;
+      D = value.Day;
+      
+      if (M <= 2) {
+      	Y--;
+      	M += 12;
+      }
+      
+      A = Y / 100;
+      B = 2 - A + (A / 4);
+      X1 = 36525 * (Y + 4716) / 100;
+      X2 = 306001 * (M + 1) / 10000;
+      iJD = (long)((X1 + X2 + D + B - 1524.5) * 86400000);
+      iJD += (long)value.TimeOfDay.TotalMilliseconds;
+      
+      return iJD / 86400000.0;
     }
 
     /// <summary>
@@ -387,7 +469,7 @@ namespace Mono.Data.Sqlite
     /// <returns>The corresponding (closest match) DbType</returns>
     internal static DbType TypeToDbType(Type typ)
     {
-      TypeCode tc = Type.GetTypeCode(typ);
+      TypeCode tc = TypeUtil.GetTypeCode(typ);
       if (tc == TypeCode.Object)
       {
         if (typ == typeof(byte[])) return DbType.Binary;
@@ -598,7 +680,7 @@ namespace Mono.Data.Sqlite
     /// <returns>The SQLite type affinity for that type.</returns>
     internal static TypeAffinity TypeToAffinity(Type typ)
     {
-      TypeCode tc = Type.GetTypeCode(typ);
+      TypeCode tc = TypeUtil.GetTypeCode(typ);
       if (tc == TypeCode.Object)
       {
         if (typ == typeof(byte[]) || typ == typeof(Guid))
@@ -647,7 +729,7 @@ namespace Mono.Data.Sqlite
         
       for (int n = 0; n < _typeNames.Length; n++)
       {
-        if (string.Compare(nameToCompare, _typeNames[n].typeName, true, CultureInfo.InvariantCulture) == 0)
+        if (string.Compare (nameToCompare, _typeNames [n].typeName, StringComparison.OrdinalIgnoreCase) == 0)
           return _typeNames[n].dataType; 
       }
       

@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System;
 using System.Data.Common;
 using System.ComponentModel;
@@ -167,3 +168,4 @@ namespace System.Data
 		}
 	}
 }
+#endif

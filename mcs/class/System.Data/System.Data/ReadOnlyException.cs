@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public class ReadOnlyException : DataException
 	{
 		public ReadOnlyException ()
@@ -54,9 +56,11 @@ namespace System.Data
 		}
 #endif
 
+#if !WINDOWS_STORE_APP
 		protected ReadOnlyException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

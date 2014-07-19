@@ -10,7 +10,7 @@ RESOURCES = $(RESX_RESOURCES) $(OTHER_RESOURCES)
 PREBUILT = $(RESX_RESOURCES:=.prebuilt)
 
 LIBRARY = Mono.Data.Sqlite.dll
-LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll /r:System.Transactions.dll /r:System.Xml.dll \
+LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Core.dll /r:System.Data.dll /r:System.Transactions.dll /r:System.Xml.dll \
 	$(RESOURCES:%=-resource:%) -d:SQLITE_STANDARD
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618

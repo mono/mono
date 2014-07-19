@@ -28,16 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Text;
 using System.IO;
 using System.Data;
-using MonoTests.System.Data.Utils;
 using System.Xml;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+using System.Collections.Generic;
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+#else
+using System.Runtime.Serialization.Formatters.Binary;
+#endif
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests_System.Data
 {
@@ -323,7 +343,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(true , ds.GetChanges()!=null, "DS27");
 
 			// GetChanges 3
-			Assert.AreEqual(dr.ItemArray, ds.GetChanges().Tables[0].Rows[0].ItemArray  , "DS28");
+			AssertHelpers.AreEqualArray(dr.ItemArray, ds.GetChanges().Tables[0].Rows[0].ItemArray  , "DS28");
 		}
 
 		[Test] public void GetChanges_ByDataRowState()
@@ -363,12 +383,12 @@ namespace MonoTests_System.Data
 			arrAdded = dr.ItemArray;
 
 			// GetChanges Added
-			Assert.AreEqual(arrAdded, ds.GetChanges(DataRowState.Added).Tables[0].Rows[0].ItemArray , "DS30");
+			AssertHelpers.AreEqualArray(arrAdded, ds.GetChanges(DataRowState.Added).Tables[0].Rows[0].ItemArray , "DS30");
 
 			// GetChanges Deleted
 			dr = ds.GetChanges(DataRowState.Deleted).Tables[0].Rows[0];
 			object[] tmp = new object[] {dr[0,DataRowVersion.Original],dr[1,DataRowVersion.Original],dr[2,DataRowVersion.Original],dr[3,DataRowVersion.Original],dr[4,DataRowVersion.Original],dr[5,DataRowVersion.Original]};
-			Assert.AreEqual(arrDeleted, tmp, "DS31");
+			AssertHelpers.AreEqualArray(arrDeleted, tmp, "DS31");
 
 			//	can't check it	
 			//		// GetChanges Detached
@@ -377,10 +397,10 @@ namespace MonoTests_System.Data
 			//		Assert.AreEqual(arrDetached, tmp, "DS32");
 
 			// GetChanges Modified
-			Assert.AreEqual(arrModified, ds.GetChanges(DataRowState.Modified).Tables[0].Rows[0].ItemArray , "DS33");
+			AssertHelpers.AreEqualArray(arrModified, ds.GetChanges(DataRowState.Modified).Tables[0].Rows[0].ItemArray , "DS33");
 
 			// GetChanges Unchanged
-			Assert.AreEqual(arrUnchanged, ds.GetChanges(DataRowState.Unchanged).Tables[0].Rows[0].ItemArray , "DS34");
+			AssertHelpers.AreEqualArray(arrUnchanged, ds.GetChanges(DataRowState.Unchanged).Tables[0].Rows[0].ItemArray , "DS34");
 		}
 
 		[Test] public void BeginInitTest ()
@@ -568,7 +588,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Products>");
 			sb.Append("</NewDataSet>");
 
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 
 			DataSet ds = new DataSet();
 			//	ds.ReadXml(myStream);
@@ -599,7 +619,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Products>");
 			sb.Append("</NewDataSet>");
 
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 
 			DataSet ds = new DataSet();
 			//ds.ReadXml(myStream);
@@ -623,7 +643,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Products>");
 			sb.Append("</NewDataSet>");
 
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 
 			DataSet ds = new DataSet();
 			//	ds.ReadXml(myStream);
@@ -658,7 +678,7 @@ namespace MonoTests_System.Data
 			sb.Append("</h:body>");
 			sb.Append("</h:html>");
 
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			DataSet tempDs = new DataSet();
 			tempDs.ReadXml(myStream);
 			myStream.Seek(0,SeekOrigin.Begin);
@@ -689,7 +709,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element1 attr1='value2'>Text1</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS70");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS71");
@@ -713,7 +733,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS75");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS76");
@@ -737,7 +757,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element2>Text2</Element2>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("NewDataSet", ds.DataSetName, "DS79");
 			Assert.AreEqual("DocumentElement", ds.Tables[0].TableName, "DS80");
@@ -761,7 +781,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element1 attr1='value1' attr2='value2'/>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS84");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS85");
@@ -785,7 +805,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element1>Text2</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS89");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS90");
@@ -805,7 +825,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element1 attr1='value1' attr2='value2'/>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS93");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS94");
@@ -835,7 +855,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS102");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS103");
@@ -866,7 +886,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS111");
 			Assert.AreEqual("Element1", ds.Tables[0].TableName, "DS112");
@@ -926,7 +946,7 @@ namespace MonoTests_System.Data
 			sb.Append("<Element1 attr1='value1'>Text1</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS140");
@@ -957,7 +977,7 @@ namespace MonoTests_System.Data
 			sb.Append("</Element1>");
 			sb.Append("</DocumentElement>");
 			DataSet ds = new DataSet();
-			MemoryStream myStream = new MemoryStream(new ASCIIEncoding().GetBytes(sb.ToString()));
+			MemoryStream myStream = new MemoryStream(new UnicodeEncoding().GetBytes(sb.ToString()));
 			ds.InferXmlSchema(myStream,null);
 
 			Assert.AreEqual("DocumentElement", ds.DataSetName, "DS149");
@@ -986,6 +1006,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(culInfo , ds.Locale , "DS157");
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]
 		[SetCulture ("cs-CZ")]
 		public void DataSetSpecificCulture ()
@@ -996,6 +1017,7 @@ namespace MonoTests_System.Data
 			dt.Locale = ds.Locale;
 			Assert.AreSame (dt, ds.Tables["MACHINE"]);
 		}		
+#endif
 
 		[Test] public void MergeFailed()
 		{
@@ -1231,7 +1253,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("OldValue1", dsTarget.Tables["Table2"].Select("ParentId=1")[0][1] , "DS182");
 
 			// Merge - added values
-			Assert.AreEqual(arrAddedRow, dsTarget.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS183");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget.Tables["Table2"].Select("ParentId=99")[0].ItemArray, "DS183");
 
 			// Merge - deleted row
 			Assert.AreEqual(0, dsTarget.Tables["Table2"].Select("ParentId=2").Length , "DS184");
@@ -1286,7 +1308,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(oldValue, dsTarget1.Tables["Table2"].Select("ParentId=1")[0][1] , "DS188");
 
 			// Merge - added values
-			Assert.AreEqual(arrAddedRow, dsTarget1.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS189");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget1.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS189");
 
 			// Merge - deleted row
 			Assert.AreEqual(iDeleteLength, dsTarget1.Tables["Table2"].Select("ParentId=2").Length , "DS190");
@@ -1299,7 +1321,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("NewValue", dsTarget2.Tables["Table2"].Select("ParentId=1")[0][1] , "DS191");
 
 			// Merge - added values
-			Assert.AreEqual(arrAddedRow, dsTarget2.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS192");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget2.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS192");
 
 			// Merge - deleted row
 			Assert.AreEqual(0, dsTarget2.Tables["Table2"].Select("ParentId=2").Length , "DS193");
@@ -1579,7 +1601,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
 		public void Merge_MissingEventHandler ()
 		{
 			DataSet ds = new DataSet ();
@@ -1593,11 +1614,12 @@ namespace MonoTests_System.Data
 			ds1.Tables [0].PrimaryKey = new DataColumn[] {ds1.Tables [0].Columns [1]};
 
 			// Exception shud be raised when handler is not set for MergeFailed Event
+			AssertHelpers.AssertThrowsException<DataException> (() => {
 			ds1.Merge (ds);
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof(DataException))]
 		public void Merge_MissingColumn  ()
 		{
 			DataSet ds = new DataSet ();
@@ -1611,7 +1633,9 @@ namespace MonoTests_System.Data
 
 			ds1.Tables [0].Columns.Add ("col2");
 
+			AssertHelpers.AssertThrowsException<DataException> (() => {
 			ds.Merge (ds1, true, MissingSchemaAction.Error);
+			});
 		}
 
 		[Test]
@@ -1653,7 +1677,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
 		public void Merge_PrimaryKeys_IncorrectOrder ()
 		{
 			DataSet ds = new DataSet ();
@@ -1669,7 +1692,9 @@ namespace MonoTests_System.Data
 
 			// Though the key columns are the same, if the order is incorrect
 			// Exception must be raised
+			AssertHelpers.AssertThrowsException<DataException> (() => {
 			ds1.Merge (ds);
+			});
 		}
 
 		void CompareResults_1(string Msg,DataSet ds, DataSet dsTarget)
@@ -1830,7 +1855,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("OldValue1", dsTarget.Tables["Table2"].Select("ParentId=1")[0][1] , "DS240");
 
 			// Merge - added values
-			Assert.AreEqual(arrAddedRow, dsTarget.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS241");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget.Tables["Table2"].Select("ParentId=99")[0].ItemArray  , "DS241");
 
 			// Merge - deleted row
 			Assert.AreEqual(0, dsTarget.Tables["Table2"].Select("ParentId=2").Length , "DS242");
@@ -1883,7 +1908,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(OldValue, dsTarget1.Tables["Table1"].Select("ParentId=1")[0][1] , "DS246");
 
 			// Merge true,Ignore - added values
-			Assert.AreEqual(arrAddedRow, dsTarget1.Tables["Table1"].Select("ParentId=99")[0].ItemArray  , "DS247");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget1.Tables["Table1"].Select("ParentId=99")[0].ItemArray  , "DS247");
 
 			// Merge true,Ignore - deleted row
 			Assert.AreEqual(true, dsTarget1.Tables["Table1"].Select("ParentId=2").Length > 0, "DS248");
@@ -1900,7 +1925,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("NewValue", dsTarget1.Tables["Table1"].Select("ParentId=1")[0][1] , "DS250");
 
 			// Merge true,Ignore - added values
-			Assert.AreEqual(arrAddedRow, dsTarget1.Tables["Table1"].Select("ParentId=99")[0].ItemArray  , "DS251");
+			AssertHelpers.AreEqualArray(arrAddedRow, dsTarget1.Tables["Table1"].Select("ParentId=99")[0].ItemArray  , "DS251");
 
 			// Merge true,Ignore - deleted row
 			Assert.AreEqual(0, dsTarget1.Tables["Table1"].Select("ParentId=2").Length , "DS252");
@@ -2002,7 +2027,7 @@ namespace MonoTests_System.Data
 			//write xml  schema only
 			ds1.WriteXmlSchema(ms);
 
-			System.IO.MemoryStream ms1 = new System.IO.MemoryStream(ms.GetBuffer());
+			System.IO.MemoryStream ms1 = new System.IO.MemoryStream (ms.ToArray ());
 			//copy schema
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
@@ -2034,7 +2059,7 @@ namespace MonoTests_System.Data
 
 		[Test] public void ReadXmlSchema_ByFileName()
 		{
-			string sTempFileName = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899.xml");
+			string sTempFileName = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899.xml");
 
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
@@ -2123,13 +2148,13 @@ namespace MonoTests_System.Data
 			ds1.Tables.Add(DataProvider.CreateChildDataTable());
 
 			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.Xml.XmlTextWriter xmlTW = new System.Xml.XmlTextWriter(sw);
+			XmlWriter xmlTW = XmlWriter.Create(sw);
 			//write xml file, schema only
 			ds1.WriteXmlSchema(xmlTW);
 			xmlTW.Flush();
 
 			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
-			System.Xml.XmlTextReader xmlTR = new System.Xml.XmlTextReader(sr);
+			XmlReader xmlTR = XmlReader.Create(sr);
 
 			//copy both data and schema
 			DataSet ds2 = new DataSet();
@@ -2176,7 +2201,8 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
 			//write xml file, data only
-			ds1.WriteXml(sTempFileName);
+			using (Stream file = File.Create (sTempFileName))
+				ds1.WriteXml (file);
 
 			//copy both data and schema
 			DataSet ds2 = ds1.Copy();
@@ -2234,7 +2260,7 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS302");
 
-			ms.Close();
+			ms.Dispose ();
 		}
 
 		[Test] public void ReadXml_Strm2()
@@ -2445,7 +2471,7 @@ namespace MonoTests_System.Data
 			// Empty string
 			DataSet ds = new DataSet();
 			System.IO.StringReader sr = new System.IO.StringReader (string.Empty);
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr);
+			XmlReader xReader = XmlReader.Create(sr);
 			try
 			{
 				ds.ReadXml (xReader);
@@ -2636,7 +2662,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet();
 			System.IO.StringReader sr = new System.IO.StringReader(a_xmlData) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			XmlReader xReader = XmlReader.Create(sr) ;
 			ds.ReadXml (xReader);
 			Assert.AreEqual(a_expected, this.dataSetDescription(ds), "DS337");
 		}
@@ -2682,7 +2708,7 @@ namespace MonoTests_System.Data
 			xmlData +=    "</b>";
 			xmlData += 	"</a>";
 			System.IO.StringReader sr = new System.IO.StringReader(xmlData) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			XmlReader xReader = XmlReader.Create(sr) ;
 			ds.ReadXml (xReader);
 			Assert.AreEqual(3, ds.Tables["c"].Rows.Count, "DS338");
 		}
@@ -2760,8 +2786,8 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS341");
 
-			sr.Close();
-			sw.Close();
+			sr.Dispose ();
+			sw.Dispose ();
 		}
 
 		[Test]
@@ -2778,7 +2804,7 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
 			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.Xml.XmlTextWriter xmlTW = new System.Xml.XmlTextWriter(sw);
+			XmlWriter xmlTW = XmlWriter.Create(sw);
 
 			//write xml file, data only
 			ds1.WriteXml(xmlTW);
@@ -2789,7 +2815,7 @@ namespace MonoTests_System.Data
 			//clear the data
 			ds2.Clear();
 			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
-			System.Xml.XmlTextReader xmlTR = new System.Xml.XmlTextReader(sr);
+			XmlReader xmlTR = XmlReader.Create(sr);
 			ds2.ReadXml(xmlTR);
 
 			//check xml data
@@ -2887,7 +2913,7 @@ namespace MonoTests_System.Data
 			ms = new System.IO.MemoryStream();
 			ds1.WriteXmlSchema (ms);
 
-			ms1 = new System.IO.MemoryStream (ms.GetBuffer());
+			ms1 = new System.IO.MemoryStream (ms.ToArray());
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
 		
@@ -3115,7 +3141,7 @@ namespace MonoTests_System.Data
 			}
 			finally	
 			{
-				sw.Close();
+				sw.Dispose ();
 			}
 		}
 
@@ -3233,17 +3259,43 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			ds.Tables.Add(DataProvider.CreateParentDataTable());
 			string strXML = ds.GetXmlSchema();
+#if !WINDOWS_STORE_APP
 			schemaDocInit = new XmlDocument();
 			schemaDocInit.LoadXml(strXML);
 			namespaceManagerToInit = new XmlNamespaceManager(schemaDocInit.NameTable);
+#else
+			XmlReader reader = XmlReader.Create(new StringReader(strXML));
+			schemaDocInit = XmlDocument.Parse(strXML);
+			namespaceManagerToInit = new XmlNamespaceManager(reader.NameTable);
+#endif
 			namespaceManagerToInit.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema");
 			namespaceManagerToInit.AddNamespace("msdata", "urn:schemas-microsoft-com:xml-msdata");
 		}
 
 		private void CheckNode(string description, string xPath, int expectedNodesCout, XmlDocument schemaDoc, XmlNamespaceManager nm)
 		{
-			int actualNodeCount = schemaDoc.SelectNodes(xPath, nm).Count;
-			Assert.AreEqual(expectedNodesCout,actualNodeCount, "DS75" + description);
+#if !WINDOWS_STORE_APP
+			int actualNodeCount = schemaDoc.SelectNodes (xPath, nm).Count;
+#else
+			// this is a very simple hacked xpath parser specific to the test cases
+			int actualNodeCount = -1;
+			string[] levels = xPath.Split (new char [] {'/', '[', ']'}, StringSplitOptions.RemoveEmptyEntries);
+			IEnumerable<XElement> elements = new XElement [] { new XElement ("root", schemaDoc.Root) };
+			foreach (string level in levels) {
+				if (level [0] == '@') {
+					string[] parts = level.Split ('=');
+					XName name = XNamespace.Get (nm.DefaultNamespace) + parts [0].Substring (1);
+					string val = parts [1].Substring (1, parts [1].Length - 2);
+					actualNodeCount = elements.Count(e => e.Attribute (name).Value == val);
+				}
+				else {
+					string[] parts = level.Split (':');
+					XName currentLevel = XNamespace.Get (nm.LookupNamespace (parts [0])) + parts [1];
+					elements = elements.SelectMany (e => e.Elements (currentLevel));
+				}
+			}
+#endif
+			Assert.AreEqual (expectedNodesCout, actualNodeCount, "DS75" + description);
 		}
 
 		[Test]
@@ -3253,12 +3305,12 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			string input = "<a><b><c>2</c></b></a>";
 			System.IO.StringReader sr = new System.IO.StringReader(input) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			XmlReader xReader = XmlReader.Create(sr) ;
 			ds.ReadXml (xReader);
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
-			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			XmlWriter xWriter = XmlWriter.Create(sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
 			Assert.AreEqual(input,output, "DS76");
@@ -3268,12 +3320,12 @@ namespace MonoTests_System.Data
 			string input = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a><b><c>2</c></b></a>";
 			string expectedOutput = "<a><b><c>2</c></b></a>";
 			System.IO.StringReader sr = new System.IO.StringReader(input) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			XmlReader xReader = XmlReader.Create(sr) ;
 			ds.ReadXml (xReader);
 			
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
-			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			XmlWriter xWriter = XmlWriter.Create(sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
 			Assert.AreEqual(expectedOutput,output, "DS77");
@@ -3357,7 +3409,7 @@ namespace MonoTests_System.Data
 			ds.WriteXmlSchema (ms);
 
 			DataSet ds1 = new DataSet ();
-			ds1.ReadXmlSchema (new MemoryStream (ms.GetBuffer ()));
+			ds1.ReadXmlSchema (new MemoryStream (ms.ToArray ()));
 
 			// no new relation, and <table>_Id columns, should get created when 
 			// Relation.Nested = true
@@ -3410,7 +3462,7 @@ namespace MonoTests_System.Data
 
 			// When table schema is missing, it shud load up the data
 			// for the existing schema
-			ds1.ReadXml (new MemoryStream (ms.GetBuffer ()), XmlReadMode.DiffGram);
+			ds1.ReadXml (new MemoryStream (ms.ToArray ()), XmlReadMode.DiffGram);
 
 			Assert.AreEqual (2, ds1.Tables [0].Rows.Count, "#1");
 			Assert.AreEqual (1, ds1.Tables [0].Columns.Count, "#2");
@@ -3448,7 +3500,7 @@ namespace MonoTests_System.Data
 			c1.Rows.Add (new object[] {"p1","p2","p3","c1"});
 
 			StringWriter sw = new StringWriter ();
-			XmlTextWriter xw = new XmlTextWriter (sw);
+			XmlWriter xw = XmlWriter.Create (sw);
 			ds.WriteXml (xw);
 			string dataset_xml = sw.ToString ();
 			string child_xml = "<child><col1>p1</col1><col2>p2</col2><col3>p3</col3><col4>c1</col4></child>";
@@ -3616,6 +3668,7 @@ namespace MonoTests_System.Data
 
 		}
 
+#if !WINDOWS_STORE_APP
 		[Test]	
         	public void Bug537229_BinFormatSerializer_Test ()
         	{
@@ -3660,5 +3713,6 @@ namespace MonoTests_System.Data
                         DataTable vdt=(DataTable)bfmt.Deserialize(mstm2);
 			AssertDataTableValues (vdt);
 		}
+#endif
 	}
 }

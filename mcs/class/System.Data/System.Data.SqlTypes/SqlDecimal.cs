@@ -32,7 +32,9 @@
 //
 
 #if !TARGET_JVM
+#if !WINDOWS_STORE_APP
 using Mono.Data.Tds.Protocol;
+#endif
 #endif
 using System;
 using System.Xml;
@@ -44,8 +46,12 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("decimal")]
+#endif
 #endif
 	public struct SqlDecimal : INullable, IComparable
 #if NET_2_0
@@ -349,6 +355,7 @@ namespace System.Data.SqlTypes
 		}
 
 #if !TARGET_JVM
+#if !WINDOWS_STORE_APP
 		internal static SqlDecimal FromTdsBigDecimal (TdsBigDecimal x)
 		{
 			if (x == null)
@@ -356,6 +363,7 @@ namespace System.Data.SqlTypes
 			else
 				return new SqlDecimal (x.Precision, x.Scale, !x.IsNegative, x.Data);
 		}
+#endif
 #endif
 
 		public override int GetHashCode ()
@@ -423,7 +431,7 @@ namespace System.Data.SqlTypes
 				throw new SqlNullValueException ();
 
 			decimal d = n.Value;
-			d = Decimal.Round (d, position);
+			d = Math.Round (d, position);
 			return new SqlDecimal (d);
 		}
 
@@ -1463,6 +1471,7 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -1474,6 +1483,7 @@ namespace System.Data.SqlTypes
 			}
 			return new XmlQualifiedName ("decimal", "http://www.w3.org/2001/XMLSchema");
 		}
+#endif
 		
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

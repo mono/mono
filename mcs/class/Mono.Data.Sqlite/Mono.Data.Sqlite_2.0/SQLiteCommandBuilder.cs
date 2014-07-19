@@ -170,8 +170,8 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false)]
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
+    [Browsable (false)]
 #endif
     public override CatalogLocation CatalogLocation
     {
@@ -188,8 +188,8 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false)]
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
+    [Browsable (false)]
 #endif
     public override string CatalogSeparator
     {
@@ -206,10 +206,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false)]
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
+    [Browsable (false)]
 #endif
-    [DefaultValue("[")]
+    [DefaultValue ("[")]
     public override string QuotePrefix
     {
       get
@@ -225,8 +225,8 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false)]
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
+    [Browsable (false)]
 #endif
     public override string QuoteSuffix
     {
@@ -267,8 +267,8 @@ namespace Mono.Data.Sqlite
         || String.IsNullOrEmpty(quotedIdentifier))
         return quotedIdentifier;
 
-      if (quotedIdentifier.StartsWith(QuotePrefix, StringComparison.InvariantCultureIgnoreCase) == false
-        || quotedIdentifier.EndsWith(QuoteSuffix, StringComparison.InvariantCultureIgnoreCase) == false)
+      if (quotedIdentifier.StartsWith (QuotePrefix, StringComparison.OrdinalIgnoreCase) == false
+        || quotedIdentifier.EndsWith (QuoteSuffix, StringComparison.OrdinalIgnoreCase) == false)
         return quotedIdentifier;
 
       return quotedIdentifier.Substring(QuotePrefix.Length, quotedIdentifier.Length - (QuotePrefix.Length + QuoteSuffix.Length)).Replace(QuoteSuffix + QuoteSuffix, QuoteSuffix);
@@ -277,8 +277,8 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false)]
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
+    [Browsable (false)]
 #endif
     public override string SchemaSeparator
     {

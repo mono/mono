@@ -23,15 +23,25 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaParticle.
 	/// </summary>
-	public abstract class XmlSchemaParticle : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	abstract class XmlSchemaParticle : XmlSchemaAnnotated
 	{
 		internal static XmlSchemaParticle Empty {
 			get {
@@ -257,7 +267,7 @@ namespace System.Xml.Schema
 		{
 		}
 
-		internal virtual void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
+		internal virtual void CheckRecursion (Stack<XmlSchemaParticle> stack, ValidationEventHandler h, XmlSchema schema)
 		{
 		}
 
@@ -289,7 +299,7 @@ namespace System.Xml.Schema
 				return true;
 			}
 
-			internal override void CheckRecursion (Stack stack, 
+			internal override void CheckRecursion (Stack<XmlSchemaParticle> stack, 
 				ValidationEventHandler h, XmlSchema schema)
 			{
 				// do nothing

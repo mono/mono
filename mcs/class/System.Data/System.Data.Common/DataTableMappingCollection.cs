@@ -38,9 +38,15 @@ using System.ComponentModel;
 
 namespace System.Data.Common
 {
+#if !WINDOWS_STORE_APP
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableMappingCollectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-	public sealed class DataTableMappingCollection : MarshalByRefObject, ITableMappingCollection, IList, ICollection, IEnumerable
+#endif
+	public sealed class DataTableMappingCollection : 
+#if !WINDOWS_STORE_APP
+		MarshalByRefObject,
+#endif
+		ITableMappingCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
 
@@ -63,20 +69,24 @@ namespace System.Data.Common
 
 		#region Properties
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The number of items in the collection")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return mappings.Count; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The specified DataTableMapping object")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTableMapping this [int index] {
 			get { return (DataTableMapping)(mappings[index]); }
 			set {
@@ -87,11 +97,13 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The specified DataTableMapping object")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTableMapping this [string sourceTable] {
 			get { return (DataTableMapping) sourceTables[sourceTable]; }
 			set { this [mappings.IndexOf (sourceTables[sourceTable])] = value; }

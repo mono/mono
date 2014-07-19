@@ -38,7 +38,18 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Xml;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -197,7 +208,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void UnusedComplexTypesIgnored ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
@@ -221,11 +231,12 @@ namespace MonoTests.System.Data
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
 			AssertDataTable ("dt", ds.Tables[0], "Root", 1, 0, 0, 0, 0, 0);
 			// Here "unusedType" table is never imported.
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables[1].ReadXmlSchema (new StringReader (xs));
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void IsDataSetAndTypeIgnored ()
 		{
 			string xsbase = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
@@ -250,11 +261,12 @@ namespace MonoTests.System.Data
 			xs = String.Format (xsbase, "true");
 			ds = new DataSet ();
 			ds.Tables.Add (new DataTable ("Root"));
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
+			});
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void NestedReferenceNotAllowed ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
@@ -278,7 +290,9 @@ namespace MonoTests.System.Data
 			// (i.e. cannot be referenced in any other elements)
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (new DataTable ());
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
+			});
 		}
 
 		[Test]
@@ -378,16 +392,16 @@ namespace MonoTests.System.Data
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (new DataTable("Table1"));
 			ds1.Tables.Add (new DataTable("Table2"));
-			ds1.Tables[0].ReadXmlSchema (new XmlTextReader (schema, XmlNodeType.Document, null));
-			ds1.Tables[1].ReadXmlSchema (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds1.Tables[0].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
+			ds1.Tables[1].ReadXmlSchema (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds1);
 
 			// ReadXml() should also be the same
 			DataSet ds2 = new DataSet ();
 			ds2.Tables.Add (new DataTable ("Table1"));
 			ds2.Tables.Add (new DataTable ("Table2"));
-			ds2.Tables[0].ReadXml (new XmlTextReader (schema, XmlNodeType.Document, null));
-			ds2.Tables[1].ReadXml (new XmlTextReader (schema, XmlNodeType.Document, null));
+			ds2.Tables[0].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
+			ds2.Tables[1].ReadXml (XmlReader.Create (new StringReader (schema), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Document}));
 			ReadTest1Check (ds2);
 		}
 
@@ -433,22 +447,24 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void TestSampleFileComplexTablesExp1 () {
 			// Nested simple type element
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (new DataTable ("uno"));
+			AssertHelpers.AssertThrowsException<NullReferenceException> (() => {
 			ds.Tables[0].ReadXmlSchema ("Test/System.Data/schemas/test007.xsd");
+			});
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void TestSampleFileComplexTablesExp2 () {
 			// External simple type element
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (new DataTable ("uno"));
+			AssertHelpers.AssertThrowsException<NullReferenceException> (() => {
 			ds.Tables[0].ReadXmlSchema ("Test/System.Data/schemas/test008.xsd");
+			});
 		}
 
 		[Test]
@@ -457,14 +473,9 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet ();
 			ds.Tables.Add( new DataTable("foo"));
-			XmlTextReader xtr = null;
-			try {
-				xtr = new XmlTextReader ("Test/System.Data/schemas/test010.xsd");
-				xtr.XmlResolver = null;
+			using (Stream file = File.OpenRead ("Test/System.Data/schemas/test010.xsd"))
+			using (XmlReader xtr = XmlReader.Create (file)) {
 				ds.Tables[0].ReadXmlSchema (xtr);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
 			}
 			AssertDataSet ("010", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
@@ -474,7 +485,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void TestSampleFileComplexTables2 ()
 		{
 			DataSet ds = new DataSet ();
@@ -486,7 +496,9 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("attr", dt.Columns [0], "a", true, false, 0, 1, "a", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://xsdtesting", 0, String.Empty, false, false);
 			AssertDataColumn ("simple", dt.Columns [1], "e_text", false, false, 0, 1, "e_text", MappingType.SimpleContent, typeof (decimal), DBNull.Value, String.Empty, -1, "", 1, String.Empty, false, false);
 			AssertDataColumn ("hidden", dt.Columns [2], "root_Id", true, false, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, "", 2, String.Empty, false, false);
+			AssertHelpers.AssertThrowsException<NullReferenceException>(() => {
 			ds.Tables[1].ReadXmlSchema ("Test/System.Data/schemas/test011.xsd");
+			});
 		}
 
 		[Test]

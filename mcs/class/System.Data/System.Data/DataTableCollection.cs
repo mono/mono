@@ -38,17 +38,21 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 
 namespace System.Data
 {
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.TablesCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[ListBindable (false)]
+#endif
 	public partial class DataTableCollection : InternalDataCollectionBase {
 		DataSet dataSet;
 		DataTable[] mostRecentTables;
@@ -80,7 +84,12 @@ namespace System.Data
 			}
 		}
 
-		protected override ArrayList List {
+#if !WINDOWS_STORE_APP
+		protected 
+#else
+		internal
+#endif
+		override ArrayList List {
 			get { return base.List; }
 		}
 
@@ -274,9 +283,9 @@ namespace System.Data
 			int count = 0, match = -1;
 			for (int i = start; i < List.Count; i++) {
 				String name2 = ((DataTable) List[i]).TableName;
-				if (String.Compare (name, name2, false, dataSet.Locale) == 0)
+				if (dataSet.Locale.CompareInfo.Compare (name, name2, CompareOptions.None) == 0)
 					return i;
-				if (String.Compare (name, name2, true, dataSet.Locale) == 0) {
+				if (dataSet.Locale.CompareInfo.Compare (name, name2, CompareOptions.IgnoreCase) == 0) {
 					match = i;
 					count++;
 				}
@@ -362,7 +371,9 @@ namespace System.Data
 
 		#region Events
 
+#if !WINDOWS_STORE_APP
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
+#endif
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		public event CollectionChangeEventHandler CollectionChanging;
@@ -447,6 +458,7 @@ namespace System.Data
 			CopyTo ((Array) array, index);
 		}
 
+#if !WINDOWS_STORE_APP
 		internal void BinarySerialize_Schema (SerializationInfo si)
 		{
 			si.AddValue ("DataSet.Tables.Count", Count);
@@ -476,9 +488,12 @@ namespace System.Data
 				dt.BinarySerialize (si, "DataTable_" + i + ".");
 			}
 		}
+#endif
 	}
 #else
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	partial class DataTableCollection {
 		private int IndexOf (string name, bool error)
 		{

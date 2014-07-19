@@ -38,7 +38,7 @@ using System.Globalization;
 using System.Text;
 
 namespace System.Data.Common {
-	public abstract class DbCommandBuilder : Component
+	public abstract class DbCommandBuilder : Component, IDisposable
 	{
 		bool _setAllValues;
 		bool _disposed;
@@ -470,8 +470,10 @@ namespace System.Data.Common {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+#endif
 		public DbDataAdapter DataAdapter {
 			get { return _dbDataAdapter; }
 			set {  if (value != null) 

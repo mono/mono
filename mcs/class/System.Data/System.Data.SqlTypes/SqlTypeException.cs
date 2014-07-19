@@ -34,8 +34,13 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
-	public class SqlTypeException : SystemException, ISerializable
+#endif
+	public class SqlTypeException : SystemException
+#if !WINDOWS_STORE_APP
+		, ISerializable
+#endif
 	{
 		public SqlTypeException()
 			: base (Locale.GetText ("A sql exception has occured."))
@@ -52,6 +57,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		protected SqlTypeException (SerializationInfo si, StreamingContext sc)
 			: base (si.GetString("SqlTypeExceptionMessage"))
 		{
@@ -61,5 +67,6 @@ namespace System.Data.SqlTypes
 		{
 			si.AddValue ("SqlTypeExceptionMessage", Message, typeof(string));
 		}
+#endif
 	}
 }

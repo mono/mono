@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 using System;
 
@@ -35,4 +36,5 @@ namespace System.Data.SqlClient {
 	public delegate void SqlRowsCopiedEventHandler(object sender, SqlRowsCopiedEventArgs e);
 }
 
+#endif
 #endif

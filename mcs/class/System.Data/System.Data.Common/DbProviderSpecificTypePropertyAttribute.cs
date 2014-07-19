@@ -33,7 +33,9 @@ using System;
 
 namespace System.Data.Common {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute()]
+#endif
 	public sealed class DbProviderSpecificTypePropertyAttribute : Attribute
 	{
 		#region Fields

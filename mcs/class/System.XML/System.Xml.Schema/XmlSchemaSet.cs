@@ -34,20 +34,33 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Security.Policy;
-using System.Xml.Schema;
+using System.Xml;
 using System.Xml.XPath;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 #if NET_2_0
-	public class XmlSchemaSet
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaSet
 #else
 	internal sealed class XmlSchemaSet
 #endif
 	{
 		XmlNameTable nameTable;
-		XmlResolver xmlResolver = new XmlUrlResolver ();
+		XmlResolver xmlResolver = 
+#if !WINDOWS_STORE_APP
+			new XmlUrlResolver ();
+#else
+			null;
+#endif
 
 		ArrayList schemas;
 		XmlSchemaObjectTable attributes;
@@ -128,6 +141,7 @@ namespace System.Xml.Schema
 #endif
 		}
 
+#if !WINDOWS_STORE_APP
 		public XmlSchema Add (string targetNamespace, string schemaUri)
 		{
 			var uri = xmlResolver.ResolveUri (null, schemaUri);
@@ -135,6 +149,7 @@ namespace System.Xml.Schema
 				using (var r = XmlReader.Create (stream, new XmlReaderSettings () { XmlResolver = xmlResolver, NameTable = nameTable}, uri.ToString ()))
 					return Add (targetNamespace, r);
 		}
+#endif
 
 		public XmlSchema Add (string targetNamespace, XmlReader schemaDocument)
 		{

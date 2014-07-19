@@ -29,8 +29,18 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Xml;
-
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace Monotests_System.Data
 {
@@ -42,7 +52,7 @@ namespace Monotests_System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-			tempFile = Path.GetTempFileName ();
+			tempFile = AssertHelpers.GetTempFileName ();
 		}
 
 		[TearDown]
@@ -63,10 +73,12 @@ namespace Monotests_System.Data
 			dr["CustName"] = DBNull.Value;
 			dr["Type"] = typeof (DBNull);
 			dt.Rows.Add (dr);
-			ds.WriteXml (tempFile, XmlWriteMode.DiffGram);
+			using (Stream file = File.Create (tempFile))
+				ds.WriteXml (file, XmlWriteMode.DiffGram);
 
 			ds = Create ();
-			ds.ReadXml (tempFile, XmlReadMode.DiffGram);
+			using (Stream file = File.OpenRead (tempFile))
+				ds.ReadXml (file, XmlReadMode.DiffGram);
 		}
 
 		private static DataSet Create ()

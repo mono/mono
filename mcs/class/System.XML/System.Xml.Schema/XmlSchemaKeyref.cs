@@ -25,12 +25,21 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaKeyref.
 	/// </summary>
-	public class XmlSchemaKeyref : XmlSchemaIdentityConstraint
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaKeyref : XmlSchemaIdentityConstraint
 	{
 		private XmlQualifiedName refer;
 		const string xmlname = "keyref";

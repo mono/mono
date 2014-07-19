@@ -33,6 +33,7 @@
 //
 using System;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -54,7 +55,7 @@ namespace Mono.Xml.Schema
 		public bool HasValueLocal;
 		public bool HasValueOther;
 		public bool HasValueTargetNamespace;
-		public StringCollection ResolvedNamespaces;
+		public List<String> ResolvedNamespaces;
 
 		void Reset ()
 		{
@@ -62,7 +63,7 @@ namespace Mono.Xml.Schema
 			HasValueLocal = false;
 			HasValueOther = false;
 			HasValueTargetNamespace = false;
-			ResolvedNamespaces = new StringCollection ();
+			ResolvedNamespaces = new List<String> ();
 		}
 
 		public void Compile (string nss,

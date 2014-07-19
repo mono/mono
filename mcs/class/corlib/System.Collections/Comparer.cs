@@ -30,18 +30,26 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
+#endif
 
 namespace System.Collections
 {
+#if !WINDOWS_STORE_APP
 	[ComVisible(true)]
 	[Serializable]
+#endif
 #if INSIDE_CORLIB
 	public
 #else
 	internal
 #endif
-	sealed class Comparer : IComparer, ISerializable {
+	sealed class Comparer : IComparer
+#if !WINDOWS_STORE_APP
+		, ISerializable 
+#endif
+	{
 
 		public static readonly Comparer Default = new Comparer ();
 		public static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
@@ -88,6 +96,7 @@ namespace System.Collections
 			throw new ArgumentException (Locale.GetText ("Neither 'a' nor 'b' implements IComparable."));
 		}
 
+#if !WINDOWS_STORE_APP
 		// ISerializable
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -97,5 +106,6 @@ namespace System.Collections
 
 			info.AddValue ("CompareInfo", m_compareInfo, typeof (CompareInfo));
 		}
+#endif
 	}
 }

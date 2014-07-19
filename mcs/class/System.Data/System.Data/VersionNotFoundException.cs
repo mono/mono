@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public class VersionNotFoundException : DataException
 	{
 		public VersionNotFoundException ()
@@ -47,10 +49,12 @@ namespace System.Data
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		protected VersionNotFoundException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 #if NET_2_0
 		public VersionNotFoundException (string message, Exception innerException)

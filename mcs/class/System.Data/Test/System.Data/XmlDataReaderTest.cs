@@ -31,7 +31,22 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
+
+#if WINDOWS_STORE_APP
+using System.Xml.Linq;
+using XmlNode = System.Xml.Linq.XNode;
+#endif
 
 namespace Monotests_System.Data
 {
@@ -99,9 +114,7 @@ namespace Monotests_System.Data
 						"</FuncXml>" + Environment.NewLine +
 						"</CustomTypesTable>" + Environment.NewLine +
 						"</CustomTypesData>" + Environment.NewLine;
-			
-			StringReader sr = new StringReader (xml);
-			XmlTextReader xr = new XmlTextReader (sr);
+
 			DataTable tbl = new DataTable("CustomTypesTable");
 			tbl.Columns.Add("Dummy", typeof(System.UInt32));
 			tbl.Columns.Add("FuncXml", typeof(CustomTypeXml));
@@ -109,17 +122,21 @@ namespace Monotests_System.Data
 			DataSet ds = new DataSet("CustomTypesData");
 			ds.Tables.Add(tbl);
 
-			ds.ReadXml(xr);
+			using (StringReader sr = new StringReader (xml))
+			using (XmlReader xr = XmlReader.Create (sr)) {
+				ds.ReadXml(xr);
+			}
 
 			Assert.AreEqual (1, ds.Tables["CustomTypesTable"].Rows.Count, "XDR2");
-			
-			xr.Close ();
+			Assert.AreEqual (99, Convert.ToInt32(ds.Tables["CustomTypesTable"].Rows[0][0]), "XDR3");
+			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<Func "), "XDR4");
 		}
 		
+#if !WINDOWS_STORE_APP
 		[Serializable]
-		public class CustomTypeXml : IXmlSerializable
-		{
-		    private XmlNode mFuncXmlNode;
+#endif
+		public class CustomTypeXml : IXmlSerializable {
+		    XmlNode mFuncXmlNode;
 
 		    #region Constructors
 		    public CustomTypeXml()
@@ -128,86 +145,120 @@ namespace Monotests_System.Data
 
 		    public CustomTypeXml(string str)
 		    {
-		        XmlDocument doc = new XmlDocument();
-		        doc.LoadXml(str);
+#if !WINDOWS_STORE_APP
+		        XmlDocument doc = new XmlDocument ();
+		        doc.LoadXml (str);
 		        mFuncXmlNode = (XmlNode)(doc.DocumentElement);
+#else
+		        XDocument doc = XDocument.Parse (str);
+		        mFuncXmlNode = doc.Root;
+#endif
 		    }
 
-		    public CustomTypeXml(XmlNode xNode)
+		    public CustomTypeXml (XmlNode xNode)
 		    {
 		        mFuncXmlNode = xNode;
 		    }
 		    #endregion
 
 		    #region Node (set/get)
-		    public XmlNode Node
-		    {
-		        get
-		        {
-		            return mFuncXmlNode;
-		        }
-		        set
-		        {
-		            this.mFuncXmlNode = value;
-		        }
+		    public XmlNode Node {
+		        get { return mFuncXmlNode; }
+		        set { this.mFuncXmlNode = value; }
 		    }
 		    #endregion
 		    #region ToString
-		    public override string ToString()
+		    public override string ToString ()
 		    {
+#if !WINDOWS_STORE_APP
 		        return this.Node.OuterXml;
+#else
+				return this.Node.ToString ();
+#endif
 		    }
 		    #endregion
 
 		    /* IXmlSerializable overrides */
 		    #region WriteXml
-		    void IXmlSerializable.WriteXml(XmlWriter writer)
+		    void IXmlSerializable.WriteXml (XmlWriter writer)
 		    {
-		        XmlDocument doc = new XmlDocument();
-		        doc.LoadXml(mFuncXmlNode.OuterXml);
+#if !WINDOWS_STORE_APP
+		        XmlDocument doc = new XmlDocument ();
+		        doc.LoadXml (mFuncXmlNode.OuterXml);
 
 		        // On function level
-		        if (doc.DocumentElement.Name == "Func")
-		        {
-		            try { doc.DocumentElement.Attributes.Remove(doc.DocumentElement.Attributes["ReturnType"]); }
-		            catch { }
-		            try { doc.DocumentElement.Attributes.Remove(doc.DocumentElement.Attributes["ReturnTId"]); }
-		            catch { }
-		            try { doc.DocumentElement.Attributes.Remove(doc.DocumentElement.Attributes["CSharpType"]); }
-		            catch { }
-		        }
-		        else
-		        {
-		            UpgradeSchema(doc.DocumentElement);
+		        if (doc.DocumentElement.Name == "Func") {
+		            try {
+                        doc.DocumentElement.Attributes.Remove (doc.DocumentElement.Attributes ["ReturnType"]);
+		            } catch { 
+		            }
+		            try { 
+		                doc.DocumentElement.Attributes.Remove (doc.DocumentElement.Attributes ["ReturnTId"]);
+		            } catch {
+		            }
+		            try { 
+		                doc.DocumentElement.Attributes.Remove (doc.DocumentElement.Attributes ["CSharpType"]); 
+		            } catch {
+		            }
+		        } else {
+		            UpgradeSchema (doc.DocumentElement);
 		        }
 
 		        // Make sure lrt is saved according to latest schema
-		        foreach (XmlNode n in doc.DocumentElement.ChildNodes)
+		        foreach (XmlNode n in doc.DocumentElement.ChildNodes) {
+		            UpgradeSchema (n);
+		        }
+#else
+				XDocument doc = XDocument.Parse(mFuncXmlNode.ToString());
+
+		        // On function level
+		        if (doc.Root.Name.LocalName == "Func")
 		        {
-		            UpgradeSchema(n);
+		            try { 
+						doc.Root.Attribute ("ReturnType").Remove (); 
+					} catch { 
+					}
+		            try { 
+						doc.Root.Attribute ("ReturnTId").Remove (); 
+					} catch {
+					}
+					try {
+						doc.Root.Attribute ("CSharpType").Remove ();
+					} catch {
+					}
+		        } else {
+		            UpgradeSchema (doc.Root);
 		        }
 
-		        doc.WriteTo(writer);
+		        // Make sure lrt is saved according to latest schema
+		        foreach (XElement e in doc.Root.Elements ()) {
+		            UpgradeSchema (e);
+		        }
+#endif
+
+		        doc.WriteTo (writer);
 		    }
 		    #endregion
 		    #region ReadXml
-		    void IXmlSerializable.ReadXml(XmlReader reader)
+		    void IXmlSerializable.ReadXml (XmlReader reader)
 		    {
-		        XmlDocument doc = new XmlDocument();
-		        string str = reader.ReadString();
-		        try
-		        {
-		            doc.LoadXml(str);
-		        }
-		        catch
-		        {
-		            doc.LoadXml(reader.ReadOuterXml());
+#if !WINDOWS_STORE_APP
+		        XmlDocument doc = new XmlDocument ();
+		        string str = reader.ReadString ();
+		        try {
+		            doc.LoadXml (str);
+		        } catch {
+		            doc.LoadXml (reader.ReadOuterXml ());
 		        }
 		        mFuncXmlNode = (XmlNode)(doc.DocumentElement);
+#else
+				string str = reader.ReadInnerXml ();
+				mFuncXmlNode = XDocument.Parse (str).Root;
+#endif
 		    }
 		    #endregion
 		    #region GetSchema
-		    XmlSchema IXmlSerializable.GetSchema()
+		    XmlSchema IXmlSerializable.GetSchema ()
 		    {
 		        return (null);
 		    }
@@ -215,39 +266,91 @@ namespace Monotests_System.Data
 
 		    /* Private utils */
 		    #region private UpgradeSchema
-		    private void UpgradeSchema(XmlNode xNode)
+#if !WINDOWS_STORE_APP
+		    void UpgradeSchema (XmlNode xNode)
 		    {
 		        // Attribute removals (cleanup)
-		        try { xNode.Attributes.Remove(xNode.Attributes["TId"]); }
-		        catch { }
-		        try { xNode.Attributes.Remove(xNode.Attributes["OnError"]); }
-		        catch { }
-		        try { xNode.Attributes.Remove(xNode.Attributes["Check"]); }
-		        catch { }
-		        try { xNode.Attributes.Remove(xNode.Attributes["ParamType"]); }
-		        catch { }
-		        try { xNode.Attributes.Remove(xNode.Attributes["RealLen"]); }
-		        catch { }
+		        try { 
+			        xNode.Attributes.Remove (xNode.Attributes ["TId"]);
+			    } catch {
+			    }
+		        try { 
+			        xNode.Attributes.Remove (xNode.Attributes ["OnError"]);
+			    } catch {
+			    }
+		        try {
+			        xNode.Attributes.Remove (xNode.Attributes ["Check"]);
+			    } catch {
+			    }
+		        try {
+			        xNode.Attributes.Remove (xNode.Attributes ["ParamType"]);
+			    } catch {
+			    }
+		        try {
+			        xNode.Attributes.Remove (xNode.Attributes ["RealLen"]);
+			    } catch {
+			    }
 
 		        // Attribute removals (order)
-		        try
-		        {
-		            XmlAttribute attr = xNode.Attributes["IsExpGetRef"];
-		            xNode.Attributes.Remove(xNode.Attributes["IsExpGetRef"]);
-		            xNode.Attributes.InsertAfter(attr, xNode.Attributes["ExpectedValue"]);
-		        }
-		        catch { }
+		        try {
+		            XmlAttribute attr = xNode.Attributes ["IsExpGetRef"];
+		            xNode.Attributes.Remove (xNode.Attributes ["IsExpGetRef"]);
+		            xNode.Attributes.InsertAfter (attr, xNode.Attributes ["ExpectedValue"]);
+			    } catch {
+			    }
 
 		        // Attribute value formats (prefix, etc.)
-		        string tmp = xNode.Attributes["HandleInput"].Value;
-		        tmp = tmp.Replace("E_LRT_INPUT_HANDLE_", "");
-		        xNode.Attributes["HandleInput"].Value = tmp;
+		        string tmp = xNode.Attributes ["HandleInput"].Value;
+		        tmp = tmp.Replace ("E_LRT_INPUT_HANDLE_", "");
+		        xNode.Attributes ["HandleInput"].Value = tmp;
 
-		        foreach (XmlNode n in xNode.ChildNodes)
-		        {
-		            UpgradeSchema(n);
+		        foreach (XmlNode n in xNode.ChildNodes) {
+		            UpgradeSchema (n);
 		        }
 		    }
+#else
+			void UpgradeSchema (XElement xNode)
+		    {
+		        // Attribute removals (cleanup)
+		        try { 
+					xNode.Attribute ("TId").Remove (); 
+			    } catch {
+			    }
+		        try { 
+					xNode.Attribute ("OnError").Remove ();
+			    } catch {
+			    }
+		        try { 
+					xNode.Attribute ("Check").Remove ();
+			    } catch {
+			    }
+		        try { 
+					xNode.Attribute ("ParamType").Remove ();
+			    } catch {
+			    }
+				try {
+					xNode.Attribute ("RealLen").Remove ();
+			    } catch {
+			    }
+
+		        // Attribute removals (order)
+		        try {
+		            XAttribute attr = xNode.Attribute ("IsExpGetRef");
+		            attr.Remove ();
+		            xNode.Add (attr);
+			    } catch {
+			    }
+
+		        // Attribute value formats (prefix, etc.)
+		        string tmp = xNode.Attribute ("HandleInput").Value;
+		        tmp = tmp.Replace ("E_LRT_INPUT_HANDLE_", "");
+		        xNode.Attribute ("HandleInput").Value = tmp;
+
+		        foreach (XElement n in xNode.Elements ()) {
+		            UpgradeSchema (n);
+		        }
+		    }
+#endif
 		    #endregion
 		}	
 	}

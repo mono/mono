@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System.ComponentModel;
 using System.Security.Permissions;
 using System.Globalization;
@@ -111,3 +112,4 @@ namespace System.Data.Common {
 		#endregion // Methods
 	}
 }
+#endif

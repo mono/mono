@@ -41,7 +41,11 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
+	public abstract class DbDataReader : 
+#if !WINDOWS_STORE_APP
+		MarshalByRefObject, 
+#endif
+		IDataReader, IDataRecord, IDisposable, IEnumerable
 	{
 		#region Constructors
 

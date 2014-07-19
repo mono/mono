@@ -40,8 +40,12 @@ using System.Text;
 
 namespace System.Data.SqlTypes
 {
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("anyType")]
+#endif
 	public sealed class SqlXml : INullable, IXmlSerializable
 	{
 		bool notNull;
@@ -124,18 +128,20 @@ namespace System.Data.SqlTypes
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("anyType", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
+#endif
 
 		public XmlReader CreateReader ()
 		{
 			if (notNull) {
 			   	XmlReaderSettings xs = new XmlReaderSettings ();
 				xs.ConformanceLevel = ConformanceLevel.Fragment;
-				return XmlTextReader.Create (new StringReader (xmlValue), xs);
+				return XmlReader.Create (new StringReader (xmlValue), xs);
 			} else
 				throw new SqlNullValueException (); 
 		}

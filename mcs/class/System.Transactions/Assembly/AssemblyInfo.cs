@@ -34,7 +34,6 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 
 // General Information about the System.Transactions assembly
 
@@ -52,14 +51,23 @@ using System.Security.Permissions;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
+#if !WINDOWS_STORE_APP
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+#endif
 [assembly: AllowPartiallyTrustedCallers]
 
 #if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
+#if WINDOWS_STORE_APP
+	[assembly: AssemblyDelaySign (false)]
+	[assembly: AssemblyKeyFile("../mono.snk")]
+#else
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif
+#endif // WINDOWS_STORE_APP
+#endif // !TARGET_JVM
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+#if !WINDOWS_STORE_APP
 [assembly: BestFitMapping (false)]
+#endif

@@ -27,12 +27,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
-	public abstract class XmlSchemaGroupBase : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	abstract class XmlSchemaGroupBase : XmlSchemaParticle
 	{
 		private XmlSchemaObjectCollection compiledItems;
 
@@ -83,7 +92,7 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		internal override void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
+		internal override void CheckRecursion (Stack<XmlSchemaParticle> stack, ValidationEventHandler h, XmlSchema schema)
 		{
 			foreach (XmlSchemaParticle p in this.Items)
 				p.CheckRecursion (stack, h, schema);

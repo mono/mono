@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
@@ -63,3 +64,4 @@ namespace System.Data.SqlClient {
 		#endregion // Methods
 	}
 }
+#endif

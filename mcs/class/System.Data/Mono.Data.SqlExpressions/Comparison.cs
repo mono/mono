@@ -97,15 +97,15 @@ namespace Mono.Data.SqlExpressions {
 				}
 			}
 
-			if (o1 is DateTime && o2 is string && Thread.CurrentThread.CurrentCulture != CultureInfo.InvariantCulture) {
+			if (o1 is DateTime && o2 is string && CultureInfo.CurrentCulture != CultureInfo.InvariantCulture) {
 				// DateTime is always CultureInfo.InvariantCulture
 				o2 = (IComparable) DateTime.Parse ((string)o2, CultureInfo.InvariantCulture);
 			} else if (o2 is DateTime && o1 is string && 
-			           Thread.CurrentThread.CurrentCulture != CultureInfo.InvariantCulture) {
+			           CultureInfo.CurrentCulture != CultureInfo.InvariantCulture) {
 				// DateTime is always CultureInfo.InvariantCulture
                 o1 = (IComparable) DateTime.Parse ((string)o1, CultureInfo.InvariantCulture);
 			}
-			else if (o2 is DateTime && o1 is string && Thread.CurrentThread.CurrentCulture != CultureInfo.InvariantCulture) {
+			else if (o2 is DateTime && o1 is string && CultureInfo.CurrentCulture != CultureInfo.InvariantCulture) {
 				// DateTime is always CultureInfo.InvariantCulture
 				o1 = (IComparable) DateTime.Parse ((string)o1, CultureInfo.InvariantCulture);
 			}

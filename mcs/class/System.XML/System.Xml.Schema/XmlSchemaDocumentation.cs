@@ -25,12 +25,27 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_STORE_APP
+using XmlNode = System.Xml.Linq.XNode;
+using System.Xml.Linq;
+using System.Linq;
+#endif
+
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaDocumentation.
 	/// </summary>
-	public class XmlSchemaDocumentation : XmlSchemaObject
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	class XmlSchemaDocumentation : XmlSchemaObject
 	{
 		private string language;
 		private XmlNode[] markup;
@@ -107,6 +122,7 @@ namespace System.Xml.Schema
 			}
 
 			//Content {any}*
+#if !WINDOWS_STORE_APP
 			XmlDocument xmldoc = new XmlDocument();
 			xmldoc.AppendChild(xmldoc.ReadNode(reader));
 			XmlNode root = xmldoc.FirstChild;
@@ -118,6 +134,15 @@ namespace System.Xml.Schema
 					doc.Markup[i] = root.ChildNodes[i];
 				}
 			}
+#else
+			XDocument xmldoc = new XDocument();
+			xmldoc.Add(XNode.ReadFrom(reader));
+			XElement root = xmldoc.FirstNode as XElement;
+			if (root != null && root.Nodes ().Any ())
+			{
+				doc.Markup = root.Nodes().ToArray();
+			}
+#endif
 			if(reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
 				skip = true;
 

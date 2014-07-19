@@ -89,7 +89,7 @@ namespace System.Data.Common
 				if (y == DBNull.Value) 
 					return 1;
 				
-				return String.Compare ((string)x, (string)y, false);
+				return String.Compare ((string)x, (string)y, StringComparison.CurrentCulture);
 			}
 
 			#endregion
@@ -111,7 +111,7 @@ namespace System.Data.Common
 				if (y == DBNull.Value) 
 					return 1;
 				
-				return String.Compare ((string)x, (string)y, true);
+				return String.Compare ((string)x, (string)y, StringComparison.CurrentCultureIgnoreCase);
 			}
 
 			#endregion

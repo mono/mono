@@ -32,12 +32,21 @@ using System.Xml;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaComplexType.
 	/// </summary>
-	public class XmlSchemaComplexType : XmlSchemaType
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	class XmlSchemaComplexType : XmlSchemaType
 	{
 		private XmlSchemaAnyAttribute anyAttribute;
 		private XmlSchemaObjectCollection attributes;

@@ -48,15 +48,18 @@ namespace Mono.Xml.Schema
 
 		public XmlSchemaElement CurrentElement;
 
+#if !WINDOWS_STORE_APP
 		public Stack ContextStack = new Stack ();
 
 		public XsdValidationContext Context
 			= new XsdValidationContext ();
+#endif
 
 		public XmlSchemaContentProcessing ProcessContents {
 			get { return processContents; }
 		}
 
+#if !WINDOWS_STORE_APP
 		public void PushContext ()
 		{
 			ContextStack.Push (Context.Clone ());
@@ -66,6 +69,7 @@ namespace Mono.Xml.Schema
 		{
 			Context = (XsdValidationContext) ContextStack.Pop ();
 		}
+#endif
 
 		internal void SetProcessContents (XmlSchemaContentProcessing value)
 		{

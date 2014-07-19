@@ -5,6 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
+#if !WINDOWS_STORE_APP
 namespace Mono.Data.Sqlite
 {
   using System;
@@ -56,3 +57,4 @@ namespace Mono.Data.Sqlite
     }
   }
 }
+#endif

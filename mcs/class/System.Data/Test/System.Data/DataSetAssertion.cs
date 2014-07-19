@@ -36,12 +36,28 @@ using System.Data;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#endif
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
 	public class DataSetAssertion
 	{
+#if !WINDOWS_STORE_APP
 		public string GetNormalizedSchema (string source)
 		{
 /*
@@ -63,7 +79,7 @@ namespace MonoTests.System.Data
 			return writer.ToString ();
 		}
 
-		private void SortAttributes (XmlElement el)
+		void SortAttributes (XmlElement el)
 		{
 			SortAttributesAttributes (el);
 			ArrayList al = new ArrayList ();
@@ -77,7 +93,7 @@ namespace MonoTests.System.Data
 				el.RemoveChild (n);
 		}
 
-		private void SortAttributesAttributes (XmlElement el)
+		void SortAttributesAttributes (XmlElement el)
 		{
 			ArrayList al = new ArrayList ();
 			foreach (XmlAttribute a in el.Attributes)
@@ -93,6 +109,41 @@ namespace MonoTests.System.Data
 				if (a.Name != "xmlns")// || a.Value != String.Empty)
 					el.SetAttributeNode (a);
 		}
+#else
+		public string GetNormalizedSchema (string source)
+		{
+			XDocument doc = XDocument.Parse (source);
+			SortAttributes (doc.Root);
+			StringWriter writer = new StringWriter ();
+			doc.Save (writer);
+			return writer.ToString ();
+		}
+
+		void SortAttributes (XElement el)
+		{
+			SortAttributesAttributes (el);
+			ArrayList al = new ArrayList ();
+			foreach (XNode n in el.Nodes ()) {
+				if (n.NodeType == XmlNodeType.Element)
+					SortAttributes (n as XElement);
+				if (n.NodeType == XmlNodeType.Comment)
+					al.Add (n);
+			}
+			foreach (XNode n in al)
+				n.Remove ();
+		}
+
+		void SortAttributesAttributes (XElement el)
+		{
+			XAttribute[] attrs = el.Attributes ().ToArray ();
+			el.RemoveAttributes ();
+			el.Add (attrs.OrderBy (x => {
+				string prefix = el.GetPrefixOfNamespace (x.Name.Namespace);
+				string localName = x.Name.LocalName;
+				return (prefix != null) ? (prefix + ":" + localName) : localName;
+			}).Where (x => x.Name.LocalName != "xmlns"));
+		}
+#endif
 
 		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
 		{
@@ -126,7 +177,7 @@ namespace MonoTests.System.Data
 		// a bit detailed version
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount, ReadState state, string readerLocalName, string readerNS)
 		{
-			XmlReader xtr = new XmlTextReader (xml, XmlNodeType.Element, null);
+			XmlReader xtr = XmlReader.Create (new StringReader (xml), new XmlReaderSettings{ConformanceLevel=ConformanceLevel.Fragment});
 			Assert.AreEqual (resultMode, ds.ReadXml (xtr, readMode), label + ".return");
 			AssertDataSet (label + ".dataset", ds, datasetName, tableCount, -1);
 			Assert.AreEqual (state, xtr.ReadState, label + ".readstate");

@@ -31,10 +31,21 @@ using System.Collections;
 using System.Data;
 using System.Globalization;
 using System.Collections.Generic;
-
 using MonoTests.System.Data.Utils;
-
+#if WINDOWS_STORE_APP
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#endif
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
+#endif
 
 namespace MonoTests_System.Data
 {
@@ -693,7 +704,7 @@ namespace MonoTests_System.Data
 			drArr[2].RowError = "Error3";
 
 			// GetErrors
-			Assert.AreEqual(dt.GetErrors(), drArr, "DT64");
+			AssertHelpers.AreEqualArray(dt.GetErrors(), drArr, "DT64");
 		}
 
 		[Test]
@@ -746,7 +757,7 @@ namespace MonoTests_System.Data
 
 			// ImportRow - Values
 			dt1.ImportRow (dr);
-			Assert.AreEqual (dr.ItemArray, dt1.Rows [dt1.Rows.Count - 1].ItemArray, "DT69");
+			AssertHelpers.AreEqualArray (dr.ItemArray, dt1.Rows [dt1.Rows.Count - 1].ItemArray, "DT69");
 
 			// ImportRow - DataRowState
 			Assert.AreEqual (dr.RowState, dt1.Rows [dt1.Rows.Count - 1].RowState, "DT70");
@@ -1191,7 +1202,7 @@ namespace MonoTests_System.Data
 			dt.Rows.CopyTo (drResult, 0);
 
 			// Select
-			Assert.AreEqual(drResult, drSelect, "DT122");
+			AssertHelpers.AreEqualArray(drResult, drSelect, "DT122");
 		}
 
 		[Test]
@@ -1232,7 +1243,7 @@ namespace MonoTests_System.Data
 			}
 			// Select_S - ChildId=1
 			drSelect = dt.Select ("ChildId=1");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT123");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT123");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1242,11 +1253,11 @@ namespace MonoTests_System.Data
 			}
 			// Select_S - ChildId='1'
 			drSelect = dt.Select ("ChildId='1'");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT124");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT124");
 			//-------------------------------------------------------------
 			// Select_S - ChildId= '1'  (whitespace in filter string.
 			drSelect = dt.Select("ChildId= '1'");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT125");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT125");
 			//-------------------------------------------------------------
 			al.Clear();
 			foreach (DataRow dr in dt.Rows)
@@ -1254,7 +1265,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - String1='1-String1'
 			drSelect = dt.Select ("String1='1-String1'");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT126");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT126");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1263,7 +1274,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - ChildId=1 and String1='1-String1'
 			drSelect = dt.Select ("ChildId=1 and String1='1-String1'");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT127");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT127");
 
 			//-------------------------------------------------------------
 			al.Clear();
@@ -1309,7 +1320,7 @@ namespace MonoTests_System.Data
 					al.Add (dr);
 			// Select_S - String2 like '%1-S%'
 			drSelect = dt.Select ("String2 like '%1-S%'");
-			Assert.AreEqual (al.ToArray (), drSelect, "DT128");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT128");
 
 			//-------------------------------------------------------------
 			//If a column name contains one of the above characters,(ex. #\/=><+-*%&|^'" and so on) the name must be wrapped in brackets. For example to use a column named "Column#" in an expression, you would write "[Column#]":
@@ -1375,7 +1386,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - SubString(Trim(String1),1,2) = '1-'
 			drSelect = dt.Select ("SubString(Trim(String1),1,2) = '1-'");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT130");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT130");
 			//-------------------------------------------------------------
 			/*
 			al.Clear();
@@ -1406,7 +1417,7 @@ namespace MonoTests_System.Data
 					al.Add(dr);
 			// Select_S - Parent.ParentId = ChildId
 			drSelect = dt.Select ("Parent.ParentId = ChildId");
-			Assert.AreEqual (al.ToArray(), drSelect, "DT134");
+			AssertHelpers.AreEqualArray (al.ToArray(), drSelect, "DT134");
 		}
 
 		private void CompareUnSorted(Array a, Array b)
@@ -1440,27 +1451,27 @@ namespace MonoTests_System.Data
 			drSelect = dt.Select ("ParentId=1", string.Empty, DataViewRowState.Added);
 			drResult = GetResultRows(dt,DataRowState.Added);
 			// Select_SSD DataViewRowState.Added
-			Assert.AreEqual (drResult, drSelect, "DT135");
+			AssertHelpers.AreEqualArray (drResult, drSelect, "DT135");
 
 			drSelect = dt.Select ("ParentId=1", string.Empty, DataViewRowState.CurrentRows);
 			drResult = GetResultRows (dt, DataRowState.Unchanged | DataRowState.Added  | DataRowState.Modified);
 			// Select_SSD DataViewRowState.CurrentRows
-			Assert.AreEqual (drResult, drSelect, "DT136");
+			AssertHelpers.AreEqualArray (drResult, drSelect, "DT136");
 
 			drSelect = dt.Select ("ParentId=1", string.Empty, DataViewRowState.Deleted);
 			drResult = GetResultRows (dt, DataRowState.Deleted);
 			// Select_SSD DataViewRowState.Deleted
-			Assert.AreEqual (drResult, drSelect, "DT137");
+			AssertHelpers.AreEqualArray (drResult, drSelect, "DT137");
 
 			drSelect = dt.Select ("ParentId=1", string.Empty, DataViewRowState.ModifiedCurrent | DataViewRowState.ModifiedOriginal);
 			drResult = GetResultRows (dt,DataRowState.Modified);
 			// Select_SSD ModifiedCurrent or ModifiedOriginal
-			Assert.AreEqual (drResult, drSelect, "DT138");
+			AssertHelpers.AreEqualArray (drResult, drSelect, "DT138");
 		}
 
 		private DataRow [] GetResultRows (DataTable dt, DataRowState State)
 		{
-			ArrayList al = new ArrayList ();
+			List<DataRow> al = new List<DataRow> ();
 			DataRowVersion drVer = DataRowVersion.Current;
 
 			//From MSDN -	The row the default version for the current DataRowState.
@@ -1481,8 +1492,8 @@ namespace MonoTests_System.Data
 				if (dr.HasVersion(drVer) && ((int)dr["ParentId", drVer] == 1) && ((dr.RowState & State) > 0))
 					al.Add(dr);
 			}
-			DataRow[] result = (DataRow[])al.ToArray((typeof(DataRow)));
-			return result;
+
+			return al.ToArray ();
 		}
 
 		[Test]
@@ -1583,7 +1594,7 @@ namespace MonoTests_System.Data
 			// Checking PrimaryKey set/get
 			DataColumn[] dcArr = new DataColumn[] {dtParent.Columns[0]};
 			dtParent.PrimaryKey = new DataColumn[] {dtParent.Columns[0]};
-			Assert.AreEqual (dcArr, dtParent.PrimaryKey, "DT152");
+			AssertHelpers.AreEqualArray (dcArr, dtParent.PrimaryKey, "DT152");
 
 			dtParent.PrimaryKey=null;
 			DataSet ds = new DataSet();
@@ -2187,7 +2198,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("ChildId=1", "ParentId Desc");
-			Assert.AreEqual (al.ToArray (), drSelect, "DT193");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT193");
 
 			//get excepted resault
 			al = new List<DataRow>();
@@ -2199,7 +2210,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select("String1='1-String1'", "ParentId Desc");
-			Assert.AreEqual (al.ToArray(),drSelect, "DT194");
+			AssertHelpers.AreEqualArray (al.ToArray(),drSelect, "DT194");
 
 			//get excepted resault
 			al = new List<DataRow> ();
@@ -2211,7 +2222,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("ChildId=1 and String1='1-String1'", "ParentId Desc");
-			Assert.AreEqual(al.ToArray (), drSelect, "DT195");
+			AssertHelpers.AreEqualArray(al.ToArray (), drSelect, "DT195");
 			
 
 			//get excepted resault
@@ -2224,7 +2235,7 @@ namespace MonoTests_System.Data
 			al.Sort(new DataRowsComparer("ParentId", "Desc"));
 
 			drSelect = dt.Select("Len(String1) < 4 ", "ParentId Desc");
-			Assert.AreEqual(al.ToArray(),drSelect, "DT196");
+			AssertHelpers.AreEqualArray(al.ToArray(),drSelect, "DT196");
 		}
 		
 		[Test]
@@ -2250,7 +2261,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("String1 like '%%String*'  ", "ParentId Desc");
-			Assert.AreEqual (al.ToArray (), drSelect, "DT197");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT197");
 			
 			//get excepted resault
 			al = new List<DataRow> ();
@@ -2262,7 +2273,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("ChildId in (2,3)  ", "ParentId Desc");
-			Assert.AreEqual (al.ToArray (), drSelect, "DT198");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT198");
 
 			//get excepted resault
 			al = new List<DataRow> ();
@@ -2292,7 +2303,7 @@ namespace MonoTests_System.Data
 			al.Sort (new DataRowsComparer ("ParentId", "Desc"));
 
 			drSelect = dt.Select ("SubString(String2,3,3) like 'Str' ", "ParentId Desc");
-			Assert.AreEqual (al.ToArray (), drSelect, "DT200");
+			AssertHelpers.AreEqualArray (al.ToArray (), drSelect, "DT200");
 		}
 
 		[Test]
@@ -2541,13 +2552,30 @@ namespace MonoTests_System.Data
 				object objX = drX[_columnName];
 				object objY = drY[_columnName];
 
-				int compareResult = Comparer.Default.Compare(objX, objY);
+				int compareResult = Compare(objX, objY);
 
 				//If we are comparing desc we need to reverse the result.
 				if (_direction.ToLower() == "desc")
 					compareResult = -compareResult;
 
 				return compareResult;
+			}
+
+			public int Compare(object a, object b)
+			{
+				if (a == b)
+					return 0;
+				else if (a == null)
+					return -1;
+				else if (b == null)
+					return 1;
+
+				if (a is IComparable)
+					return (a as IComparable).CompareTo(b);
+				else if (b is IComparable)
+					return -(b as IComparable).CompareTo(a);
+
+				throw new ArgumentException("Neither 'a' nor 'b' implements IComparable.");
 			}
 		}
 	}

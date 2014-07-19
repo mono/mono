@@ -44,19 +44,24 @@ namespace System.Data
 	/// retrieve a PropertyCollection.
 	/// </summary>
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
-	public class PropertyCollection : Hashtable {
+#endif
+	public class PropertyCollection : Hashtable
+	{
 		public PropertyCollection() 
 		{
 		}
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 		protected PropertyCollection(System.Runtime.Serialization.SerializationInfo info,
 					     System.Runtime.Serialization.StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 #endif
 
 		// the only public methods and properties 

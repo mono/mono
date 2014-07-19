@@ -30,12 +30,21 @@ using System;
 using System.Xml.Serialization;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaComplexContent.
 	/// </summary>
-	public class XmlSchemaComplexContent : XmlSchemaContentModel
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	class XmlSchemaComplexContent : XmlSchemaContentModel
 	{
 		private XmlSchemaContent content;
 		private bool isMixed;

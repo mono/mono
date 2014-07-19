@@ -35,9 +35,11 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
+#endif
 	public class SystemException : Exception
 	{
 		const int Result = unchecked ((int)0x80131501);
@@ -55,10 +57,12 @@ namespace System
 			HResult = Result;
 		}
 
+#if !WINDOWS_STORE_APP
 		protected SystemException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 		public SystemException (string message, Exception innerException)
 			: base (message, innerException)

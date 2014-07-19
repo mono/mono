@@ -37,7 +37,10 @@ using System.Runtime.CompilerServices;
 
 namespace System.Data.Common
 {
-	public abstract class DbDataRecord : IDataRecord, ICustomTypeDescriptor
+	public abstract class DbDataRecord : IDataRecord
+#if !WINDOWS_STORE_APP
+		, ICustomTypeDescriptor
+#endif
 	{
 		protected DbDataRecord ()
 		{
@@ -79,6 +82,7 @@ namespace System.Data.Common
 			throw new NotSupportedException ();
 		}
 
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
@@ -168,6 +172,7 @@ namespace System.Data.Common
 		{
 			return this;
 		}
+#endif
 	}
 
 	class DbDataRecordImpl : DbDataRecord

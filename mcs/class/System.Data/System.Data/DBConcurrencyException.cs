@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 	public sealed class DBConcurrencyException : SystemException
 	{
 		DataRow [] rows;
@@ -69,9 +71,11 @@ namespace System.Data
 			rows = dataRows;
 		}
 
+#if !WINDOWS_STORE_APP
 		private DBConcurrencyException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
+#endif
 
 		#endregion // Constructors
 
@@ -113,6 +117,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 #endif
+#if !WINDOWS_STORE_APP
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			if (si == null)
@@ -120,6 +125,7 @@ namespace System.Data
 
 			base.GetObjectData (si, context);
 		}
+#endif
 
 		#endregion // Methods
 	}

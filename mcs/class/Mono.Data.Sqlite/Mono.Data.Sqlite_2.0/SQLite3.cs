@@ -8,10 +8,14 @@
 namespace Mono.Data.Sqlite
 {
   using System;
+  using System.Diagnostics;
   using System.Data;
   using System.Runtime.InteropServices;
   using System.Collections.Generic;
   using System.Globalization;
+#if NETFX_CORE
+  using EntryPointNotFoundException = System.TypeLoadException;
+#endif
 
   /// <summary>
   /// This class implements SQLiteBase completely, and is the guts of the code that interop's SQLite with .NET
@@ -32,6 +36,19 @@ namespace Mono.Data.Sqlite
 #if MONOTOUCH
     GCHandle gch;
 #endif
+
+    Random rnd = null;
+    private void Sleep ()
+    {
+      if (rnd == null) // First time we've encountered the lock
+        rnd = new Random ();
+#if !WINDOWS_STORE_APP
+      System.Threading.Thread.Sleep (rnd.Next (1, 150));
+#else
+      System.Threading.Tasks.Task.Delay (rnd.Next (1, 150)).Wait ();
+#endif
+    }
+
     /// <summary>
     /// The user-defined functions registered on this connection
     /// </summary>
@@ -122,16 +139,16 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
         int n = UnsafeNativeMethods.sqlite3_open_interop(ToUTF8(strFilename), (int)flags, out db);
 #else
-	// Compatibility with versions < 3.5.0
+        if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && SqliteConnection.FileExists (strFilename) == false)
+          throw new SqliteException ((int)SQLiteErrorCode.CantOpen, strFilename);
+        // Compatibility with versions < 3.5.0
         int n;
-
-	try {
-		n = UnsafeNativeMethods.sqlite3_open_v2(ToUTF8(strFilename), out db, (int)flags, IntPtr.Zero);
-	} catch (EntryPointNotFoundException) {
-		Console.WriteLine ("Your sqlite3 version is old - please upgrade to at least v3.5.0!");
-		n = UnsafeNativeMethods.sqlite3_open (ToUTF8 (strFilename), out db);
-	}
-	
+        try {
+          n = UnsafeNativeMethods.sqlite3_open_v2 (ToUTF8 (strFilename), out db, (int)flags, IntPtr.Zero);
+        } catch (EntryPointNotFoundException) {
+          Debug.WriteLine ("Your sqlite3 version is old - please upgrade to at least v3.5.0!");
+          n = UnsafeNativeMethods.sqlite3_open (ToUTF8 (strFilename), out db);
+        }
 #endif
         if (n > 0) throw new SqliteException(n, null);
 
@@ -157,7 +174,6 @@ namespace Mono.Data.Sqlite
     internal override bool Step(SqliteStatement stmt)
     {
       int n;
-      Random rnd = null;
       uint starttick = (uint)Environment.TickCount;
       uint timeout = (uint)(stmt._command._commandTimeout * 1000);
 
@@ -183,8 +199,6 @@ namespace Mono.Data.Sqlite
           else if ((r == 6 || r == 5) && stmt._command != null) // SQLITE_LOCKED || SQLITE_BUSY
           {
             // Keep trying
-            if (rnd == null) // First time we've encountered the lock
-              rnd = new Random();
 
             // If we've exceeded the command's timeout, give up and throw an error
             if ((uint)Environment.TickCount - starttick > timeout)
@@ -194,7 +208,7 @@ namespace Mono.Data.Sqlite
             else
             {
               // Otherwise sleep for a random amount of time up to 150ms
-              System.Threading.Thread.CurrentThread.Join(rnd.Next(1, 150));
+              Sleep ();
             }
           }
         }
@@ -253,7 +267,6 @@ namespace Mono.Data.Sqlite
       byte[] b = ToUTF8(strSql);
       string typedefs = null;
       SqliteStatement cmd = null;
-      Random rnd = null;
       uint starttick = (uint)Environment.TickCount;
 
       GCHandle handle = GCHandle.Alloc(b, GCHandleType.Pinned);
@@ -301,10 +314,12 @@ namespace Mono.Data.Sqlite
               _buildingSchema = true;
               try
               {
+#if !WINDOWS_STORE_APP
                 ISQLiteSchemaExtensions ext = ((IServiceProvider)SqliteFactory.Instance).GetService(typeof(ISQLiteSchemaExtensions)) as ISQLiteSchemaExtensions;
 
                 if (ext != null)
                   ext.BuildTempSchema(cnn);
+#endif
 
                 while (cmd == null && strSql.Length > 0)
                 {
@@ -324,8 +339,6 @@ namespace Mono.Data.Sqlite
           else if (n == 6 || n == 5) // Locked -- delay a small amount before retrying
           {
             // Keep trying
-            if (rnd == null) // First time we've encountered the lock
-              rnd = new Random();
 
             // If we've exceeded the command's timeout, give up and throw an error
             if ((uint)Environment.TickCount - starttick > timeoutMS)
@@ -335,7 +348,7 @@ namespace Mono.Data.Sqlite
             else
             {
               // Otherwise sleep for a random amount of time up to 150ms
-              System.Threading.Thread.CurrentThread.Join(rnd.Next(1, 150));
+              Sleep ();
             }
           }
         }
@@ -488,7 +501,7 @@ namespace Mono.Data.Sqlite
 
       for (int n = 0; n < x; n++)
       {
-        if (String.Compare(columnName, ColumnName(stmt, n), true, CultureInfo.InvariantCulture) == 0)
+        if (String.Compare (columnName, ColumnName (stmt, n), StringComparison.OrdinalIgnoreCase) == 0)
           return n;
       }
       return -1;
@@ -613,11 +626,18 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
+#if !WINDOWS_STORE_APP
       unsafe {
 	      if (nCopied > 0)
 		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
 	      else nCopied = 0;
       }
+#else
+      if (nCopied > 0)
+        Marshal.Copy (ptr + nDataOffset, bDest, nStart, nCopied);
+      else
+        nCopied = 0;
+#endif
 
       return nCopied;
     }
@@ -823,11 +843,18 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
+#if !WINDOWS_STORE_APP
       unsafe {
 	      if (nCopied > 0)
 		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
 	      else nCopied = 0;
       }
+#else
+      if (nCopied > 0)
+        Marshal.Copy (ptr + nDataOffset, bDest, nStart, nCopied);
+      else 
+        nCopied = 0;
+#endif
 
       return nCopied;
     }

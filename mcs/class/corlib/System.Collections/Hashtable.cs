@@ -32,34 +32,46 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
+#if !WINDOWS_STORE_APP
 using System.Runtime.ConstrainedExecution;
+#endif
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace System.Collections {
 
+#if !WINDOWS_STORE_APP
 	[Serializable]
+#endif
 #if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback {
+#elif WINDOWS_STORE_APP
+	public class Hashtable : IDictionary, ICollection, IEnumerable {
 #else
-	internal class Hashtable : IDictionary, ICollection, IEnumerable {
+	class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 		internal struct Slot {
 			internal Object key;
 
 			internal Object value;
 		}
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 		internal class KeyMarker
 #if !NET_2_1
+#if !WINDOWS_STORE_APP
 			: IObjectReference
+#endif
 #endif
 		{
 			public readonly static KeyMarker Removed = new KeyMarker();
@@ -86,7 +98,9 @@ namespace System.Collections {
 		private HashValues hashValues;
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
+#if !WINDOWS_STORE_APP
 		private SerializationInfo serializationInfo;
+#endif
 		private IEqualityComparer equalityComparer;
 
 		private int inUse;
@@ -101,7 +115,10 @@ namespace System.Collections {
 		public Hashtable () : this (0, 1.0f) {}
 
 		[Obsolete ("Please use Hashtable(int, float, IEqualityComparer) instead")]
-		public Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
+#if !WINDOWS_STORE_APP
+		public
+#endif
+		Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
 			if (capacity<0)
 				throw new ArgumentOutOfRangeException ("capacity", "negative capacity");
 
@@ -152,7 +169,10 @@ namespace System.Collections {
 		}
 			
 		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
-		public Hashtable (int capacity,
+#if !WINDOWS_STORE_APP
+		public
+#endif
+		Hashtable (int capacity,
 		                  IHashCodeProvider hcp,
 		                  IComparer comparer)
 			: this (capacity, 1.0f, hcp, comparer)
@@ -160,7 +180,10 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")]
-		public Hashtable (IDictionary d, float loadFactor,
+#if !WINDOWS_STORE_APP
+		public
+#endif
+		Hashtable (IDictionary d, float loadFactor,
 		                  IHashCodeProvider hcp, IComparer comparer)
 			: this (d!=null ? d.Count : 0,
 		                loadFactor, hcp, comparer)
@@ -187,21 +210,29 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, IEqualityComparer) instead")]
-		public Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
+#if !WINDOWS_STORE_APP
+		public
+#endif
+		Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
 		                 : this (d, 1.0f, hcp, comparer)
 		{
 		}
 
 		[Obsolete ("Please use Hashtable(IEqualityComparer) instead")]
-		public Hashtable (IHashCodeProvider hcp, IComparer comparer)
+#if !WINDOWS_STORE_APP
+		public
+#endif
+		Hashtable (IHashCodeProvider hcp, IComparer comparer)
 		                 : this (1, 1.0f, hcp, comparer)
 		{
 		}
 
+#if !WINDOWS_STORE_APP
 		protected Hashtable (SerializationInfo info, StreamingContext context)
 		{
 			serializationInfo = info;
 		}
+#endif
 
 		public Hashtable (IDictionary d, IEqualityComparer equalityComparer) : this (d, 1.0f, equalityComparer)
 		{
@@ -240,7 +271,10 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use EqualityComparer property.")]
-		protected IHashCodeProvider hcp {
+#if !WINDOWS_STORE_APP
+		protected
+#endif
+		IHashCodeProvider hcp {
 			set {
 				hcpRef = value;
 			}
@@ -400,7 +434,9 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
+#if !WINDOWS_STORE_APP
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public virtual void Clear ()
 		{
 			for (int i = 0;i<table.Length;i++) {
@@ -423,7 +459,9 @@ namespace System.Collections {
 			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
+#if !WINDOWS_STORE_APP
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
@@ -478,6 +516,7 @@ namespace System.Collections {
 			return new Hashtable (this);
 		}
 
+#if !WINDOWS_STORE_APP
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -542,6 +581,7 @@ namespace System.Collections {
 			
 			serializationInfo = null;
 		}
+#endif
 
 		/// <summary>
 		///  Returns a synchronized (thread-safe)
@@ -776,7 +816,9 @@ namespace System.Collections {
 
 		private enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
 			private Hashtable host;
@@ -877,7 +919,9 @@ namespace System.Collections {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 #if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
@@ -933,7 +977,9 @@ namespace System.Collections {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 #if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
@@ -992,7 +1038,9 @@ namespace System.Collections {
 		}
 
 
+#if !WINDOWS_STORE_APP
 		[Serializable]
+#endif
 		private class SyncHashtable : Hashtable, IEnumerable {
 
 			private Hashtable host;
@@ -1004,6 +1052,7 @@ namespace System.Collections {
 				this.host = host;
 			}
 
+#if !WINDOWS_STORE_APP
 			internal SyncHashtable (SerializationInfo info, StreamingContext context)
 			{
 				host = (Hashtable) info.GetValue("ParentTable", typeof(Hashtable));
@@ -1013,6 +1062,7 @@ namespace System.Collections {
 			{
 				info.AddValue ("ParentTable", host);
 			}
+#endif
 			
 			// ICollection
 

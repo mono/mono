@@ -32,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System;
 using System.Data;
 using System.Globalization;
@@ -518,7 +519,7 @@ namespace MonoTests.System.Data.Xml
 			text.NewLine = "\n";
 			dataset.WriteXml (text);
 			//DataDoc.Save (text);
-			string TextString = text.ToString ();
+			string TextString = text.ToString ().Replace ("\r\n", "\n");
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 
@@ -907,3 +908,4 @@ namespace MonoTests.System.Data.Xml
 		}
 	}
 }
+#endif

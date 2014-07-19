@@ -41,7 +41,6 @@ using System;
 using System.Data;
 using System.Xml;
 using System.Xml.Schema;
-using System.Xml.XPath;
 using System.Collections;
 using System.Globalization;
 
@@ -236,7 +235,7 @@ namespace System.Data {
 				case XmlConstants.DiffgrNamespace:
 				case XmlConstants.MsdataNamespace:
 				case XmlConstants.MspropNamespace:
-				case XmlSchema.Namespace:
+				case XmlConstants.SchemaNamespace:
 					continue;
 				}
 				DataColumn c = Table.Columns [XmlHelper.Decode (reader.LocalName)];
@@ -272,11 +271,10 @@ namespace System.Data {
 				string colName = XmlHelper.Decode (reader.LocalName);
 				if (Table.Columns.Contains (colName)) 
 				{
-					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadString ());
+					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadElementString ());
 					
 					if (loadType == DataRowVersion.Current) Row [colName] = data;
 					else Row.SetOriginalValue (colName, data);
-					reader.Read ();
 				}
 				else 
 				{
@@ -324,13 +322,12 @@ namespace System.Data {
 			string error = reader.GetAttribute ("hasErrors");
 			string changes = reader.GetAttribute ("hasChanges", XmlConstants.DiffgrNamespace);
 			
-			if (changes != null)
-			{
-				if (string.Compare (changes, "modified", true, CultureInfo.InvariantCulture) == 0) {
+			if (changes != null) {
+				if (CultureInfo.InvariantCulture.CompareInfo.Compare (changes, "modified", CompareOptions.IgnoreCase) == 0) {
 					DiffGrRows.Add (id, Row); // for later use
 					state = DataRowState.Modified;
 				}
-				else if (string.Compare (changes, "inserted", true, CultureInfo.InvariantCulture) == 0) {
+				else if (CultureInfo.InvariantCulture.CompareInfo.Compare (changes, "inserted", CompareOptions.IgnoreCase) == 0) {
 					state = DataRowState.Added;
 				}
 				else
@@ -340,7 +337,7 @@ namespace System.Data {
 				state = DataRowState.Unchanged;
 			
 			// If row had errors add row to hashtable for later use
-			if (error != null && string.Compare (error, "true", true, CultureInfo.InvariantCulture) == 0)
+			if (error != null && CultureInfo.InvariantCulture.CompareInfo.Compare (error, "true", CompareOptions.IgnoreCase) == 0)
 				ErrorRows.Add (id, Row);
 		
 			LoadColumns (Table, Row, reader, DataRowVersion.Current);

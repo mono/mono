@@ -36,12 +36,18 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
+#if !WINDOWS_STORE_APP
 #if NET_2_0
 	[TypeConverterAttribute ("System.Data.Common.DataTableMapping+DataTableMappingConverter, " + Consts.AssemblySystem_Data)]
 #else
 	[TypeConverterAttribute (typeof (DataTableMappingConverter))]
 #endif
-	public sealed class DataTableMapping : MarshalByRefObject, ITableMapping, ICloneable
+#endif
+	public sealed class DataTableMapping : 
+#if !WINDOWS_STORE_APP
+		MarshalByRefObject,
+#endif
+		ITableMapping, ICloneable
 	{
 		#region Fields
 
@@ -80,7 +86,9 @@ namespace System.Data.Common {
 #if !NET_2_0
 		[DataSysDescription ("Individual columns mappings when this table mapping is matched.")]
 #endif
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 		public DataColumnMappingCollection ColumnMappings {
 			get { return columnMappings; }
 		}

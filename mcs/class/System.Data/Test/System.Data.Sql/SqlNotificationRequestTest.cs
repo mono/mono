@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 
 using System;
 using System.Data.Sql;
@@ -224,4 +225,5 @@ namespace MonoTests.System.Data.Sql
 	}
 }
 
+#endif
 #endif

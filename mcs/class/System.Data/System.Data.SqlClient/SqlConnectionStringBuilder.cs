@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_STORE_APP
 using System;
 using System.Text;
 using System.Collections;
@@ -878,4 +879,5 @@ namespace System.Data.SqlClient
  
 	
 }
+#endif // !WINDOWS_STORE_APP
 #endif // NET_2_0

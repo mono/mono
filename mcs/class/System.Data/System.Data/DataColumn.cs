@@ -55,13 +55,16 @@ namespace System.Data {
 	/// Summary description for DataColumn.
 	/// </summary>
 
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataColumnEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[ToolboxItem (false)]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
-	public class DataColumn : MarshalByValueComponent {
-#region Events
+#endif
+	public class DataColumn : MarshalByValueComponent, IDisposable {
+
+		#region Events
 		EventHandlerList _eventHandlers = new EventHandlerList ();
 
 		//used for constraint validation
@@ -169,7 +172,9 @@ namespace System.Data {
 #if NET_2_0
 		DataSetDateTime _datetimeMode = DataSetDateTime.UnspecifiedLocal;
 		[DefaultValue (DataSetDateTime.UnspecifiedLocal)]
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public DataSetDateTime DateTimeMode {
 			get { return _datetimeMode; }
 			set {
@@ -201,7 +206,9 @@ namespace System.Data {
 		}
 #endif
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
 #endif
@@ -233,12 +240,14 @@ namespace System.Data {
 		///		(that is, the Expression property is set.) The incremented value is used only if the row's value for this column,
 		///		when added to the columns collection, is equal to the default value.
 		///	</remarks>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether the column automatically increments itself for new rows added to the table.  The type of this column must be Int16, Int32, or Int64.")]
 #endif
 		[DefaultValue (false)]
-		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoIncrement {
 			get { return _autoIncrement; }
 			set {
@@ -260,7 +269,9 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the starting value for an AutoIncrement column.")]
 #endif
@@ -273,7 +284,9 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the increment used by an AutoIncrement column.")]
 #endif
@@ -316,7 +329,9 @@ namespace System.Data {
 				DataContainer.CopyValue (Table.DefaultValuesRowIndex, index);
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the default user-interface caption for this column.")]
 #endif
@@ -334,11 +349,15 @@ namespace System.Data {
 			set { _columnMapping = value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
 #endif
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		[DefaultValue ("")]
 		public string ColumnName {
 			get { return _columnName; }
@@ -347,7 +366,7 @@ namespace System.Data {
 					value = String.Empty;
 
 				CultureInfo info = Table != null ? Table.Locale : CultureInfo.CurrentCulture;
-				if (String.Compare (value, _columnName, true, info) != 0) {
+				if (info.CompareInfo.Compare (value, _columnName, CompareOptions.IgnoreCase) != 0) {
 					if (Table != null) {
 						if (value.Length == 0)
 							throw new ArgumentException ("ColumnName is required when it is part of a DataTable.");
@@ -360,25 +379,31 @@ namespace System.Data {
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 
+#if !WINDOWS_STORE_APP
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
-				} else if (String.Compare (value, _columnName, false, info) != 0) {
+#endif
+				} else if (info.CompareInfo.Compare (value, _columnName, CompareOptions.None) != 0) {
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 
+#if !WINDOWS_STORE_APP
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
+#endif
 				}
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[RefreshProperties (RefreshProperties.All)]
+		[TypeConverterAttribute (typeof (ColumnTypeConverter))]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the type of data stored in this column.")]
 #endif
 		[DefaultValue (typeof (string))]
-		[RefreshProperties (RefreshProperties.All)]
-		[TypeConverterAttribute (typeof (ColumnTypeConverter))]
 		public Type DataType {
 			get { return DataContainer.Type; }
 			set {
@@ -425,11 +450,13 @@ namespace System.Data {
 		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
 		/// <exception cref="System.InvalidCastException"></exception>
 		/// <exception cref="System.ArgumentException"></exception>
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
 #endif
-		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
 		public object DefaultValue {
 			get { return _defaultValue; }
 
@@ -465,12 +492,14 @@ namespace System.Data {
 				DataContainer [Table.DefaultValuesRowIndex] = _defaultValue;
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the value that this column computes for each row based on other columns instead of taking user input.")]
 #endif
 		[DefaultValue ("")]
-		[RefreshProperties (RefreshProperties.All)]
 		public string Expression {
 			get { return _expression; }
 			set {
@@ -531,8 +560,10 @@ namespace System.Data {
 			get { return _compiledExpression; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
 #endif
@@ -543,7 +574,9 @@ namespace System.Data {
 #endif
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the maximum length of the value this column allows. ")]
 #endif
@@ -561,7 +594,9 @@ namespace System.Data {
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri for elements or attributes stored in this column.")]
 #endif
@@ -577,12 +612,14 @@ namespace System.Data {
 		}
 
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the index of this column in the Columns collection.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Ordinal {
 			get { return _ordinal; }
 #if NET_2_0
@@ -605,7 +642,9 @@ namespace System.Data {
 		}
 #endif
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the Prefix used for this DataColumn in xml representation.")]
 #endif
@@ -615,7 +654,9 @@ namespace System.Data {
 			set { _prefix = value == null ? String.Empty : value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether this column allows changes once a row has been added to the table.")]
 #endif
@@ -625,12 +666,14 @@ namespace System.Data {
 			set { _readOnly = value; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Returns the DataTable to which this column belongs.")]
 #endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTable Table {
 			get { return _table; }
 #if NET_2_0
@@ -638,12 +681,14 @@ namespace System.Data {
 #endif
 		}
 
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether this column should restrict its values in the rows of the table to be unique.")]
 #endif
 		[DefaultValue (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Unique {
 			get { return _unique; }
 			set {
@@ -682,7 +727,7 @@ namespace System.Data {
 
 		internal static bool CanAutoIncrement (Type type)
 		{
-			switch (Type.GetTypeCode (type)) {
+			switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Int16:
 				case TypeCode.Int32:
 				case TypeCode.Int64:
@@ -914,7 +959,7 @@ namespace System.Data {
 #if NET_2_0
 			if (type == null)
 				return DBNull.Value;
-			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly) {
+			if (type.Namespace == "System.Data.SqlTypes" && type.GetAssembly () == typeof (DataColumn).GetAssembly ()) {
 				// For SqlXxx types, set SqlXxx.Null instead of DBNull.Value.
 				if (type == typeof (SqlBinary))
 					return SqlBinary.Null;
@@ -952,7 +997,6 @@ namespace System.Data {
 #endif
 			return DBNull.Value;
 		}
-
 		#endregion // Methods
 	}
 }

@@ -72,7 +72,9 @@ namespace System.Data {
 		private int _rowId;
 		internal bool _rowChanged = false;
 
+#if !WINDOWS_STORE_APP
 		private XmlDataDocument.XmlDataElement mappedElement;
+#endif
 		internal bool _inExpressionEvaluation = false;
 
 		#endregion // Fields
@@ -171,7 +173,7 @@ namespace System.Data {
 				_table.ChangingDataColumn (this, column, value);
 
 #if NET_2_0
-				if (value == null && column.DataType.IsValueType)
+				if (value == null && column.DataType.GetIsValueType ())
 #else
 				if (value == null && column.DataType != typeof (string))
 #endif
@@ -561,6 +563,7 @@ namespace System.Data {
 			throw new ArgumentException (String.Format ("The index {0} does not belong to this row.", index));
 		}
 
+#if !WINDOWS_STORE_APP
 		internal XmlDataDocument.XmlDataElement DataElement {
 			get {
 				if (mappedElement != null || _table.DataSet == null || _table.DataSet._xmlDataDocument == null)
@@ -574,6 +577,7 @@ namespace System.Data {
 			}
 			set { mappedElement = value; }
 		}
+#endif
 
 		internal void SetOriginalValue (string columnName, object val)
 		{

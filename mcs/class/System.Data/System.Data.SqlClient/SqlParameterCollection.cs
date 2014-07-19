@@ -35,6 +35,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -452,3 +453,4 @@ namespace System.Data.SqlClient
 		#endregion // Methods
 	}
 }
+#endif
