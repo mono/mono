@@ -96,6 +96,7 @@ namespace System.Data {
 		{
 			_table = table;
 			_rowId = rowId;
+			rowError = String.Empty;
 		}
 
 		#endregion // Constructors
