@@ -211,18 +211,23 @@ namespace System.Web.UI.WebControls
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			string x, y;
+			decimal d_x;
 			string unique = UniqueID;
 			x = postCollection [unique + ".x"];
 			y = postCollection [unique + ".y"];
 			if (!String.IsNullOrEmpty (x) && !String.IsNullOrEmpty (y)) {
-				pos_x = Int32.Parse(x);
+				Decimal.TryParse(x, out d_x);
+				pos_x = (int)Math.Round(d_x);
+				//pos_x = Int32.Parse(x);
 				pos_y = Int32.Parse(y);
 				Page.RegisterRequiresRaiseEvent (this);
 				return true;
 			} else {
 				x = postCollection [unique];
 				if (!String.IsNullOrEmpty (x)) {
-					pos_x = Int32.Parse (x);
+					Decimal.TryParse(x, out d_x);
+					pos_x = (int)Math.Round(d_x);
+					//pos_x = Int32.Parse (x);
 					pos_y = 0;
 					Page.RegisterRequiresRaiseEvent (this);
 					return true;
