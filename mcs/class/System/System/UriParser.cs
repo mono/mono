@@ -55,7 +55,7 @@ namespace System {
 
 		internal string GetComponentsHelper (Uri uri, UriComponents components, UriFormat format)
 		{
-			UriElements elements = UriParseComponents.ParseComponents (uri.OriginalString.Trim (), UriKind.Absolute);
+			UriElements elements = UriParseComponents.ParseComponents (uri.OriginalString.Trim (), UriKind.Absolute, this);
 
 			string scheme = scheme_name;
 			int dp = default_port;

@@ -52,18 +52,18 @@ namespace System {
 	// http://www.ietf.org/rfc/rfc3986.txt
 	internal static class UriParseComponents
 	{
-		public static UriElements ParseComponents (string uri, UriKind kind)
+		public static UriElements ParseComponents (string uri, UriKind kind, UriParser parser)
 		{
 			UriElements elements;
 			string error;
 
-			if (!TryParseComponents (uri, kind, out elements, out error))
+			if (!TryParseComponents (uri, kind, parser, out elements, out error))
 				throw new UriFormatException (error);
 
 			return elements;
 		}
 
-		public static bool TryParseComponents (string uri, UriKind kind, out UriElements elements, out string error)
+		public static bool TryParseComponents (string uri, UriKind kind, UriParser parser, out UriElements elements, out string error)
 		{
 			ParserState state = new ParserState (uri, kind);
 			
