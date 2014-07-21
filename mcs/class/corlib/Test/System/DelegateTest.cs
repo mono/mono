@@ -1386,6 +1386,40 @@ namespace MonoTests.System
 			Assert.IsTrue (d (0, 0));
 		}
 
+		public static void DynInvokeWithClosedFirstArg (object a, object b)
+		{
+		}
+
+		[Test]
+		public void DynamicInvokeClosedOverNullDelegate () {
+			var dm = new DynamicMethod ("test", typeof (Delegate), null);
+			var il = dm.GetILGenerator ();
+			il.Emit (OpCodes.Ldnull);
+			il.Emit (OpCodes.Ldftn, GetType ().GetMethod ("DynInvokeWithClosedFirstArg"));
+			il.Emit (OpCodes.Newobj, typeof (Action<object>).GetConstructors ()[0]);
+			il.Emit (OpCodes.Ret);
+
+			var f = (Func <object>) dm.CreateDelegate (typeof (Func <object>));
+			Action<object> ac = (Action<object>)f();
+			ac.DynamicInvoke (new object[] { "oi" });
+			ac.DynamicInvoke (new object[] { null });
+		}
+
+		[Test]
+		public void DynamicInvokeFirstArgBoundDelegate () {
+			var dm = new DynamicMethod ("test", typeof (Delegate), null);
+			var il = dm.GetILGenerator ();
+			il.Emit (OpCodes.Ldstr, "test");
+			il.Emit (OpCodes.Ldftn, GetType ().GetMethod ("DynInvokeWithClosedFirstArg"));
+			il.Emit (OpCodes.Newobj, typeof (Action<object>).GetConstructors ()[0]);
+			il.Emit (OpCodes.Ret);
+
+			var f = (Func <object>) dm.CreateDelegate (typeof (Func <object>));
+			Action<object> ac = (Action<object>)f();
+			ac.DynamicInvoke (new object[] { "oi" });
+			ac.DynamicInvoke (new object[] { null });
+		}
+
 		static bool Int32D2 (int x, int y)
 		{
 			return (x & y) == y; 
