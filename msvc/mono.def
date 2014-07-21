@@ -679,6 +679,7 @@ mono_reflection_get_token
 mono_reflection_get_type
 mono_reflection_parse_type
 mono_reflection_type_from_name
+mono_reflection_type_get_handle
 mono_register_bundled_assemblies
 mono_register_config_for_assembly
 mono_register_machine_config
