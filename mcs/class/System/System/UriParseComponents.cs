@@ -65,9 +65,23 @@ namespace System {
 
 		public static bool TryParseComponents (string uri, UriKind kind, UriParser parser, out UriElements elements, out string error)
 		{
+			uri = uri.Trim ();
+
+			var ok = true;
 			ParserState state = new ParserState (uri, kind);
+
+			if (uri.Length == 0 && (kind == UriKind.Relative || kind == UriKind.RelativeOrAbsolute)){
+				state.elements.isAbsoluteUri = false;
+				ok = false;
+			}
 			
-			bool ok = ParseFilePath (ref state);
+			if (uri.Length <= 1 && kind == UriKind.Absolute) {
+				state.error = "Absolute URI is too short";
+				ok = false;
+			}
+
+			if (ok)
+				ok = ParseFilePath (ref state);
 			if (ok)
 				ok = ParseScheme (ref state);
 			if (ok)
@@ -78,6 +92,18 @@ namespace System {
 			    ok = ParseQuery (ref state);
 			if (ok)
 			    ParseFragment (ref state);
+
+			var scheme = state.elements.scheme;
+			if (string.IsNullOrEmpty (state.elements.host) &&
+				(scheme == Uri.UriSchemeHttp || scheme == Uri.UriSchemeGopher || scheme == Uri.UriSchemeNntp ||
+				scheme == Uri.UriSchemeHttps || scheme == Uri.UriSchemeFtp))
+				state.error = "Invalid URI: The Authority/Host could not be parsed.";
+
+			parser = parser ?? UriParser.GetParser (scheme);
+			if (!string.IsNullOrEmpty (state.elements.host) &&
+				Uri.CheckHostName (state.elements.host) == UriHostNameType.Unknown &&
+				parser is DefaultUriParser)
+				state.error = "Invalid URI: The hostname could not be parsed.";
 
 			if (!string.IsNullOrEmpty (state.error)) {
 				elements = null;
@@ -118,6 +144,9 @@ namespace System {
 
 			string part = state.remaining;
 
+			if (part.Length > 0 && (part [0] == '/' || part [0] == '\\'))
+				part = part.Substring (1);
+
 			if (part.Length < 2 || part [1] != ':')
 				return state.remaining.Length > 0;
 
@@ -139,10 +168,9 @@ namespace System {
 			if (string.IsNullOrEmpty (scheme)) {
 				state.elements.scheme = Uri.UriSchemeFile;
 				state.elements.delimiter = "://";
-				state.elements.path = "/";
 			}
 
-			state.elements.path += part.Replace ("\\", "/");
+			state.elements.path = part.Replace ("\\", "/");
 
 			return false;
 		}
@@ -198,9 +226,6 @@ namespace System {
 		{
 			string part = state.remaining;
 			
-			if (!IsAlpha (part [0]))
-				return part.Length > 0;
-			
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (part [0]);
 			
@@ -213,13 +238,40 @@ namespace System {
 				sb.Append (ch);
 			}
 			
-			if (index >= part.Length || part [index] != ':') {
-				state.error = "Invalid URI: The format of the URI could not be determined.";
-				return false;
+			if (index == 0 || index >= part.Length) {
+				if (state.kind == UriKind.Absolute) {
+					state.error = "Invalid URI: The format of the URI could not be determined.";
+					return false;
+				}
+
+				state.elements.isAbsoluteUri = false;
+				return state.remaining.Length > 0;
+			}
+
+			if (part [index] != ':') {
+				if (state.kind == UriKind.Absolute) {
+					state.error = "Invalid URI: The URI scheme is not valid.";
+					return false;
+				}
+
+				state.elements.isAbsoluteUri = false;
+				return state.remaining.Length > 0;
 			}
 
 			state.elements.scheme = sb.ToString ().ToLowerInvariant ();
 			state.remaining = part.Substring (index);
+
+			// Check scheme name characters as specified in RFC2396.
+			// Note: different checks in 1.x and 2.0
+			if (!Uri.CheckSchemeName (state.elements.scheme)) {
+				if (state.kind == UriKind.Absolute) {
+					state.error = "Invalid URI: The URI scheme is not valid.";
+					return false;
+				}
+
+				state.elements.isAbsoluteUri = false;
+				return state.remaining.Length > 0;
+			}
 
 			return ParseDelimiter (ref state);
 		}
@@ -246,6 +298,9 @@ namespace System {
 		
 		private static bool ParseAuthority (ref ParserState state)
 		{
+			if (state.elements.delimiter != Uri.SchemeDelimiter && state.elements.scheme != Uri.UriSchemeMailto)
+				return state.remaining.Length > 0;
+
 			string part = state.remaining;
 			
 			bool ok = ParseUser (ref state);
@@ -293,6 +348,11 @@ namespace System {
 			}
 
 			if (index + 1 <= part.Length && part [index] == '@') {
+				if (state.elements.scheme == Uri.UriSchemeFile) {
+					state.error = "Invalid URI: The hostname could not be parsed.";
+					return false;
+				}
+
 				state.elements.user = sb == null ? "" : sb.ToString ();
 				state.remaining = state.remaining.Substring (index + 1);
 			}
