@@ -317,6 +317,8 @@ namespace System {
 			
 			var tmpHost = "";
 
+			var possibleIpv6 = false;
+
 			int index;
 			for (index = 0; index < part.Length; index++) {	
 				
@@ -326,13 +328,18 @@ namespace System {
 					break;
 
 				// Possible IPv6
-				if (string.IsNullOrEmpty (tmpHost) && ch == ':')
+				if (string.IsNullOrEmpty (tmpHost) && ch == ':') {
 					tmpHost = sb.ToString ();
+					possibleIpv6 = true;
+				}
 				
 				sb.Append (ch);
+
+				if (possibleIpv6 && ch == ']')
+					break;
 			}
 			
-			if (!string.IsNullOrEmpty (tmpHost)) {
+			if (possibleIpv6) {
 				IPv6Address ipv6addr;
 				if (IPv6Address.TryParse (sb.ToString (), out ipv6addr)) {
 					var ipStr = ipv6addr.ToString (!Uri.IriParsing).Split ('%') [0];
