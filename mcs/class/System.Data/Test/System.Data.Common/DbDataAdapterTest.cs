@@ -225,6 +225,37 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 		}
 #endif
 
+                [Test]
+                public void UpdateResetRowErrorCorrectly()
+                {
+                        const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory
+                        using (var dbConnection = new SqliteConnection(connectionString)) {
+                                dbConnection.Open();
+                                var ts = dbConnection.BeginTransaction();
+                                try {
+                                        var da = new SqliteDataAdapter("SELECT * FROM Primus", dbConnection);
+                                        var builder = new SqliteCommandBuilder(da);
+                                        da.UpdateCommand = builder.GetUpdateCommand();
+                                        da.UpdateCommand.Transaction = ts;
+                             
+                                        var ds1 = new DataSet();
+                                        da.Fill(ds1, "Primus");
+
+                                        var table = ds1.Tables[0];
+                                        var row = table.NewRow();
+                                        row["id"] = 10;
+                                        row["name"] = "Bart";
+                                        table.Rows.Add(row);
+
+                                        var ds2 = ds1.GetChanges();
+                                        da.Update(ds2, "Primus");
+                                        Assert.IsFalse(ds2.HasErrors);
+                                } finally {
+                                        ts.Rollback();
+                                }
+                        }
+                }
+
 #endif
 
 		class MyAdapter : DbDataAdapter
