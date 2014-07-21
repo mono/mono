@@ -40,6 +40,8 @@ namespace System {
 			path = String.Empty;
 			query = null;
 			fragment = null;
+
+			isAbsoluteUri = true;
 		}
 		
 		public string scheme;
@@ -50,5 +52,10 @@ namespace System {
 		public string path;
 		public string query;
 		public string fragment;
+
+		public bool isAbsoluteUri;
+		public bool isUnixFilePath;
+		public bool isUnc;
+		public long scopeId;
 	}
 }
