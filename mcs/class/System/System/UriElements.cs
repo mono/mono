@@ -36,7 +36,7 @@ namespace System {
 			delimiter = String.Empty;
 			user = null;
 			host = String.Empty;
-			port = String.Empty;
+			port = -1;
 			path = String.Empty;
 			query = null;
 			fragment = null;
@@ -46,7 +46,7 @@ namespace System {
 		public string delimiter;
 		public string user;
 		public string host;
-		public string port;
+		public int port;
 		public string path;
 		public string query;
 		public string fragment;
