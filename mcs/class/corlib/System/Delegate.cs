@@ -478,8 +478,13 @@ namespace System
 					/* Uncommon case */
 					if (d.data != null && data != null)
 						return (d.data.target_type == data.target_type && d.data.method_name == data.method_name);
-					else
+					else {
+						if (d.data != null)
+							return d.data.target_type == null;
+						if (data != null)
+							return data.target_type == null;
 						return false;
+					}
 				}
 				return true;
 			}
