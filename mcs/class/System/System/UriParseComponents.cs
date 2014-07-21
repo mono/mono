@@ -126,7 +126,7 @@ namespace System {
 					state.error = "Invalid URI: The URI scheme is not valid.";
 					return false;
 				}
-				//isAbsoluteUri = false;
+				state.elements.isAbsoluteUri = false;
 				state.elements.path = part;
 				return false;
 			}
@@ -156,7 +156,7 @@ namespace System {
 
 			state.elements.scheme = Uri.UriSchemeFile;
 			state.elements.delimiter = "://";
-			//state.elements.isUnc = true;
+			state.elements.isUnc = true;
 
 			part = part.TrimStart (new char [] {'\\'});
 			int pos = part.IndexOf ('\\');
@@ -181,7 +181,8 @@ namespace System {
 
 			state.elements.scheme = Uri.UriSchemeFile;
 			state.elements.delimiter = "://";
-			//state.elements.isUnixFilePath = true;
+			state.elements.isUnixFilePath = true;
+			state.elements.isAbsoluteUri = (state.kind == UriKind.Relative)? false : true;
 
 			if (part.Length >= 2 && part [0] == '/' && part [1] == '/') {
 				part = part.TrimStart (new char [] {'/'});
@@ -344,7 +345,7 @@ namespace System {
 				if (IPv6Address.TryParse (sb.ToString (), out ipv6addr)) {
 					var ipStr = ipv6addr.ToString (!Uri.IriParsing).Split ('%') [0];
 					state.elements.host = "[" + ipStr + "]";
-					//state.elements.scopeId = ipv6addr.ScopeId;
+					state.elements.scopeId = ipv6addr.ScopeId;
 
 					state.remaining = part.Substring (sb.Length);
 					return state.remaining.Length > 0;
