@@ -87,9 +87,9 @@ namespace System {
 			case UriComponents.Host:
 				return elements.host;
 			case UriComponents.Port: {
-				string p = elements.port;
-				if (p != null && p.Length != 0 && p != dp.ToString ())
-					return p;
+				int p = elements.port;
+				if (p != null && p >= 0 && p != dp)
+					return p.ToString (CultureInfo.InvariantCulture);
 				return String.Empty;
 			}
 			case UriComponents.Path:
@@ -102,7 +102,9 @@ namespace System {
 			case UriComponents.Fragment:
 				return UriHelper.FormatAbsolute (elements.fragment, scheme, UriComponents.Fragment, format, formatFlags);
 			case UriComponents.StrongPort: {
-				return elements.port.Length != 0 ? elements.port : dp.ToString ();
+				return elements.port >= 0
+				? elements.port.ToString (CultureInfo.InvariantCulture)
+				: dp.ToString (CultureInfo.InvariantCulture);
 			}
 			case UriComponents.SerializationInfoString:
 				components = UriComponents.AbsoluteUri;
@@ -133,7 +135,7 @@ namespace System {
 			// otherwise only display if ut's not the default port
 			if ((components & UriComponents.StrongPort) != 0) {
 				sb.Append (":");
-				if (elements.port.Length != 0) {
+				if (elements.port >= 0) {
 					sb.Append (elements.port);
 				} else {
 					sb.Append (dp);
@@ -141,8 +143,8 @@ namespace System {
 			}
 
 			if ((components & UriComponents.Port) != 0) {
-				string p = elements.port;
-				if (p != null && p.Length != 0 && p != dp.ToString ()) {
+				int p = elements.port;
+				if (p != null && p >= 0 && p != dp) {
 					sb.Append (":");
 					sb.Append (elements.port);
 				}

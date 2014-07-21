@@ -29,7 +29,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
-
+using System.Globalization;
 
 namespace System {
 	
@@ -366,16 +366,31 @@ namespace System {
 			for (index = 1; index < part.Length; index++ ) {
 				char ch = part [index];
 				
-				if (!char.IsDigit (ch))
-					break;
+				if (!char.IsDigit (ch)) {
+					if (ch == '/' || ch == '#' || ch == '?')
+						break;
+
+					state.error = "Invalid URI: Invalid port specified.";
+					return false;
+				}
 				
 				sb.Append (ch);
 			}
-			
+
 			if (index <= part.Length)
 				state.remaining = part.Substring (index);
+
+			if (sb.Length == 0)
+				return state.remaining.Length > 0;
 			
-			state.elements.port = sb.ToString();
+			int port;
+			if (!Int32.TryParse (sb.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out port) ||
+				port < 0 || port > UInt16.MaxValue) {
+				state.error = "Invalid URI: Invalid port number";
+				return false;
+			}
+
+			state.elements.port = port;
 				
 			return state.remaining.Length > 0;
 		}
