@@ -3673,6 +3673,9 @@ namespace Mono.CSharp {
 			get {
 				return top_block;
 			}
+			set {
+				top_block = value;
+			}
 		}
 
 		public bool Resolved {
@@ -4310,6 +4313,24 @@ namespace Mono.CSharp {
 
 			variable = null;
 			return false;
+		}
+
+		public void IncludeBlock (ParametersBlock pb, ToplevelBlock block)
+		{
+			if (block.names != null) {
+				foreach (var n in block.names) {
+					var variable = n.Value as INamedBlockVariable;
+					if (variable != null) {
+						if (variable.Block.ParametersBlock == pb)
+							AddLocalName (n.Key, variable, false);
+						continue;
+					}
+
+					foreach (var v in (List<INamedBlockVariable>) n.Value)
+						if (v.Block.ParametersBlock == pb)
+							AddLocalName (n.Key, v, false);
+				}
+			}
 		}
 
 		// <summary>
