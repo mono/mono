@@ -274,7 +274,7 @@ namespace System.Web
 			mimeTypes.Add ("mod", "audio/mod");
 			mimeTypes.Add ("mov", "video/quicktime");
 			mimeTypes.Add ("movie", "video/x-sgi-movie");
-			mimeTypes.Add ("mov", "video/quicktime");
+			mimeTypes.Add ("moov", "video/quicktime");
 			mimeTypes.Add ("mp2", "video/mpeg");
 			mimeTypes.Add ("mp3", "audio/mpeg");
 			mimeTypes.Add ("mp4", "video/mp4");
