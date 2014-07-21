@@ -3,7 +3,7 @@ use File::Spec;
 use File::Basename;
 use File::Copy;
 use File::Path;
-my $root = File::Spec->rel2abs( dirname($0) );
+my $root = File::Spec->rel2abs( dirname($0) . '/../..' );
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
@@ -14,8 +14,8 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 }
 
 
-CompileVCProj("$root/msvc/mono.sln","Release_eglib|x64",0);
-my $remove = "$root/builds/embedruntimes/win64/libmono.bsc";
+CompileVCProj("$root/msvc/mono.sln","Release_eglib|Win32",0);
+my $remove = "$root/builds/embedruntimes/win32/libmono.bsc";
 if (-e $remove)
 {
 	unlink($remove) or die("can't delete libmono.bsc");
@@ -23,12 +23,12 @@ if (-e $remove)
 
 
 #have a duplicate for now...
-copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution/bin-x64/mono.dll");
-copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution/bin-x64/mono.pdb");
+copy("$root/builds/embedruntimes/win32/mono.dll","$root/builds/monodistribution/bin/mono.dll");
+copy("$root/builds/embedruntimes/win32/mono.pdb","$root/builds/monodistribution/bin/mono.pdb");
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
-	system("git log --pretty=format:\"mono-runtime-win64 = %H %d %ad\" --no-abbrev-commit --date=short -1 > $root\\builds\\versions.txt");
+	system("git log --pretty=format:\"mono-runtime-win32 = %H %d %ad\" --no-abbrev-commit --date=short -1 > $root\\builds\\versions.txt");
 }
 
 sub CompileVCProj
