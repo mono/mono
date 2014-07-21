@@ -17,7 +17,8 @@
 /ltmain.sh
 /mono-*.tar.gz
 /msvc/ipch
-/msvc/Win32-Release_eglib_xarm
+/msvc/Win32_*
+/msvc/x64_*
 /*.pc
 /mono.spec
 /semantic.cache
