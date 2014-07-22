@@ -468,10 +468,14 @@ namespace System {
 			if (path == "/")
 				return path;
 
+			bool endWithSlash = false;
+
 			List<string> result = new List<string> ();
 
 			bool begin = true;
 			for (int startpos = 0; startpos < path.Length; ) {
+				endWithSlash = true;
+
 				int endpos = path.IndexOf ('/', startpos);
 				if (endpos == -1)
 					endpos = path.Length;
@@ -501,6 +505,8 @@ namespace System {
 						continue;
 				}
 
+				endWithSlash = false;
+
 				result.Add (current);
 			}
 
@@ -522,7 +528,7 @@ namespace System {
 				res.Append(part);
 			}
 
-			if (path [path.Length - 1] == '/')
+			if (path [path.Length - 1] == '/' || endWithSlash)
 				res.Append ('/');
 				
 			return res.ToString();
