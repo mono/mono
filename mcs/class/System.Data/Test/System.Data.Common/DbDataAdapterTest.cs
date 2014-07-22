@@ -225,36 +225,39 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 		}
 #endif
 
-                [Test]
-                public void UpdateResetRowErrorCorrectly()
-                {
-                        const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory
-                        using (var dbConnection = new SqliteConnection(connectionString)) {
-                                dbConnection.Open();
-                                var ts = dbConnection.BeginTransaction();
-                                try {
-                                        var da = new SqliteDataAdapter("SELECT * FROM Primus", dbConnection);
-                                        var builder = new SqliteCommandBuilder(da);
-                                        da.UpdateCommand = builder.GetUpdateCommand();
-                                        da.UpdateCommand.Transaction = ts;
-                             
-                                        var ds1 = new DataSet();
-                                        da.Fill(ds1, "Primus");
+		[Test]
+		public void UpdateResetRowErrorCorrectly()
+		{
+			const string connectionString = "URI = file::memory:; Version = 3";//will be in System.Data directory
+			using (var dbConnection = new SqliteConnection(connectionString)) {
+				dbConnection.Open();
 
-                                        var table = ds1.Tables[0];
-                                        var row = table.NewRow();
-                                        row["id"] = 10;
-                                        row["name"] = "Bart";
-                                        table.Rows.Add(row);
+				using (var cmd = dbConnection.CreateCommand()) {
+					cmd.CommandText = "CREATE TABLE data (id PRIMARY KEY, name TEXT)";
+					cmd.ExecuteNonQuery();
+				}
 
-                                        var ds2 = ds1.GetChanges();
-                                        da.Update(ds2, "Primus");
-                                        Assert.IsFalse(ds2.HasErrors);
-                                } finally {
-                                        ts.Rollback();
-                                }
-                        }
-                }
+
+				var ts = dbConnection.BeginTransaction();
+				var da = new SqliteDataAdapter("SELECT * FROM data", dbConnection);
+				var builder = new SqliteCommandBuilder(da);
+				da.UpdateCommand = builder.GetUpdateCommand();
+				da.UpdateCommand.Transaction = ts;
+
+				var ds1 = new DataSet();
+				da.Fill(ds1, "data");
+
+				var table = ds1.Tables[0];
+				var row = table.NewRow();
+				row["id"] = 10;
+				row["name"] = "Bart";
+				table.Rows.Add(row);
+
+				var ds2 = ds1.GetChanges();
+				da.Update(ds2, "data");
+				Assert.IsFalse(ds2.HasErrors);
+			}
+		}
 
 #endif
 
