@@ -462,7 +462,7 @@ namespace System {
 		}
 
 		// This is called "compacting" in the MSDN documentation
-		private static string Reduce (string path, bool trimDots)
+		internal static string Reduce (string path, bool trimDots)
 		{
 			// quick out, allocation-free, for a common case
 			if (path == "/")
