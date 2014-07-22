@@ -1052,7 +1052,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				types [i] = ((TypeParameterSpec)t).GetEffectiveBase ();
+				var tps = t as TypeParameterSpec;
+				types [i] = tps != null ? tps.GetEffectiveBase () : t;
 			}
 
 			if (HasTypeConstraint)
