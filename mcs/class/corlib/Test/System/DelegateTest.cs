@@ -1386,6 +1386,7 @@ namespace MonoTests.System
 			Assert.IsTrue (d (0, 0));
 		}
 
+#if !MONOTOUCH
 		public static void DynInvokeWithClosedFirstArg (object a, object b)
 		{
 		}
@@ -1419,6 +1420,7 @@ namespace MonoTests.System
 			ac.DynamicInvoke (new object[] { "oi" });
 			ac.DynamicInvoke (new object[] { null });
 		}
+#endif
 
 		static bool Int32D2 (int x, int y)
 		{
