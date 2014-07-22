@@ -1792,12 +1792,8 @@ namespace Mono.CSharp {
 				// this argument is generated during compilation which speeds up dispatch
 				// by about 25%
 				//
-
-				//
-				// Disabled for now due to JIT bug
-				//
-				//method_parameters = ParametersCompiled.Prefix (method_parameters,
-				//	new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
+				method_parameters = ParametersCompiled.Prefix (method_parameters,
+					new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
 			}
 
 			if (storey == null && hoisted_tparams == null)
