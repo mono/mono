@@ -273,6 +273,15 @@ namespace System {
 				return state.remaining.Length > 0;
 			}
 
+			if (state.elements.scheme == Uri.UriSchemeFile) {
+				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
+#if BOOTSTRAP_BASIC
+				state.elements.isUnc = (Path.DirectorySeparatorChar == '\\');
+#else
+				state.elements.isUnc = Environment.IsRunningOnWindows;
+#endif
+			}
+
 			return ParseDelimiter (ref state);
 		}
 
