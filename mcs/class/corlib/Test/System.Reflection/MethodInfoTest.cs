@@ -804,7 +804,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void TestLocalVariableTypes ()
 		{
-			var typeofT = typeof (GenericClass<>).GenericTypeArguments [0];
+			var typeofT = typeof (GenericClass<>).GetGenericArguments () [0];
 			var typeofK = typeof (GenericClass<>).GetMethod ("Method2").GetGenericArguments () [0];
 
 			var type = typeof (GenericClass<>).GetMethod("Method").GetMethodBody().LocalVariables[0].LocalType;
