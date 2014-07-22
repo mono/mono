@@ -20218,6 +20218,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-collectioninit-04.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.String &lt;Test&gt;m__0(System.String)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;Test&gt;m__1(System.String)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>69</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-etree-01.cs">
     <type name="InverseLogicalOperator">
       <method name="Boolean op_True(InverseLogicalOperator)" attrs="2198">
@@ -63737,6 +63756,27 @@
       </method>
     </type>
   </test>
+  <test name="test-async-74.cs">
+    <type name="AwaitGotoBug">
+      <method name="System.Threading.Tasks.Task Test()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitGotoBug+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>337</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
@@ -67991,6 +68031,37 @@
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
         <size>62</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-primary-ctor-09.cs">
+    <type name="A">
+      <method name="Void .ctor(Func`2)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="PC">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>50</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="PC+&lt;f1&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__0(Int32)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1(Int32)" attrs="131">
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
