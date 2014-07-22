@@ -279,196 +279,88 @@ namespace System {
 				throw new ArgumentNullException ("baseUri");
 			if (!baseUri.IsAbsoluteUri)
 				throw new ArgumentOutOfRangeException ("baseUri");
-			if (relativeUri == null)
-				relativeUri = String.Empty;
+			if (string.IsNullOrEmpty (relativeUri)) {
+				source = baseUri.OriginalString;
+				ParseUri (UriKind.Absolute);
+				return;
+			}
 
-			// See RFC 2396 Par 5.2 and Appendix C
+			string error;
+			bool startsWithSlash = false;
 
-			// Check Windows UNC (for // it is scheme/host separator)
-			if (relativeUri.Length >= 2 && relativeUri [0] == '\\' && relativeUri [1] == '\\') {
+			UriElements baseEl;
+			if (!UriParseComponents.TryParseComponents (baseUri.OriginalString, UriKind.Absolute, null, out baseEl, out error))
+				throw new UriFormatException (error);
+
+			if (relativeUri.StartsWith (baseEl.scheme + ":"))
+				relativeUri = relativeUri.Substring (baseEl.scheme.Length + 1);
+
+			if (relativeUri.Length >= 1 && relativeUri [0] == '/') {
+				if (relativeUri.Length >= 2 && relativeUri [1] == '/') {
+					source = baseEl.scheme + ":" + relativeUri;
+					ParseUri (UriKind.Absolute);
+					return;
+				}
+
+				relativeUri = relativeUri.Substring (1);
+				startsWithSlash = true;
+			}
+
+			UriElements relativeEl;
+			if (!UriParseComponents.TryParseComponents (relativeUri, UriKind.RelativeOrAbsolute, null, out relativeEl, out error))
+				throw new UriFormatException (error);
+
+			if (relativeEl.isAbsoluteUri) {
 				source = relativeUri;
 				ParseUri (UriKind.Absolute);
 				return;
 			}
 
-			int pos = relativeUri.IndexOf (':');
-			if (pos != -1) {
+			source = baseEl.scheme + baseEl.delimiter;
 
-				int pos2 = relativeUri.IndexOfAny (new char [] {'/', '\\', '?'});
+			if (baseEl.user != null)
+				source += baseEl.user + "@";
 
-				// pos2 < 0 ... e.g. mailto
-				// pos2 > pos ... to block ':' in query part
-				if (pos2 > pos || pos2 < 0) {
-					// in some cases, it is equivanent to new Uri (relativeUri, dontEscape):
-					// 1) when the URI scheme in the 
-					// relative path is different from that
-					// of the baseUri, or
-					// 2) the URI scheme is non-standard
-					// ones (non-standard URIs are always
-					// treated as absolute here), or
-					// 3) the relative URI path is absolute.
-					if (String.CompareOrdinal (baseUri.Scheme, 0, relativeUri, 0, pos) != 0 ||
-					    !IsPredefinedScheme (baseUri.Scheme) ||
-					    (relativeUri.Length > pos + 1 && relativeUri [pos + 1] == '/')) {
-						Uri tmp = null;
-						if (Uri.TryCreate (relativeUri, UriKind.Absolute, out tmp)) {
-							source = relativeUri;
-							ParseUri (UriKind.Absolute);
-							return;
-						} else if (pos == 1) {
-							// special case as this looks like a windows path
-							string msg = ParseAsWindowsAbsoluteFilePath (relativeUri);
-							if (msg != null)
-								throw new UriFormatException (msg);
-						}
-						// otherwise continue with 'full' relativeUri
-					}
-					else
-						relativeUri = relativeUri.Substring (pos + 1);
+			source += baseEl.host;
+
+			if (baseEl.port >= 0)
+				source += ":" + baseEl.port.ToString (CultureInfo.InvariantCulture);
+
+			var canUseBase = true;
+
+			string path;
+			if (!string.IsNullOrEmpty (relativeEl.path) || startsWithSlash) {
+				canUseBase = false;
+				path = relativeEl.path;
+				if (startsWithSlash)
+					path = relativeEl.path;
+				else {
+					var pathEnd = baseEl.path.LastIndexOf ('/');
+					path = (pathEnd > 0)? baseEl.path.Substring (0, pathEnd+1) : "";
+					path += relativeEl.path;
 				}
-			}
+			} else
+				path = baseEl.path;
 
-			this.scheme = baseUri.scheme;
-			this.host = baseUri.host;
-			this.port = baseUri.port;
-			this.userinfo = baseUri.userinfo;
-			this.isUnc = baseUri.isUnc;
-			this.isUnixFilePath = baseUri.isUnixFilePath;
-			this.isOpaquePart = baseUri.isOpaquePart;
+			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
+				path = "/" + path;
 
-			if (relativeUri.Length == 0) {
-				this.path = baseUri.path;
-				this.query = baseUri.query;
-				this.fragment = baseUri.fragment;
-				this.source = baseUri.OriginalString;
-				return;
-			}
+			source += UriHelper.Reduce (path, true);
 
-			var formatFlags = UriHelper.FormatFlags.None;
-			if (UriHelper.HasCharactersToNormalize (relativeUri))
-				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
+			if (relativeEl.query != null) {
+				canUseBase = false;
+				source += "?" + relativeEl.query;
+			} else if (canUseBase && baseEl.query != null)
+				source += "?" + baseEl.query;
 
-			if (userEscaped)
-				formatFlags |= UriHelper.FormatFlags.UserEscaped;
+			if (relativeEl.fragment != null)
+				source += "#" + relativeEl.fragment;
+			else if (canUseBase && baseEl.fragment != null)
+				source += "#" + baseEl.fragment;
 
-			// 8 fragment
-			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
-			string original_fragment = String.Empty;
-			pos = relativeUri.IndexOf ('#');
-			if (pos != -1) {
-				original_fragment = relativeUri.Substring (pos);
-				fragment = "#" + UriHelper.FormatAbsolute(relativeUri.Substring (pos+1), scheme,
-					UriComponents.Fragment, UriFormat.UriEscaped, formatFlags);
+			ParseUri (UriKind.Absolute);
 
-				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
-			}
-
-			bool consider_query = false;
-
-			// 6 query
-			pos = relativeUri.IndexOf ('?');
-			if (pos != -1) {
-				query = relativeUri.Substring (pos);
-				query = UriHelper.FormatAbsolute(query, scheme,
-					UriComponents.Query, UriFormat.UriEscaped, formatFlags);
-#if !NET_4_0 && !MOBILE
-				consider_query = query.Length > 0;
-#endif
-				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
-			} else if (relativeUri.Length == 0) {
-				// if there is no relative path then we keep the Query and Fragment from the absolute
-				query = baseUri.query;
-			}
-
-			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
-				if (relativeUri.Length > 1 && relativeUri [1] == '/') {
-					source = scheme + ':' + relativeUri + query + original_fragment;
-					ParseUri (UriKind.Absolute);
-					return;
-				} else {
-					path = relativeUri;
-					source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
-					path = UriHelper.FormatAbsolute (path, scheme,
-						UriComponents.Path, UriFormat.UriEscaped, formatFlags);;
-					return;
-				}
-			}
-			
-			// par 5.2 step 6 a)
-			path = baseUri.path;
-			if ((relativeUri.Length > 0) || consider_query) {
-				pos = path.LastIndexOf ('/');
-				if (pos >= 0) 
-					path = path.Substring (0, pos + 1);
-			}
-
-			if (relativeUri.Length == 0) {
-				// when merging URI the OriginalString is not quite original
-				source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
-				return;
-			}
-	
-			// 6 b)
-			path += relativeUri;
-
-			// 6 c)
-			int startIndex = 0;
-			while (true) {
-				pos = path.IndexOf ("./", startIndex);
-				if (pos == -1)
-					break;
-				if (pos == 0)
-					path = path.Remove (0, 2);
-				else if (path [pos - 1] != '.')
-					path = path.Remove (pos, 2);
-				else
-					startIndex = pos + 1;
-			}
-			
-			// 6 d)
-			if (path.Length > 1 && 
-			    path [path.Length - 1] == '.' &&
-			    path [path.Length - 2] == '/')
-				path = path.Remove (path.Length - 1, 1);
-			
-			// 6 e)
-			startIndex = 0;
-			while (true) {
-				pos = path.IndexOf ("/../", startIndex);
-				if (pos == -1)
-					break;
-				if (pos == 0) {
-					startIndex = 3;
-					continue;
-				}
-				int pos2 = path.LastIndexOf ('/', pos - 1);
-				if (pos2 == -1) {
-					startIndex = pos + 1;
-				} else {
-					if (path.Substring (pos2 + 1, pos - pos2 - 1) != "..")
-						path = path.Remove (pos2 + 1, pos - pos2 + 3);
-					else
-						startIndex = pos + 1;
-				}
-			}
-			
-			// 6 f)
-			if (path.Length > 3 && path.EndsWith ("/..")) {
-				pos = path.LastIndexOf ('/', path.Length - 4);
-				if (pos != -1)
-					if (path.Substring (pos + 1, path.Length - pos - 4) != "..")
-						path = path.Remove (pos + 1, path.Length - pos - 1);
-			}
-			
-			// 6 g)
-			while (path.StartsWith ("/../", StringComparison.Ordinal))
-				path = path.Substring (3);
-
-			// when merging URI the OriginalString is not quite original
-			source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
-
-			path = UriHelper.FormatAbsolute (path, scheme,
-					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
+			return;
 		}
 		
 		// Properties
