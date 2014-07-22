@@ -5561,7 +5561,8 @@ namespace Mono.CSharp {
 		bool VerifyArguments (ResolveContext ec, ref Arguments args, MemberSpec member, IParametersMember pm, bool chose_params_expanded)
 		{
 			var pd = pm.Parameters;
-			TypeSpec[] ptypes = ((IParametersMember) member).Parameters.Types;
+			var cpd = ((IParametersMember) member).Parameters;
+			var ptypes = cpd.Types;
 
 			Parameter.Modifier p_mod = 0;
 			TypeSpec pt = null;
@@ -5577,7 +5578,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = pd.FixedParameters[a_idx].ModFlags;
+					p_mod = cpd.FixedParameters [a_idx].ModFlags;
 					pt = ptypes[a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
