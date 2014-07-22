@@ -1047,9 +1047,32 @@ SkipCRLF:
 			}
 		}
 
-		private void ReadObjGroup(RTF rtf) {
-			rtf.SkipGroup();
-			rtf.RouteToken();
+		private void ReadObjGroup (RTF rtf)
+		{
+			int level;
+			
+			level = 1;
+			
+			while (GetToken() != TokenClass.EOF && this.minor != Minor.ObjResult) {
+				if (rtf_class == TokenClass.Group) {
+					if (this.major == Major.BeginGroup) {
+						level++;
+					} else if (this.major == Major.EndGroup) {
+						level--;
+						if (level < 1) {
+							break;
+						}
+					}
+				}
+			}
+
+			if (level >= 1) {
+				GetToken ();
+
+				if (rtf_class == TokenClass.Group)
+					GetToken ();
+				rtf.RouteToken ();
+			}
 		}
 		#endregion	// Default Delegates
 	}

@@ -1487,11 +1487,9 @@ namespace System.Windows.Forms {
 
 				case RTF.Major.PictAttr:
 					if (rtf.Picture != null && rtf.Picture.IsValid ()) {
+						FlushText (rtf, false);
 						Line line = document.GetLine (rtf_cursor_y);
-						document.InsertPicture (line, 0, rtf.Picture);
-						rtf_cursor_x++;
-
-						FlushText (rtf, true);
+						document.InsertPicture (line, rtf_cursor_x++, rtf.Picture);
 						rtf.Picture = null;
 					}
 					break;
