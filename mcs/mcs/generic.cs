@@ -1479,6 +1479,9 @@ namespace Mono.CSharp {
 					if (ac != null)
 						return ArrayContainer.MakeType (context.Module, et, ac.Rank);
 
+					if (ec is PointerContainer)
+						return PointerContainer.MakeType (context.Module, et);
+
 					throw new NotImplementedException ();
 				}
 
