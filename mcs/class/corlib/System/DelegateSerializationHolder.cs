@@ -46,10 +46,12 @@ namespace System
 		{
 			string type;
 			string assembly;
-			public object target;
+			object target;
 			string targetTypeAssembly;
 			string targetTypeName;
+#pragma warning disable 414
 			string methodName;
+#pragma warning restore
 			public DelegateEntry delegateEntry; // next delegate in the invocation list
 
 			// A DelegateEntry holds information about a delegate that is part
@@ -64,37 +66,31 @@ namespace System
 				methodName = del.Method.Name;
 			}
 
-			public Delegate DeserializeDelegate (SerializationInfo info)
+			public Delegate DeserializeDelegate (SerializationInfo info, int index)
 			{
 				object realTarget = null;
 				if (target != null)
 					realTarget = info.GetValue (target.ToString(), typeof(object));
 
+				var method = (MethodInfo) info.GetValue ("method" + index, typeof (MethodInfo));
+
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);
-				Delegate del;
-				if (realTarget != null) {
+
 #if !DISABLE_REMOTING
-					if (RemotingServices.IsTransparentProxy (realTarget)) {
-						// The call to IsInstanceOfType will force the proxy
-						// to load the real type of the remote object. This is
-						// needed to make sure that subsequent calls to
-						// GetType() return the expected type.
-						Assembly tasm = Assembly.Load (targetTypeAssembly);
-						Type tt = tasm.GetType (targetTypeName);
-						if (!tt.IsInstanceOfType (realTarget))
-							throw new RemotingException ("Unexpected proxy type.");
-					}
-#endif
-					del = Delegate.CreateDelegate (dt, realTarget, methodName);
-				}
-				else {
+				if (realTarget != null && RemotingServices.IsTransparentProxy (realTarget)) {
+					// The call to IsInstanceOfType will force the proxy
+					// to load the real type of the remote object. This is
+					// needed to make sure that subsequent calls to
+					// GetType() return the expected type.
 					Assembly tasm = Assembly.Load (targetTypeAssembly);
 					Type tt = tasm.GetType (targetTypeName);
-					del = Delegate.CreateDelegate (dt, tt, methodName);
+					if (!tt.IsInstanceOfType (realTarget))
+						throw new RemotingException ("Unexpected proxy type.");
 				}
+#endif
 
-				return del;
+				return Delegate.CreateDelegate (dt, realTarget, method);
 			}
 		}
 
@@ -112,14 +108,14 @@ namespace System
 
 			// Deserializes and combines the delegates
 			if (count == 1) 
-				_delegate = entryChain.DeserializeDelegate (info);
+				_delegate = entryChain.DeserializeDelegate (info, 0);
 			else
 			{
 				Delegate[] delegates = new Delegate[count];
 				entry = entryChain;
 				for (int n=0; n<count; n++)
 				{
-					delegates[n] = entry.DeserializeDelegate (info);
+					delegates[n] = entry.DeserializeDelegate (info, n);
 					entry = entry.delegateEntry;
 				}
 				_delegate = Delegate.Combine (delegates);
@@ -145,6 +141,8 @@ namespace System
 				lastEntry = entry;
 				if (del.Target != null)
 					info.AddValue (targetLabel, del.Target);
+
+				info.AddValue ("method" + n, del.Method);
 			}
 			info.SetType (typeof (DelegateSerializationHolder));
 		}
