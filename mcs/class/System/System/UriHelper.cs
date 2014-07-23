@@ -169,11 +169,7 @@ namespace System {
 
 		internal static string FormatRelative (string str, string schemeName, UriFormat uriFormat)
 		{
-			var formatFlags = FormatFlags.None;
-			if (HasCharactersToNormalize (str))
-				formatFlags |= FormatFlags.HasUriCharactersToNormalize;
-
-			return Format (str, schemeName, UriKind.Relative, UriComponents.Path, uriFormat, formatFlags);
+			return Format (str, schemeName, UriKind.Relative, UriComponents.Path, uriFormat, FormatFlags.None);
 		}
 
 		private static string Format (string str, string schemeName, UriKind uriKind,
@@ -183,7 +179,7 @@ namespace System {
 				return "";
 
 			if (UriHelper.HasCharactersToNormalize (str))
-				formatFlags |= UriHelper.FormatFlags.HasComponentCharactersToNormalize;
+				formatFlags |= UriHelper.FormatFlags.HasComponentCharactersToNormalize | FormatFlags.HasUriCharactersToNormalize;
 
 			if (component == UriComponents.Fragment && UriHelper.HasPercentage (str))
 				formatFlags |= UriHelper.FormatFlags.HasFragmentPercentage;
