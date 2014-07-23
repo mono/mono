@@ -4247,7 +4247,6 @@ namespace Mono.CSharp {
 				if (!TypeSpecComparer.Equals (p_m.Parameters.Types, q_m.Parameters.Types))
 					return 0;
 
-				var orig_p = p;
 				p = p_m.ReturnType;
 				var orig_q = q;
 				q = q_m.ReturnType;
@@ -4277,33 +4276,34 @@ namespace Mono.CSharp {
 						q = q.TypeArguments[0];
 						p = p.TypeArguments[0];
 					}
-				} else if (q != p) {
-					//
-					// LAMESPEC: Lambda expression returning dynamic type has identity (better) conversion to delegate returning object type
-					//
-					if (q.BuiltinType == BuiltinTypeSpec.Type.Object) {
-						var am_rt = am.InferReturnType (ec, null, orig_q);
-						if (am_rt != null && am_rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-							return 2;
-					} else if (p.BuiltinType == BuiltinTypeSpec.Type.Object) {
-						var am_rt = am.InferReturnType (ec, null, orig_p);
-						if (am_rt != null && am_rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-							return 1;
-					}
 				}
 
-				//
-				// The parameters are identicial and return type is not void, use better type conversion
-				// on return type to determine better one
-				//
-			} else {
-				if (argument_type == p)
-					return 1;
+				if (q != p) {
+					//
+					// An inferred return type X exists for E in the context of that parameter list, and 
+					// the conversion from X to Y1 is better than the conversion from X to Y2
+					//
+					argument_type = am.InferReturnType (ec, null, orig_q);
+					if (argument_type == null) {
+						// TODO: Can this be hit?
+						return 1;
+					}
 
-				if (argument_type == q)
-					return 2;
+					if (argument_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+						argument_type = ec.BuiltinTypes.Object;
+				}
 			}
 
+			if (argument_type == p)
+				return 1;
+
+			if (argument_type == q)
+				return 2;
+
+			//
+			// The parameters are identicial and return type is not void, use better type conversion
+			// on return type to determine better one
+			//
 			return BetterTypeConversion (ec, p, q);
 		}
 
