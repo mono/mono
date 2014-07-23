@@ -412,8 +412,6 @@ AC_LIBTOOL_WIN32_DLL
 # This causes monodis to not link correctly
 #AC_DISABLE_FAST_INSTALL
 AM_PROG_LIBTOOL
-# Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
-DOLT
 
 export_ldflags=`(./libtool --config; echo eval echo \\$export_dynamic_flag_spec) | sh`
 AC_SUBST(export_ldflags)
