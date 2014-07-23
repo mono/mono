@@ -49,9 +49,7 @@ namespace System
 			object target;
 			string targetTypeAssembly;
 			string targetTypeName;
-#pragma warning disable 414
 			string methodName;
-#pragma warning restore
 			public DelegateEntry delegateEntry; // next delegate in the invocation list
 
 			// A DelegateEntry holds information about a delegate that is part
@@ -72,25 +70,35 @@ namespace System
 				if (target != null)
 					realTarget = info.GetValue (target.ToString(), typeof(object));
 
-				var method = (MethodInfo) info.GetValue ("method" + index, typeof (MethodInfo));
+				var key = "method" + index;
+				var method = info.HasKey (key) ? (MethodInfo)info.GetValue (key, typeof (MethodInfo)) : null;
 
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);
 
+				if (realTarget != null) {
 #if !DISABLE_REMOTING
-				if (realTarget != null && RemotingServices.IsTransparentProxy (realTarget)) {
-					// The call to IsInstanceOfType will force the proxy
-					// to load the real type of the remote object. This is
-					// needed to make sure that subsequent calls to
-					// GetType() return the expected type.
-					Assembly tasm = Assembly.Load (targetTypeAssembly);
-					Type tt = tasm.GetType (targetTypeName);
-					if (!tt.IsInstanceOfType (realTarget))
-						throw new RemotingException ("Unexpected proxy type.");
-				}
+					if (RemotingServices.IsTransparentProxy (realTarget)) {
+						// The call to IsInstanceOfType will force the proxy
+						// to load the real type of the remote object. This is
+						// needed to make sure that subsequent calls to
+						// GetType() return the expected type.
+						Assembly tasm = Assembly.Load (targetTypeAssembly);
+						Type tt = tasm.GetType (targetTypeName);
+						if (!tt.IsInstanceOfType (realTarget))
+							throw new RemotingException ("Unexpected proxy type.");
+					}
 #endif
+					return method == null ?
+						Delegate.CreateDelegate (dt, realTarget, methodName) :
+						Delegate.CreateDelegate (dt, realTarget, method);
+				}
 
-				return Delegate.CreateDelegate (dt, realTarget, method);
+				if (method != null)
+					return Delegate.CreateDelegate (dt, realTarget, method);
+
+				Type tt2 = Assembly.Load (targetTypeAssembly).GetType (targetTypeName);
+				return Delegate.CreateDelegate (dt, tt2, methodName);
 			}
 		}
 
