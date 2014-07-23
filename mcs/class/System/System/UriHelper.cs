@@ -248,7 +248,11 @@ namespace System {
 			if (!isEscaped && !userEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags))
 				return HexEscapeMultiByte (c);
 
-			if (isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags)) {
+			if (isEscaped && (
+#if NET_4_0
+				(userEscaped && c < 0xFF) ||
+#endif
+				!NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
 				if (IriParsing &&
 					(c == '<' || c == '>' || c == '^' || c == '{' || c == '|' || c ==  '}' || c > 0x7F) &&
 					(formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0)
