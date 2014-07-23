@@ -339,8 +339,15 @@ namespace System {
 					path = (pathEnd > 0)? baseEl.path.Substring (0, pathEnd+1) : "";
 					path += relativeEl.path;
 				}
-			} else
+			} else {
 				path = baseEl.path;
+#if !NET_4_0
+				if (relativeEl.query != null) {
+					var pathEnd = path.LastIndexOf ('/');
+					path = (pathEnd > 0)? path.Substring (0, pathEnd+1) : "";
+				}
+#endif
+			}
 
 			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
 				path = "/" + path;
