@@ -496,8 +496,13 @@ namespace System {
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
 
+				var formatFlags = UriHelper.FormatFlags.NoSlashReplace;
+
+				if (userEscaped)
+					formatFlags |= UriHelper.FormatFlags.UserEscaped;
+
 				string unescapedPath = UriHelper.FormatAbsolute (path, scheme,
-					UriComponents.Path, UriFormat.Unescaped, UriHelper.FormatFlags.NoSlashReplace);
+					UriComponents.Path, UriFormat.Unescaped, formatFlags);
 
 				if (path.StartsWith("/") && !unescapedPath.StartsWith("/"))
 					unescapedPath = "/" + unescapedPath;
