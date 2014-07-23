@@ -233,19 +233,17 @@ namespace System {
 					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
 
 					string cStr = str.Substring(iStart, i-iStart);
-					s.Append (FormatChar (x, cStr, scheme, uriKind, component, uriFormat, formatFlags));
-					if (surrogate != char.MinValue)
-						s.Append (surrogate);
+					s.Append (FormatChar (x, surrogate, cStr, scheme, uriKind, component, uriFormat, formatFlags));
 
 					i--;
 				} else
-					s.Append (FormatChar (c, "" + c, scheme, uriKind, component, uriFormat, formatFlags));
+					s.Append (FormatChar (c, char.MinValue, "" + c, scheme, uriKind, component, uriFormat, formatFlags));
 			}
 			
 			return s.ToString();
 		}
 
-		private static string FormatChar (char c, string cStr, UriSchemes scheme, UriKind uriKind,
+		private static string FormatChar (char c, char surrogate, string cStr, UriSchemes scheme, UriKind uriKind,
 			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
 			var isEscaped = cStr.Length != 1;
@@ -258,7 +256,7 @@ namespace System {
 				if (IriParsing &&
 					(c == '<' || c == '>' || c == '^' || c == '{' || c == '|' || c ==  '}' || c > 0x7F) &&
 					(formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0)
-					return HexEscapeMultiByte (c); //Upper case escape
+					return cStr.ToUpperInvariant (); //Upper case escape
 
 				return cStr; //Keep original case
 			}
@@ -276,7 +274,11 @@ namespace System {
 					return "/";
 			}
 
-			return c.ToString (CultureInfo.InvariantCulture);
+			var ret = c.ToString (CultureInfo.InvariantCulture);
+			if (surrogate != char.MinValue)
+				ret += surrogate.ToString (CultureInfo.InvariantCulture);
+
+			return ret;
 		}
 
 		private static bool NeedToUnescape (char c, UriSchemes scheme, UriComponents component, UriKind uriKind,
