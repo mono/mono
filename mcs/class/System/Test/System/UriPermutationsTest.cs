@@ -223,6 +223,12 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void PercentageEncoding_AbsolutePath ()
+		{
+			TestPercentageEncoding (uri => uri.AbsolutePath);
+		}
+
+		[Test]
 		public void PercentageEncoding_Fragment ()
 		{
 			TestPercentageEncoding (uri => uri.Fragment);
