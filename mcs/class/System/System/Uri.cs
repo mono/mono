@@ -1154,7 +1154,8 @@ namespace System {
 		[Obsolete]
 		protected virtual string Unescape (string path)
 		{
-			return Unescape (path, false, false);
+			var formatFlags = UriHelper.FormatFlags.NoSlashReplace | UriHelper.FormatFlags.NoReduce;
+			return UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, UriFormat.Unescaped, formatFlags);
 		}
 
 		internal static string Unescape (string str, bool excludeSpecial)
