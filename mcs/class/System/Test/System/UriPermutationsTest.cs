@@ -282,6 +282,45 @@ namespace MonoTests.System {
 			TestPercentageEncoding (uri => uri.ToString (), true);
 		}
 
+		class UriEx : Uri
+		{
+			public UriEx (string s) : base (s)
+			{
+			}
+
+			public string UnescapeString (string s)
+			{
+				return Unescape (s);
+			}
+
+			public static string UnescapeString (string uri, string target)
+			{
+				return new UriEx (uri).UnescapeString (target);
+			}
+		}
+
+		[Test]
+		public void PercentageEncoding_Unescape ()
+		{
+			TestChars (str => {
+				var sbUpper = new StringBuilder ();
+				var sbLower = new StringBuilder ();
+				foreach (char c in str) {
+					sbUpper.Append (HexEscapeMultiByte (c, true));
+					sbLower.Append (HexEscapeMultiByte (c, false));
+				}
+				string escapedUpperStr = sbUpper.ToString ();
+				string escapedLowerStr = sbLower.ToString ();
+
+				StringTester.Assert (str + "[Unescaped]", UriEx.UnescapeString ("file://a/", str));
+				StringTester.Assert (escapedUpperStr + "[EscapedUpper]", UriEx.UnescapeString ("file://a/", escapedUpperStr));
+				StringTester.Assert (escapedLowerStr + "[EscapedLower]", UriEx.UnescapeString ("file://a/", escapedLowerStr));
+			});
+
+			foreach (var str in specialCases)
+				StringTester.Assert (str, UriEx.UnescapeString("file://a/", str));
+		}
+
 		[Test]
 		public void Reduce_AbsoluteUri ()
 		{
