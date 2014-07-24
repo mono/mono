@@ -198,25 +198,6 @@ namespace MonoTests.System {
 
 		private delegate void TestStringDelegate (UriToStringDelegate toString, bool testRelative = true, string id = "");
 
-		private void TestLocalPath (TestStringDelegate test)
-		{
-			var id = (Path.DirectorySeparatorChar == '/') ? "[UNIX]" : "[MS]";
-			test (uri => uri.LocalPath, false, id);
-
-			if (!createMode)
-				return;
-
-			var altId = (Path.AltDirectorySeparatorChar == '/') ? "[UNIX]" : "[MS]";
-			test (uri => {
-				var result = uri.LocalPath;
-
-				if (uri.Scheme == Uri.UriSchemeFile)
-					result = result.Replace (Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-				return result;
-			}, false, altId);
-		}
-
 		[Test]
 		public void PercentageEncoding_AbsoluteUri ()
 		{
@@ -269,12 +250,6 @@ namespace MonoTests.System {
 		public void PercentageEncoding_GetComponents_Query ()
 		{
 			TestComponent (UriComponents.Query);
-		}
-
-		[Test]
-		public void PercentageEncoding_LocalPath ()
-		{
-			TestLocalPath (TestPercentageEncoding);
 		}
 
 		[Test]
@@ -332,12 +307,6 @@ namespace MonoTests.System {
 		public void Reduce_AbsoluteUri ()
 		{
 			TestReduce (uri => uri.AbsoluteUri, false);
-		}
-
-		[Test]
-		public void Reduce_LocalPath ()
-		{
-			TestLocalPath (TestReduce);
 		}
 
 		[Test]
