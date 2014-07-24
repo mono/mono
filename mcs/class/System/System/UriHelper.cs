@@ -22,6 +22,7 @@ namespace System {
 			IPv6Host = 1 << 5,
 			NoSlashReplace = 1 << 6,
 			NoReduce = 1 << 7,
+			HasWindowsPath = 1 << 8,
 		}
 
 		[Flags]
@@ -189,6 +190,11 @@ namespace System {
 				str.Length > 1 && str [0] == '[' && str [str.Length - 1] == ']')
 				 formatFlags |= UriHelper.FormatFlags.IPv6Host;
 
+			if (component == UriComponents.Path &&
+				str.Length >= 2 && str [1] != ':' &&
+				('a' <= str [0] && str [0] <= 'z') || ('A' <= str [0] && str [0] <= 'Z'))
+				formatFlags |= UriHelper.FormatFlags.HasWindowsPath;
+
 			UriSchemes scheme = GetScheme (schemeName);
 
 			if (scheme == UriSchemes.Custom && (formatFlags & FormatFlags.HasHost) != 0)
@@ -283,6 +289,10 @@ namespace System {
 					return (isEscaped && uriFormat != UriFormat.UriEscaped) ? "\\" : "/";
 
 				if (SchemeContains (scheme, UriSchemes.NetPipe | UriSchemes.NetTcp | UriSchemes.File))
+					return "/";
+
+				if (SchemeContains (scheme, UriSchemes.Custom) &&
+					(formatFlags & FormatFlags.HasWindowsPath) == 0)
 					return "/";
 			}
 
