@@ -1286,7 +1286,7 @@ method_declaration
 
 		// Was added earlier in the case of body being eof for full ast
 	  }
-	  method_body
+	  method_body_expression_block
 	  {
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
@@ -1441,9 +1441,13 @@ method_header
 	  }
 	;
 
+method_body_expression_block
+	: method_body
+	| expression_block
+	;
+
 method_body
 	: block
-	| expression_block
 	| SEMICOLON		{ $$ = null; }
 	;
 
@@ -2124,7 +2128,7 @@ operator_declaration
 	: opt_attributes opt_modifiers operator_declarator 
 	  {
 	  }
-	  method_body
+	  method_body_expression_block
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		if (decl != null) {
