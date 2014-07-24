@@ -21,6 +21,7 @@ namespace System {
 			UserEscaped = 1 << 4,
 			IPv6Host = 1 << 5,
 			NoSlashReplace = 1 << 6,
+			NoReduce = 1 << 7,
 		}
 
 		[Flags]
@@ -206,7 +207,8 @@ namespace System {
 
 			str = FormatString (str, scheme, uriKind, component, uriFormat, formatFlags);
 
-			if (component == UriComponents.Path) {
+			if (component == UriComponents.Path &&
+				(formatFlags & FormatFlags.NoReduce) == 0) {
 				if (SchemeContains (scheme, reduceAfter))
 					str = Reduce (str, !IriParsing);
 				if(IriParsing && scheme == UriSchemes.CustomWithHost)
