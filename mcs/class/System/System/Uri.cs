@@ -2029,6 +2029,11 @@ namespace System {
 
 		public string GetComponents (UriComponents components, UriFormat format)
 		{
+			if (!IsAbsoluteUri && components == UriComponents.SerializationInfoString)
+			{
+				return UriParser.Format (OriginalString, format);
+			}
+
 			return Parser.GetComponents (this, components, format);
 		}
 

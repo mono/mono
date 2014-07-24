@@ -226,7 +226,7 @@ namespace System {
 			return s;
 		}
 
-		private string Format (string s, UriFormat format)
+		internal static string Format (string s, UriFormat format)
 		{
 			if (s.Length == 0)
 				return String.Empty;
