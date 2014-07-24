@@ -168,6 +168,7 @@ typedef struct MonoAotCompile {
 	GHashTable *method_label_hash;
 	const char *temp_prefix;
 	guint32 label_generator;
+	MonoClass **typespec_classes;
 } MonoAotCompile;
 
 typedef struct {
@@ -1334,16 +1335,21 @@ static guint32
 find_typespec_for_class (MonoAotCompile *acfg, MonoClass *klass)
 {
 	int i;
-	MonoClass *k = NULL;
+	int len = acfg->image->tables [MONO_TABLE_TYPESPEC].rows;
 
 	/* FIXME: Search referenced images as well */
-	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPESPEC].rows; ++i) {
-		k = mono_class_get_full (acfg->image, MONO_TOKEN_TYPE_SPEC | (i + 1), NULL);
-		if (k == klass)
+	if (!acfg->typespec_classes) {
+		acfg->typespec_classes = mono_mempool_alloc0 (acfg->mempool, sizeof (MonoClass*) * len);
+		for (i = 0; i < len; ++i) {
+			acfg->typespec_classes [i] = mono_class_get_full (acfg->image, MONO_TOKEN_TYPE_SPEC | (i + 1), NULL);
+		}
+	}
+	for (i = 0; i < len; ++i) {
+		if (acfg->typespec_classes [i] == klass)
 			break;
 	}
 
-	if (i < acfg->image->tables [MONO_TABLE_TYPESPEC].rows)
+	if (i < len)
 		return MONO_TOKEN_TYPE_SPEC | (i + 1);
 	else
 		return 0;
@@ -5137,7 +5143,7 @@ emit_got_info (MonoAotCompile *acfg)
 	 */
 
 	/* Encode info required to decode shared GOT entries */
-	buf_size = acfg->got_patches->len * 64;
+	buf_size = acfg->got_patches->len * 128;
 	p = buf = mono_mempool_alloc (acfg->mempool, buf_size);
 	got_info_offsets = mono_mempool_alloc (acfg->mempool, acfg->got_patches->len * sizeof (guint32));
 	acfg->plt_got_info_offsets = mono_mempool_alloc (acfg->mempool, acfg->plt_offset * sizeof (guint32));
