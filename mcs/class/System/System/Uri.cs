@@ -1467,7 +1467,14 @@ namespace System {
 		// sequences such as (e.g.) %E3%81%8B into a single character
 		internal static char HexUnescapeMultiByte (string pattern, ref int index, out char surrogate) 
 		{
+			bool invalidEscape;
+			return HexUnescapeMultiByte (pattern, ref index, out surrogate, out invalidEscape);
+		}
+
+		internal static char HexUnescapeMultiByte (string pattern, ref int index, out char surrogate, out bool invalidEscape)
+		{
 			surrogate = char.MinValue;
+			invalidEscape = false;
 
 			if (pattern == null) 
 				throw new ArgumentException ("pattern");
@@ -1495,8 +1502,11 @@ namespace System {
 			// We might be dealing with a single-byte character:
 			// If there was only 0 or 1 leading ones then we're not dealing
 			// with a multi-byte character.
-			if (num_bytes <= 1)
-				return (char) ((msb << 4) | lsb);
+			if (num_bytes <= 1) {
+				var c = (char) ((msb << 4) | lsb);
+				invalidEscape = c > 0x7F;
+				return c;
+			}
 
 			// Now that we know how many bytes *should* follow, we'll check them
 			// to ensure we are dealing with a valid multi-byte character.
@@ -1524,6 +1534,7 @@ namespace System {
 			// If what looked like a multi-byte character is invalid, then we'll
 			// just return the first byte as a single byte character.
 			if (all_invalid) {
+				invalidEscape = true;
 				index = orig_index + 3;
 				return (char) chars[0];
 			}
