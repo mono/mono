@@ -229,7 +229,16 @@ namespace System {
 				if (c == '%') {
 					int iStart = i;
 					char surrogate;
-					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
+					bool invalidUnescape;
+					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate, out invalidUnescape);
+
+#if NET_4_0
+					if (invalidUnescape) {
+						s.Append (c);
+						i = iStart;
+						continue;
+					}
+#endif
 
 					string cStr = str.Substring(iStart, i-iStart);
 					s.Append (FormatChar (x, surrogate, cStr, scheme, uriKind, component, uriFormat, formatFlags));
