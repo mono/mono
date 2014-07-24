@@ -35,7 +35,8 @@ namespace MonoTests.System {
 		};
 
 		private static readonly string [] specialCases = {
-			"a/a#%#", "a/a#%25#" // '%' cause '#' to escape in some cases
+			"a/a#%#", "a/a#%25#", // '%' cause '#' to escape in some cases
+			"a/%80%81%B8%B9", // invalid utf8 encoding
 		};
 
 		private static readonly string [] reduceLocations = {
