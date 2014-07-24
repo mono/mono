@@ -198,7 +198,8 @@ namespace System {
 
 			if (IriParsing) {
 				reduceAfter |= UriSchemes.Ftp;
-			} else if (component == UriComponents.Path) {
+			} else if (component == UriComponents.Path &&
+				(formatFlags & FormatFlags.NoSlashReplace) == 0) {
 				if(scheme == UriSchemes.Ftp)
 					str = Reduce (str.Replace ('\\', '/'), !IriParsing);
 				if (scheme == UriSchemes.CustomWithHost)
