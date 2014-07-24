@@ -65442,6 +65442,51 @@
       </method>
     </type>
   </test>
+  <test name="test-expression-bodied-01.cs">
+    <type name="C">
+      <method name="System.String Test1(System.String, System.String)" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void Test2(Int32)" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="System.Func`1[System.Int32] Test3(Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="System.String op_Implicit(C)" attrs="2198">
+        <size>13</size>
+      </method>
+      <method name="System.String get_Prop()" attrs="2180">
+        <size>30</size>
+      </method>
+      <method name="System.Func`1[System.String] get_Prop2()" attrs="2193">
+        <size>37</size>
+      </method>
+      <method name="Int32 get_Item(Int32, Int32)" attrs="2182">
+        <size>11</size>
+      </method>
+      <method name="Int32 Check()" attrs="129">
+        <size>213</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="System.String &lt;get_Prop2&gt;m__0(System.Object)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>29</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test3&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__0()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

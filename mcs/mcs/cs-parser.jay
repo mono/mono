@@ -1443,7 +1443,28 @@ method_header
 
 method_body
 	: block
+	| expression_block
 	| SEMICOLON		{ $$ = null; }
+	;
+
+expression_block
+	: ARROW
+	 {
+		if (lang_version < LanguageVersion.V_6) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression bodied members");
+		}
+
+		++lexer.parsing_block;
+		start_block (GetLocation ($1));
+	 }
+	 expression SEMICOLON
+	 {
+		lexer.parsing_block = 0;
+		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		var b = end_block (GetLocation ($4));
+		b.IsCompilerGenerated = true;
+		$$ = b;
+	 }
 	;
 
 opt_formal_parameter_list
@@ -1777,6 +1798,32 @@ property_declaration
 	  {
 		current_property = null;
 	  }
+	| opt_attributes
+	  opt_modifiers
+	  member_type
+	  member_declaration_name
+	  {
+		lexer.parsing_generic_declaration = false;
+		if (doc_support)
+			tmpComment = Lexer.consume_doc_comment ();
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+	  }
+	  expression_block
+	  {
+		var type = (FullNamedExpression) $3;
+		var property = new Property (current_type, type, (Modifiers) $2,
+			(MemberName) $4, (Attributes) $1);
+
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
+			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", property.GetSignatureForError ());
+
+		property.Get = new Property.GetMethod (property, Modifiers.COMPILER_GENERATED, null, property.Location);
+		property.Get.Block = (ToplevelBlock) $6;
+
+		current_type.AddMember (property);
+
+		current_local_parameters = null;
+	  }
 	;
 
 opt_property_initializer
@@ -1827,24 +1874,34 @@ indexer_declaration
 		}
 
 		lexer.PropertyParsing = true;
+		current_local_parameters = (ParametersCompiled) $7;
 	  }
-	  OPEN_BRACE accessor_declarations 
+	  indexer_body
 	  {
-		lexer.PropertyParsing = false;
-	  }
-	  CLOSE_BRACE
-	  {
+ 		lexer.PropertyParsing = false;
+		current_local_parameters = null;
+
 		if (current_property.AccessorFirst != null && current_property.AccessorFirst.Block == null)
 			((Indexer) current_property).ParameterInfo.CheckParameters (current_property);
 	  
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
 			
-		lbag.AppendToMember (current_property, GetLocation ($10), GetLocation ($13));
 		current_property = null;		
 	  }
 	;
 
+indexer_body
+	: OPEN_BRACE accessor_declarations CLOSE_BRACE
+	  {
+		lbag.AppendToMember (current_property, GetLocation ($1), GetLocation ($3));
+	  }
+	| expression_block
+	  {
+		current_property.Get = new Indexer.GetIndexerMethod (current_property, Modifiers.COMPILER_GENERATED, current_local_parameters, null, current_property.Location);
+		current_property.Get.Block = (ToplevelBlock) $1;
+	  }
+	;
 
 accessor_declarations
 	: get_accessor_declaration
@@ -2067,7 +2124,7 @@ operator_declaration
 	: opt_attributes opt_modifiers operator_declarator 
 	  {
 	  }
-	  operator_body
+	  method_body
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		if (decl != null) {
@@ -2093,11 +2150,6 @@ operator_declaration
 		current_local_parameters = null;
 	  }
 	;
-
-operator_body 
-	: block
-	| SEMICOLON { $$ = null; }
-	; 
 
 operator_type
 	: type_expression_or_array
