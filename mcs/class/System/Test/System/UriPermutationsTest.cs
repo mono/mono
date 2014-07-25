@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 
@@ -13,6 +11,7 @@ namespace MonoTests.System {
 		// The generated files should then be used when running the tests in Mono with CreateMode = false
 		private const bool createMode = false;
 
+		// The final location depends on NET_2_0, NET_4_0, NET_4_5.
 		private const string location = "./Test/System/UriPermutationsTest/";
 
 		private const string nonAsciiTestedChars = "☕";
@@ -59,22 +58,17 @@ namespace MonoTests.System {
 			"", ".", "..", "...", "%2E", "%2E%2E", "%2E%2E%2E"
 		};
 
-		public static readonly bool IriParsing;
-
-		static UriPermutationsTest ()
-		{
-			FieldInfo iriParsingField = typeof (Uri).GetField ("s_IriParsing",
-				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-			if (iriParsingField != null)
-				IriParsing = (bool) iriParsingField.GetValue (null);
-		}
-
 		[SetUp]
 		public void Setup()
 		{
 			StringTester.CreateMode = createMode;
-			StringTester.Location = location;
-			StringTester.Location += (IriParsing) ? "IriParsing" : "NoIriParsing";
+#if NET_4_5
+			StringTester.Location = location + "NET_4_5";
+#elif NET_4_0
+			StringTester.Location = location + "NET_4_0";
+#else
+			StringTester.Location = location + "NET_2_0";
+#endif
 		}
 
 		[TearDown]
