@@ -39,7 +39,6 @@ namespace System.Net
 	{
 		enum State {
 			None,
-			PartialSize,
 			Body,
 			BodyFinished,
 			Trailer
@@ -140,9 +139,9 @@ namespace System.Net
 		
 		void InternalWrite (byte [] buffer, ref int offset, int size)
 		{
-			if (state == State.None || state == State.PartialSize) {
+			if (state == State.None) {
 				state = GetChunkSize (buffer, ref offset, size);
-				if (state == State.PartialSize)
+				if (state == State.None)
 					return;
 				
 				saved.Length = 0;
@@ -263,7 +262,7 @@ namespace System.Net
 					ThrowProtocolViolation ("Cannot parse chunk size.");
 				}
 
-				return State.PartialSize;
+				return State.None;
 			}
 
 			chunkRead = 0;
