@@ -290,7 +290,7 @@ namespace System {
 			if (!UriParseComponents.TryParseComponents (baseUri.OriginalString, UriKind.Absolute, null, out baseEl, out error))
 				throw new UriFormatException (error);
 
-			if (relativeUri.StartsWith (baseEl.scheme + ":"))
+			if (relativeUri.StartsWith (baseEl.scheme + ":", StringComparison.Ordinal))
 				relativeUri = relativeUri.Substring (baseEl.scheme.Length + 1);
 
 			if (relativeUri.Length >= 1 && relativeUri [0] == '/') {
@@ -509,7 +509,8 @@ namespace System {
 				string unescapedPath = UriHelper.FormatAbsolute (path, scheme,
 					UriComponents.Path, UriFormat.Unescaped, formatFlags);
 
-				if (path.StartsWith("/") && !unescapedPath.StartsWith("/"))
+				if (path.StartsWith ("/", StringComparison.Ordinal) &&
+					!unescapedPath.StartsWith ("/", StringComparison.Ordinal))
 					unescapedPath = "/" + unescapedPath;
 
 				if (IsLocalIdenticalToAbsolutePath ()) {
@@ -969,7 +970,7 @@ namespace System {
 					if (segments [k] != segments2 [k]) 
 						break;
 				
-				for (int i = k; i < segments.Length && segments [i].EndsWith ("/"); i++)
+				for (int i = k; i < segments.Length && segments [i].EndsWith ("/", StringComparison.Ordinal); i++)
 					result += "../";
 				for (int i = k; i < segments2.Length; i++)
 					result += segments2 [i];
