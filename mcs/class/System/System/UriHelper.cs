@@ -87,9 +87,9 @@ namespace System {
 			return (keys & flag) != 0;
 		}
 
-		internal static bool IsKnownScheme(string scheme)
+		internal static bool IsKnownScheme (string scheme)
 		{
-			return GetScheme(scheme) != UriSchemes.Custom;
+			return GetScheme (scheme) != UriSchemes.Custom;
 		}
 
 		internal static string HexEscapeMultiByte (char character)
@@ -112,7 +112,7 @@ namespace System {
 			return SupportsQuery (GetScheme (scheme));
 		}
 
-		internal static bool SupportsQuery(UriSchemes scheme)
+		internal static bool SupportsQuery (UriSchemes scheme)
 		{
 			if (SchemeContains (scheme, UriSchemes.File))
 				return IriParsing;
@@ -120,7 +120,7 @@ namespace System {
 			return !SchemeContains (scheme, UriSchemes.Ftp | UriSchemes.Gopher | UriSchemes.Nntp | UriSchemes.Telnet | UriSchemes.News);
 		}
 
-		internal static bool HasCharactersToNormalize(string str)
+		internal static bool HasCharactersToNormalize (string str)
 		{
 			int len = str.Length;
 			for (int i = 0; i < len; i++) {
@@ -213,7 +213,7 @@ namespace System {
 				reduceAfter |= UriSchemes.Ftp;
 			} else if (component == UriComponents.Path &&
 				(formatFlags & FormatFlags.NoSlashReplace) == 0) {
-				if(scheme == UriSchemes.Ftp)
+				if (scheme == UriSchemes.Ftp)
 					str = Reduce (str.Replace ('\\', '/'), !IriParsing);
 				if (scheme == UriSchemes.CustomWithHost)
 					str = Reduce (str.Replace ('\\', '/'), false);
@@ -225,7 +225,7 @@ namespace System {
 				(formatFlags & FormatFlags.NoReduce) == 0) {
 				if (SchemeContains (scheme, reduceAfter))
 					str = Reduce (str, !IriParsing);
-				if(IriParsing && scheme == UriSchemes.CustomWithHost)
+				if (IriParsing && scheme == UriSchemes.CustomWithHost)
 					str = Reduce (str, false);
 			}
 
@@ -256,7 +256,7 @@ namespace System {
 						continue;
 					}
 
-					string cStr = str.Substring(iStart, i-iStart);
+					string cStr = str.Substring (iStart, i-iStart);
 					s.Append (FormatChar (x, surrogate, cStr, scheme, uriKind, component, uriFormat, formatFlags));
 
 					i--;
@@ -264,7 +264,7 @@ namespace System {
 					s.Append (FormatChar (c, char.MinValue, "" + c, scheme, uriKind, component, uriFormat, formatFlags));
 			}
 			
-			return s.ToString();
+			return s.ToString ();
 		}
 
 		private static string FormatChar (char c, char surrogate, string cStr, UriSchemes scheme, UriKind uriKind,
@@ -546,13 +546,13 @@ namespace System {
 				} else {
 					res.Append ('/');
 				}
-				res.Append(part);
+				res.Append (part);
 			}
 
 			if (path [path.Length - 1] == '/' || endWithSlash)
 				res.Append ('/');
 				
-			return res.ToString();
+			return res.ToString ();
 		}
 	}
 }

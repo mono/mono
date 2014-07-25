@@ -140,7 +140,7 @@ namespace System {
 
 		// Constructors
 
-		static Uri()
+		static Uri ()
 		{
 #if NET_4_5
 			IriParsing = true;
@@ -162,14 +162,14 @@ namespace System {
 			string uri = serializationInfo.GetString ("AbsoluteUri");
 			if (uri.Length > 0) {
 				source = uri;
-				ParseUri(UriKind.Absolute);
+				ParseUri (UriKind.Absolute);
 			} else {
 				uri = serializationInfo.GetString ("RelativeUri");
 				if (uri.Length > 0) {
 					source = uri;
-					ParseUri(UriKind.Relative);
+					ParseUri (UriKind.Relative);
 				} else {
-					throw new ArgumentException("Uri string was null or empty.");
+					throw new ArgumentException ("Uri string was null or empty.");
 				}
 			}
 		}
@@ -182,12 +182,12 @@ namespace System {
 			switch (uriKind) {
 			case UriKind.Absolute:
 				if (!IsAbsoluteUri)
-					throw new UriFormatException("Invalid URI: The format of the URI could not be "
+					throw new UriFormatException ("Invalid URI: The format of the URI could not be "
 						+ "determined.");
 				break;
 			case UriKind.Relative:
 				if (IsAbsoluteUri)
-					throw new UriFormatException("Invalid URI: The format of the URI could not be "
+					throw new UriFormatException ("Invalid URI: The format of the URI could not be "
 						+ "determined because the parameter 'uriString' represents an absolute URI.");
 				break;
 			case UriKind.RelativeOrAbsolute:
@@ -254,7 +254,7 @@ namespace System {
 			source = uriString;
 			ParseUri (UriKind.Absolute);
 			if (!isAbsoluteUri)
-				throw new UriFormatException("Invalid URI: The format of the URI could not be "
+				throw new UriFormatException ("Invalid URI: The format of the URI could not be "
 					+ "determined: " + uriString);
 		}
 
@@ -735,7 +735,7 @@ namespace System {
 		}
 #if !NET_2_1
 
-		[Obsolete("This method does nothing, it has been obsoleted")]
+		[Obsolete ("This method does nothing, it has been obsoleted")]
 		protected virtual void Canonicalize ()
 		{
 			//
@@ -1039,8 +1039,8 @@ namespace System {
 			if (this.isAbsoluteUri) {
 				serializationInfo.AddValue ("AbsoluteUri", this.AbsoluteUri);
 			} else {
-				serializationInfo.AddValue("AbsoluteUri", String.Empty);
-				serializationInfo.AddValue("RelativeUri", this.OriginalString);
+				serializationInfo.AddValue ("AbsoluteUri", String.Empty);
+				serializationInfo.AddValue ("RelativeUri", this.OriginalString);
 			}
 		}
 
@@ -1101,7 +1101,7 @@ namespace System {
 				// or a letter from A-F (case-insensitive).
 				if (IsHexEncoding (str,i)) {
 					// if ,yes , copy it as is
-					s.Append(str.Substring (i, 3));
+					s.Append (str.Substring (i, 3));
 					i += 2;
 					continue;
 				}
@@ -1316,7 +1316,7 @@ namespace System {
 			if (elements.path != null) {
 				path = UriHelper.FormatAbsolute (elements.path, scheme,
 					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
-				if (elements.delimiter == SchemeDelimiter && string.IsNullOrEmpty(path))
+				if (elements.delimiter == SchemeDelimiter && string.IsNullOrEmpty (path))
 					path = "/";
 			}
 
@@ -1454,13 +1454,13 @@ namespace System {
 				} else {
 					res.Append ('/');
 				}
-				res.Append(part);
+				res.Append (part);
 			}
 
 			if (path [path.Length - 1] == '/')
 				res.Append ('/');
 				
-			return res.ToString();
+			return res.ToString ();
 		}
 
 		// A variant of HexUnescape() which can decode multi-byte escaped
