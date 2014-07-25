@@ -49,6 +49,10 @@ namespace System.Security.Claims {
 			: this (claims: null, authenticationType: null, nameType: null, roleType: null)
 		{ }
 		
+		public ClaimsIdentity(IEnumerable<Claim> claims)
+			: this (claims: claims, authenticationType: null, nameType: null, roleType: null)
+		{ }
+		
 		public ClaimsIdentity (string authenticationType)
 			: this (claims: null, authenticationType: authenticationType, nameType: null, roleType: null)
 		{ }
