@@ -81,12 +81,12 @@ namespace System {
 				return false;
 			}
 
-			bool ok = ParseFilePath (ref state) &&
-				ParseScheme (ref state) &&
-				ParseAuthority (ref state) &&
-				ParsePath (ref state) &&
-				ParseQuery (ref state) &&
-				ParseFragment (ref state);
+			bool ok = ParseFilePath (state) &&
+				ParseScheme (state) &&
+				ParseAuthority (state) &&
+				ParsePath (state) &&
+				ParseQuery (state) &&
+				ParseFragment (state);
 
 			var scheme = state.elements.scheme;
 			if (string.IsNullOrEmpty (state.elements.host) &&
@@ -116,14 +116,14 @@ namespace System {
 				   (('A' <= ch) && (ch <= 'Z'));
 		}
 
-		private static bool ParseFilePath (ref ParserState state)
+		private static bool ParseFilePath (ParserState state)
 		{
-			return ParseWindowsFilePath (ref state) &&
-				ParseWindowsUNC (ref state) &&
-				ParseUnixFilePath (ref state);
+			return ParseWindowsFilePath (state) &&
+				ParseWindowsUNC (state) &&
+				ParseUnixFilePath (state);
 		}
 
-		private static bool ParseWindowsFilePath (ref ParserState state)
+		private static bool ParseWindowsFilePath (ParserState state)
 		{
 			var scheme = state.elements.scheme;
 
@@ -164,7 +164,7 @@ namespace System {
 			return false;
 		}
 
-		private static bool ParseWindowsUNC (ref ParserState state)
+		private static bool ParseWindowsUNC (ParserState state)
 		{
 			string part = state.remaining;
 
@@ -189,7 +189,7 @@ namespace System {
 			return false;
 		}
 
-		private static bool ParseUnixFilePath (ref ParserState state)
+		private static bool ParseUnixFilePath (ParserState state)
 		{
 			string part = state.remaining;
 
@@ -211,7 +211,7 @@ namespace System {
 		}
 		
 		// 3.1) scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-		private static bool ParseScheme (ref ParserState state) 
+		private static bool ParseScheme (ParserState state)
 		{
 			string part = state.remaining;
 			
@@ -271,10 +271,10 @@ namespace System {
 #endif
 			}
 
-			return ParseDelimiter (ref state);
+			return ParseDelimiter (state);
 		}
 
-		private static bool ParseDelimiter (ref ParserState state)
+		private static bool ParseDelimiter (ParserState state)
 		{
 			var delimiter = Uri.GetSchemeDelimiter (state.elements.scheme);
 
@@ -294,16 +294,16 @@ namespace System {
 			return state.remaining.Length > 0;
 		}
 		
-		private static bool ParseAuthority (ref ParserState state)
+		private static bool ParseAuthority (ParserState state)
 		{
 			if (state.elements.delimiter != Uri.SchemeDelimiter && state.elements.scheme != Uri.UriSchemeMailto)
 				return state.remaining.Length > 0;
 
 			string part = state.remaining;
 			
-			return ParseUser (ref state) &&
-				ParseHost (ref state) &&
-				ParsePort (ref state);
+			return ParseUser (state) &&
+				ParseHost (state) &&
+				ParsePort (state);
 		}
 
 		static bool IsUnreserved (char ch)
@@ -319,7 +319,7 @@ namespace System {
 		}
 		
 		// userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
-		private static bool ParseUser (ref ParserState state)
+		private static bool ParseUser (ParserState state)
 		{
 			string part = state.remaining;
 			StringBuilder sb = null;
@@ -356,7 +356,7 @@ namespace System {
 		}
 		
 		// host        = IP-literal / IPv4address / reg-name
-		private static bool ParseHost (ref ParserState state)
+		private static bool ParseHost (ParserState state)
 		{
 			string part = state.remaining;
 
@@ -366,7 +366,7 @@ namespace System {
 				state.remaining = part;
 			}
 
-			if (!ParseWindowsFilePath (ref state))
+			if (!ParseWindowsFilePath (state))
 				return false;
 
 			StringBuilder sb = new StringBuilder ();
@@ -417,7 +417,7 @@ namespace System {
 		}
 		
 		// port          = *DIGIT
-		private static bool ParsePort (ref ParserState state)
+		private static bool ParsePort (ParserState state)
 		{
 			string part = state.remaining;
 			if (part.Length == 0 || part [0] != ':')
@@ -458,7 +458,7 @@ namespace System {
 			return state.remaining.Length > 0;
 		}
 		
-		private static bool ParsePath (ref ParserState state)
+		private static bool ParsePath (ParserState state)
 		{
 			string part = state.remaining;
 			StringBuilder sb = new StringBuilder ();
@@ -484,7 +484,7 @@ namespace System {
 			return state.remaining.Length > 0;
 		}
 		
-		private static bool ParseQuery (ref ParserState state)
+		private static bool ParseQuery (ParserState state)
 		{
 			string part = state.remaining;
 
@@ -515,7 +515,7 @@ namespace System {
 			return state.remaining.Length > 0;
 		}
 		
-		private static bool ParseFragment (ref ParserState state)
+		private static bool ParseFragment (ParserState state)
 		{
 			string part = state.remaining;
 			
