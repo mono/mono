@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 
 namespace System {
-	internal class UriHelper {
+	internal static class UriHelper {
 		internal const UriFormat ToStringUnescape = (UriFormat) 0x7FFF;
 
 		internal static bool IriParsing	{
