@@ -289,7 +289,7 @@ namespace System {
 		{
 			var delimiter = Uri.GetSchemeDelimiter (state.elements.scheme);
 
-			if (!state.remaining.StartsWith (delimiter)) {
+			if (!state.remaining.StartsWith (delimiter, StringComparison.Ordinal)) {
 				if (UriHelper.IsKnownScheme (state.elements.scheme)) {
 					state.error = "Invalid URI: The Authority/Host could not be parsed.";
 					return false;
