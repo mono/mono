@@ -363,24 +363,49 @@ namespace System {
 				if (uriKind == UriKind.Relative)
 					return false;
 
-				if (c == '$' || c == '&' || c == '+' || c == ',' || c == ';' || c == '=' || c == '@')
+				switch (c) {
+				case '$':
+				case '&':
+				case '+':
+				case ',':
+				case ';':
+				case '=':
+				case '@':
 					return true;
+				}
 
 				if (c < 0x20 || c == 0x7f)
 					return true;
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {
-				if (c == '-' || c == '.' || c == '_' || c == '~')
+				switch (c) {
+				case '-':
+				case '.':
+				case '_':
+				case '~':
 					return true;
-
-				if (c == ' ' || c == '!' || c == '"' || c == '\'' || c == '(' || c == ')' || c == '*' ||
-					c == '<' || c == '>' || c == '^' || c == '`' || c == '{' || c == '}' || c == '|')
+				case ' ':
+				case '!':
+				case '"':
+				case '\'':
+				case '(':
+				case ')':
+				case '*':
+				case '<':
+				case '>':
+				case '^':
+				case '`':
+				case '{':
+				case '}':
+				case '|':
 					return uriKind != UriKind.Relative ||
 						(IriParsing && (formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0);
-
-				if (c == ':' || c == '[' || c == ']')
+				case ':':
+				case '[':
+				case ']':
 					return uriKind != UriKind.Relative;
+				}
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
 					return true;
@@ -403,14 +428,28 @@ namespace System {
 
 					return false;
 				}
-
-				if (c == '-' || c == '.' || c == '_' || c == '~')
-					return true;
 				
-				if ((formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0 &&
-					(c == '!' || c == '\'' || c == '(' || c == ')' || c == '*' ||
-					c == ':' || c == '[' || c == ']'))
+				switch (c) {
+				case '-':
+				case '.':
+				case '_':
+				case '~':
 					return true;
+				}
+
+				if ((formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0) {
+					switch (c) {
+					case '!':
+					case '\'':
+					case '(':
+					case ')':
+					case '*':
+					case ':':
+					case '[':
+					case ']':
+						return true;
+					}
+				}
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
 					return true;
@@ -468,14 +507,22 @@ namespace System {
 				if (c < 0x20 || c >= 0x7F)
 					return component != UriComponents.Host;
 
-				if (c == ' ' || c == '"' || c == '%' || c == '<' || c == '>' || c == '^' ||
-					c == '`' || c == '{' || c == '}' || c == '|')
+				switch (c) {
+				case ' ':
+				case '"':
+				case '%':
+				case '<':
+				case '>':
+				case '^':
+				case '`':
+				case '{':
+				case '}':
+				case '|':
 					return true;
-
-				if (c == '[' || c == ']')
+				case '[':
+				case ']':
 					return !IriParsing;
-
-				if (c == '\\') {
+				case '\\':
 					return component != UriComponents.Path ||
 						   SchemeContains (scheme,
 							   UriSchemes.Gopher | UriSchemes.Ldap | UriSchemes.Mailto | UriSchemes.Nntp |
