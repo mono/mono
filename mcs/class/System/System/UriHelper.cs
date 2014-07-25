@@ -356,13 +356,8 @@ namespace System {
 				return false;
 			}
 
-			if (c == '#') {
-				//Avoid creating new fragment
-				if (component == UriComponents.Path || component == UriComponents.Query)
-					return false;
-
+			if (c == '#')
 				return false;
-			}
 
 			if (uriFormat == ToStringUnescape && !IriParsing) {
 				if (uriKind == UriKind.Relative)
@@ -438,10 +433,6 @@ namespace System {
 
 				if (!SupportsQuery (scheme))
 					return component != UriComponents.Fragment;
-
-				//Avoid removing query
-				if (component == UriComponents.Path)
-					return false;
 
 				return false;
 			}
