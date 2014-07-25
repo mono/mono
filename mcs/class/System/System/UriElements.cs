@@ -34,12 +34,9 @@ namespace System {
 		{
 			scheme = String.Empty;
 			delimiter = String.Empty;
-			user = null;
 			host = String.Empty;
 			port = -1;
 			path = String.Empty;
-			query = null;
-			fragment = null;
 
 			isAbsoluteUri = true;
 		}
