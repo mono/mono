@@ -74,7 +74,7 @@ namespace System {
 			if (uri.UserEscaped)
 				formatFlags |= UriHelper.FormatFlags.UserEscaped;
 
-			if (!string.IsNullOrEmpty(elements.host))
+			if (!string.IsNullOrEmpty (elements.host))
 				formatFlags |= UriHelper.FormatFlags.HasHost;
 
 			// it's easier to answer some case directly (as the output isn't identical 
