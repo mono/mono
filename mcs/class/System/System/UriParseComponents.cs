@@ -175,7 +175,7 @@ namespace System {
 			state.elements.delimiter = "://";
 			state.elements.isUnc = true;
 
-			part = part.TrimStart (new char [] {'\\'});
+			part = part.TrimStart ('\\');
 			int pos = part.IndexOf ('\\');
 			if (pos > 0) {
 				state.elements.path = part.Substring (pos);
