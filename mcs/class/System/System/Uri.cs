@@ -1769,19 +1769,34 @@ namespace System {
 		//
 		static bool NeedToEscapeDataChar (char b)
 		{
-			if (IriParsing) {
-				// .NET 4.0 follows RFC 3986 Unreserved Characters
-				return !((b >= 'A' && b <= 'Z') ||
-					 (b >= 'a' && b <= 'z') ||
-					 (b >= '0' && b <= '9') ||
-					 b == '-' || b == '.' || b == '_' || b == '~');
+			if ((b >= 'A' && b <= 'Z') ||
+				(b >= 'a' && b <= 'z') ||
+				(b >= '0' && b <= '9'))
+				return false;
+
+			switch (b) {
+			case '-':
+			case '.':
+			case '_':
+			case '~':
+				return false;
 			}
 
-			return !((b >= 'A' && b <= 'Z') ||
-				 (b >= 'a' && b <= 'z') ||
-				 (b >= '0' && b <= '9') ||
-				 b == '_' || b == '~' || b == '!' || b == '\'' ||
-				 b == '(' || b == ')' || b == '*' || b == '-' || b == '.');
+			if (IriParsing)
+				return true;
+
+			switch (b) {
+			case '!':
+			case '\'':
+			case '(':
+			case ')':
+			case '*':
+			case '-':
+			case '.':
+				return false;
+			}
+
+			return true;
 		}
 		
 		public static string EscapeDataString (string stringToEscape)
@@ -1820,14 +1835,26 @@ namespace System {
 		//
 		static bool NeedToEscapeUriChar (char b)
 		{
-			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';') ||
-				b == '!' || b == '#' || b == '$' || b == '=' || b == '?' || b == '@' || b == '_' || b == '~')
+			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';'))
 				return false;
 
+			switch (b) {
+			case '!':
+			case '#':
+			case '$':
+			case '=':
+			case '?':
+			case '@':
+			case '_':
+			case '~':
+				return false;
 #if NET_4_0
-			if (b == '[' || b == ']')
+			case '[':
+			case ']':
 				return !IriParsing;
 #endif
+			}
+
 			return true;
 		}
 		
