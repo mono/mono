@@ -95,12 +95,16 @@ namespace System {
 		internal static string HexEscapeMultiByte (char character)
 		{
 			const string hex_upper_chars = "0123456789ABCDEF";
-			string ret = "";
-			byte [] bytes = Encoding.UTF8.GetBytes (new [] {character});
-			foreach (byte b in bytes)
-				ret += "%" + hex_upper_chars [((b & 0xf0) >> 4)] + hex_upper_chars [((b & 0x0f))];
 
-			return ret;
+			var sb = new StringBuilder ();
+			byte [] bytes = Encoding.UTF8.GetBytes (new [] {character});
+			foreach (byte b in bytes) {
+				sb.Append ("%");
+				sb.Append (hex_upper_chars [(b & 0xf0) >> 4]);
+				sb.Append (hex_upper_chars [b & 0x0f]);
+			}
+
+			return sb.ToString ();
 		}
 
 		internal static bool SupportsQuery (string scheme)
