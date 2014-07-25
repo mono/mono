@@ -144,14 +144,12 @@ namespace System {
 		{
 #if NET_4_5
 			IriParsing = true;
-#else
-			IriParsing = false;
 #endif
 
 			var iriparsingVar = Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING");
 			if (iriparsingVar == "true")
 				IriParsing = true;
-			if (iriparsingVar == "false")
+			else if (iriparsingVar == "false")
 				IriParsing = false;
 		}
 
