@@ -497,42 +497,38 @@ namespace System {
 
 			List<string> result = new List<string> ();
 
-			bool begin = true;
-			for (int startpos = 0; startpos < path.Length; ) {
-				endWithSlash = true;
+			string[] segments = path.Split ('/');
+			int lastSegmentIndex = segments.Length - 1;
+			for (var i = 0; i <= lastSegmentIndex; i++) {
+				string segment = segments [i];
 
-				int endpos = path.IndexOf ('/', startpos);
-				if (endpos == -1)
-					endpos = path.Length;
-				string current = path.Substring (startpos, endpos-startpos);
-				startpos = endpos + 1;
-				if (begin && current.Length == 0) {
-					begin = false;
+				if (i == lastSegmentIndex &&
+					(segment.Length == 0 || segment == ".." || segment == "."))
+					endWithSlash = true;
+
+				if ((i == 0 || i == lastSegmentIndex) && segment.Length == 0)
 					continue;
-				}
 
-				begin = false;
-				if (current == "..") {
+				if (segment == "..") {
 					int resultCount = result.Count;
 					// in 2.0 profile, skip leading ".." parts
-					if (resultCount == 0) {
+					if (resultCount == 0)
 						continue;
-					}
 
 					result.RemoveAt (resultCount - 1);
 					continue;
 				}
 
-				if (current == "." ||
-					(trimDots && current.EndsWith("."))) {
-					current = current.TrimEnd('.');
-					if (current == "" && endpos < path.Length)
+				if (segment == "." ||
+					(trimDots && segment.EndsWith (".", StringComparison.Ordinal))) {
+					segment = segment.TrimEnd ('.');
+					if (segment == "" && i < lastSegmentIndex)
 						continue;
 				}
 
 				endWithSlash = false;
 
-				result.Add (current);
+				result.Add (segment);
 			}
 
 			if (result.Count == 0)
