@@ -159,8 +159,11 @@ namespace System {
 				char surrogate;
 				char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
 
+				if (x == '%')
+					return true;
+
 				bool isEscaped = i - iStart > 1;
-				if (!isEscaped || x == '%')
+				if (!isEscaped)
 					return true;
 			}
 
