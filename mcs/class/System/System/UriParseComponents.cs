@@ -67,31 +67,26 @@ namespace System {
 		{
 			uri = uri.Trim ();
 
-			var ok = true;
 			ParserState state = new ParserState (uri, kind);
+			elements = state.elements;
+			error = null;
 
 			if (uri.Length == 0 && (kind == UriKind.Relative || kind == UriKind.RelativeOrAbsolute)){
 				state.elements.isAbsoluteUri = false;
-				ok = false;
+				return true;
 			}
 			
 			if (uri.Length <= 1 && kind == UriKind.Absolute) {
-				state.error = "Absolute URI is too short";
-				ok = false;
+				error = "Absolute URI is too short";
+				return false;
 			}
 
-			if (ok)
-				ok = ParseFilePath (ref state);
-			if (ok)
-				ok = ParseScheme (ref state);
-			if (ok)
-			    ok = ParseAuthority (ref state);
-			if (ok)
-			    ok = ParsePath (ref state);
-			if (ok)
-			    ok = ParseQuery (ref state);
-			if (ok)
-			    ParseFragment (ref state);
+			bool ok = ParseFilePath (ref state) &&
+				ParseScheme (ref state) &&
+				ParseAuthority (ref state) &&
+				ParsePath (ref state) &&
+				ParseQuery (ref state) &&
+				ParseFragment (ref state);
 
 			var scheme = state.elements.scheme;
 			if (string.IsNullOrEmpty (state.elements.host) &&
@@ -111,8 +106,6 @@ namespace System {
 				return false;
 			}
 			
-			elements = state.elements;
-			error = null;
 			return true;
 		}
 
@@ -125,13 +118,9 @@ namespace System {
 
 		private static bool ParseFilePath (ref ParserState state)
 		{
-			bool ok = ParseWindowsFilePath (ref state);
-			if (ok)
-				ok = ParseWindowsUNC (ref state);
-			if (ok)
-				ok = ParseUnixFilePath (ref state);
-
-			return ok;
+			return ParseWindowsFilePath (ref state) &&
+				ParseWindowsUNC (ref state) &&
+				ParseUnixFilePath (ref state);
 		}
 
 		private static bool ParseWindowsFilePath (ref ParserState state)
@@ -312,12 +301,9 @@ namespace System {
 
 			string part = state.remaining;
 			
-			bool ok = ParseUser (ref state);
-			if (ok)
-				ok = ParseHost (ref state);
-			if (ok)
-				ok = ParsePort (ref state);
-			return ok;
+			return ParseUser (ref state) &&
+				ParseHost (ref state) &&
+				ParsePort (ref state);
 		}
 
 		static bool IsUnreserved (char ch)
