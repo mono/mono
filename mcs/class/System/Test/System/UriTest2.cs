@@ -381,7 +381,7 @@ TextWriter sw = Console.Out;
 		[Test]
 		public void HttpsWithoutPort ()
 		{
-			string s = "Https://host.DOMAIN.com/dir%2fapp.xap#";
+			string s = "Https://host.DOMAIN.com/dir/app.xap#";
 			Uri uri = new Uri (s);
 			Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
 			Assert.AreEqual ("https://host.domain.com/dir/app.xap#", uri.AbsoluteUri, "AbsoluteUri");
@@ -1036,6 +1036,20 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (2121, uri.Port, "Port");
 			Assert.AreEqual ("ftp", uri.Scheme, "Scheme");
 			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+		}
+		
+		[Test]
+		public void PreserveSlashsOnPath ()
+		{
+			Uri uri = new Uri ("http://host.com/%2Fcontent", UriKind.Absolute);
+#if NET_4_5
+			Assert.AreEqual ("/%2Fcontent", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("/%2Fcontent", uri.LocalPath, "LocalPath");
+#else
+			Assert.AreEqual ("//content", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("//content", uri.LocalPath, "LocalPath");
+#endif
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString(), "ToString");
 		}
 	}
 }

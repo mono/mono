@@ -577,7 +577,7 @@ namespace System {
 					return cachedLocalPath;
 
 				if (IsLocalIdenticalToAbsolutePath ()) {
-					cachedLocalPath = Unescape (AbsolutePath);
+					cachedLocalPath = Unescape (AbsolutePath, true);
 					return cachedLocalPath;
 				}
 
@@ -950,7 +950,7 @@ namespace System {
 					if (scheme == "mailto" || scheme == "news")
 						sb.Append (path);
 					else 
-						sb.Append (Reduce (path, CompactEscaped (scheme)));
+						sb.Append (Reduce (path, CompactEscaped (scheme), NormalizeForwardSlashes (scheme)));
 				}
 				return sb.ToString ();
 			}
@@ -1238,7 +1238,7 @@ namespace System {
 			return Unescape (str, excludeSpecial, excludeSpecial);
 		}
 		
-		internal static string Unescape (string str, bool excludeSpecial, bool excludeBackslash) 
+		internal static string Unescape (string str, bool excludeSpecial, bool excludeSlash) 
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
@@ -1256,8 +1256,12 @@ namespace System {
 						s.Append ("%25");
 					else if (excludeSpecial && x == '?')
 						s.Append ("%3F");
-					else if (excludeBackslash && x == '\\')
+					else if (excludeSlash && x == '\\')
 						s.Append ("%5C");
+#if NET_4_5
+					else if (excludeSlash && x == '/')
+						s.Append ("%2F");
+#endif
 					else {
 						s.Append (x);
 						if (surrogate != char.MinValue)
@@ -1591,7 +1595,7 @@ namespace System {
 			host = uriString;
 
 			if (unixAbsPath) {
-				path = Reduce ('/' + uriString, true);
+				path = Reduce ('/' + uriString, true, true);
 				host = String.Empty;
 			} else if (host.Length == 2 && host [1] == ':') {
 				if (scheme != UriSchemeFile) {
@@ -1647,7 +1651,7 @@ namespace System {
 				return ex.Message;
 
 			if ((scheme != Uri.UriSchemeMailto) && (scheme != Uri.UriSchemeFile)) {
-				path = Reduce (path, CompactEscaped (scheme));
+				path = Reduce (path, CompactEscaped (scheme), NormalizeForwardSlashes (scheme));
 			}
 
 			return null;
@@ -1679,9 +1683,25 @@ namespace System {
 			return false;
 		}
 
+		private static bool NormalizeForwardSlashes(string scheme)
+		{
+#if NET_4_5
+			if (scheme == null || scheme.Length < 4)
+				return true;
+			
+			char first = scheme [0];
+
+			if (first == 'h') {
+				return !(scheme == "http" || scheme == "https");
+			}
+
+#endif			
+			return true;
+		}
+
 		// replace '\', %5C ('\') and %2f ('/') into '/'
 		// replace %2e ('.') into '.'
-		private static string NormalizePath (string path)
+		private static string NormalizePath (string path, bool normalizeForwardSlashes)
 		{
 			StringBuilder res = new StringBuilder ();
 			for (int i = 0; i < path.Length; i++) {
@@ -1694,10 +1714,11 @@ namespace System {
 					if (i < path.Length - 2) {
 						char c1 = path [i + 1];
 						char c2 = Char.ToUpper (path [i + 2]);
+						
 						if ((c1 == '2') && (c2 == 'E')) {
 							c = '.';
 							i += 2;
-						} else if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
+						} else if ((normalizeForwardSlashes && (c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
 							c = '/';
 							i += 2;
 						}
@@ -1710,7 +1731,7 @@ namespace System {
 		}
 
 		// This is called "compacting" in the MSDN documentation
-		private static string Reduce (string path, bool compact_escaped)
+		private static string Reduce (string path, bool compact_escaped, bool normalizeForwardSlashes)
 		{
 			// quick out, allocation-free, for a common case
 			if (path == "/")
@@ -1719,7 +1740,7 @@ namespace System {
 			if (compact_escaped && (path.IndexOf ('%') != -1)) {
 				// replace '\', %2f, %5c with '/' and replace %2e with '.'
 				// other escaped values seems to survive this step
-				path = NormalizePath (path);
+				path = NormalizePath (path, normalizeForwardSlashes);
 			} else {
 				// (always) replace '\' with '/'
 				path = path.Replace ('\\', '/');
