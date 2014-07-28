@@ -52,18 +52,18 @@ namespace System {
 	// http://www.ietf.org/rfc/rfc3986.txt
 	internal static class UriParseComponents
 	{
-		public static UriElements ParseComponents (string uri, UriKind kind, UriParser parser)
+		public static UriElements ParseComponents (string uri, UriKind kind)
 		{
 			UriElements elements;
 			string error;
 
-			if (!TryParseComponents (uri, kind, parser, out elements, out error))
+			if (!TryParseComponents (uri, kind, out elements, out error))
 				throw new UriFormatException (error);
 
 			return elements;
 		}
 
-		public static bool TryParseComponents (string uri, UriKind kind, UriParser parser, out UriElements elements, out string error)
+		public static bool TryParseComponents (string uri, UriKind kind, out UriElements elements, out string error)
 		{
 			uri = uri.Trim ();
 
@@ -94,7 +94,7 @@ namespace System {
 				scheme == Uri.UriSchemeHttps || scheme == Uri.UriSchemeFtp))
 				state.error = "Invalid URI: The Authority/Host could not be parsed.";
 
-			parser = parser ?? UriParser.GetParser (scheme);
+			var parser = UriParser.GetParser (scheme);
 			if (!string.IsNullOrEmpty (state.elements.host) &&
 				Uri.CheckHostName (state.elements.host) == UriHostNameType.Unknown &&
 				parser is DefaultUriParser)
