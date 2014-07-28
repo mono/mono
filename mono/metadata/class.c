@@ -7812,7 +7812,7 @@ mono_class_set_userdata (MonoClass *klass, void* userdata)
  */
 
 int
-mono_class_set_userdata_offset ()
+mono_class_get_userdata_offset ()
 {
 	return offsetof(struct _MonoClass, user_data);
 }
