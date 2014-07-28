@@ -1782,9 +1782,7 @@ namespace System {
 				return false;
 			}
 
-			if (IriParsing)
-				return true;
-
+#if !NET_4_5
 			switch (b) {
 			case '!':
 			case '\'':
@@ -1795,6 +1793,7 @@ namespace System {
 			case '.':
 				return false;
 			}
+#endif
 
 			return true;
 		}
@@ -1848,10 +1847,10 @@ namespace System {
 			case '_':
 			case '~':
 				return false;
-#if NET_4_0
+#if NET_4_5
 			case '[':
 			case ']':
-				return !IriParsing;
+				return false;
 #endif
 			}
 
