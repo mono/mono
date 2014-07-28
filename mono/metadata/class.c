@@ -7806,6 +7806,19 @@ mono_class_set_userdata (MonoClass *klass, void* userdata)
 }
 
 /**
+ * mono_class_get_userdata_offset:
+ *
+ * enables faster way of getting at the userdata, as we need this in very hot paths. returns offset in bytes.
+ */
+
+int
+mono_class_set_userdata_offset ()
+{
+	return offsetof(struct _MonoClass, user_data);
+}
+
+
+/**
  * mono_field_get_name:
  * @field: the MonoClassField to act on
  *

@@ -186,6 +186,7 @@ mono_class_get_type
 mono_class_get_type_token
 mono_class_get_userdata
 mono_class_set_userdata
+mono_class_get_userdata_offset
 mono_class_inflate_generic_method
 mono_class_inflate_generic_method_full
 mono_class_inflate_generic_type
