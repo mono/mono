@@ -287,7 +287,7 @@ namespace System {
 			bool startsWithSlash = false;
 
 			UriElements baseEl;
-			if (!UriParseComponents.TryParseComponents (baseUri.OriginalString, UriKind.Absolute, null, out baseEl, out error))
+			if (!UriParseComponents.TryParseComponents (baseUri.OriginalString, UriKind.Absolute, out baseEl, out error))
 				throw new UriFormatException (error);
 
 			if (relativeUri.StartsWith (baseEl.scheme + ":", StringComparison.Ordinal))
@@ -305,7 +305,7 @@ namespace System {
 			}
 
 			UriElements relativeEl;
-			if (!UriParseComponents.TryParseComponents (relativeUri, UriKind.RelativeOrAbsolute, null, out relativeEl, out error))
+			if (!UriParseComponents.TryParseComponents (relativeUri, UriKind.RelativeOrAbsolute, out relativeEl, out error))
 				throw new UriFormatException (error);
 
 			if (relativeEl.isAbsoluteUri) {
@@ -1286,7 +1286,7 @@ namespace System {
 		{
 			UriElements elements;
 			string error;
-			if (!UriParseComponents.TryParseComponents (uriString, kind, null, out elements, out error))
+			if (!UriParseComponents.TryParseComponents (source, kind, out elements, out error))
 				return error;
 
 			var formatFlags = UriHelper.FormatFlags.None;
