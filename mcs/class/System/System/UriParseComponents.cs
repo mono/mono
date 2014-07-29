@@ -82,22 +82,29 @@ namespace System {
 			}
 
 			bool ok = ParseFilePath (state) &&
-				ParseScheme (state) &&
+				ParseScheme (state);
+
+			var scheme = state.elements.scheme;
+			UriParser parser = null;
+			if (!string.IsNullOrEmpty (scheme)) {
+				parser = UriParser.GetParser (scheme);
+				if (parser != null && !(parser is DefaultUriParser))
+					return true;
+			}
+
+			ok = ok &&
 				ParseAuthority (state) &&
 				ParsePath (state) &&
 				ParseQuery (state) &&
 				ParseFragment (state);
 
-			var scheme = state.elements.scheme;
 			if (string.IsNullOrEmpty (state.elements.host) &&
 				(scheme == Uri.UriSchemeHttp || scheme == Uri.UriSchemeGopher || scheme == Uri.UriSchemeNntp ||
 				scheme == Uri.UriSchemeHttps || scheme == Uri.UriSchemeFtp))
 				state.error = "Invalid URI: The Authority/Host could not be parsed.";
 
-			var parser = UriParser.GetParser (scheme);
 			if (!string.IsNullOrEmpty (state.elements.host) &&
-				Uri.CheckHostName (state.elements.host) == UriHostNameType.Unknown &&
-				parser is DefaultUriParser)
+				Uri.CheckHostName (state.elements.host) == UriHostNameType.Unknown)
 				state.error = "Invalid URI: The hostname could not be parsed.";
 
 			if (!string.IsNullOrEmpty (state.error)) {
