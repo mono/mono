@@ -1026,9 +1026,12 @@ namespace System {
 			if (cachedToString != null) 
 				return cachedToString;
 
-			if (isAbsoluteUri)
-				cachedToString = Parser.GetComponentsHelper (this, UriComponents.AbsoluteUri, UriHelper.ToStringUnescape);
-			else
+			if (isAbsoluteUri) {
+				if (Parser is DefaultUriParser)
+					cachedToString = Parser.GetComponentsHelper (this, UriComponents.AbsoluteUri, UriHelper.ToStringUnescape);
+				else
+					cachedToString = Parser.GetComponents (this, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped);
+			} else
 				cachedToString = UriHelper.FormatRelative (source, scheme, UriHelper.ToStringUnescape);
 
 			return cachedToString;
