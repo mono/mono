@@ -827,7 +827,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeofK, type);
 			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
 		}
-#endif /* !MONOTOUCH */
+#endif
 	}
 	
 #if NET_2_0
