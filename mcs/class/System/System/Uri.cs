@@ -1289,6 +1289,23 @@ namespace System {
 			if (!UriParseComponents.TryParseComponents (source, kind, out elements, out error))
 				return error;
 
+			scheme = elements.scheme;
+			var parser = UriParser.GetParser (scheme);
+			if (parser != null && !(parser is DefaultUriParser)) {
+				userinfo = Parser.GetComponents (this, UriComponents.UserInfo, UriFormat.UriEscaped);
+				host = Parser.GetComponents (this, UriComponents.Host, UriFormat.UriEscaped);
+
+				var portStr = Parser.GetComponents (this, UriComponents.StrongPort, UriFormat.UriEscaped);
+				if (!string.IsNullOrEmpty (portStr))
+					port = int.Parse (portStr);
+
+				path = Parser.GetComponents (this, UriComponents.Path | UriComponents.KeepDelimiter, UriFormat.UriEscaped);
+				query = Parser.GetComponents (this, UriComponents.Query, UriFormat.UriEscaped);
+				fragment = Parser.GetComponents (this, UriComponents.StrongPort, UriFormat.UriEscaped);
+
+				return null;
+			}
+
 			var formatFlags = UriHelper.FormatFlags.None;
 			if (UriHelper.HasCharactersToNormalize (uriString))
 				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
@@ -1298,8 +1315,6 @@ namespace System {
 
 			if (elements.host != null)
 				formatFlags |= UriHelper.FormatFlags.HasHost;
-
-			scheme = elements.scheme;
 
 			userinfo = elements.user;
 
