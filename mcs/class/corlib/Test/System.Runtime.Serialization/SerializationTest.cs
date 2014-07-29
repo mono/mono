@@ -42,6 +42,7 @@ namespace MonoTests.System.Runtime.Serialization
 			RemotingServices.Disconnect (mt);
 		}
 
+#if !MONOTOUCH
 		[Test]
 		public void DelegateSerializationTest ()
 		{
@@ -61,6 +62,7 @@ namespace MonoTests.System.Runtime.Serialization
 				a2.Test ();
 			}
 		}
+#endif /* !MONOTOUCH */
 
 		static int HandleE1 (StringBuilder arg)
 		{

@@ -784,6 +784,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("System.Nullable`1[System.Int32] Bug12856()", m.ToString (), "#1");
 		}
 
+#if !MONOTOUCH
 		class GenericClass<T>
 		{
 			public void Method ()
@@ -826,6 +827,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeofK, type);
 			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
 		}
+#endif /* !MONOTOUCH */
 	}
 	
 #if NET_2_0
