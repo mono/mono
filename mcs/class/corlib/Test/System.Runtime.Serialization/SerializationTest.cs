@@ -62,7 +62,7 @@ namespace MonoTests.System.Runtime.Serialization
 				a2.Test ();
 			}
 		}
-#endif /* !MONOTOUCH */
+#endif
 
 		static int HandleE1 (StringBuilder arg)
 		{
