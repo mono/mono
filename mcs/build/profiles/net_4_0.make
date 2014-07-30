@@ -17,3 +17,6 @@ FRAMEWORK_VERSION = 4.0
 XBUILD_VERSION = 4.0
 
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+
+# Ignore tests on net_4_0 as the 4.0 IL code is never used for running (just for metadata), so it doesn't make sense to execute tests there
+NO_TEST = yes

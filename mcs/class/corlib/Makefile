@@ -147,8 +147,10 @@ run-test-vts: test-vts
 	@echo Running vts tests...
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
+ifndef NO_TEST
 test: test-vts
 run-test: run-test-vts
+endif
 
 EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \
