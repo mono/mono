@@ -191,7 +191,7 @@ namespace System.Linq.Parallel
 				                                               localCall,
 				                                               seedFunc);
 
-				tasks[i] = Task.Factory.StartNew (procSlot.Process, options.Token);
+				tasks[i] = Task.Factory.StartNew (procSlot.Process, options.Token, TaskCreationOptions.AttachedToParent | TaskCreationOptions.LongRunning, TaskScheduler.Default);
 			}
 
 			Task.WaitAll (tasks, options.Token);
