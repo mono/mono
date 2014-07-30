@@ -1385,7 +1385,7 @@ namespace Mono.CSharp
 			if (ec.Module.Evaluator != null && ec.Module.Evaluator.EvaluationListener != null) {
 				source.Emit (ec);
 				ec.Module.Evaluator.EmitEvaluatedValue (ec,
-					null, assignType, Location.Null, target.StartLocation, false);
+					null, assignType, Location.Null, source.StartLocation, false);
 			}
 #endif
 		}
