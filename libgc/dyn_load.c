@@ -26,7 +26,7 @@
  * None of this is safe with dlclose and incremental collection.
  * But then not much of anything is safe in the presence of dlclose.
  */
-#if (defined(__linux__) || defined(__native_client__)) && !defined(_GNU_SOURCE)
+#if (defined(__linux__) || defined(__GLIBC__) || defined(__native_client__)) && !defined(_GNU_SOURCE)
     /* Can't test LINUX, since this must be define before other includes */
 #   define _GNU_SOURCE
 #endif
@@ -394,7 +394,7 @@ GC_bool GC_register_main_static_data()
 /* For glibc 2.2.4+.  Unfortunately, it doesn't work for older	*/
 /* versions.  Thanks to Jakub Jelinek for most of the code.	*/
 
-# if (defined(LINUX) || defined(NACL)) /* Are others OK here, too? */ \
+# if (defined(LINUX) || defined (__GLIBC__) || defined(NACL)) /* Are others OK here, too? */ \
      && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 2) \
          || (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG))) 
 
