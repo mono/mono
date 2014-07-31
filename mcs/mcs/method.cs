@@ -1535,7 +1535,7 @@ namespace Mono.CSharp {
 			
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
-			call.EmitPredefined (ec, base_ctor, argument_list);
+			call.EmitPredefined (ec, base_ctor, argument_list, false);
 		}
 
 		public override void EmitStatement (EmitContext ec)

@@ -564,10 +564,15 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (method_group.InstanceExpression == null)
+			InstanceEmitter ie;
+			if (method_group.InstanceExpression == null) {
+				ie = new InstanceEmitter ();
 				ec.EmitNull ();
-			else
-				method_group.InstanceExpression.Emit (ec);
+			} else {
+				ie = new InstanceEmitter (method_group.InstanceExpression, false);
+				ie.NullShortCircuit = method_group.NullShortCircuit;
+				ie.Emit (ec);
+			}
 
 			var delegate_method = method_group.BestCandidate;
 
@@ -580,6 +585,10 @@ namespace Mono.CSharp {
 			}
 
 			ec.Emit (OpCodes.Newobj, constructor_method);
+
+			if (method_group.NullShortCircuit) {
+				ie.EmitResultLift (ec, type, false);
+			}
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc) {
@@ -889,17 +898,14 @@ namespace Mono.CSharp {
 			//
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpr;
-			call.EmitPredefined (ec, method, arguments, loc);
+			call.Emit (ec, method, arguments, loc);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			Emit (ec);
-			// 
-			// Pop the return value if there is one
-			//
-			if (type.Kind != MemberKind.Void)
-				ec.Emit (OpCodes.Pop);
+			var call = new CallEmitter ();
+			call.InstanceExpression = InstanceExpr;
+			call.EmitStatement (ec, method, arguments, loc);
 		}
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
