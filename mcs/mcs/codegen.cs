@@ -540,8 +540,8 @@ namespace Mono.CSharp
 				// bool array can actually store any byte value
 				//
 				ig.Emit (OpCodes.Ldelem_U1);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.And);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Cgt_Un);
 				break;
 			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldelem_U1);
@@ -762,8 +762,8 @@ namespace Mono.CSharp
 				break;
 			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.And);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Cgt_Un);
 				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:
