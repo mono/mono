@@ -272,6 +272,7 @@ namespace System.Net.NetworkInformation {
 					int       index = -1;
 					byte[]    macAddress = null;
 					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+					int       nullNameCount = 0;
 
 					if (addr.ifa_addr != IntPtr.Zero) {
 						sockaddr_in sockaddr = (sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in));
@@ -347,6 +348,9 @@ namespace System.Net.NetworkInformation {
 
 					LinuxNetworkInterface iface = null;
 
+					if (String.IsNullOrEmpty (name))
+						name = "\0" + (++nullNameCount).ToString ();
+					
 					if (!interfaces.TryGetValue (name, out iface)) {
 						iface = new LinuxNetworkInterface (name);
 						interfaces.Add (name, iface);
