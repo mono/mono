@@ -1203,6 +1203,12 @@ namespace Mono.CSharp.Nullable
 				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
+
+			if (TypeSpec.IsValueType (left.Type) && !left.Type.IsNullableType) {
+				Warning_UnreachableExpression (ec, right.Location);
+				return ReducedExpression.Create (left, this, false).Resolve (ec);
+			}
+
 			type = rtype;
 			return this;
 		}
