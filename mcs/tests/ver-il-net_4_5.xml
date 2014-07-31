@@ -50567,6 +50567,24 @@
       </method>
     </type>
   </test>
+  <test name="test-903.cs">
+    <type name="C">
+      <method name="S op_Implicit(C)" attrs="2198">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-91.cs">
     <type name="Abstract">
       <method name="Void .ctor()" attrs="6276">
