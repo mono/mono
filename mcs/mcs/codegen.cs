@@ -983,7 +983,7 @@ namespace Mono.CSharp
 		public Expression InstanceExpression;
 
 		//
-		// When set leaves an extra copy of all arguments on the stack
+		// When call has to leave an extra copy of all arguments on the stack
 		//
 		public bool DuplicateArguments;
 
@@ -998,18 +998,27 @@ namespace Mono.CSharp
 		//
 		public bool HasAwaitArguments;
 
+		public bool NullShortCircuit;
+
 		//
 		// When dealing with await arguments the original arguments are converted
 		// into a new set with hoisted stack results
 		//
 		public Arguments EmittedArguments;
 
+		public Label NullOperatorLabel;
+
 		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
 		{
-			EmitPredefined (ec, method, Arguments, loc);
+			EmitPredefined (ec, method, Arguments, false, loc);
 		}
 
-		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments, Location? loc = null)
+		public void EmitStatement (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
+		{
+			EmitPredefined (ec, method, Arguments, true, loc);
+		}
+
+		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments, bool statement = false, Location? loc = null)
 		{
 			Expression instance_copy = null;
 
@@ -1022,6 +1031,7 @@ namespace Mono.CSharp
 
 			OpCode call_op;
 			LocalTemporary lt = null;
+			InstanceEmitter ie = new InstanceEmitter ();
 
 			if (method.IsStatic) {
 				call_op = OpCodes.Call;
@@ -1034,15 +1044,24 @@ namespace Mono.CSharp
 
 				if (HasAwaitArguments) {
 					instance_copy = InstanceExpression.EmitToField (ec);
-					if (Arguments == null)
-						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+					ie = new InstanceEmitter (instance_copy, IsAddressCall (instance_copy, call_op, method.DeclaringType));
+
+					if (Arguments == null) {
+						ie.EmitLoad (ec);
+					}
 				} else if (!InstanceExpressionOnStack) {
-					var instance_on_stack_type = EmitCallInstance (ec, InstanceExpression, method.DeclaringType, call_op);
+					ie = new InstanceEmitter (InstanceExpression, IsAddressCall (InstanceExpression, call_op, method.DeclaringType));
+					ie.NullShortCircuit = NullShortCircuit;
+					ie.Emit (ec);
+
+					if (NullShortCircuit) {
+						NullOperatorLabel = ie.NullOperatorLabel;
+					}
 
 					if (DuplicateArguments) {
 						ec.Emit (OpCodes.Dup);
 						if (Arguments != null && Arguments.Count != 0) {
-							lt = new LocalTemporary (instance_on_stack_type);
+							lt = new LocalTemporary (ie.GetStackType (ec));
 							lt.Store (ec);
 							instance_copy = lt;
 						}
@@ -1054,7 +1073,8 @@ namespace Mono.CSharp
 				EmittedArguments = Arguments.Emit (ec, DuplicateArguments, HasAwaitArguments);
 				if (EmittedArguments != null) {
 					if (instance_copy != null) {
-						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+						ie = new InstanceEmitter (instance_copy, IsAddressCall (instance_copy, call_op, method.DeclaringType));
+						ie.Emit (ec);
 
 						if (lt != null)
 							lt.Release (ec);
@@ -1085,55 +1105,25 @@ namespace Mono.CSharp
 			if (method.Parameters.HasArglist) {
 				var varargs_types = GetVarargsTypes (method, Arguments);
 				ec.Emit (call_op, method, varargs_types);
-				return;
-			}
-
-			//
-			// If you have:
-			// this.DoFoo ();
-			// and DoFoo is not virtual, you can omit the callvirt,
-			// because you don't need the null checking behavior.
-			//
-			ec.Emit (call_op, method);
-		}
-
-		static TypeSpec EmitCallInstance (EmitContext ec, Expression instance, TypeSpec declaringType, OpCode callOpcode)
-		{
-			var instance_type = instance.Type;
-
-			//
-			// Push the instance expression
-			//
-			if ((instance_type.IsStructOrEnum && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
-				instance_type.IsGenericParameter || declaringType.IsNullableType) {
+			} else {
 				//
-				// If the expression implements IMemoryLocation, then
-				// we can optimize and use AddressOf on the
-				// return.
+				// If you have:
+				// this.DoFoo ();
+				// and DoFoo is not virtual, you can omit the callvirt,
+				// because you don't need the null checking behavior.
 				//
-				// If not we have to use some temporary storage for
-				// it.
-				var iml = instance as IMemoryLocation;
-				if (iml != null) {
-					iml.AddressOf (ec, AddressOp.Load);
-				} else {
-					LocalTemporary temp = new LocalTemporary (instance_type);
-					instance.Emit (ec);
-					temp.Store (ec);
-					temp.AddressOf (ec, AddressOp.Load);
-				}
-
-				return ReferenceContainer.MakeType (ec.Module, instance_type);
+				ec.Emit (call_op, method);
 			}
 
-			if (instance_type.IsStructOrEnum) {
-				instance.Emit (ec);
-				ec.Emit (OpCodes.Box, instance_type);
-				return ec.BuiltinTypes.Object;
-			}
+			// 
+			// Pop the return value if there is one and stack should be empty
+			//
+			if (statement && method.ReturnType.Kind != MemberKind.Void)
+				ec.Emit (OpCodes.Pop);
 
-			instance.Emit (ec);
-			return instance_type;
+			if (NullShortCircuit && !DuplicateArguments) {
+				ie.EmitResultLift (ec, method.ReturnType, statement);
+			}
 		}
 
 		static MetaType[] GetVarargsTypes (MethodSpec method, Arguments arguments)
@@ -1174,6 +1164,153 @@ namespace Mono.CSharp
 				return false;
 
 			return true;
+		}
+
+		static bool IsAddressCall (Expression instance, OpCode callOpcode, TypeSpec declaringType)
+		{
+			var instance_type = instance.Type;
+			return (instance_type.IsStructOrEnum && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
+				instance_type.IsGenericParameter || declaringType.IsNullableType;
+		}
+	}
+
+	public struct InstanceEmitter
+	{
+		readonly Expression instance;
+		readonly bool addressRequired;
+		bool value_on_stack;
+
+		public bool NullShortCircuit;
+		public Label NullOperatorLabel;
+
+		public InstanceEmitter (Expression instance, bool addressLoad)
+		{
+			this.instance = instance;
+			this.addressRequired = addressLoad;
+			NullShortCircuit = false;
+			NullOperatorLabel = new Label ();
+		}
+
+		public void Emit (EmitContext ec)
+		{
+			Nullable.Unwrap unwrap;
+
+			if (NullShortCircuit) {
+				NullOperatorLabel = ec.DefineLabel ();
+				unwrap = instance as Nullable.Unwrap;
+			} else {
+				unwrap = null;
+			}
+
+			if (unwrap != null) {
+				unwrap.Store (ec);
+				unwrap.EmitCheck (ec);
+				ec.Emit (OpCodes.Brfalse, NullOperatorLabel);
+				unwrap.Emit (ec);
+				var tmp = ec.GetTemporaryLocal (unwrap.Type);
+				ec.Emit (OpCodes.Stloc, tmp);
+				ec.Emit (OpCodes.Ldloca, tmp);
+				ec.FreeTemporaryLocal (tmp, unwrap.Type);
+				return;
+			}
+
+			EmitLoad (ec);
+
+			if (NullShortCircuit) {
+				ec.Emit (OpCodes.Dup);
+				ec.Emit (OpCodes.Brfalse, NullOperatorLabel);
+			}
+
+			value_on_stack = true;
+		}
+
+		public void EmitLoad (EmitContext ec)
+		{
+			var instance_type = instance.Type;
+
+			//
+			// Push the instance expression
+			//
+			if (addressRequired) {
+				//
+				// If the expression implements IMemoryLocation, then
+				// we can optimize and use AddressOf on the
+				// return.
+				//
+				// If not we have to use some temporary storage for
+				// it.
+				var iml = instance as IMemoryLocation;
+				if (iml != null) {
+					iml.AddressOf (ec, AddressOp.Load);
+				} else {
+					LocalTemporary temp = new LocalTemporary (instance_type);
+					instance.Emit (ec);
+					temp.Store (ec);
+					temp.AddressOf (ec, AddressOp.Load);
+				}
+
+				return;
+			}
+
+			instance.Emit (ec);
+
+			// Only to make verifier happy
+			if (instance_type.IsGenericParameter && !(instance is This) && TypeSpec.IsReferenceType (instance_type)) {
+				ec.Emit (OpCodes.Box, instance_type);
+			} else if (instance_type.IsStructOrEnum) {
+				ec.Emit (OpCodes.Box, instance_type);
+			}
+		}
+
+		public void EmitResultLift (EmitContext ec, TypeSpec type, bool statement)
+		{
+			if (!NullShortCircuit)
+				throw new InternalErrorException ();
+
+			bool value_rt = TypeSpec.IsValueType (type);
+			TypeSpec lifted;
+			if (value_rt) {
+				if (type.IsNullableType)
+					lifted = type;
+				else {
+					lifted = Nullable.NullableInfo.MakeType (ec.Module, type);
+					ec.Emit (OpCodes.Newobj, Nullable.NullableInfo.GetConstructor (lifted));
+				}
+			} else {
+				lifted = null;
+			}
+
+			var end = ec.DefineLabel ();
+			if (value_on_stack || !statement) {
+				ec.Emit (OpCodes.Br_S, end);
+			}
+
+			ec.MarkLabel (NullOperatorLabel);
+
+			if (value_on_stack)
+				ec.Emit (OpCodes.Pop);
+
+			if (!statement) {
+				if (value_rt)
+					Nullable.LiftedNull.Create (lifted, Location.Null).Emit (ec);
+				else
+					ec.EmitNull ();
+			}
+
+			ec.MarkLabel (end);
+		}
+
+		public TypeSpec GetStackType (EmitContext ec)
+		{
+			var instance_type = instance.Type;
+
+			if (addressRequired)
+				return ReferenceContainer.MakeType (ec.Module, instance_type);
+
+			if (instance_type.IsStructOrEnum)
+				return ec.Module.Compiler.BuiltinTypes.Object;
+
+			return instance_type;
 		}
 	}
 }

@@ -1260,6 +1260,10 @@ namespace Mono.CSharp
 				return Token.OP_COALESCING;
 			}
 
+			if (d == '.') {
+				return Token.INTERR_OPERATOR;
+			}
+
 			switch (current_token) {
 			case Token.CLOSE_PARENS:
 			case Token.TRUE:
@@ -1282,6 +1286,10 @@ namespace Mono.CSharp
 			int parens = 0;
 
 			switch (xtoken ()) {
+			case Token.DOT:
+			case Token.OPEN_BRACKET_EXPR:
+				next_token = Token.INTERR_OPERATOR;
+				break;
 			case Token.LITERAL:
 			case Token.TRUE:
 			case Token.FALSE:

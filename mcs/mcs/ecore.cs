@@ -3151,6 +3151,8 @@ namespace Mono.CSharp {
 			get;
 		}
 
+		public bool NullShortCircuit { get; set; }
+
 		protected abstract TypeSpec DeclaringType {
 			get;
 		}
@@ -3348,6 +3350,13 @@ namespace Mono.CSharp {
 				InstanceExpression.FlowAnalysis (fc);
 		}
 
+		protected static TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
+		{
+			return TypeSpec.IsValueType (type) && !type.IsNullableType ?
+				Nullable.NullableInfo.MakeType (rc.Module, type) :
+				type;
+		}
+
 		public bool ResolveInstanceExpression (ResolveContext rc, Expression rhs)
 		{
 			if (!ResolveInstanceExpressionCore (rc, rhs))
@@ -3494,7 +3503,7 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			if (left != null && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
+			if (left != null && !NullShortCircuit && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
 				ec.Report.Warning (1720, 1, left.Location,
 					"Expression will always cause a `{0}'", "System.NullReferenceException");
 			}
@@ -3503,30 +3512,16 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
+		protected InstanceEmitter EmitInstance (EmitContext ec, bool prepare_for_load)
 		{
-			TypeSpec instance_type = InstanceExpression.Type;
-			if (TypeSpec.IsValueType (instance_type)) {
-				if (InstanceExpression is IMemoryLocation) {
-					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.Load);
-				} else {
-					// Cannot release the temporary variable when its address
-					// is required to be on stack for any parent
-					LocalTemporary t = new LocalTemporary (instance_type);
-					InstanceExpression.Emit (ec);
-					t.Store (ec);
-					t.AddressOf (ec, AddressOp.Store);
-				}
-			} else {
-				InstanceExpression.Emit (ec);
-
-				// Only to make verifier happy
-				if (instance_type.IsGenericParameter && !(InstanceExpression is This) && TypeSpec.IsReferenceType (instance_type))
-					ec.Emit (OpCodes.Box, instance_type);
-			}
+			var inst = new InstanceEmitter (InstanceExpression, TypeSpec.IsValueType (InstanceExpression.Type));
+			inst.NullShortCircuit = NullShortCircuit;
+			inst.Emit (ec);
 
 			if (prepare_for_load)
 				ec.Emit (OpCodes.Dup);
+
+			return inst;
 		}
 
 		public abstract void SetTypeArguments (ResolveContext ec, TypeArguments ta);
@@ -3845,11 +3840,15 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 		
-		public void EmitCall (EmitContext ec, Arguments arguments)
+		public void EmitCall (EmitContext ec, Arguments arguments, bool statement)
 		{
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpression;
-			call.Emit (ec, best_candidate, arguments, loc);			
+			call.NullShortCircuit = NullShortCircuit;
+			if (statement)
+				call.EmitStatement (ec, best_candidate, arguments, loc);
+			else
+				call.Emit (ec, best_candidate, arguments, loc);
 		}
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
@@ -3955,6 +3954,9 @@ namespace Mono.CSharp {
 			// Speed up the check by not doing it on disallowed targets
 			if (best_candidate_return.Kind == MemberKind.Void && best_candidate.IsConditionallyExcluded (ec))
 				Methods = Excluded;
+
+			if (NullShortCircuit)
+				best_candidate_return = LiftMemberType (ec, best_candidate_return);
 
 			return this;
 		}
@@ -5986,6 +5988,13 @@ namespace Mono.CSharp {
 				variable_info = var.VariableInfo.GetStructFieldInfo (Name);
 			}
 
+			if (NullShortCircuit) {
+				type = LiftMemberType (ec, type);
+
+				if (InstanceExpression.IsNull)
+					return Constant.CreateConstantFromValue (type, null, loc);
+			}
+
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -6192,8 +6201,11 @@ namespace Mono.CSharp {
 
 				ec.Emit (OpCodes.Ldsfld, spec);
 			} else {
+				InstanceEmitter ie;
 				if (!prepared)
-					EmitInstance (ec, false);
+					ie = EmitInstance (ec, false);
+				else
+					ie = new InstanceEmitter ();
 
 				// Optimization for build-in types
 				if (type.IsStruct && type == ec.CurrentType && InstanceExpression.Type == type) {
@@ -6208,6 +6220,10 @@ namespace Mono.CSharp {
 							ec.Emit (OpCodes.Volatile);
 
 						ec.Emit (OpCodes.Ldfld, spec);
+
+						if (NullShortCircuit) {
+							ie.EmitResultLift (ec, spec.MemberType, false);
+						}
 					}
 				}
 			}
@@ -6229,6 +6245,9 @@ namespace Mono.CSharp {
 			}
 
 			if (IsInstance) {
+				if (NullShortCircuit)
+					throw new NotImplementedException ("null operator assignment");
+
 				if (has_await_source)
 					source = source.EmitToField (ec);
 
@@ -6518,9 +6537,14 @@ namespace Mono.CSharp {
 			// Special case: length of single dimension array property is turned into ldlen
 			//
 			if (IsSingleDimensionalArrayLength ()) {
-				EmitInstance (ec, false);
+				var inst = EmitInstance (ec, false);
+
 				ec.Emit (OpCodes.Ldlen);
 				ec.Emit (OpCodes.Conv_I4);
+
+				if (NullShortCircuit)
+					inst.EmitResultLift (ec, ec.BuiltinTypes.Int, false);
+
 				return;
 			}
 
@@ -6576,8 +6600,15 @@ namespace Mono.CSharp {
 			call.InstanceExpression = InstanceExpression;
 			if (args == null)
 				call.InstanceExpressionOnStack = true;
+			if (NullShortCircuit) {
+				call.NullShortCircuit = true;
+				call.NullOperatorLabel = null_operator_label;
+			}
 
-			call.Emit (ec, Setter, args, loc);
+			if (leave_copy)
+				call.Emit (ec, Setter, args, loc);
+			else
+				call.EmitStatement (ec, Setter, args, loc);
 
 			if (temp != null) {
 				temp.Emit (ec);
@@ -6642,6 +6673,7 @@ namespace Mono.CSharp {
 		protected LocalTemporary temp;
 		protected bool emitting_compound_assignment;
 		protected bool has_await_arguments;
+		protected Label null_operator_label;
 
 		protected PropertyOrIndexerExpr (Location l)
 		{
@@ -6678,6 +6710,10 @@ namespace Mono.CSharp {
 				var expr = OverloadResolve (ec, null);
 				if (expr == null)
 					return null;
+
+				if (NullShortCircuit && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
+					type = LiftMemberType (ec, type);
+				}
 
 				if (expr != this)
 					return expr.Resolve (ec);
@@ -6717,6 +6753,14 @@ namespace Mono.CSharp {
 			if (!ResolveSetter (ec))
 				return null;
 
+			if (NullShortCircuit && ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
+				var lifted_type = LiftMemberType (ec, type);
+				if (type != lifted_type) {
+					// TODO: Workaround to disable codegen for now
+					return Nullable.Wrap.Create (this, lifted_type);
+				}
+			}
+
 			return this;
 		}
 
@@ -6726,6 +6770,7 @@ namespace Mono.CSharp {
 		public virtual void Emit (EmitContext ec, bool leave_copy)
 		{
 			var call = new CallEmitter ();
+			call.NullShortCircuit = NullShortCircuit;
 			call.InstanceExpression = InstanceExpression;
 			if (has_await_arguments)
 				call.HasAwaitArguments = true;
@@ -6739,6 +6784,9 @@ namespace Mono.CSharp {
 				Arguments = call.EmittedArguments;
 				has_await_arguments = true;
 			}
+
+			if (NullShortCircuit && emitting_compound_assignment)
+				null_operator_label = call.NullOperatorLabel;
 
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
@@ -6963,7 +7011,8 @@ namespace Mono.CSharp {
 
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpression;
-			call.Emit (ec, op, args, loc);
+			call.NullShortCircuit = NullShortCircuit;
+			call.EmitStatement (ec, op, args, loc);
 		}
 
 		#endregion
