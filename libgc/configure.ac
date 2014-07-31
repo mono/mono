@@ -114,6 +114,17 @@ case "$THREADS" in
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	THREADDLLIBS="-lpthread -lrt"
 	;;
+     *-*-kfreebsd*-gnu)
+	AC_DEFINE(GC_FREEBSD_THREADS)
+	INCLUDES="$INCLUDES -pthread"
+	THREADDLLIBS=-pthread
+	AC_DEFINE(_REENTRANT)
+	if test "${enable_parallel_mark}" = yes; then
+		AC_DEFINE(PARALLEL_MARK)
+	fi
+	AC_DEFINE(THREAD_LOCAL_ALLOC)
+	AC_DEFINE(USE_COMPILER_TLS)
+	;;
       *-*-freebsd*)
 	AC_DEFINE(GC_FREEBSD_THREADS)
 	if test "x$PTHREAD_CFLAGS" != "x"; then
