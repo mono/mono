@@ -36,8 +36,7 @@ namespace System.Data.Services.Providers
 	public class ResourceProperty
 	{
 		public bool CanReflectOnInstanceTypeProperty {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;	
 		}
 
 		public ResourceType ResourceType {
@@ -58,8 +57,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public object CustomState {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;	
 		}
 
 		public bool IsReadOnly {
