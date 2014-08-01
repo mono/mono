@@ -399,7 +399,7 @@ namespace System.Net {
 			if (AddressFamily == AddressFamily.InterNetworkV6)
 				return this;
 			if (AddressFamily != AddressFamily.InterNetwork)
-				throw new Exception ("Only AddressFamily.InterNetworkV6 can be converted to IPv4");
+				throw new Exception ("Only AddressFamily.InterNetworkV4 can be converted to IPv6");
 
 			byte [] ipv4Bytes = GetAddressBytes ();
 			byte [] ipv6Bytes = new byte [16] {
