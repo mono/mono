@@ -8907,19 +8907,21 @@ namespace Mono.CSharp
 				return new DynamicMemberBinder (Name, args, loc);
 			}
 
-			if (!IsValidDotExpression (expr_type)) {
-				Error_OperatorCannotBeApplied (rc, expr_type);
-				return null;
-			}
-
 			if (this is NullMemberAccess) {
-				if (!IsNullPropagatingValid (expr.Type))
+				if (!IsNullPropagatingValid (expr.Type)) {
 					expr.Error_OperatorCannotBeApplied (rc, loc, "?", expr.Type);
+					return null;
+				}
 
 				if (expr_type.IsNullableType) {
 					expr = Nullable.Unwrap.Create (expr, true).Resolve (rc);
 					expr_type = expr.Type;
 				}
+			}
+
+			if (!IsValidDotExpression (expr_type)) {
+				Error_OperatorCannotBeApplied (rc, expr_type);
+				return null;
 			}
 
 			var lookup_arity = Arity;
