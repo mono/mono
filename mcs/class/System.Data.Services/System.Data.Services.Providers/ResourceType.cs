@@ -40,7 +40,8 @@ namespace System.Data.Services.Providers
 	public class ResourceType
 	{
 		string nameSpace;
-		
+		List<ResourceProperty> properties;	
+	
 		public bool IsMediaLinkEntry {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -59,7 +60,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public ReadOnlyCollection <ResourceProperty> Properties {
-			get { throw new NotImplementedException (); }
+			get { return new ReadOnlyCollection<ResourceProperty>(properties); }
 		}
 
 		public ReadOnlyCollection <ResourceProperty> PropertiesDeclaredOnThisType {
@@ -104,8 +105,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public object CustomState {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;
 		}
 
 		public bool IsReadOnly {
@@ -118,10 +118,6 @@ namespace System.Data.Services.Providers
 				throw new ArgumentNullException ("instanceType");
 			if (String.IsNullOrEmpty (name))
 				throw new ArgumentNullException ("name");
-			if (resourceTypeKind == ResourceTypeKind.Primitive)
-				throw new ArgumentException ("'Primitive' is not a valid value for resourceTypeKind", "resourceTypeKind");
-			if (instanceType.IsValueType)
-				throw new ArgumentException ("Clr type for the resource type cannot be a value type.");
 			
 			this.InstanceType = instanceType;
 			this.ResourceTypeKind = resourceTypeKind;
@@ -136,16 +132,18 @@ namespace System.Data.Services.Providers
 
 			// Appears to always be true
 			this.CanReflectOnInstanceType = true;
+		
+			properties = new List<ResourceProperty>();
 		}
 
 		public static ResourceType GetPrimitiveResourceType (Type type)
 		{
-			throw new NotImplementedException ();
+			return new ResourceType(type, ResourceTypeKind.Primitive, null, type.Namespace, type.Name, type.IsAbstract);
 		}
 
 		public void AddProperty (ResourceProperty property)
 		{
-			throw new NotImplementedException ();
+			this.properties.Add(property);
 		}
 
 		public void AddEntityPropertyMappingAttribute (EntityPropertyMappingAttribute attribute)
