@@ -25,9 +25,60 @@ using Mono.Utilities;
 
 namespace Monodoc.Providers
 {
+	public interface IEcmaProviderFileSource {
+		XmlReader GetIndexReader(string path);
+		XDocument GetTypeDocument(string path);
+		XElement GetNamespaceElement(string path);
+		string GetTypeXmlPath(string basePath, string nsName, string typeName);
+		string GetNamespaceXmlPath(string basePath, string ns);
+		XElement ExtractNamespaceSummary (string path);
+	}
+
+	internal class DefaultEcmaProviderFileSource : IEcmaProviderFileSource {
+		public static readonly IEcmaProviderFileSource Default = new DefaultEcmaProviderFileSource();
+
+		public XmlReader GetIndexReader(string path) {
+			return XmlReader.Create (File.OpenRead (path));
+		}
+
+		public XElement GetNamespaceElement(string path) {
+			return XElement.Load (path);
+		}
+
+		public string GetTypeXmlPath(string basePath, string nsName, string typeName) {
+			string finalPath = Path.Combine (basePath, nsName, Path.ChangeExtension (typeName, ".xml"));
+			return finalPath;
+		}
+
+		public XDocument GetTypeDocument(string path) {
+			return XDocument.Load (path);
+		}
+
+		public string GetNamespaceXmlPath(string basePath, string ns) {
+			string finalPath = Path.Combine(basePath, String.Format("ns-{0}.xml", ns));
+			return finalPath;
+		}
+
+		public XElement ExtractNamespaceSummary (string path)
+		{
+			using (var reader = XmlReader.Create (path)) {
+				reader.ReadToFollowing ("Namespace");
+				var name = reader.GetAttribute ("Name");
+				var summary = reader.ReadToFollowing ("summary") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("summary");
+				var remarks = reader.ReadToFollowing ("remarks") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("remarks");
+
+				return new XElement ("namespace",
+				                     new XAttribute ("ns", name ?? string.Empty),
+				                     summary,
+				                     remarks);
+			}
+		}
+	}
+
 	public class EcmaProvider : Provider
 	{
 		HashSet<string> directories = new HashSet<string> ();
+		IEcmaProviderFileSource fileSource;
 
 		public EcmaProvider ()
 		{
@@ -36,6 +87,16 @@ namespace Monodoc.Providers
 		public EcmaProvider (string baseDir)
 		{
 			AddDirectory (baseDir);
+		}
+
+		public IEcmaProviderFileSource FileSource { 
+			get {
+				if (fileSource == null) {
+					fileSource = new DefaultEcmaProviderFileSource();
+				}
+				return fileSource;
+			}
+			set { fileSource = value; }
 		}
 
 		public void AddDirectory (string directory)
@@ -59,7 +120,7 @@ namespace Monodoc.Providers
 					continue;
 				}
 
-				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, EcmaHelpSource.EcmaPrefix, tree, storage, nsSummaries, _ => resID++.ToString ());
+				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, EcmaHelpSource.EcmaPrefix, tree, storage, nsSummaries, _ => resID++.ToString (), FileSource);
 			}
 
 			foreach (var summary in nsSummaries)
@@ -68,24 +129,11 @@ namespace Monodoc.Providers
 			var masterSummary = new XElement ("elements",
 			                                  directories
 			                                  .SelectMany (d => Directory.EnumerateFiles (d, "ns-*.xml"))
-			                                  .Select (ExtractNamespaceSummary));
+			                                  .Select (FileSource.ExtractNamespaceSummary));
 			storage.Store ("mastersummary.xml", masterSummary.ToString ());
 		}
 
-		XElement ExtractNamespaceSummary (string nsFile)
-		{
-			using (var reader = XmlReader.Create (nsFile)) {
-				reader.ReadToFollowing ("Namespace");
-				var name = reader.GetAttribute ("Name");
-				var summary = reader.ReadToFollowing ("summary") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("summary");
-				var remarks = reader.ReadToFollowing ("remarks") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("remarks");
 
-				return new XElement ("namespace",
-				                     new XAttribute ("ns", name ?? string.Empty),
-				                     summary,
-				                     remarks);
-			}
-		}
 
 		public override void CloseTree (HelpSource hs, Tree tree)
 		{
