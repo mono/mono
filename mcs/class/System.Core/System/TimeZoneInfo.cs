@@ -572,11 +572,6 @@ namespace System
 		}
 #endif
 
-		public static TimeZoneInfo FromSerializedString (string source)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public AdjustmentRule [] GetAdjustmentRules ()
 		{
 			if (!supportsDaylightSavingTime)
@@ -876,11 +871,6 @@ namespace System
 			}
 		}
 		
-		public string ToSerializedString ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override string ToString ()
 		{
 			return DisplayName;
@@ -986,6 +976,8 @@ namespace System
 			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first) % 7;
 			if (day >  DateTime.DaysInMonth (year, transition.Month))
 				day -= 7;
+			if (day < 1)
+				day += 7;
 			return new DateTime (year, transition.Month, day) + transition.TimeOfDay.TimeOfDay;
 		}
 

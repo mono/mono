@@ -264,6 +264,7 @@ System/TimeZone.cs
 ../System.Core/System/TimeZoneInfo.AdjustmentRule.cs
 ../System.Core/System/TimeZoneInfo.Android.cs
 ../System.Core/System/TimeZoneInfo.MonoTouch.cs
+../System.Core/System/TimeZoneInfo.Serialization.cs
 ../System.Core/System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
