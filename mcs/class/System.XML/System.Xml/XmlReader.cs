@@ -494,12 +494,12 @@ namespace System.Xml
 		void IDisposable.Dispose() 
 #endif
 		{
-			Dispose (false);
+			Dispose (true);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (ReadState != ReadState.Closed)
+			if (disposing && ReadState != ReadState.Closed)
 				Close ();
 		}
 #endif
