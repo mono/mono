@@ -1493,6 +1493,7 @@ guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handle
 	guint32 ret = WAIT_IO_COMPLETION;
 	guint32 start_ms;
 	MonoException* exc = NULL;
+	guint32 time_left_to_wait_ms = ms;
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
@@ -1500,8 +1501,22 @@ guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handle
 
 	while (!exc && ret == WAIT_IO_COMPLETION)
 	{
-		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, ms, TRUE);
+		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, time_left_to_wait_ms, TRUE);
 		exc = mono_thread_get_and_clear_pending_exception ();
+
+		if (ret == WAIT_IO_COMPLETION)
+		{
+			guint32 elapsed_ms;
+			// Infinite timeout, no need to check for elapsed time.
+			if (ms == -1)
+				continue;
+
+			elapsed_ms = mono_msec_ticks () - start_ms;
+			if (elapsed_ms < ms)
+				time_left_to_wait_ms = ms - elapsed_ms;
+			else
+				ret = WAIT_TIMEOUT;
+		}
 	}
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
