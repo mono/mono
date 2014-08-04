@@ -28,11 +28,12 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace System
 {
-	public sealed partial class TimeZoneInfo
+	public partial class TimeZoneInfo
 	{
 		public static TimeZoneInfo FromSerializedString (string source)
 		{
@@ -59,8 +60,8 @@ namespace System
 
 			if (this.SupportsDaylightSavingTime) {
 				foreach (var rule in this.GetAdjustmentRules()) {
-					var start = rule.DateStart.ToString ("MM:dd:yyyy");
-					var end = rule.DateEnd.ToString ("MM:dd:yyyy");
+					var start = rule.DateStart.ToString ("MM:dd:yyyy", CultureInfo.InvariantCulture);
+					var end = rule.DateEnd.ToString ("MM:dd:yyyy", CultureInfo.InvariantCulture);
 					var delta = (int)rule.DaylightDelta.TotalMinutes;
 					var transitionStart = SerializeTransitionTime (rule.DaylightTransitionStart);
 					var transitionEnd = SerializeTransitionTime (rule.DaylightTransitionEnd);
@@ -77,7 +78,7 @@ namespace System
 		{
 			// Similar to: [01:01:0001;12:31:9999;60;[0;01:00:00;3;5;0;];[0;02:00:00;10;5;0;];]
 			if (input [0] != '[')
-				throw new System.Runtime.Serialization.SerializationException ();
+				throw new SerializationException ();
 			input.Remove (0, 1); // [
 			var dateStart = DeserializeDate (ref input);
 			var dateEnd = DeserializeDate (ref input);
@@ -93,25 +94,23 @@ namespace System
 		private static TimeZoneInfo.TransitionTime DeserializeTransitionTime (ref StringBuilder input)
 		{
 			if (input [0] != '[' || (input [1] != '0' && input [1] != '1') || input [2] != ';')
-				throw new System.Runtime.Serialization.SerializationException ();
+				throw new SerializationException ();
 			var rule = input [1];
 			input.Remove (0, 3); // [#;
+			var timeOfDay = DeserializeTime (ref input);
+			var month = DeserializeInt (ref input);
 			if (rule == '0') {
 				// Floating rule such as: [0;01:00:00;3;5;0;];
-				var timeOfDay = DeserializeTime (ref input);
-				var month = DeserializeInt (ref input);
 				var week = DeserializeInt (ref input);
 				var dayOfWeek = DeserializeInt (ref input);
 				input.Remove (0, 2); // ];
 				return TimeZoneInfo.TransitionTime.CreateFloatingDateRule (timeOfDay, month, week, (DayOfWeek)dayOfWeek);
-			} else {
-				// Fixed rule such as: [1;02:15:59.999;6;2;];
-				var timeOfDay = DeserializeTime (ref input);
-				var month = DeserializeInt (ref input);
-				var day = DeserializeInt (ref input);
-				input.Remove (0, 2); // ];
-				return TimeZoneInfo.TransitionTime.CreateFixedDateRule (timeOfDay, month, day);
 			}
+
+			// Fixed rule such as: [1;02:15:59.999;6;2;];
+			var day = DeserializeInt (ref input);
+			input.Remove (0, 2); // ];
+			return TimeZoneInfo.TransitionTime.CreateFixedDateRule (timeOfDay, month, day);
 		}
 
 		private static string DeserializeString (ref StringBuilder input)
@@ -146,8 +145,8 @@ namespace System
 					break;
 			}
 			int result;
-			if(!int.TryParse(input.ToString(0, charCount), out result))
-				throw new System.Runtime.Serialization.SerializationException();
+			if(!int.TryParse(input.ToString(0, charCount), NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+				throw new SerializationException();
 			input.Remove(0, charCount + 1);
 			return result;
 		}
@@ -158,7 +157,7 @@ namespace System
 			input.CopyTo (0, inChars, 0, inChars.Length);
 			DateTime result;
 			if (!DateTime.TryParseExact (new string (inChars), "MM:dd:yyyy;", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
-				throw new System.Runtime.Serialization.SerializationException ();
+				throw new SerializationException ();
 			input.Remove (0, inChars.Length);
 			return result;
 		}
@@ -171,7 +170,7 @@ namespace System
 				input.CopyTo (0, inChars, 0, inChars.Length);
 				DateTime result;
 				if (!DateTime.TryParseExact (new string (inChars), "HH:mm:ss;", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
-					throw new System.Runtime.Serialization.SerializationException ();
+					throw new SerializationException ();
 				input.Remove (0, inChars.Length);
 				return result;
 			} else if (input [12] == ';') {
@@ -181,11 +180,11 @@ namespace System
 				var inString = new string (inChars);
 				DateTime result;
 				if (!DateTime.TryParseExact (inString, "HH:mm:ss.fff;", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
-					throw new System.Runtime.Serialization.SerializationException ();
+					throw new SerializationException ();
 				input.Remove (0, inChars.Length);
 				return result;
-			} else
-				throw new System.Runtime.Serialization.SerializationException ();
+			}
+			throw new SerializationException ();
 		}
 
 		private static string EscapeForSerialization (string unescaped)
@@ -203,10 +202,10 @@ namespace System
 
 			if (transition.IsFixedDateRule) {
 				return string.Format ("[1;{0};{1};{2};]", timeOfDay, transition.Month, transition.Day);
-			} else {
-				return string.Format ("[0;{0};{1};{2};{3};]", timeOfDay, transition.Month,
-					transition.Week, (int)transition.DayOfWeek);
 			}
+
+			return string.Format ("[0;{0};{1};{2};{3};]", timeOfDay, transition.Month,
+				transition.Week, (int)transition.DayOfWeek);
 		}
 	}
 }
