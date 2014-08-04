@@ -5123,22 +5123,12 @@ namespace Mono.CSharp {
 							if (dup_args)
 								t = TypeManager.GetReferenceType (iexpr_type);
 						} else {
-
-#if GMCS_SOURCE
-							if(instance_expr is IMemoryLocation)
-							{
-								((IMemoryLocation)instance_expr).AddressOf(ec, AddressOp.LoadStore);
-								if(dup_args)
-									t = TypeManager.GetReferenceType(iexpr_type);
-							}
-							else
-#endif
-							{
-								instance_expr.Emit (ec);
+							instance_expr.Emit (ec);
 							
-								ig.Emit (OpCodes.Box, instance_expr.Type);
-								t = TypeManager.object_type;
-							}
+							// FIXME: should use instance_expr is IMemoryLocation + constraint.
+							// to help JIT to produce better code
+							ig.Emit (OpCodes.Box, instance_expr.Type);
+							t = TypeManager.object_type;
 						}
 					} else {
 						instance_expr.Emit (ec);
@@ -5158,23 +5148,14 @@ namespace Mono.CSharp {
 			if (!omit_args && Arguments != null)
 				Arguments.Emit (ec, dup_args, this_arg);
 
-			/* Note from MSDN:
-			 * "When calling methods of System.Object on value types, consider using the constrained prefix 
-			 *  with the callvirt instruction instead of emitting a call instruction. This removes the need 
-			 *  to emit different IL depending on whether or not the value type overrides the method, 
-			 *  avoiding a potential versioning problem."
-			 * Value types can't derive from other value types so System.Object should be the /only/ thing
-			 * we need to check for in this way. */
-			bool isSystemObjectMethod = (decl_type == TypeManager.object_type);
-
 			OpCode call_op;
-			if (is_static || struct_call || ((is_base || (this_call && !method.IsVirtual)) && !(TypeManager.IsValueType(instance_expr.Type) && isSystemObjectMethod))) {
+			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)) {
 				call_op = OpCodes.Call;
 			} else {
 				call_op = OpCodes.Callvirt;
 				
 #if GMCS_SOURCE
-				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter || (TypeManager.IsValueType(instance_expr.Type) && instance_expr is IMemoryLocation)))
+				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
 					ig.Emit (OpCodes.Constrained, instance_expr.Type);
 #endif
 			}
