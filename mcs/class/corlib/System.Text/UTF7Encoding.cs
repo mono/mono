@@ -604,23 +604,24 @@ class UTF7Encoding : Encoding
 	// Get a UTF7-specific decoder that is attached to this instance.
 	public override Decoder GetDecoder ()
 	{
-		return new UTF7Decoder ();
+		return new UTF7Decoder (this);
 	}
 
 	// Get a UTF7-specific encoder that is attached to this instance.
 	public override Encoder GetEncoder ()
 	{
-		return new UTF7Encoder (allowOptionals);
+		return new UTF7Encoder (allowOptionals, this);
 	}
 
 	// UTF-7 decoder implementation.
-	private sealed class UTF7Decoder : Decoder
+	private sealed class UTF7Decoder : EncodingDecoder
 	{
 		// Internal state.
 		private int leftOver;
 
 		// Constructor.
-		public UTF7Decoder ()
+		public UTF7Decoder (Encoding encoding)
+			: base (encoding)
 		{
 			leftOver = 0;
 		}
@@ -640,14 +641,15 @@ class UTF7Encoding : Encoding
 	} // class UTF7Decoder
 
 	// UTF-7 encoder implementation.
-	private sealed class UTF7Encoder : Encoder
+	private sealed class UTF7Encoder : EncodingEncoder
 	{
 		private bool allowOptionals;
 		private int leftOver = 0;
 		private bool isInShifted = false;
 
 		// Constructor.
-		public UTF7Encoder (bool allowOptionals)
+		public UTF7Encoder (bool allowOptionals, UTF7Encoding encoding)
+			: base (encoding)
 		{
 			this.allowOptionals = allowOptionals;
 		}
