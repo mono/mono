@@ -1525,6 +1525,8 @@ System.Text/EncoderFallbackException.cs
 System.Text/EncoderReplacementFallback.cs
 System.Text/EncoderReplacementFallbackBuffer.cs
 System.Text/Encoding.cs
+System.Text/EncodingEncoder.cs
+System.Text/EncodingDecoder.cs
 System.Text/EncodingInfo.cs
 System.Text/Latin1Encoding.cs
 System.Text/MLangCodePageEncoding.cs
