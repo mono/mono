@@ -3566,9 +3566,11 @@ element_access
 		if (lang_version < LanguageVersion.V_6)
 			FeatureIsNotAvailable (GetLocation ($2), "null propagating operator");
 
-		throw new NotImplementedException ();
-//		$$ = new ElementAccess ((Expression) $1, (Arguments) $4, GetLocation ($3));
-//		lbag.AddLocation ($$, GetLocation ($4));
+		$$ = new ElementAccess ((Expression) $1, (Arguments) $4, GetLocation ($3)) {
+			NullPropagating = true
+		};
+
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($5));
 	  }
 	| primary_expression OPEN_BRACKET_EXPR expression_list_arguments error
 	  {

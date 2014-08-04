@@ -8849,11 +8849,6 @@ namespace Mono.CSharp
 			return (type.Kind & dot_kinds) != 0 || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 		}
 
-		static bool IsNullPropagatingValid (TypeSpec type)
-		{
-			return TypeSpec.IsReferenceType (type) || type.IsNullableType;
-		}
-
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
 		{
 			var sn = expr as SimpleName;
@@ -9355,6 +9350,8 @@ namespace Mono.CSharp
 			this.Arguments = args;
 		}
 
+		public bool NullPropagating { get; set; }
+
 		public override Location StartLocation {
 			get {
 				return Expr.StartLocation;
@@ -9372,8 +9369,15 @@ namespace Mono.CSharp
 		//
 		Expression CreateAccessExpression (ResolveContext ec)
 		{
+			if (NullPropagating && !IsNullPropagatingValid (type)) {
+				Error_OperatorCannotBeApplied (ec, loc, "?", type);
+				return null;
+			}
+
 			if (type.IsArray)
-				return (new ArrayAccess (this, loc));
+				return new ArrayAccess (this, loc) {
+					NullShortCircuit = NullPropagating
+				};
 
 			if (type.IsPointer)
 				return MakePointerAccess (ec, type);
@@ -9388,7 +9392,9 @@ namespace Mono.CSharp
 
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers != null || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				return new IndexerExpr (indexers, type, this);
+				return new IndexerExpr (indexers, type, this) {
+					NullShortCircuit = NullPropagating
+				};
 			}
 
 			if (type != InternalType.ErrorType) {
@@ -9514,6 +9520,8 @@ namespace Mono.CSharp
 			loc = l;
 		}
 
+		public bool NullShortCircuit { get; set; }
+
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			var ac = (ArrayContainer) ea.Expr.Type;
@@ -9532,6 +9540,9 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
+			if (NullShortCircuit)
+				Error_NullShortCircuitInsideExpressionTree (ec);
+
 			return ea.CreateExpressionTree (ec);
 		}
 
@@ -9542,6 +9553,9 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
+			if (NullShortCircuit)
+				throw new NotSupportedException ("null propagating operator assignment");
+
 			return DoResolve (ec);
 		}
 
@@ -9564,9 +9578,13 @@ namespace Mono.CSharp
 				UnsafeError (ec, ea.Location);
 			}
 
+			if (NullShortCircuit)
+				type = LiftMemberType (ec, type);
+
 			foreach (Argument a in ea.Arguments) {
-				if (a is NamedArgument)
-					ElementAccess.Error_NamedArgument ((NamedArgument) a, ec.Report);
+				var na = a as NamedArgument;
+				if (na != null)
+					ElementAccess.Error_NamedArgument (na, ec.Report);
 
 				a.Expr = ConvertExpressionToArrayIndex (ec, a.Expr);
 			}
@@ -9589,30 +9607,35 @@ namespace Mono.CSharp
 		//
 		// Load the array arguments into the stack.
 		//
-		void LoadInstanceAndArguments (EmitContext ec, bool duplicateArguments, bool prepareAwait)
+		InstanceEmitter LoadInstanceAndArguments (EmitContext ec, bool duplicateArguments, bool prepareAwait)
 		{
+			InstanceEmitter ie;
 			if (prepareAwait) {
+				ie = new InstanceEmitter ();
 				ea.Expr = ea.Expr.EmitToField (ec);
-			} else if (duplicateArguments) {
-				ea.Expr.Emit (ec);
-				ec.Emit (OpCodes.Dup);
-
-				var copy = new LocalTemporary (ea.Expr.Type);
-				copy.Store (ec);
-				ea.Expr = copy;
 			} else {
-				ea.Expr.Emit (ec);
+				ie = new InstanceEmitter (ea.Expr, false);
+				ie.NullShortCircuit = NullShortCircuit;
+				ie.Emit (ec);
+
+				if (duplicateArguments) {
+					ec.Emit (OpCodes.Dup);
+
+					var copy = new LocalTemporary (ea.Expr.Type);
+					copy.Store (ec);
+					ea.Expr = copy;
+				}
 			}
 
 			var dup_args = ea.Arguments.Emit (ec, duplicateArguments, prepareAwait);
 			if (dup_args != null)
 				ea.Arguments = dup_args;
+
+			return ie;
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			var ac = ea.Expr.Type as ArrayContainer;
-
 			if (prepared) {
 				ec.EmitLoadFromPtr (type);
 			} else {
@@ -9620,8 +9643,12 @@ namespace Mono.CSharp
 					LoadInstanceAndArguments (ec, false, true);
 				}
 
-				LoadInstanceAndArguments (ec, false, false);
+				var ac = (ArrayContainer) ea.Expr.Type;
+				var inst = LoadInstanceAndArguments (ec, false, false);
 				ec.EmitArrayLoad (ac);
+
+				if (NullShortCircuit)
+					inst.EmitResultLift (ec, ((ArrayContainer) ea.Expr.Type).Element, false);
 			}	
 
 			if (leave_copy) {
@@ -9810,6 +9837,10 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
+			if (NullShortCircuit) {
+				Error_NullShortCircuitInsideExpressionTree (ec);
+			}
+
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
 				InstanceExpression.CreateExpressionTree (ec),
 				new TypeOfMethod (Getter, loc));
