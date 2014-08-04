@@ -882,13 +882,13 @@ fail_no_space:
 	// Get a UTF8-specific decoder that is attached to this instance.
 	public override Decoder GetDecoder ()
 	{
-		return new UTF8Decoder (DecoderFallback);
+		return new UTF8Decoder (this);
 	}
 
 	// Get a UTF8-specific encoder that is attached to this instance.
 	public override Encoder GetEncoder ()
 	{
-		return new UTF8Encoder (EncoderFallback, emitIdentifier);
+		return new UTF8Encoder (this);
 	}
 
 	// Get the UTF8 preamble.
@@ -935,15 +935,15 @@ fail_no_space:
 
 	// UTF-8 decoder implementation.
 	[Serializable]
-	private class UTF8Decoder : Decoder
+	private class UTF8Decoder : EncodingDecoder
 	{
 		private uint leftOverBits;
 		private uint leftOverCount;
 
 		// Constructor.
-		public UTF8Decoder (DecoderFallback fallback)
+		public UTF8Decoder (Encoding encoding)
+			: base (encoding)
 		{
-			Fallback = fallback;
 			leftOverBits = 0;
 			leftOverCount = 0;
 		}
@@ -969,17 +969,16 @@ fail_no_space:
 
 	// UTF-8 encoder implementation.
 	[Serializable]
-	private class UTF8Encoder : Encoder
+	private class UTF8Encoder : EncodingEncoder
 	{
 //		private bool emitIdentifier;
 		private char leftOverForCount;
 		private char leftOverForConv;
 
 		// Constructor.
-		public UTF8Encoder (EncoderFallback fallback, bool emitIdentifier)
+		public UTF8Encoder (UTF8Encoding encoding)
+			: base (encoding)
 		{
-			Fallback = fallback;
-//			this.emitIdentifier = emitIdentifier;
 			leftOverForCount = '\0';
 			leftOverForConv = '\0';
 		}
