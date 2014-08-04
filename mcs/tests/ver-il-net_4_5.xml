@@ -67267,25 +67267,25 @@
       <method name="Void remove_ev1(System.Action)" attrs="2182">
         <size>42</size>
       </method>
-      <method name="Int32 get_Item(Boolean)" attrs="2182">
-        <size>10</size>
-      </method>
-      <method name="System.Nullable`1[System.Int32] get_Item(System.Nullable`1[System.Int32])" attrs="2182">
-        <size>10</size>
-      </method>
-      <method name="System.String get_Item(System.String)" attrs="2182">
-        <size>10</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="145">
-        <size>20</size>
+        <size>86</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Int32 TestProperty()" attrs="145">
+        <size>168</size>
+      </method>
+      <method name="Int32 TestField()" attrs="145">
+        <size>168</size>
+      </method>
+      <method name="Int32 TestEvent()" attrs="145">
+        <size>50</size>
       </method>
     </type>
   </test>
@@ -67309,6 +67309,39 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>27</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-05.cs">
+    <type name="CI">
+      <method name="Void set_Item(System.String, System.String)" attrs="2182">
+        <size>2</size>
+      </method>
+      <method name="System.String get_Item(System.String)" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Item(Int32, System.Nullable`1[System.Int32])" attrs="2182">
+        <size>2</size>
+      </method>
+      <method name="System.Nullable`1[System.Int32] get_Item(Int32)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 TestArrayAccess()" attrs="145">
+        <size>114</size>
+      </method>
+      <method name="Int32 TestIndexerAccess()" attrs="145">
+        <size>93</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>64</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

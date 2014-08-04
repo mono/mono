@@ -1264,15 +1264,6 @@ namespace Mono.CSharp
 				return Token.INTERR_OPERATOR;
 			}
 
-			switch (current_token) {
-			case Token.CLOSE_PARENS:
-			case Token.TRUE:
-			case Token.FALSE:
-			case Token.NULL:
-			case Token.LITERAL:
-				return Token.INTERR;
-			}
-
 			if (d != ' ') {
 				if (d == ',' || d == ';' || d == '>')
 					return Token.INTERR_NULLABLE;
