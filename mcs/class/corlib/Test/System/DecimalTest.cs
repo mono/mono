@@ -1561,5 +1561,13 @@ namespace MonoTests.System
 			d = Decimal.Parse ("0.");
 			Assert.AreEqual ("0", d.ToString (), "#11");
 		}
+
+		[Test] // bug #21764
+		public void RoundToString ()
+		{
+			Assert.AreEqual ("3", Math.Round (3M, 5).ToString (CultureInfo.InvariantCulture), "#1");
+			Assert.AreEqual ("3.01", Math.Round (3.01M, 5).ToString (CultureInfo.InvariantCulture), "#2");
+			Assert.AreEqual ("-3.01", Math.Round (-3.01M, 5).ToString (CultureInfo.InvariantCulture), "#3");
+		}
 	}
 }
