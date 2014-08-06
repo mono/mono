@@ -41690,6 +41690,9 @@
       <method name="System.String Test_2()" attrs="150">
         <size>7</size>
       </method>
+      <method name="Void Test_3()" attrs="145">
+        <size>20</size>
+      </method>
     </type>
   </test>
   <test name="test-505.cs">
