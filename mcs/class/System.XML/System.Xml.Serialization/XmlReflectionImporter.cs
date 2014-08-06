@@ -1041,6 +1041,9 @@ namespace System.Xml.Serialization {
 
 				if (choiceEnumMap != null) {
 					string cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName, elem.ElementName);
+					if (cname == null && elem.Namespace != null)
+						cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName,
+							elem.Namespace.ToString () + ":" + elem.ElementName);
 					if (cname == null)
 						throw new InvalidOperationException (string.Format (
 							CultureInfo.InvariantCulture, "Type {0} is missing"
