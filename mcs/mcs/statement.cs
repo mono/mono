@@ -5219,14 +5219,16 @@ namespace Mono.CSharp {
 
 				if (sl != null && sl.SectionStart) {
 					//
-					// Section is marked already via constant switch or goto case
+					// Section is marked already via goto case
 					//
 					if (!sl.IsUnreachable) {
 						section_rc = new Reachability ();
 						continue;
 					}
 
-					if (section_rc.IsUnreachable) {
+					if (constant_label != null && constant_label != sl)
+						section_rc = Reachability.CreateUnreachable ();
+					else if (section_rc.IsUnreachable) {
 						section_rc = new Reachability ();
 					} else {
 						if (prev_label != null) {
@@ -5239,9 +5241,6 @@ namespace Mono.CSharp {
 					}
 
 					prev_label = sl;
-
-					if (constant_label != null && constant_label != sl)
-						section_rc = Reachability.CreateUnreachable ();
 				}
 
 				section_rc = s.MarkReachable (section_rc);
@@ -5532,7 +5531,7 @@ namespace Mono.CSharp {
 
 		public override void AddEndDefiniteAssignment (FlowAnalysisContext fc)
 		{
-			if (case_default == null)
+			if (case_default == null && !(new_expr is Constant))
 				return;
 
 			if (end_reachable_das == null)
