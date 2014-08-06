@@ -2,6 +2,7 @@
 // ZipFileExtensions.cs
 //
 // Author:
+//       João Matos <joao.matos@xamarin.com>
 //       Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
@@ -27,43 +28,95 @@ using System;
 
 namespace System.IO.Compression
 {
-	[MonoTODO]
 	public static class ZipFileExtensions
 	{
 		public static ZipArchiveEntry CreateEntryFromFile (
 			this ZipArchive destination, string sourceFileName,
 			string entryName)
 		{
-			throw new NotImplementedException ();
+			return CreateEntryFromFile (destination, sourceFileName, entryName,
+				CompressionLevel.Fastest);
 		}
 
 		public static ZipArchiveEntry CreateEntryFromFile (
 			this ZipArchive destination, string sourceFileName,
-			string entryName, CompressionLevel compressionLevel
-			)
+			string entryName, CompressionLevel compressionLevel)
 		{
-			throw new NotImplementedException ();
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+
+			if (entryName == null)
+				throw new ArgumentNullException ("entryName");
+
+			ZipArchiveEntry entry;
+			using (Stream stream = File.Open (sourceFileName, FileMode.Open,
+				FileAccess.Read, FileShare.Read))
+			{
+				var zipArchiveEntry = destination.CreateEntry (entryName, compressionLevel);
+
+				using (Stream entryStream = zipArchiveEntry.Open ())
+					stream.CopyTo (entryStream);
+
+				entry = zipArchiveEntry;
+			}
+
+			return entry;
 		}
 
 		public static void ExtractToDirectory (
 			this ZipArchive source,
 			string destinationDirectoryName)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			if (destinationDirectoryName == null)
+				throw new ArgumentNullException ("destinationDirectoryName");
+
+			var destDirInfo = Directory.CreateDirectory (destinationDirectoryName);
+			string fullName = destDirInfo.FullName;
+
+			foreach (var zipEntry in source.Entries)
+			{
+				var fullPath = Path.GetFullPath (Path.Combine (fullName, zipEntry.FullName));
+
+				var isFileName = Path.GetFileName (fullPath).Length != 0;
+				var dirPath = isFileName ? Path.GetDirectoryName (fullPath) : fullPath;
+				Directory.CreateDirectory (dirPath);
+
+				if (isFileName)
+					zipEntry.ExtractToFile (fullPath, false);
+			}
 		}
 
 		public static void ExtractToFile (
 			this ZipArchiveEntry source,
 			string destinationFileName)
 		{
-			throw new NotImplementedException ();
+			ExtractToFile (source, destinationFileName, overwrite: false);
 		}
 
 		public static void ExtractToFile (
 			this ZipArchiveEntry source, string destinationFileName,
 			bool overwrite)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			if (destinationFileName == null)
+				throw new ArgumentNullException ("destinationFileName");
+				
+			var mode = overwrite ? FileMode.Create : FileMode.CreateNew;
+			using (var stream = File.Open (destinationFileName, mode, FileAccess.Write))
+			{
+				using (var stream2 = source.Open ())
+					stream2.CopyTo(stream);
+			}
+
+			File.SetLastWriteTime(destinationFileName, source.LastWriteTime.DateTime);
 		}
 	}
 }
