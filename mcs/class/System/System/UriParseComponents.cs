@@ -228,7 +228,7 @@ namespace System {
 			int index;
 			for (index = 1; index < part.Length; index++ ) {
 				char ch = part [index];
-				if (ch != '.' && ch != '-' && ch != '+' && !IsAlpha (ch))
+				if (ch != '.' && ch != '-' && ch != '+' && !IsAlpha (ch) && !Char.IsDigit (ch))
 					break;
 				
 				sb.Append (ch);
