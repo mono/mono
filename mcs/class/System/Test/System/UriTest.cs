@@ -1434,6 +1434,13 @@ namespace MonoTests.System
 			new Uri ("hey");
 		}
 
+		[Test]
+		public void SchemeWithDigits ()
+		{
+			Uri uri = new Uri ("net.p2p://foobar");
+			Assert.AreEqual ("net.p2p", uri.Scheme);
+		}
+
 		// on .NET 2.0 a port number is limited to UInt16.MaxValue
 		[ExpectedException (typeof (UriFormatException))]
 		[Test]
