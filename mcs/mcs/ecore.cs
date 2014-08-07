@@ -430,6 +430,18 @@ namespace Mono.CSharp {
 			return type.GetDefinition ().GetSignatureForError ();
 		}
 
+		public static bool IsNeverNull (Expression expr)
+		{
+			if (expr is This || expr is New || expr is ArrayCreation || expr is DelegateCreation || expr is ConditionalMemberAccess)
+				return true;
+
+			var c = expr as Constant;
+			if (c != null)
+				return !c.IsNull;
+
+			return false;
+		}
+
 		protected static bool IsNullPropagatingValid (TypeSpec type)
 		{
 			return (TypeSpec.IsReferenceType (type) && type != InternalType.NullLiteral) || type.IsNullableType;

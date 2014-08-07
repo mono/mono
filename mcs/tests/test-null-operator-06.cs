@@ -23,6 +23,10 @@ public class C
 		if (t5 != 8)
 			return 5;
 
+		var t6 = x?.ToString().Length;
+		if (t6 != null)
+			return 6;
+
 		return 0;
 	}
 }

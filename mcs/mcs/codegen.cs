@@ -1030,8 +1030,6 @@ namespace Mono.CSharp
 		//
 		public Arguments EmittedArguments;
 
-		public Label NullOperatorLabel;
-
 		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
 		{
 			EmitPredefined (ec, method, Arguments, false, loc);
@@ -1169,8 +1167,7 @@ namespace Mono.CSharp
 			// It's non-virtual and will never be null and it can be determined
 			// whether it's known value or reference type by verifier
 			//
-			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation) &&
-				!instance.Type.IsGenericParameter)
+			if (!method.IsVirtual && Expression.IsNeverNull (instance) && !instance.Type.IsGenericParameter)
 				return false;
 
 			return true;
@@ -1199,6 +1196,9 @@ namespace Mono.CSharp
 		{
 			Label NullOperatorLabel;
 			Nullable.Unwrap unwrap;
+
+			if (conditionalAccess && Expression.IsNeverNull (instance))
+				conditionalAccess = false;
 
 			if (conditionalAccess) {
 				NullOperatorLabel = ec.DefineLabel ();
