@@ -8876,7 +8876,7 @@ namespace Mono.CSharp
 
 		public override bool HasConditionalAccess ()
 		{
-			return expr.HasConditionalAccess ();
+			return LeftExpression.HasConditionalAccess ();
 		}
 
 		public static bool IsValidDotExpression (TypeSpec type)
@@ -8976,6 +8976,9 @@ namespace Mono.CSharp
 
 								emg.SetTypeArguments (rc, targs);
 							}
+
+							if (this is ConditionalMemberAccess)
+								emg.ConditionalAccess = true;
 
 							// TODO: it should really skip the checks bellow
 							return emg.Resolve (rc);

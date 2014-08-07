@@ -3651,7 +3651,8 @@ namespace Mono.CSharp {
 				return null;
 
 			var cand = candidates;
-			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
+			var atype = ConditionalAccess ? Argument.AType.ExtensionTypeConditionalAccess : Argument.AType.ExtensionType;
+			arguments.Insert (0, new Argument (ExtensionExpression, atype));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
 			
 			// Restore candidates in case we are running in probing mode 
@@ -4947,7 +4948,7 @@ namespace Mono.CSharp {
 
 				score = 1;
 				if (!params_expanded_form) {
-					if (a.ArgType == Argument.AType.ExtensionType) {
+					if (a.IsExtensionType) {
 						//
 						// Indentity, implicit reference or boxing conversion must exist for the extension parameter
 						//
@@ -5335,7 +5336,7 @@ namespace Mono.CSharp {
 			}
 
 			if (best_candidate_dynamic) {
-				if (args[0].ArgType == Argument.AType.ExtensionType) {
+				if (args[0].IsExtensionType) {
 					rc.Report.Error (1973, loc,
 						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
 						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError ());
@@ -5682,7 +5683,7 @@ namespace Mono.CSharp {
 				}
 
 				Expression conv;
-				if (a.ArgType == Argument.AType.ExtensionType) {
+				if (a.IsExtensionType) {
 					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt)) {
 						conv = a.Expr;
 					} else {
