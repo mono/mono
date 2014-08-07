@@ -67360,6 +67360,16 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-07.cs">
+    <type name="C">
+      <method name="Int32 Main()" attrs="145">
+        <size>95</size>
+      </method>
+      <method name="System.String EM(System.Object)" attrs="145">
+        <size>26</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()" attrs="6278">
