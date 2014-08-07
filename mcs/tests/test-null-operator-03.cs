@@ -10,7 +10,9 @@ class C
         if (x == null)
             return 1;
 
-        // TODO: Should it really be of int? type
+        var x2 = "abc"?.GetHashCode();
+        if (x2 == null)
+            return 2;
 
         return 0;
     }

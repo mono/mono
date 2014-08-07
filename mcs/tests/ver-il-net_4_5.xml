@@ -67294,7 +67294,7 @@
   <test name="test-null-operator-03.cs">
     <type name="C">
       <method name="Int32 Test1()" attrs="129">
-        <size>62</size>
+        <size>82</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>62</size>
@@ -67353,7 +67353,7 @@
   <test name="test-null-operator-06.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="145">
-        <size>409</size>
+        <size>465</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
