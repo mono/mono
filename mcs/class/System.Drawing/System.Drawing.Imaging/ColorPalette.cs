@@ -69,7 +69,6 @@ namespace System.Drawing.Imaging
 				return flags;
 			}
 		}
-#if !TARGET_JVM
 		/* Caller should call FreeHGlobal*/
 		internal IntPtr getGDIPalette() 
 		{
@@ -112,6 +111,5 @@ namespace System.Drawing.Imaging
 				offset += 4;
 			}
 		}
-#endif
 	}
 }

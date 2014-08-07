@@ -115,13 +115,7 @@ namespace System.Web.UI
 			var req = context.Request;
 			if (req != null)
 				masterPageFile = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (req.CurrentExecutionFilePath, masterPageFile);
-#if TARGET_JVM
-			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
-											    owner.Page.MapPath (masterPageFile),
-											    context);
-#else
 			MasterPage masterPage = BuildManager.CreateInstanceFromVirtualPath (masterPageFile, typeof (MasterPage)) as MasterPage;
-#endif
 			if (masterPage == null)
 				throw new HttpException ("Failed to create MasterPage instance for '" + masterPageFile + "'.");
 

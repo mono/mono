@@ -151,9 +151,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NotDotNet")]
-#if TARGET_JVM
-		[Ignore ("TD #6954")]
-#endif
 		public void HtmlEncode_XSS ()
 		{
 			string problem = "\xff1cscript\xff1e";  // unicode looks alike <script>
@@ -306,9 +303,7 @@ namespace MonoTests.System.Web {
 		}
 #endif
 		[Test]
-#if !TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void HtmlEncode ()
 		{
 			for (char c = char.MinValue; c < char.MaxValue; c++) {
@@ -608,9 +603,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #6956")]
-#endif
 		public void UrlEncodeUnicodeTest ()
 		{
 			string str = "sch" + (char) 0xf6 + "n";
@@ -757,9 +749,6 @@ namespace MonoTests.System.Web {
 
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #6956")]
-#endif
 		public void ParseQueryString ()
 		{
 			ParseQueryString_Helper (HttpUtility.ParseQueryString ("name=value"), "#1",

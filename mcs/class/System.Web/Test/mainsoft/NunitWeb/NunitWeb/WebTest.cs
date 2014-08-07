@@ -1,7 +1,3 @@
-#if TARGET_JVM_FOR_WEBTEST
-#define TARGET_JVM
-#endif
-
 using System;
 using System.Reflection;
 using System.IO;
@@ -202,7 +198,6 @@ namespace MonoTests.SystemWeb.Framework
 		/// </summary>
 		public static void CleanApp ()
 		{
-#if !TARGET_JVM
 			if (host != null) {
 				lock (_appUnloadedSync) {
 					EventHandler handler = new EventHandler(PulseAppUnloadedSync);
@@ -218,7 +213,6 @@ namespace MonoTests.SystemWeb.Framework
 				baseDir = null;
 				binDir = null;
 			}
-#endif
 		}
 		
 		private static object _appUnloadedSync = new object();
@@ -305,7 +299,6 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
-#if !TARGET_JVM
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
 					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
@@ -313,7 +306,6 @@ namespace MonoTests.SystemWeb.Framework
 				source.Read (array, 0, array.Length);
 				CopyBinary (array, targetUrl);
 			}
-#endif
 		}
 
 		public static void CopyPrefixedResources (Type type, string namePrefix, string targetDir)
@@ -347,9 +339,6 @@ namespace MonoTests.SystemWeb.Framework
 		/// <example><code>CopyBinary (System.Text.Encoding.UTF8.GetBytes ("Hello"), "App_Data/Greeting.txt");</code></example>
 		public static string CopyBinary (byte[] sourceArray, string targetUrl)
 		{
-#if TARGET_JVM
-			return null;
-#else
 			EnsureWorkingDirectories ();
 			EnsureDirectoryExists (Path.Combine (baseDir, Path.GetDirectoryName (targetUrl)));
 			string targetFile = Path.Combine (baseDir, targetUrl);
@@ -386,7 +375,6 @@ namespace MonoTests.SystemWeb.Framework
 			}
 
 			return targetFile;
-#endif
 		}
 
 		static WebTestResourcesSetupAttribute.SetupHandler CheckResourcesSetupHandler ()
@@ -408,14 +396,9 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (host != null)
 				return;
-#if TARGET_JVM
-			host = new MyHost ();
-			return;
-#else
 			host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
 			if (host == null)
 				SetupHosting ();
-#endif
 		}
 		
 		public static void SetupHosting ()
@@ -425,16 +408,10 @@ namespace MonoTests.SystemWeb.Framework
 		
 		public static void SetupHosting (WebTestResourcesSetupAttribute.SetupHandler resHandler)
 		{
-#if !TARGET_JVM
 			if (host == null)
 				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
-#endif
 			if (host != null)
 				CleanApp ();
-#if TARGET_JVM
-			host = new MyHost ();
-			return;
-#else
 			if (resHandler == null)
 				resHandler = CheckResourcesSetupHandler ();
 			if (resHandler == null)
@@ -452,7 +429,6 @@ namespace MonoTests.SystemWeb.Framework
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
 			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
  			host.AppDomain.DomainUnload += new EventHandler (_unloadHandler.OnUnload);
-#endif
 		}
 
 		private static UnloadHandler _unloadHandler = new UnloadHandler();
@@ -485,7 +461,6 @@ namespace MonoTests.SystemWeb.Framework
 			
 			public void OnUnload (object o, EventArgs args)
 			{
-#if !TARGET_JVM
                 // Block new requests from starting
 				lock (_syncUnloading) {
 					// Wait for pending requests to finish
@@ -501,7 +476,6 @@ namespace MonoTests.SystemWeb.Framework
 					if (handler != null)
 						handler(this, null);
 				}
-#endif
             }
 		}
 
@@ -509,15 +483,10 @@ namespace MonoTests.SystemWeb.Framework
 
 		public static string TestBaseDir {
 			get {
-#if !TARGET_JVM
 				return baseDir;
-#else
-				return String.Empty;
-#endif
 			}
 		}
 		
-#if !TARGET_JVM
 		const string VIRTUAL_BASE_DIR = "/NunitWeb";
 		private static string baseDir;
 		private static string binDir;
@@ -608,6 +577,5 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		static partial void CopyResourcesLocal ();
-#endif
 	}
 }

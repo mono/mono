@@ -13,7 +13,7 @@ using System;
 using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.Serialization;
@@ -31,9 +31,7 @@ public class AssemblyNameTest {
 
 	private string tempDir = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.AssemblyNameTest");
 
-#if !TARGET_JVM // Thread.GetDomain is not supported for TARGET_JVM.
 	private AppDomain domain;
-#endif // TARGET_JVM
 
 	// created with "sn -o test.snk test.txt"
 	static byte[] keyPair = {
@@ -154,9 +152,7 @@ public class AssemblyNameTest {
 
 		Directory.CreateDirectory (tempDir);
 
-#if !TARGET_JVM // Thread.GetDomain is not supported for TARGET_JVM.
 		domain = Thread.GetDomain ();
-#endif // TARGET_JVM
 	}
 
 	[TearDown]
@@ -761,7 +757,7 @@ public class AssemblyNameTest {
 		return assemblyName;
 	}
 
-#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM.
+#if !MOBILE
 	private Assembly GenerateAssembly (AssemblyName name) 
 	{
 		AssemblyBuilder ab = domain.DefineDynamicAssembly (
@@ -892,7 +888,7 @@ public class AssemblyNameTest {
 		ab = GenerateDynamicAssembly (name);
 		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
 	}
-#endif // TARGET_JVM
+#endif
 
 	[Test]
 	public void HashAlgorithm ()
@@ -983,7 +979,6 @@ public class AssemblyNameTest {
 		Assert.AreEqual (an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken (), "PublicToken");
 	}
 
-#if !TARGET_JVM // Assemblyname.GetObjectData not implemented yet for TARGET_JVM
 	[Test]
 	public void GetObjectData_Info_Null ()
 	{
@@ -999,7 +994,6 @@ public class AssemblyNameTest {
 			Assert.AreEqual ("info", ex.ParamName, "#6");
 		}
 	}
-#endif // TARGET_JVM
 
 	[Test]
 	public void Clone_Corlib ()
@@ -1166,7 +1160,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
-	[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM.
 	public void Constructor1_Full ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -1768,7 +1761,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
-	[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM.
 	public void Constructor1_Version ()
 	{
 		const string assemblyName = "TestAssembly";

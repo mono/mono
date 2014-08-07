@@ -192,7 +192,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")]
 		public void ExpressionDelegateTarget ()
 		{
 			var p = Expression.Parameter (typeof (string), "str");
@@ -220,7 +219,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 #if !NET_4_0
 		[Test]
-		[Category ("TargetJvmNotSupported")]
 		public void GlobalsInScope ()
 		{
 			var foo = new Foo { gazonk = "gazonk" };

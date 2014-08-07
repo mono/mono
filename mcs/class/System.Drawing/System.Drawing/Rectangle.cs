@@ -54,13 +54,6 @@ namespace System.Drawing
 		
 		public static readonly Rectangle Empty;
 
-#if TARGET_JVM
-		internal java.awt.Rectangle NativeObject {
-			get {
-				return new java.awt.Rectangle(X,Y,Width,Height);
-			}
-		}
-#endif
 
 		/// <summary>
 		///	Ceiling Shared Method

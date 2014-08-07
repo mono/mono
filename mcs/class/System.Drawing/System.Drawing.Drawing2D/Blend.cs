@@ -38,9 +38,6 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for Blend.
 	/// </summary>
-#if TARGET_JVM
-	[MonoTODO]
-#endif
 	public sealed class Blend
 	{
 		private float [] positions;

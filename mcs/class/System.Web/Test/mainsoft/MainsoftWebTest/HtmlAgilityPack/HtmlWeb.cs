@@ -7,7 +7,6 @@ using System.Xml.Serialization;
 using System.Xml.Xsl;
 using Microsoft.Win32;
 
-#if !TARGET_JVM
 namespace HtmlAgilityPack
 {
 	/// <summary>
@@ -821,4 +820,3 @@ namespace HtmlAgilityPack
 		}
 	}
 }
-#endif

@@ -49,9 +49,7 @@ public class OracleDataReader_GetName_I : GHTBase
 	}
 
 	[Test]
-#if !TARGET_JVM
 	[Category("NotWorking")]
-#endif
 	public void run()
 	{
 		Exception exp = null;

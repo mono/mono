@@ -43,55 +43,6 @@ namespace System.Diagnostics {
 
 	public abstract class TraceListener : MarshalByRefObject, IDisposable {
 
-#if TARGET_JVM
-		readonly LocalDataStoreSlot _indentLevelStore = System.Threading.Thread.AllocateDataSlot ();
-		readonly LocalDataStoreSlot _indentSizeStore = System.Threading.Thread.AllocateDataSlot ();
-		readonly LocalDataStoreSlot _attributesStore = System.Threading.Thread.AllocateDataSlot ();
-		readonly LocalDataStoreSlot _filterStore = System.Threading.Thread.AllocateDataSlot ();
-		readonly LocalDataStoreSlot _optionsStore = System.Threading.Thread.AllocateDataSlot ();
-		
-		private int indentLevel {
-			get {
-				object o = System.Threading.Thread.GetData (_indentLevelStore);
-				if (o == null)
-					return 0;
-				return (int) o;
-			}
-			set { System.Threading.Thread.SetData (_indentLevelStore, value); }
-		}
-		
-		private int indentSize {
-			get {
-				object o = System.Threading.Thread.GetData (_indentSizeStore);
-				if (o == null)
-					return 4;
-				return (int) o;
-			}
-			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
-		}
-
-		private StringDictionary attributes {
-			get { return (StringDictionary) System.Threading.Thread.GetData (_attributesStore); }
-			set { System.Threading.Thread.SetData (_attributesStore, value); }
-		}
-
-#if !MOBILE
-		private TraceFilter filter {
-			get { return (TraceFilter) System.Threading.Thread.GetData (_filterStore); }
-			set { System.Threading.Thread.SetData (_filterStore, value); }
-		}
-#endif
-
-		private TraceOptions options {
-			get {
-				object o = System.Threading.Thread.GetData (_optionsStore);
-				if (o == null)
-					return TraceOptions.None;
-				return (TraceOptions) o;
-			}
-			set { System.Threading.Thread.SetData (_optionsStore, value); }
-		}
-#else
 		[ThreadStatic]
 		private int indentLevel = 0;
 
@@ -106,7 +57,6 @@ namespace System.Diagnostics {
 #endif
 		[ThreadStatic]
 		private TraceOptions options;
-#endif
 
 		private string name;
 		private bool needIndent = true;

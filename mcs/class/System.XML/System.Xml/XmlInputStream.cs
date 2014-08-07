@@ -466,12 +466,6 @@ namespace System.Xml
 						}
 					}
 				}
-#if TARGET_JVM
-				else {
-					if (bufLength >= 10 && Encoding.Unicode.GetString (buffer, 2, 8) == "?xml")
-						enc = Encoding.Unicode;
-				}
-#endif
 				bufPos = 0;
 				break;
 			default:

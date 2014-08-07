@@ -35,9 +35,6 @@ using NUnit.Framework;
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
-#if TARGET_JVM
-using DivideByZeroException = System.ArithmeticException;
-#endif
 #if NET_2_0
 using System.Xml.Serialization;
 using System.IO;

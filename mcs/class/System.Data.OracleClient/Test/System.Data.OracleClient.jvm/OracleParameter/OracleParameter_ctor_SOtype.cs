@@ -94,9 +94,6 @@ public class OracleParameter_ctor_SOtype : ADONetTesterClass
 	}
 
 	[Test]
-//#if !TARGET_JVM
-//	[Category("NotWorking")]
-//#endif
 	public void SimpleTypesWithDBNull()
 	{
 		OracleConnection con=null;

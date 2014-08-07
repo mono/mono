@@ -100,10 +100,8 @@ namespace System.Web.Services.Protocols
 
 			string physPath = Path.Combine (path, help);
 			
-#if !TARGET_JVM
 			if (!File.Exists (physPath))
 				throw new InvalidOperationException ("Documentation page '" + physPath + "' not found");
-#endif
 
 			_pageHandler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
 		}
@@ -137,11 +135,7 @@ namespace System.Web.Services.Protocols
 
 				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
 				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
-#if !TARGET_JVM //code generation is not supported
 				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
-#else
-				else if (key == "code") throw new Exception("Code generation is not supported.");
-#endif
 				else if (key == "disco") GenerateDiscoDocument (context);
 				else throw new Exception ("This should never happen");
 			}
@@ -212,7 +206,6 @@ namespace System.Web.Services.Protocols
 			GetSchemas() [di].Write (xtw);
 		}
 
-#if !TARGET_JVM		
 		void GenerateCode (HttpContext context, string langId)
 		{
 			context.Response.ContentType = "text/plain; charset=utf-8";
@@ -256,7 +249,6 @@ namespace System.Web.Services.Protocols
 
 			return provider;
 		}
-#endif
 		
 		internal ServiceDescriptionCollection GetDescriptions ()
 		{

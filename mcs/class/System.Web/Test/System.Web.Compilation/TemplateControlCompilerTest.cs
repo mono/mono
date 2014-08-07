@@ -88,9 +88,7 @@ namespace MonoTests.System.Web.Compilation {
 		
         	[Test]
 		[NUnit.Framework.Category ("NunitWeb")]
-#if !TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ReadOnlyPropertyBindTest ()
 		{
 			new WebTest ("ReadOnlyPropertyBind.aspx").Run ();

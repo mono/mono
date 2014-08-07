@@ -7,7 +7,6 @@
 //
 // Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
-#if !TARGET_JVM
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -878,4 +877,3 @@ namespace MonoTests.System.Runtime.InteropServices
 	}
 #endif
 }
-#endif

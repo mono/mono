@@ -78,11 +78,7 @@ namespace MonoTests.System.Globalization {
 		public void DeserializeKnownValue ()
 		{
 			MemoryStream ms = new MemoryStream (serialized_daylighttime);
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			DaylightTime dt = (DaylightTime) bf.Deserialize (ms);
 			Assert.AreEqual (DateTime.MinValue, dt.Start, "Start");
 			Assert.AreEqual (DateTime.MaxValue, dt.End, "End");

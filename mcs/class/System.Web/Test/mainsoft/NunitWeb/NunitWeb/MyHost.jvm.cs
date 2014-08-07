@@ -81,11 +81,7 @@ namespace MonoTests.SystemWeb.Framework
 			headers.Add (INVOKER_HEADER, Serialize (t.Invoker));
 			headers.Add (USER_HEADER, Serialize (t.UserData));
 			WebRequest wr = t.Request.CreateWebRequest (
-#if TARGET_JVM
-				new Uri ("http://localhost:8080/MainsoftWebApp20/"),
-#else
 new Uri ("http://localhost:59598/NunitWebTest/"),
-#endif
 				headers);
 
 

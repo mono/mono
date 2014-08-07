@@ -126,9 +126,6 @@ namespace System.Web.Hosting {
 		//
 		//    http://www.west-wind.com/presentations/aspnetruntime/aspnetruntime.asp
 		// 
-#if TARGET_JVM
-		[MonoNotSupported ("")]
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static object CreateApplicationHost (Type hostType, string virtualDir, string physicalDir)
 		{

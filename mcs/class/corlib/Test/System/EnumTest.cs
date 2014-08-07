@@ -201,30 +201,22 @@ namespace MonoTests.System
 
 			Assert.AreEqual ("00", TestingEnum4.This.ToString ("x"), "#B1");
 			Assert.AreEqual ("00", TestingEnum4.This.ToString ("X"), "#B2");
-#if !TARGET_JVM // This appears not to work under .Net
 			Assert.AreEqual ("ff", TestingEnum4.Test.ToString ("x"), "#B3");
-#endif // TARGET_JVM
 			Assert.AreEqual ("FF", TestingEnum4.Test.ToString ("X"), "#B4");
 
 			Assert.AreEqual ("0000", TestingEnum5.This.ToString ("x"), "#C1");
 			Assert.AreEqual ("0000", TestingEnum5.This.ToString ("X"), "#C2");
-#if !TARGET_JVM // This appears not to work under .Net
 			Assert.AreEqual ("7fff", TestingEnum5.Test.ToString ("x"), "#C3");
-#endif // TARGET_JVM
 			Assert.AreEqual ("7FFF", TestingEnum5.Test.ToString ("X"), "#C4");
 
 			Assert.AreEqual ("00000000", TestingEnum6.This.ToString ("x"), "#D1");
 			Assert.AreEqual ("00000000", TestingEnum6.This.ToString ("X"), "#D2");
-#if !TARGET_JVM // This appears not to work under .Net
 			Assert.AreEqual ("7fffffff", TestingEnum6.Test.ToString ("x"), "#D3");
-#endif // TARGET_JVM
 			Assert.AreEqual ("7FFFFFFF", TestingEnum6.Test.ToString ("X"), "#D4");
 
 			Assert.AreEqual ("0000000000000000", TestingEnum3.This.ToString ("x"), "#E1");
 			Assert.AreEqual ("0000000000000000", TestingEnum3.This.ToString ("X"), "#E2");
-#if !TARGET_JVM // This appears not to work under .Net
 			Assert.AreEqual ("ffffffffffffffff", TestingEnum3.Test.ToString ("x"), "#E3");
-#endif // TARGET_JVM
 			Assert.AreEqual ("FFFFFFFFFFFFFFFF", TestingEnum3.Test.ToString ("X"), "#E4");
 		}
 

@@ -376,9 +376,7 @@ namespace MonoTests.System.Data.Utils.Data
 		/// <returns>The number of deleted rows.</returns>
 		public static int ExecuteDelete(string a_sTableName, string a_sUniqueId)
 		{
-#if !TARGET_JVM
 			return 0;
-#endif
 			int l_iRecordsDeleted;
 			OracleCommand l_cmdDelete = new OracleCommand();
 			l_cmdDelete.Connection = new OracleConnection(ConnectedDataProvider.ConnectionString);

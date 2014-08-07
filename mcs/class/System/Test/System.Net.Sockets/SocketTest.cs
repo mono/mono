@@ -205,7 +205,6 @@ namespace MonoTests.System.Net.Sockets
 			Assert.AreEqual (CFAConnected, false, "ConnectFail");
 		}
 		
-#if !TARGET_JVM
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
@@ -220,7 +219,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Close ();
 			}
 		}
-#endif
 		[Test]
 		public void TestSelect1 ()
 		{

@@ -31,9 +31,9 @@
 using System;
 using System.Threading;
 using System.Reflection;
-#if !TARGET_JVM && !MONOTOUCH
+#if !MONOTOUCH
 using System.Reflection.Emit;
-#endif // TARGET_JVM
+#endif
 using System.Runtime.InteropServices;
 
 using NUnit.Framework;
@@ -397,7 +397,6 @@ namespace MonoTests.System.Reflection
 			typeof (Foo).GetField ("static_field").GetValue (typeof (int));
 		}
 
-#if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetValueOnRefOnlyAssembly ()
@@ -417,7 +416,6 @@ namespace MonoTests.System.Reflection
 			FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
 			f.SetValue (null, 8);
 		}
-#endif // TARGET_JVM
 
 		const int literal = 42;
 
@@ -453,7 +451,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (null, fi2.GetValue (t));
 		}
 	
-#if !TARGET_JVM // TypeBuilder not supported for TARGET_JVM
 		[Test]
 		public void NonPublicTests ()
 		{
@@ -468,7 +465,6 @@ namespace MonoTests.System.Reflection
 			fi = t.GetField ("protectedField", BindingFlags.NonPublic | BindingFlags.Instance);
 			Assert.IsNotNull (fi);
 		}
-#endif // TARGET_JVM
 
 		[Test]
 		public void GetRawDefaultValue ()

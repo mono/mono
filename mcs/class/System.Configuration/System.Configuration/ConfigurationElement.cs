@@ -769,28 +769,7 @@ namespace System.Configuration
 	
 	internal class ElementMap
 	{
-#if TARGET_JVM
-		const string elementMapsKey = "ElementMap_elementMaps";
-		static Hashtable elementMaps
-		{
-			get
-			{
-				Hashtable tbl = (Hashtable) AppDomain.CurrentDomain.GetData (elementMapsKey);
-				if (tbl == null) {
-					lock (typeof (ElementMap)) {
-						tbl = (Hashtable) AppDomain.CurrentDomain.GetData (elementMapsKey);
-						if (tbl == null) {
-							tbl = Hashtable.Synchronized (new Hashtable ());
-							AppDomain.CurrentDomain.SetData (elementMapsKey, tbl);
-						}
-					}
-				}
-				return tbl;
-			}
-		}
-#else
 		static readonly Hashtable elementMaps = Hashtable.Synchronized (new Hashtable ());
-#endif
 
 		readonly ConfigurationPropertyCollection properties;
 		readonly ConfigurationCollectionAttribute collectionAttribute;

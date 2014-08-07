@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using System.Xml.XPath;
-#if !TARGET_JVM && !MSNET
+#if !MSNET
 using Commons.Xml.Nvdl;
 using Commons.Xml.Relaxng;
 using Commons.Xml.Relaxng.Rnc;
@@ -63,7 +63,7 @@ environment variable that affects behavior:
 			case "--help":
 				Usage ();
 				return;
-#if !TARGET_JVM && !MSNET
+#if !MSNET
 			case "--validate":
 				ValidateAuto (args);
 				return;
@@ -95,7 +95,7 @@ environment variable that affects behavior:
 			}
 		}
 
-#if !TARGET_JVM && !MSNET
+#if !MSNET
 		static void ValidateAuto (string [] args)
 		{
 			if (args.Length < 1) {

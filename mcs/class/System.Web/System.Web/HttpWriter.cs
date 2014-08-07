@@ -143,14 +143,10 @@ namespace System.Web
 		{
 			if (buffer == null || index < 0 || count < 0 || (buffer.Length - index) < count)
 				throw new ArgumentOutOfRangeException ();
-#if TARGET_JVM
-			output_stream.Write (buffer, index, count);
-#else
 			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
 			int realLength = encoding.GetBytes (buffer, index, count, bytebuffer, 0);
 			output_stream.Write (bytebuffer, 0, realLength);
-#endif
 			if (response.buffer)
 				return;
 
@@ -171,14 +167,10 @@ namespace System.Web
 
 			if (index < 0 || count < 0 || ((index + count > s.Length)))
 				throw new ArgumentOutOfRangeException ();
-#if TARGET_JVM
-			output_stream.Write (s, index, count);
-#else
 			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
 			int realLength = encoding.GetBytes (s, index, count, bytebuffer, 0);
 			output_stream.Write (bytebuffer, 0, realLength);
-#endif
 			if (response.buffer)
 				return;
 

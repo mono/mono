@@ -54,12 +54,8 @@ using System.Runtime.InteropServices;
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
-#if TARGET_JVM
-[assembly: AssemblyDelaySign (false)]
-#else
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../ecma.pub")]
-#endif
 
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]

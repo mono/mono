@@ -600,12 +600,10 @@ public sealed class TypeDescriptor
 			editor = CreateEditor (editorType, componentType);
 			
 		if (editorType == null || editor == null) {
-#if !TARGET_JVM
 			// Make sure the editorBaseType's static constructor has been called,
 			// since that's where we're putting the initialization of its editor table.
 			
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (editorBaseType.TypeHandle);
-#endif				
 			if (editors != null)
 				editor = FindEditorInTable (componentType, editorBaseType, editors [editorBaseType] as Hashtable);
 		}

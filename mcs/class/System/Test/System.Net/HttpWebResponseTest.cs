@@ -666,9 +666,6 @@ namespace MonoTests.System.Net
 
 #if NET_2_0
 		[Test] // bug #324182
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void CanTimeout ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);

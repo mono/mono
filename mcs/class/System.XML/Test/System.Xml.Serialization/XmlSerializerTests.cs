@@ -861,9 +861,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("JVM returns fields in different order")]
-#endif
 		public void TestSerializeGroup ()
 		{
 			Group myGroup = new Group ();
@@ -2196,7 +2193,7 @@ namespace MonoTests.System.XmlSerialization
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		[Test]
 		public void GenerateSerializerGenerics ()
 		{

@@ -43,9 +43,6 @@ namespace System.ComponentModel
 		private int native_error_code;
 
 //		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-#if TARGET_JVM
-		[MonoNotSupported("")]
-#endif
 		public Win32Exception ()
 			: base (W32ErrorMessage (Marshal.GetLastWin32Error ()))
 		{
@@ -66,18 +63,12 @@ namespace System.ComponentModel
 			native_error_code = error;
 		}
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-#if TARGET_JVM
-		[MonoNotSupported ("")]
-#endif
 		public Win32Exception (string message)
 			: base (message)
 		{
 			native_error_code = Marshal.GetLastWin32Error ();
 		}
 
-#if TARGET_JVM
-		[MonoNotSupported ("")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public Win32Exception (string message, Exception innerException)
 			: base (message, innerException)

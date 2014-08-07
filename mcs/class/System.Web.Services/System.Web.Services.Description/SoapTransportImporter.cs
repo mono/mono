@@ -35,18 +35,7 @@ namespace System.Web.Services.Description {
 	public abstract class SoapTransportImporter {
 
 		#region Fields
-#if !TARGET_JVM
 		static ArrayList transportImporters;
-#else
-		static ArrayList transportImporters {
-			get {
-				return (ArrayList)AppDomain.CurrentDomain.GetData("SoapTransportImporter.transportImporters");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData("SoapTransportImporter.transportImporters", value);
-			}
-		}
-#endif
 		SoapProtocolImporter importContext;
 
 		#endregion // Fields

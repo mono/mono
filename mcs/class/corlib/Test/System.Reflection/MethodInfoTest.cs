@@ -51,10 +51,8 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
-#if !TARGET_JVM
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 		public static extern void dllImportMethod ();
-#endif
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
 		public void preserveSigMethod ()
 		{
@@ -128,7 +126,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void ReturnTypePseudoCustomAttributes ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ReturnTypeMarshalAs");
@@ -317,7 +314,6 @@ namespace MonoTests.System.Reflection
 		}
 
 #if NET_2_0
-#if !TARGET_JVM // MethodBody is not supported for TARGET_JVM
 		[Test]
 		public void GetMethodBody_Abstract ()
 		{
@@ -382,7 +378,6 @@ namespace MonoTests.System.Reflection
 			else
 				Assert.AreEqual (false, locals [1].IsPinned, "#6");
 		}
-#endif // TARGET_JVM
 
 		public int return_parameter_test ()
 		{
@@ -413,7 +408,6 @@ namespace MonoTests.System.Reflection
 			//Assert.IsTrue (pi.IsRetval, "#3");
 		}
 
-#if !TARGET_JVM // ReflectionOnly is not supported yet on TARGET_JVM
 		[Test]
 			public void InvokeOnRefOnlyAssembly ()
 		{
@@ -431,7 +425,6 @@ namespace MonoTests.System.Reflection
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-#endif // TARGET_JVM
 
 		[Test]
 		[ExpectedException (typeof (TargetInvocationException))]

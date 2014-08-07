@@ -122,9 +122,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Decoders ()
 		{
 			Assert.AreEqual (8, decoders.Count, "Count");
@@ -148,9 +145,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Encoders ()
 		{
 			Assert.AreEqual (5, encoders.Count, "Count");
@@ -171,9 +165,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void BMPCodec()
 		{
 			Guid g = new Guid ("557cf400-1a04-11d3-9a73-0000f81ef32e");
@@ -184,9 +175,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void GifCodec()
 		{
 			Guid g = new Guid ("557cf402-1a04-11d3-9a73-0000f81ef32e");
@@ -197,9 +185,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 		
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void JpegCodec()
 		{
 			Guid g = new Guid ("557cf401-1a04-11d3-9a73-0000f81ef32e");
@@ -210,9 +195,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void PngCodec()
 		{
 			Guid g = new Guid ("557cf406-1a04-11d3-9a73-0000f81ef32e");
@@ -223,9 +205,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TiffCodec ()
 		{
 			Guid g = new Guid ("557cf405-1a04-11d3-9a73-0000f81ef32e");
@@ -236,9 +215,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IconCodec_Encoder ()
 		{
 			Guid g = new Guid ("557cf407-1a04-11d3-9a73-0000f81ef32e");
@@ -246,9 +222,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IconCodec_Decoder ()
 		{
 			Guid g = new Guid ("557cf407-1a04-11d3-9a73-0000f81ef32e");
@@ -259,9 +232,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void EmfCodec_Encoder ()
 		{
 			Guid g = new Guid ("557cf403-1a04-11d3-9a73-0000f81ef32e");
@@ -269,9 +239,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void EmfCodec_Decoder ()
 		{
 			Guid g = new Guid ("557cf403-1a04-11d3-9a73-0000f81ef32e");
@@ -283,9 +250,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void WmfCodec_Encoder ()
 		{
 			Guid g = new Guid ("557cf404-1a04-11d3-9a73-0000f81ef32e");
@@ -293,9 +257,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void WmfCodec_Decoder ()
 		{
 			Guid g = new Guid ("557cf404-1a04-11d3-9a73-0000f81ef32e");

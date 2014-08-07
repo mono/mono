@@ -133,7 +133,6 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual ("dddd, d' ta\\' 'MMMM yyyy", culture.DateTimeFormat.LongDatePattern);
 		}
 
-#if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
 		{
@@ -143,7 +142,6 @@ namespace MonoTests.System.Globalization
 			DateTime dt2 = DateTime.Parse (s, ci);
 			Assert.AreEqual (dt.Month, dt2.Month);
 		}
-#endif
 	}
 }
 

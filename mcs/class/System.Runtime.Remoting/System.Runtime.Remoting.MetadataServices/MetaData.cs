@@ -35,10 +35,8 @@ using System.Text;
 using System.Xml;
 using System.Reflection;
 using System.Net;
-#if !TARGET_JVM
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
-#endif
 
 namespace System.Runtime.Remoting.MetadataServices
 {
@@ -56,7 +54,6 @@ namespace System.Runtime.Remoting.MetadataServices
 		{
 		}
 
-#if !TARGET_JVM
 		[MonoTODO ("strong name")]
 		public static void ConvertCodeSourceFileToAssemblyFile (
 				   string codePath,
@@ -133,7 +130,6 @@ namespace System.Runtime.Remoting.MetadataServices
 			memStream.Position = 0;
 			cg.GenerateCode (clientProxy, outputDirectory, memStream, outCodeStreamList, proxyUrl, proxyNamespace);
 		}
-#endif
 
 		public static void ConvertTypesToSchemaToFile (ServiceType [] types, SdlType sdlType, string path)
 		{

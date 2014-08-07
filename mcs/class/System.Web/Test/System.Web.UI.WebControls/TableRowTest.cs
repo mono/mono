@@ -38,9 +38,6 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
-#if TARGET_JVM
-    [vmw.common.ChangeInterfaceMethodNames]
-#endif
 	public interface ITableRowTest {
 
 		// testing

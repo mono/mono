@@ -98,13 +98,8 @@ namespace System.Runtime.Remoting.Channels
 			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
 			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
 
-#if !TARGET_JVM
 			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
 			_deserializationFormatter = new BinaryFormatter (null, context);
-#else
-			_serializationFormatter = (BinaryFormatter) vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (surrogateSelector, context, false);
-			_deserializationFormatter = (BinaryFormatter) vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (null, context, false);
-#endif
 			
 			_serializationFormatter.FilterLevel = _filterLevel;
 			_deserializationFormatter.FilterLevel = _filterLevel;

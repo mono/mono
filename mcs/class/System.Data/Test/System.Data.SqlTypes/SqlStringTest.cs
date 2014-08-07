@@ -191,9 +191,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The option CompareOptions.IgnoreWidth is not supported")]
-#endif
 		public void CompareTo()
 		{
 			SqlByte Test = new SqlByte (1);
@@ -271,9 +268,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The option CompareOptions.IgnoreWidth is not supported")]
-#endif
 		public void Greaters()
 		{
 			// GreateThan ()
@@ -288,9 +282,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The option CompareOptions.IgnoreWidth is not supported")]
-#endif
 		public void Lessers()
 		{
 			// LessThan()
@@ -377,11 +368,7 @@ namespace MonoTests.System.Data.SqlTypes
 				byte test = Test1.GetUnicodeBytes () [105];
 				Assert.Fail ("#N05");
 			} catch (Exception e) {
-#if TARGET_JVM
-				Assert.IsTrue (typeof (IndexOutOfRangeException).IsAssignableFrom(e.GetType()), "#N06");
-#else
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType(), "#N06");
-#endif
 			}
 		}
 
@@ -545,9 +532,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The option CompareOptions.IgnoreWidth is not supported")]
-#endif
 		public void ThanOrEqualOperators()
 		{
 			// == -operator

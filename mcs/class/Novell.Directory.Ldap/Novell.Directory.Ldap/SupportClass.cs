@@ -87,14 +87,10 @@ using System;
 		[CLSCompliantAttribute(false)]
 		public static sbyte[] ToSByteArray(byte[] byteArray)
 		{
-#if TARGET_JVM
-			return vmw.common.TypeUtils.ToSByteArray(byteArray);
-#else
 			sbyte[] sbyteArray = new sbyte[byteArray.Length];
 			for(int index=0; index < byteArray.Length; index++)
 				sbyteArray[index] = (sbyte) byteArray[index];
 			return sbyteArray;
-#endif
 		}
 		/*******************************/
 		/// <summary>
@@ -105,14 +101,10 @@ using System;
 		[CLSCompliantAttribute(false)]
 		public static byte[] ToByteArray(sbyte[] sbyteArray)
 		{
-#if TARGET_JVM
-			return (byte[])vmw.common.TypeUtils.ToByteArray(sbyteArray);;
-#else
 			byte[] byteArray = new byte[sbyteArray.Length];
 			for(int index=0; index < sbyteArray.Length; index++)
 				byteArray[index] = (byte) sbyteArray[index];
 			return byteArray;
-#endif
 		}
 
 		/// <summary>

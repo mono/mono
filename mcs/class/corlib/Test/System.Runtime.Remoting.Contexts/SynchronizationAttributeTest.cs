@@ -107,11 +107,7 @@ namespace MonoTests.System.Runtime.Remoting.Contexts {
 		public void DeserializeKnownValue ()
 		{
 			MemoryStream ms = new MemoryStream (serialized_sync_attr);
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			SynchronizationAttribute sa = (SynchronizationAttribute) bf.Deserialize (ms);
 			Assert.IsTrue (sa.IsReEntrant, "IsReEntrant");
 			Assert.IsFalse (sa.Locked, "Locked");

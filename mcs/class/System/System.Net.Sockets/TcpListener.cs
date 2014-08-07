@@ -148,9 +148,6 @@ namespace System.Net.Sockets
 		/// Specifies whether the TcpListener allows only one
 		/// underlying socket to listen to a specific port
 		/// </summary>
-#if TARGET_JVM
-		[MonoNotSupported ("Not supported as Socket.ExclusiveAddressUse is not supported")]
-#endif
 		public bool ExclusiveAddressUse
 		{
 			get {

@@ -50,19 +50,7 @@ namespace System.Web.Services.Configuration
 	
 	class WSConfig
 	{
-#if !TARGET_JVM
 		volatile static WSConfig instance;
-#else
-		static WSConfig instance {
-			get {
-				return (WSConfig)AppDomain.CurrentDomain.GetData("WSConfig.instance");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData("WSConfig.instance", value);
-			}
-		}
-
-#endif
 		WSProtocol protocols;
 		string wsdlHelpPage;
 		string filePath;

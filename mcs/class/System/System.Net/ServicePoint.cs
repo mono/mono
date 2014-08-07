@@ -381,7 +381,6 @@ namespace System.Net
 			protocolVersion = version;
 		}
 
-#if !TARGET_JVM
 		internal EventHandler SendRequest (HttpWebRequest request, string groupName)
 		{
 			WebConnection cnc;
@@ -399,7 +398,6 @@ namespace System.Net
 			
 			return cnc.SendRequest (request);
 		}
-#endif
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
 			lock (this) {

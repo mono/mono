@@ -429,11 +429,9 @@ namespace MonoTests.System.Configuration {
 		{
 			SysConfig cfg = ConfigurationManager.OpenMachineConfiguration ();
 			Assert.IsTrue (cfg.Sections.Count > 0, "#1");
-#if !TARGET_JVM
 			ConfigurationSection s = cfg.SectionGroups ["system.net"].Sections ["connectionManagement"];
 			Assert.IsNotNull (s, "#2");
 			Assert.IsTrue (s is ConnectionManagementSection, "#3");
-#endif
 		}
 
 		[Test]

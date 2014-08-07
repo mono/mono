@@ -97,9 +97,6 @@ namespace MonoTests.System.Drawing.Drawing2D
 
 		[Test]
 		[ExpectedException (typeof (OverflowException))]
-#if TARGET_JVM
-		[Category ("NotWorking")] // defect 6364
-#endif
 		public void ColorBlend_Negative ()
 		{
 			ColorBlend cb = new ColorBlend (-1);

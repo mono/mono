@@ -967,7 +967,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 		public void LastAccessTime ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -975,7 +974,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 		public void LastAccessTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -983,7 +981,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTime ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -991,7 +988,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);

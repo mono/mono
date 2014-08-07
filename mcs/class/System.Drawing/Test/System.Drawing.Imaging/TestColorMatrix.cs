@@ -160,10 +160,8 @@ namespace MonoTests.System.Drawing.Imaging {
 			Assert.AreEqual (0, cm.Matrix41, "4,1");
 			Assert.AreEqual (0, cm.Matrix42, "4,2");
 			Assert.AreEqual (0, cm.Matrix43, "4,3");
-#if !TARGET_JVM
 			Assert.AreEqual (100, Marshal.SizeOf (cm), "object");
 			Assert.AreEqual (100, Marshal.SizeOf (typeof (ColorMatrix)), "type");
-#endif
 		}
 
 		[Test]

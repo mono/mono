@@ -35,9 +35,6 @@ public class ServicePointTest
 
         [Test]
 		[Category ("InetAccess")]
-#if TARGET_JVM
-	[Ignore ("Unsupported - ServicePointManager.FindServicePoint")]
-#endif
         public void All ()
         {
 		ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -119,9 +116,6 @@ public class ServicePointTest
 
 	[Test]
 	[Category ("InetAccess")]
-#if TARGET_JVM
-	[Ignore ("The System.Net.ServicePointManager.FindServicePoint(Uri) is not supported")]
-#endif	
 	public void ConnectionLimit ()
 	{		
 		// the default is already 2, just in case it isn't..
@@ -155,9 +149,6 @@ public class ServicePointTest
 #if NET_2_0
 	[Test]
 	[Category ("InetAccess")]
-#if TARGET_JVM
-	[Ignore ("The System.Net.ServicePointManager.FindServicePoint(Uri) is not supported")]
-#endif	
 	public void EndPointBind ()
 	{
 		Uri uri = new Uri ("http://www.go-mono.com/");
@@ -166,26 +157,22 @@ public class ServicePointTest
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (uri);
 
 		bool called = false;
-#if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate {
 			Assert.IsTrue (!called);
 			called = true;
 			return null;
 		};
-#endif
 		req.GetResponse ().Close ();
 
 		Assert.IsTrue (called);
 
 		req = (HttpWebRequest) WebRequest.Create (uri);
 		called = false;
-#if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate(ServicePoint point, IPEndPoint remote, int times) {
 			Assert.IsTrue (times < 5);
 			called = true;
 			return new IPEndPoint(IPAddress.Parse("0.0.0.0"), 12345 + times);
 		};
-#endif
 		req.GetResponse ().Close ();
 
 		Assert.IsTrue (called);
