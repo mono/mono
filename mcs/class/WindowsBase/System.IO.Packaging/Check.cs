@@ -119,10 +119,10 @@ namespace System.IO.Packaging
 		public static void PartUriIsValid (Uri partUri)
 		{
 			if (!partUri.OriginalString.StartsWith ("/"))
-				throw new UriFormatException ("PartUris must start with '/'");
+				throw new ArgumentException ("PartUris must start with '/'");
 
 			if (partUri.IsAbsoluteUri)
-				throw new UriFormatException ("PartUris cannot be absolute");
+				throw new ArgumentException ("PartUris cannot be absolute");
 		}
 
 		public static void RelationshipTypeIsValid (string relationshipType)
