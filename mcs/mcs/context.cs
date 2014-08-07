@@ -188,6 +188,8 @@ namespace Mono.CSharp
 
 			TryWithCatchScope = 1 << 15,
 
+			ConditionalAccessReceiver = 1 << 16,
+
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
 			///

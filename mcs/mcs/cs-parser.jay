@@ -3303,7 +3303,7 @@ member_access
 			FeatureIsNotAvailable (GetLocation ($2), "null propagating operator");
 
 		var lt = (LocatedToken) $4;
-		$$ = new NullMemberAccess ((Expression) $1, lt.Value, (TypeArguments) $5, lt.Location);
+		$$ = new ConditionalMemberAccess ((Expression) $1, lt.Value, (TypeArguments) $5, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
 	  }
 	| builtin_types DOT identifier_inside_body opt_type_argument_list
@@ -3567,7 +3567,7 @@ element_access
 			FeatureIsNotAvailable (GetLocation ($2), "null propagating operator");
 
 		$$ = new ElementAccess ((Expression) $1, (Arguments) $4, GetLocation ($3)) {
-			NullPropagating = true
+			ConditionalAccess = true
 		};
 
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($5));

@@ -45,6 +45,14 @@ class C
         if (t3 != null)
             return 3;
 
+        var t4 = k?.GetLength (0).ToString () ?? "N";
+        if (t4 != "N")
+            return 4;
+
+        var t5 = k?.Length.ToString () ?? "N";
+        if (t5 != "N")
+            return 5;            
+
         k = new int[] { 3 };
         var t11 = k?.ToString ();
         if (t11.GetType () != typeof (string))
