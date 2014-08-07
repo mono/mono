@@ -67225,7 +67225,7 @@
         <size>22</size>
       </method>
       <method name="Int32 TestArray()" attrs="145">
-        <size>349</size>
+        <size>485</size>
       </method>
       <method name="Int32 TestReferenceType()" attrs="145">
         <size>231</size>
@@ -67234,7 +67234,7 @@
         <size>58</size>
       </method>
       <method name="Int32 TestNullable()" attrs="145">
-        <size>384</size>
+        <size>386</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>120</size>
@@ -67258,12 +67258,6 @@
       <method name="Void set_PropNullable(System.Nullable`1[System.Byte])" attrs="2182">
         <size>8</size>
       </method>
-      <method name="System.String get_PropReference()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_PropReference(System.String)" attrs="2182">
-        <size>8</size>
-      </method>
       <method name="Void add_ev1(System.Action)" attrs="2182">
         <size>42</size>
       </method>
@@ -67276,19 +67270,24 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="145">
-        <size>86</size>
+        <size>64</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
       <method name="Int32 TestProperty()" attrs="145">
-        <size>168</size>
+        <size>368</size>
       </method>
       <method name="Int32 TestField()" attrs="145">
-        <size>168</size>
+        <size>360</size>
       </method>
-      <method name="Int32 TestEvent()" attrs="145">
-        <size>50</size>
+    </type>
+    <type name="CI">
+      <method name="System.Object get_PropReference()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_PropReference(System.Object)" attrs="2182">
+        <size>8</size>
       </method>
     </type>
   </test>
@@ -67338,13 +67337,23 @@
     </type>
     <type name="C">
       <method name="Int32 TestArrayAccess()" attrs="145">
-        <size>114</size>
+        <size>208</size>
       </method>
       <method name="Int32 TestIndexerAccess()" attrs="145">
-        <size>93</size>
+        <size>191</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>64</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-06.cs">
+    <type name="C">
+      <method name="Int32 Main()" attrs="145">
+        <size>409</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

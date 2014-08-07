@@ -20,6 +20,10 @@ class C
 		if (v2 != null)
 			return 2;
 
+		var v3 = arr? [0].GetHashCode () ?? 724;
+		if (v3 != 724)
+			return 3;
+
 // TODO: Disabled for now?
 //        arr? [0] += 2;
 		return 0;
@@ -35,6 +39,10 @@ class C
 		var v2 = ci? [0];
 		if (v2 != null)
 			return 2;
+
+		var v3 = ci? [0].GetHashCode () ?? 724;
+		if (v3 != 724)
+			return 3;
 
 // TODO: Disabled for now?
 //       ci? [0] += 3;
