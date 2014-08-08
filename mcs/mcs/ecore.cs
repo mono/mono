@@ -444,7 +444,18 @@ namespace Mono.CSharp {
 
 		protected static bool IsNullPropagatingValid (TypeSpec type)
 		{
-			return (TypeSpec.IsReferenceType (type) && type != InternalType.NullLiteral) || type.IsNullableType;
+			switch (type.Kind) {
+			case MemberKind.Struct:
+				return type.IsNullableType;
+			case MemberKind.Enum:
+			case MemberKind.Void:
+			case MemberKind.PointerType:
+				return false;
+			case MemberKind.InternalCompilerType:
+				return type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			default:
+				return true;
+			}
 		}
 
 		public virtual bool HasConditionalAccess ()
