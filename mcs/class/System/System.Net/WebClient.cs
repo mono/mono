@@ -2183,6 +2183,12 @@ namespace System.Net
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
+			string cType = Headers ["Content-Type"];
+				if (cType != null && String.Compare (cType, urlEncodedCType, true) != 0)
+					throw new WebException ("Content-Type header cannot be changed from its default " +
+								"value for this request.");
+			Headers ["Content-Type"] = urlEncodedCType;
+
 			WebRequest request = null;
 			try {
 				SetBusy ();
@@ -2209,14 +2215,8 @@ namespace System.Net
 		                                              CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested ();
-			string cType = Headers ["Content-Type"];
-			if (cType != null && String.Compare (cType, urlEncodedCType, true) != 0)
-				throw new WebException ("Content-Type header cannot be changed from its default " +
-							"value for this request.");
 
 			WebResponse response = null;
-
-			Headers ["Content-Type"] = urlEncodedCType;
 			try {
 				MemoryStream tmpStream = new MemoryStream ();
 				foreach (string key in data) {
