@@ -1839,7 +1839,7 @@ opt_property_initializer
 		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 		start_block (GetLocation ($1));
 	  }
-	  expression SEMICOLON
+	  property_initializer SEMICOLON
 	  {
 		--lexer.parsing_block;
 		((Property)current_property).Initializer = (Expression) $3;
@@ -1847,6 +1847,11 @@ opt_property_initializer
 		end_block (GetLocation ($4));
 		current_local_parameters = null;
 	  }
+	;
+
+property_initializer
+	: expression
+	| array_initializer
 	;
 
 indexer_declaration
