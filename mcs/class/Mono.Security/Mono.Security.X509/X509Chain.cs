@@ -67,7 +67,8 @@ namespace Mono.Security.X509 {
 		// get a pre-builded chain
 		public X509Chain (X509CertificateCollection chain) : this ()
 		{
-			certs.AddRange (chain);
+			_chain = new X509CertificateCollection ();
+			_chain.AddRange (chain);
 		}
 
 		// properties
@@ -119,74 +120,65 @@ namespace Mono.Security.X509 {
 			return null;
 		}
 
-        public bool Build(X509Certificate leaf)
-        {
-            _status = X509ChainStatusFlags.NoError;
-            // Even when chain is supplied, it's really just a suggestion, how to build the chain. It may contain
-            // unnecessary certs, or be in the wrong order, etc. So build a newChain unconditionally.
-            _chain = new X509CertificateCollection();
-            if (leaf.IsSelfSigned)
-            {
-                _chain.Add(leaf); // chain should always contain leaf, even if it happens to be a root
-            }
-            X509Certificate x = leaf;
-            X509Certificate tmp = x;
-            while ((x != null) && (!x.IsSelfSigned))
-            {
-                tmp = x; // last valid
-                _chain.Add(x);
-                x = FindCertificateParent(x);
-            }
-            // find a trusted root
-            _root = FindCertificateRoot(tmp);
-            
+		public bool Build (X509Certificate leaf) 
+		{
+			_status = X509ChainStatusFlags.NoError;
+			if (_chain == null) {
+				// chain not supplied - we must build it ourselve
+				_chain = new X509CertificateCollection ();
+				X509Certificate x = leaf;
+				X509Certificate tmp = x;
+				while ((x != null) && (!x.IsSelfSigned)) {
+					tmp = x; // last valid
+					_chain.Add (x);
+					x = FindCertificateParent (x);
+				}
+				// find a trusted root
+				_root = FindCertificateRoot (tmp);
+			}
+			else {
+				// chain supplied - still have to check signatures!
+				int last = _chain.Count;
+				if (last > 0) {
+					if (IsParent (leaf, _chain [0])) {
+						int i = 1;
+						for (; i < last; i++) {
+							if (!IsParent (_chain [i-1], _chain [i]))
+								break;
+						}
+						if (i == last)
+							_root = FindCertificateRoot (_chain [last - 1]);
+					}
+				}
+				else {
+					// is the leaf a root ? (trusted or untrusted)
+					_root = FindCertificateRoot (leaf);
+				}
+			}
 
-            // validate the chain
-            if ((_chain != null) && (_status == X509ChainStatusFlags.NoError))
-            {
-                foreach (X509Certificate y in _chain)
-                {
-                    // validate dates for each certificate in the chain
-                    // note: we DO NOT check for nested date/time
-                    if (!IsValid(y))
-                    {
-                        return false;
-                    }
-                }
-                // check leaf
-                if (!IsValid(leaf))
-                {
-                    // switch status code if the failure is expiration
-                    if (_status == X509ChainStatusFlags.NotTimeNested)
-                        _status = X509ChainStatusFlags.NotTimeValid;
-                    return false;
-                }
-                // check root
-                if ((_root != null) && !IsValid(_root))
-                {
-                    return false;
-                }
-            }
-
-            if (_status == X509ChainStatusFlags.NoError)
-            {
-                // I am assuming the leaf cert is present in _chain, so if _chain.Count > 1 it means
-                // we have some intermediates in there too
-                if (_chain.Count > 1)
-                {
-                    X509CertificateCollection intermediates = X509StoreManager.IntermediateCACertificates;
-                    foreach (X509Certificate c in _chain)
-                    {
-                        if ((c != leaf) && (!intermediates.Contains(c)))
-                        {
-                            X509StoreManager.CurrentUser.IntermediateCA.Import(c);
-                        }
-                    }
-                }
-            }
-
-            return (_status == X509ChainStatusFlags.NoError);
-        }
+			// validate the chain
+			if ((_chain != null) && (_status == X509ChainStatusFlags.NoError)) {
+				foreach (X509Certificate x in _chain) {
+					// validate dates for each certificate in the chain
+					// note: we DO NOT check for nested date/time
+					if (!IsValid (x)) {
+						return false;
+					}
+				}
+				// check leaf
+				if (!IsValid (leaf)) {
+					// switch status code if the failure is expiration
+					if (_status == X509ChainStatusFlags.NotTimeNested)
+						_status = X509ChainStatusFlags.NotTimeValid;
+					return false;
+				}
+				// check root
+				if ((_root != null) && !IsValid (_root)) {
+					return false;
+				}
+			}
+			return (_status == X509ChainStatusFlags.NoError);
+		}
 
 		//
 

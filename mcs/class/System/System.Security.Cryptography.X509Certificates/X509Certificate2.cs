@@ -464,26 +464,6 @@ namespace System.Security.Cryptography.X509Certificates {
 				} else {
 					cert.RSA = (keypair as RSA);
 					cert.DSA = (keypair as DSA);
-
-                    MX.X509CertificateCollection chainCerts = new MX.X509CertificateCollection();
-                    foreach (var c in pfx.Certificates) 
-                    {
-                        if (c != cert && !c.IsSelfSigned) 
-                        {
-                            // Then it's likely an intermediate cert. Construct a chain now, so the intermediates will
-                            // be remembered later, and able to re-construct the chain at that time.
-                            chainCerts.Add(c);
-                        }   
-                    }
-
-                    if (chainCerts.Count > 0) 
-                    {
-                        // We build the chain and throw it away because we don't need it here. But as a consequence
-                        // of building it, the X509Chain will remember the intermediates in its Intermediate store,
-                        // and later will be able to reconstruct the chain when it needs to.
-                        MX.X509Chain chain = new MX.X509Chain(chainCerts);
-                        chain.Build(cert);
-                    }
 				}
 				return cert;
 			}
@@ -709,7 +689,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 #else
-        // HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
+		// HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
 		// Mono.Security.dll is built. This is required to get working client certificate in SSL/TLS
 		public AsymmetricAlgorithm PrivateKey {
 			get { return null; }
