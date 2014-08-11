@@ -61,7 +61,6 @@ namespace Microsoft.Build.Execution
 		~BuildManager ()
 		{
 			// maybe processes created by out-of-process nodes should be signaled.
-			BuildNodeManager.Stop ();
 		}
 
 		readonly List<BuildSubmission> submissions = new List<BuildSubmission> ();
