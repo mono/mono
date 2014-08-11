@@ -341,6 +341,33 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.IsTrue (items.Any (), "items.Any");
 			Assert.IsTrue (!string.IsNullOrEmpty (items.First ().EvaluatedInclude), "item.EvaluatedInclude");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConditionalCyclicDependence ()
+		{
+			string project_xml = @"<Project DefaultTargets='Build' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<PropertyGroup>
+		<C>False</C>
+	</PropertyGroup>
+	<Target Name='Build' DependsOnTargets='ResolveReferences' />
+	<Target Name='Build2' DependsOnTargets='Bar' />
+	<Target Name='ResolveReferences' DependsOnTargets='Foo;Bar' />
+	<Target Name='Foo'>
+		<CreateProperty Value='True'>
+			<Output TaskParameter='Value' PropertyName='C' />
+		</CreateProperty>
+	</Target>
+	<Target Name='Bar' Condition='!($(C))' DependsOnTargets='ResolveReferences'>
+	</Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ConditionalCyclicDependence.proj";
+			var proj = new ProjectInstance (root, null, "4.0", ProjectCollection.GlobalProjectCollection);
+			Assert.IsTrue (proj.Build (), "#1");
+			Assert.IsFalse (proj.Build ("Build2", new ILogger [0]), "#2");
+		}
 	}
 	
 	namespace SubNamespace
