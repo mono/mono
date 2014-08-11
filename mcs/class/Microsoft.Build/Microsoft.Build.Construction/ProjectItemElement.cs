@@ -62,14 +62,28 @@ namespace Microsoft.Build.Construction
                 }
                 string @remove;
                 public string Remove { get { return @remove ?? String.Empty; } set { @remove = value; } }
-                #if NET_4_5
                 string keepDuplicates;
-                public string KeepDuplicates { get { return keepDuplicates ?? String.Empty; } set { keepDuplicates = value; } }
-                string keepMetadata;
-                public string KeepMetadata { get { return keepMetadata ?? String.Empty; } set { keepMetadata = value; } }
-                string removeMetadata;
-                public string RemoveMetadata { get { return removeMetadata ?? String.Empty; } set { removeMetadata = value; } }
+		string keepMetadata;
+		string removeMetadata;
+		#if NET_4_5
+                public
+                #else
+                internal
                 #endif
+                string KeepDuplicates { get { return keepDuplicates ?? String.Empty; } set { keepDuplicates = value; } }
+		#if NET_4_5
+                public
+                #else
+                internal
+                #endif
+		string KeepMetadata { get { return keepMetadata ?? String.Empty; } set { keepMetadata = value; } }
+		#if NET_4_5
+                public
+                #else
+                internal
+                #endif
+		string RemoveMetadata { get { return removeMetadata ?? String.Empty; } set { removeMetadata = value; } }
+                
                 public ProjectMetadataElement AddMetadata (string name, string unevaluatedValue)
                 {
                         var metadata = ContainingProject.CreateMetadataElement (name, unevaluatedValue);
@@ -83,11 +97,9 @@ namespace Microsoft.Build.Construction
                 {
                         SaveAttribute (writer, "Include", Include);
                         SaveAttribute (writer, "Exclude", Exclude);
-#if NET_4_5
                         SaveAttribute (writer, "KeepDuplicates", KeepDuplicates);
                         SaveAttribute (writer, "KeepMetadata", KeepMetadata);
                         SaveAttribute (writer, "RemoveMetadata", RemoveMetadata);
-#endif
                         SaveAttribute (writer, "Remove", Remove);
                         base.SaveValue (writer);
                 }
@@ -101,7 +113,6 @@ namespace Microsoft.Build.Construction
                         case "Exclude":
                                 Exclude = value;
                                 break;
-#if NET_4_5
                         case "KeepDuplicates":
                                 KeepDuplicates = value;
                                 break;
@@ -111,7 +122,6 @@ namespace Microsoft.Build.Construction
                         case "RemoveMetadata":
                                 RemoveMetadata = value;
                                 break;
-#endif
                         case "Remove":
                                 Remove = value;
                                 break;
