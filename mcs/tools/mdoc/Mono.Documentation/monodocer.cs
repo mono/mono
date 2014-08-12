@@ -554,21 +554,13 @@ class MDocUpdater : MDocCommand
 	/// <returns><c>true</c>, if the type file was found, <c>false</c> otherwise.</returns>
 	/// <param name="result">A typle that contains 1) the 'reltypefile', 2) the 'typefile', and 3) the file info</param>
 	bool TryFindTypeFile(string nsname, string typename, string basepath, out Tuple<string, string, FileInfo> result) {
-		if (string.IsNullOrWhiteSpace (nsname)) {
-			result = null;
-			return false;
-		}
 		string reltypefile = DocUtils.PathCombine (nsname, typename + ".xml");
 		string typefile = Path.Combine (basepath, reltypefile);
 		System.IO.FileInfo file = new System.IO.FileInfo(typefile);
 
 		result = new Tuple<string, string, FileInfo> (reltypefile, typefile, file);
 
-		if (!file.Exists) {
-			return false;
-		}
-
-		return true;
+		return file.Exists;
 	}
 	
 	public string DoUpdateType (TypeDefinition type, string basepath, string dest)
@@ -583,55 +575,48 @@ class MDocUpdater : MDocCommand
 		string typename = GetTypeFileName(type);
 		string nsname = DocUtils.GetNamespace (type);
 
-			// Find the file, if it exists
-			string[] searchLocations = new string[] {
-				nsname
-			};
+		// Find the file, if it exists
+		string[] searchLocations = new string[] {
+			nsname
+		};
 
-			if (MDocUpdater.HasDroppedNamespace ()) {
-				// If dropping namespace, types may have moved into a couple of different places.
-				var newSearchLocations = searchLocations.Union (new string[] {
-					string.Format ("{0}.{1}", droppedNamespace, nsname),
-					nsname.Replace (droppedNamespace + ".", string.Empty),
-					MDocUpdater.droppedNamespace
-				});
+		if (MDocUpdater.HasDroppedNamespace ()) {
+			// If dropping namespace, types may have moved into a couple of different places.
+			var newSearchLocations = searchLocations.Union (new string[] {
+				string.Format ("{0}.{1}", droppedNamespace, nsname),
+				nsname.Replace (droppedNamespace + ".", string.Empty),
+				MDocUpdater.droppedNamespace
+			});
 
-				// NOTE: special case for MonoTouch->Xamarin.iOS
-				if (droppedNamespace.Equals ("MonoTouch")) {
+			searchLocations = newSearchLocations.ToArray ();
+		}
 
-				}
+		string reltypefile="", typefile="";
+		System.IO.FileInfo file = null;
 
-				searchLocations = newSearchLocations.ToArray ();
-			}
+		foreach (var f in searchLocations) {
+			Tuple<string, string, FileInfo> result;
+			bool fileExists = TryFindTypeFile (f, typename, basepath, out result);
 
-			string reltypefile="", typefile="";
-			System.IO.FileInfo file = null;
-
-			foreach (var f in searchLocations) {
-				Tuple<string, string, FileInfo> result;
-				bool fileExists = TryFindTypeFile (f, typename, basepath, out result);
-
+			if (fileExists) {
 				reltypefile = result.Item1;
 				typefile = result.Item2;
 				file = result.Item3;
 
-				if (fileExists) {
-					break;
-				}
+				break;
 			}
+		}
 
-			if (!file.Exists) {
-				// we were not able to find a file, let's use the original type informatio.
-				// so that we create the stub in the right place.
-				Tuple<string, string, FileInfo> result;
-				TryFindTypeFile (nsname, typename, basepath, out result);
+		if (file == null || !file.Exists) {
+			// we were not able to find a file, let's use the original type informatio.
+			// so that we create the stub in the right place.
+			Tuple<string, string, FileInfo> result;
+			TryFindTypeFile (nsname, typename, basepath, out result);
 
-				reltypefile = result.Item1;
-				typefile = result.Item2;
-				file = result.Item3;
-
-
-			}
+			reltypefile = result.Item1;
+			typefile = result.Item2;
+			file = result.Item3;
+		}
 		
 		string output = null;
 		if (dest == null) {
@@ -642,7 +627,7 @@ class MDocUpdater : MDocCommand
 			output = Path.Combine (dest, reltypefile);
 		}	
 
-		if (file.Exists) {
+		if (file != null && file.Exists) {
 			// Update
 			XmlDocument basefile = new XmlDocument();
 			try {
