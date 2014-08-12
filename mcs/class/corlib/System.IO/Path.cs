@@ -384,7 +384,7 @@ namespace System.IO {
 					}
 
 					var cwd = Directory.InsecureGetCurrentDirectory();
-					if (cwd.EndsWith(DirectorySeparatorStr))
+					if (cwd [cwd.Length - 1] == DirectorySeparatorChar)
 						path = cwd + path;
 					else
 						path = cwd + DirectorySeparatorChar + path;					
