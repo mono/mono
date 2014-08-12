@@ -50,18 +50,14 @@ namespace System.IO.Compression {
 		
 		
 #if NET_4_5
-		[MonoTODO]
 		public GZipStream (Stream stream, CompressionLevel compressionLevel)
-			: this (stream, CompressionMode.Compress)
+			: this (stream, compressionLevel, false)
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public GZipStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
-			: this (stream, CompressionMode.Compress, leaveOpen)
 		{
-			throw new NotImplementedException ();
+			this.deflateStream = new DeflateStream (stream, compressionLevel, leaveOpen, true);
 		}
 #endif
 

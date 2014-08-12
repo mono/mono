@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace MonoTests.System.IO.Compression
 {
@@ -326,6 +327,29 @@ namespace MonoTests.System.IO.Compression
 			using (var decompressing = new DeflateStream (backing, CompressionMode.Decompress))
 				decompressing.Read (buffer, 0, buffer.Length);
 		}
+
+		public MemoryStream GenerateStreamFromString(string s)
+		{
+			return new MemoryStream (Encoding.UTF8.GetBytes (s));
+		}
+
+		[Test]
+		public void CheckNet45Overloads () // Xambug #21982
+		{
+			MemoryStream dataStream = GenerateStreamFromString("Hello");
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			CopyStream (dataStream, compressing);
+			dataStream.Close();
+			compressing.Close();
+
+			backing.Seek (0, SeekOrigin.Begin);
+			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
+			StreamReader reader = new StreamReader (decompressing);
+			Assert.AreEqual ("Hello", reader.ReadLine ());
+			decompressing.Close();
+			backing.Close();
+		}		
 	}
 }
 

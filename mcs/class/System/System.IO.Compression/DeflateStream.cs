@@ -81,19 +81,20 @@ namespace System.IO.Compression
 		}
 		
 #if NET_4_5
-		[MonoTODO]
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel)
-			: this (stream, CompressionMode.Compress)
+			: this (stream, compressionLevel, false, false)
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
-			: this (stream, CompressionMode.Compress, leaveOpen)
+			: this (stream, compressionLevel, leaveOpen, false)
 		{
-			throw new NotImplementedException ();
 		}
+
+		internal DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen, bool gzip)
+			: this (stream, CompressionMode.Compress, leaveOpen, gzip)
+		{
+		}		
 #endif
 
 		protected override void Dispose (bool disposing)
