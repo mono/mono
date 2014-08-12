@@ -8423,7 +8423,7 @@ namespace Mono.CSharp
 				// Pointer types are allowed without explicit unsafe, they are just tokens
 				//
 				using (ec.Set (ResolveContext.Options.UnsafeScope)) {
-					typearg = QueriedType.ResolveAsType (ec);
+					typearg = QueriedType.ResolveAsType (ec, true);
 				}
 
 				if (typearg == null)
@@ -8760,18 +8760,18 @@ namespace Mono.CSharp
 			return expr;
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool allowUnboundTypeArguments)
 		{
 			expr = CreateExpressionFromAlias (mc);
 			if (expr == null)
 				return null;
 
-			return base.ResolveAsTypeOrNamespace (mc);
+			return base.ResolveAsTypeOrNamespace (mc, allowUnboundTypeArguments);
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			return ResolveAsTypeOrNamespace (ec);
+			return ResolveAsTypeOrNamespace (rc, false);
 		}
 
 		public override string GetSignatureForError ()
@@ -9076,7 +9076,7 @@ namespace Mono.CSharp
 			return me;
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext rc)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext rc, bool allowUnboundTypeArguments)
 		{
 			FullNamedExpression fexpr = expr as FullNamedExpression;
 			if (fexpr == null) {
@@ -9084,7 +9084,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			FullNamedExpression expr_resolved = fexpr.ResolveAsTypeOrNamespace (rc);
+			FullNamedExpression expr_resolved = fexpr.ResolveAsTypeOrNamespace (rc, allowUnboundTypeArguments);
 
 			if (expr_resolved == null)
 				return null;
@@ -9095,10 +9095,17 @@ namespace Mono.CSharp
 
 				if (retval == null) {
 					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
-				} else if (HasTypeArguments) {
-					retval = new GenericTypeExpr (retval.Type, targs, loc);
-					if (retval.ResolveAsType (rc) == null)
-						return null;
+				} else if (Arity > 0) {
+					if (HasTypeArguments) {
+						retval = new GenericTypeExpr (retval.Type, targs, loc);
+						if (retval.ResolveAsType (rc) == null)
+							return null;
+					} else {
+						if (!allowUnboundTypeArguments)
+							Error_OpenGenericTypeIsNotAllowed (rc);
+
+						retval = new GenericOpenTypeExpr (retval.Type, loc);
+					}
 				}
 
 				return retval;
@@ -9156,6 +9163,9 @@ namespace Mono.CSharp
 				if (HasTypeArguments) {
 					texpr = new GenericTypeExpr (nested, targs, loc);
 				} else {
+					if (!allowUnboundTypeArguments || expr_resolved is GenericTypeExpr) // && HasTypeArguments
+						Error_OpenGenericTypeIsNotAllowed (rc);
+
 					texpr = new GenericOpenTypeExpr (nested, loc);
 				}
 			} else if (expr_resolved is GenericOpenTypeExpr) {
@@ -10520,7 +10530,7 @@ namespace Mono.CSharp
 			this.loc = left.Location;
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext ec)
+		public override TypeSpec ResolveAsType (IMemberContext ec, bool allowUnboundTypeArguments)
 		{
 			type = left.ResolveAsType (ec);
 			if (type == null)

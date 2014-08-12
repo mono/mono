@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool allowUnboundTypeArguments)
 		{
 			throw new NotImplementedException ();
 		}
@@ -2426,7 +2426,7 @@ namespace Mono.CSharp {
 			return type.GetSignatureForError ();
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext mc)
+		public override TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments = false)
 		{
 			if (eclass != ExprClass.Unresolved)
 				return type;
