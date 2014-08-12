@@ -160,7 +160,7 @@ namespace MonoTests.System.Net.Http
 		 * The .NET runtime hits the "#9" assertion.
 		 * The test succeeds with Mono.
 		 */
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
 		public void CopyToAsync ()
 		{
 			var ms = new MemoryStream ();
