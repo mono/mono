@@ -249,7 +249,7 @@ namespace Mono.CSharp {
 				return null;
 
 			foreach (var ts in found) {
-				if (ts.Arity == arity) {
+				if (ts.Arity == arity || mode == LookupMode.NameOf) {
 					if (best == null) {
 						if ((ts.Modifiers & Modifiers.INTERNAL) != 0 && !ts.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly) && mode != LookupMode.IgnoreAccessibility)
 							continue;
