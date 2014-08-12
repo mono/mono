@@ -791,7 +791,10 @@ namespace Mono.CSharp {
 			None = 0,
 			InvocableOnly = 1,
 			ExactArity = 1 << 2,
-			ReadAccess = 1 << 3
+			ReadAccess = 1 << 3,
+			EmptyArguments = 1 << 4,
+			IgnoreArity = 1 << 5,
+			IgnoreAmbiguity = 1 << 6
 		}
 
 		//
@@ -885,7 +888,7 @@ namespace Mono.CSharp {
 				}
 
 				if (non_method != null) {
-					if (ambig_non_method != null && rc != null) {
+					if (ambig_non_method != null && rc != null && (restrictions & MemberLookupRestrictions.IgnoreAmbiguity) == 0) {
 						var report = rc.Module.Compiler.Report;
 						report.SymbolRelatedToPreviousError (non_method);
 						report.SymbolRelatedToPreviousError (ambig_non_method);
@@ -2593,6 +2596,11 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, right_side);
 		}
 
+		public void Error_NameDoesNotExist (ResolveContext rc)
+		{
+			rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+		}
+
 		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ctx)
 		{
 			if (ctx.CurrentType != null) {
@@ -2814,6 +2822,9 @@ namespace Mono.CSharp {
 					return mg;
 				}
 
+				if (Name == "nameof")
+					return new NameOf (this);
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
@@ -2859,7 +2870,7 @@ namespace Mono.CSharp {
 
 						e = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
 						if (e != null) {
-							if (e.Type.Arity != Arity) {
+							if (e.Type.Arity != Arity && (restrictions & MemberLookupRestrictions.IgnoreArity) == 0) {
 								Error_TypeArgumentsCannotBeUsed (rc, e.Type, loc);
 								return e;
 							}
@@ -2873,7 +2884,7 @@ namespace Mono.CSharp {
 							}
 						}
 
-						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+						Error_NameDoesNotExist (rc);
 					}
 
 					return ErrorExpression.Instance;
