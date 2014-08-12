@@ -33,7 +33,7 @@ namespace Mono.CSharp.Nullable
 			this.loc = loc;
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext ec)
+		public override TypeSpec ResolveAsType (IMemberContext ec, bool allowUnboundTypeArguments = false)
 		{
 			eclass = ExprClass.Type;
 
