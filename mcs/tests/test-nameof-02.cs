@@ -104,9 +104,11 @@ class X
 		if (nameof (X.GenMethod) != "GenMethod")
 			return 6;
 
-//		A<>.B bb;
-//		if (nameof (A<>.B.Foo) != "B")
-//			return 7;
+		if (nameof (A<>.B) != "B")
+			return 7;
+
+		if (nameof (A<>.B.Foo) != "Foo")
+			return 7;
 
 		return 0;
 	}

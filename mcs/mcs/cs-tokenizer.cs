@@ -202,7 +202,6 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_where;
-		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
@@ -319,11 +318,6 @@ namespace Mono.CSharp
 		public bool ConstraintsParsing {
 			get { return handle_where; }
 			set { handle_where = value; }
-		}
-
-		public bool TypeOfParsing {
-			get { return handle_typeof; }
-			set { handle_typeof = value; }
 		}
 	
 		public XmlCommentState doc_state {
@@ -1144,7 +1138,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		bool parse_less_than ()
+		bool parse_less_than (ref int genericDimension)
 		{
 		start:
 			int the_token = token ();
@@ -1181,10 +1175,23 @@ namespace Mono.CSharp
 			case Token.VOID:
 				break;
 			case Token.OP_GENERICS_GT:
+				genericDimension = 1;
+				return true;
 			case Token.IN:
 			case Token.OUT:
 				return true;
+			case Token.COMMA:
+				do {
+					++genericDimension;
+					the_token = token ();
+				} while (the_token == Token.COMMA);
 
+				if (the_token == Token.OP_GENERICS_GT) {
+					++genericDimension;
+					return true;
+				}
+
+				return false;
 			default:
 				return false;
 			}
@@ -1198,7 +1205,7 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than ())
+				if (!parse_less_than (ref genericDimension))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -1214,22 +1221,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		bool parse_generic_dimension (out int dimension)
-		{
-			dimension = 1;
-
-		again:
-			int the_token = token ();
-			if (the_token == Token.OP_GENERICS_GT)
-				return true;
-			else if (the_token == Token.COMMA) {
-				dimension++;
-				goto again;
-			}
-
-			return false;
-		}
-		
 		public int peek_token ()
 		{
 			int the_token;
@@ -3668,22 +3659,20 @@ namespace Mono.CSharp
 		int TokenizeLessThan ()
 		{
 			int d;
-			if (handle_typeof) {
-				PushPosition ();
-				if (parse_generic_dimension (out d)) {
-					val = d;
-					DiscardPosition ();
-					return Token.GENERIC_DIMENSION;
-				}
-				PopPosition ();
-			}
 
 			// Save current position and parse next token.
 			PushPosition ();
-			if (parse_less_than ()) {
+			int generic_dimension = 0;
+			if (parse_less_than (ref generic_dimension)) {
 				if (parsing_generic_declaration && (parsing_generic_declaration_doc || token () != Token.DOT)) {
 					d = Token.OP_GENERICS_LT_DECL;
 				} else {
+					if (generic_dimension > 0) {
+						val = generic_dimension;
+						DiscardPosition ();
+						return Token.GENERIC_DIMENSION;
+					}
+
 					d = Token.OP_GENERICS_LT;
 				}
 				PopPosition ();
