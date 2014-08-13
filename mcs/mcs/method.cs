@@ -2251,6 +2251,9 @@ namespace Mono.CSharp {
 
 		protected override bool CheckBase ()
 		{
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
+				CheckForDuplications ();
+
 			// Don't check base, destructors have special syntax
 			return true;
 		}
