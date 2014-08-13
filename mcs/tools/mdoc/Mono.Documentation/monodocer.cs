@@ -1407,7 +1407,7 @@ class MDocUpdater : MDocCommand
 		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace () ? "[@apistyle='new']" : "[not(@apistyle) or @apistyle='old']";
 
 		AddXmlNode(
-			root.SelectNodes("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement>().ToArray(),
+			root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().ToArray (),
 			x => x.SelectSingleNode("AssemblyName").InnerText == type.Module.Assembly.Name.Name,
 			x => WriteElementText(x, "AssemblyName", type.Module.Assembly.Name.Name),
 			() => {
@@ -1415,33 +1415,38 @@ class MDocUpdater : MDocCommand
 				
 				if (MDocUpdater.HasDroppedNamespace ()) ass.SetAttribute ("apistyle", "new");
 
-				WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
-				if (!no_assembly_versions) {
-					UpdateAssemblyVersions (root, type, true);
-				}
-				else {
-					var versions = ass.SelectNodes ("AssemblyVersion").Cast<XmlNode> ().ToList ();
-					foreach (var version in versions)
-						ass.RemoveChild (version);
-				}
-				if (!string.IsNullOrEmpty (type.Module.Assembly.Name.Culture))
-					WriteElementText(ass, "AssemblyCulture", type.Module.Assembly.Name.Culture);
-				else
-					ClearElement(ass, "AssemblyCulture");
-						
 				
-				// Why-oh-why do we put assembly attributes in each type file?
-				// Neither monodoc nor monodocs2html use them, so I'm deleting them
-				// since they're outdated in current docs, and a waste of space.
-				//MakeAttributes(ass, type.Assembly, true);
-				XmlNode assattrs = ass.SelectSingleNode("Attributes");
-				if (assattrs != null)
-					ass.RemoveChild(assattrs);
-				
-				NormalizeWhitespace(ass);
 
 				return ass;
 			});
+
+		foreach(var ass in root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ())
+		{
+			WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
+			if (!no_assembly_versions) {
+				UpdateAssemblyVersions (root, type, true);
+			}
+			else {
+				var versions = ass.SelectNodes ("AssemblyVersion").Cast<XmlNode> ().ToList ();
+				foreach (var version in versions)
+					ass.RemoveChild (version);
+			}
+			if (!string.IsNullOrEmpty (type.Module.Assembly.Name.Culture))
+				WriteElementText(ass, "AssemblyCulture", type.Module.Assembly.Name.Culture);
+			else
+				ClearElement(ass, "AssemblyCulture");
+
+
+			// Why-oh-why do we put assembly attributes in each type file?
+			// Neither monodoc nor monodocs2html use them, so I'm deleting them
+			// since they're outdated in current docs, and a waste of space.
+			//MakeAttributes(ass, type.Assembly, true);
+			XmlNode assattrs = ass.SelectSingleNode("Attributes");
+			if (assattrs != null)
+				ass.RemoveChild(assattrs);
+
+			NormalizeWhitespace(ass);
+		}
 		
 		if (type.IsGenericType ()) {
 				MakeTypeParameters (root, type.GenericParameters, MDocUpdater.HasDroppedNamespace());
@@ -2214,8 +2219,8 @@ class MDocUpdater : MDocCommand
 				e.AppendChild(c);
 			}
 		}
-		// matches.Count == 0 && !add: ignore -- already not present
 
+		// matches.Count == 0 && !add: ignore -- already not present
 		XmlNodeList avs = e.SelectNodes ("AssemblyVersion");
 		SortXmlNodes (e, avs, new VersionComparer ());
 
