@@ -1208,17 +1208,50 @@ namespace Mono.CSharp
 				unwrap = null;
 			}
 
+			IMemoryLocation instance_address = null;
+			bool conditional_access_dup = false;
+
 			if (unwrap != null) {
 				unwrap.Store (ec);
 				unwrap.EmitCheck (ec);
 				ec.Emit (OpCodes.Brtrue_S, NullOperatorLabel);
 			} else {
-				EmitLoad (ec);
+				if (conditionalAccess && addressRequired) {
+					//
+					// Don't allocate temp variable when instance load is cheap and load and load-address
+					// operate on same memory
+					//
+					instance_address = instance as VariableReference;
+					if (instance_address == null)
+						instance_address = instance as LocalTemporary;
+
+					if (instance_address == null) {
+						EmitLoad (ec);
+						ec.Emit (OpCodes.Dup);
+						ec.EmitLoadFromPtr (instance.Type);
+
+						conditional_access_dup = true;
+					} else {
+						instance.Emit (ec);
+					}
+
+					if (instance.Type.Kind == MemberKind.TypeParameter)
+						ec.Emit (OpCodes.Box, instance.Type);
+				} else {
+					EmitLoad (ec);
+
+					if (conditionalAccess) {
+						conditional_access_dup = !IsInexpensiveLoad ();
+						if (conditional_access_dup)
+							ec.Emit (OpCodes.Dup);
+					}
+				}
 
 				if (conditionalAccess) {
-					ec.Emit (OpCodes.Dup);
 					ec.Emit (OpCodes.Brtrue_S, NullOperatorLabel);
-					ec.Emit (OpCodes.Pop);
+
+					if (conditional_access_dup)
+						ec.Emit (OpCodes.Pop);
 				}
 			}
 
@@ -1233,12 +1266,16 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Br, ec.ConditionalAccess.EndLabel);
 				ec.MarkLabel (NullOperatorLabel);
 
-				if (unwrap != null) {
+				if (instance_address != null) {
+					instance_address.AddressOf (ec, AddressOp.Load);
+				} else if (unwrap != null) {
 					unwrap.Emit (ec);
 					var tmp = ec.GetTemporaryLocal (unwrap.Type);
 					ec.Emit (OpCodes.Stloc, tmp);
 					ec.Emit (OpCodes.Ldloca, tmp);
 					ec.FreeTemporaryLocal (tmp, unwrap.Type);
+				} else if (!conditional_access_dup) {
+					instance.Emit (ec);
 				}
 			}
 		}
@@ -1274,11 +1311,8 @@ namespace Mono.CSharp
 			instance.Emit (ec);
 
 			// Only to make verifier happy
-			if (instance_type.IsGenericParameter && !(instance is This) && TypeSpec.IsReferenceType (instance_type)) {
+			if (RequiresBoxing ())
 				ec.Emit (OpCodes.Box, instance_type);
-			} else if (instance_type.IsStructOrEnum) {
-				ec.Emit (OpCodes.Box, instance_type);
-			}
 		}
 
 		public TypeSpec GetStackType (EmitContext ec)
@@ -1292,6 +1326,40 @@ namespace Mono.CSharp
 				return ec.Module.Compiler.BuiltinTypes.Object;
 
 			return instance_type;
+		}
+
+		bool RequiresBoxing ()
+		{
+			var instance_type = instance.Type;
+			if (instance_type.IsGenericParameter && !(instance is This) && TypeSpec.IsReferenceType (instance_type))
+				return true;
+
+			if (instance_type.IsStructOrEnum)
+				return true;
+
+			return false;
+		}
+
+		bool IsInexpensiveLoad ()
+		{
+			if (instance is Constant)
+				return instance.IsSideEffectFree;
+
+			if (RequiresBoxing ())
+				return false;
+
+			var vr = instance as VariableReference;
+			if (vr != null)
+				return !vr.IsRef;
+
+			if (instance is LocalTemporary)
+				return true;
+
+			var fe = instance as FieldExpr;
+			if (fe != null)
+				return fe.IsStatic || fe.InstanceExpression is This;
+
+			return false;
 		}
 	}
 }

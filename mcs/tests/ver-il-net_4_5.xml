@@ -67309,13 +67309,13 @@
         <size>22</size>
       </method>
       <method name="Int32 TestArray()" attrs="145">
-        <size>485</size>
+        <size>477</size>
       </method>
       <method name="Int32 TestReferenceType()" attrs="145">
-        <size>231</size>
+        <size>229</size>
       </method>
       <method name="Int32 TestGeneric[T](T)" attrs="145">
-        <size>58</size>
+        <size>118</size>
       </method>
       <method name="Int32 TestNullable()" attrs="145">
         <size>386</size>
@@ -67360,10 +67360,10 @@
         <size>7</size>
       </method>
       <method name="Int32 TestProperty()" attrs="145">
-        <size>368</size>
+        <size>359</size>
       </method>
       <method name="Int32 TestField()" attrs="145">
-        <size>360</size>
+        <size>351</size>
       </method>
     </type>
     <type name="CI">
@@ -67394,7 +67394,7 @@
         <size>2</size>
       </method>
       <method name="Void Main()" attrs="150">
-        <size>27</size>
+        <size>26</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -67421,10 +67421,10 @@
     </type>
     <type name="C">
       <method name="Int32 TestArrayAccess()" attrs="145">
-        <size>208</size>
+        <size>206</size>
       </method>
       <method name="Int32 TestIndexerAccess()" attrs="145">
-        <size>191</size>
+        <size>188</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>64</size>
@@ -67437,7 +67437,7 @@
   <test name="test-null-operator-06.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="145">
-        <size>465</size>
+        <size>459</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -67447,10 +67447,45 @@
   <test name="test-null-operator-07.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="145">
-        <size>95</size>
+        <size>93</size>
       </method>
       <method name="System.String EM(System.Object)" attrs="145">
         <size>26</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-08.cs">
+    <type name="Program">
+      <method name="Void M[T](T)" attrs="145">
+        <size>88</size>
+      </method>
+      <method name="Void M2[T](T[])" attrs="145">
+        <size>64</size>
+      </method>
+      <method name="Void M2_2[T](T[])" attrs="145">
+        <size>114</size>
+      </method>
+      <method name="Void M3[T](System.Nullable`1[T])" attrs="145">
+        <size>106</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>165</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Void Foo(Boolean)" attrs="486">
+        <size>38</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void TestAddress_1[T](T)" attrs="145">
+        <size>56</size>
+      </method>
+      <method name="Void TestAddress_2[T](T[])" attrs="145">
+        <size>82</size>
       </method>
     </type>
   </test>
