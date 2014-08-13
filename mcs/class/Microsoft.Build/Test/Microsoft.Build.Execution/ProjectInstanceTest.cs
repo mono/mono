@@ -311,6 +311,34 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 
 		[Test]
+		public void ItemsAndPostEvaluationCondition ()
+		{
+			// target-assigned property X is not considered when evaluating condition for C.
+			string project_xml = @"<Project DefaultTargets='X;Y' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<ItemGroup>
+		<A Include='foo.txt' />
+		<B Condition='False' Include='bar.txt' />
+		<C Condition=""'$(X)'=='True'"" Include='baz.txt' />
+        </ItemGroup>
+        <Target Name='X'>
+    		<CreateProperty Value='True'>
+	    		<Output TaskParameter='Value' PropertyName='X' />
+		    </CreateProperty>
+        </Target>
+        <Target Name='Y'>
+		<Error Condition=""'@(C)'==''"" Text='missing C. X is $(X)' />
+        </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ItemsAndPostEvaluationCondition.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual (1, proj.Items.Count, "Count1");
+			Assert.IsFalse (proj.Build (), "Build");
+			Assert.AreEqual (1, proj.Items.Count, "Count2");
+		}
+
+		[Test]
 		[Category ("NotWorking")] // until we figure out why it fails on wrench.
 		public void ItemsInTargets ()
 		{
