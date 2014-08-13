@@ -1723,6 +1723,7 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 	if(code==NULL) {
 		return(FALSE);
 	}
+	*code = STILL_ACTIVE;
 	
 	if ((GPOINTER_TO_UINT (process) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
 		/* This is a pseudo handle, so we don't know what the
@@ -1747,13 +1748,8 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 	/* Make sure any process exit has been noticed, before
 	 * checking if the process is signalled.  Fixes bug 325463.
 	 */
-	process_wait (process, 0);
-	
-	if (_wapi_handle_issignalled (process) == TRUE) {
+	if (WAIT_OBJECT_0 == process_wait (process, 0) && _wapi_handle_issignalled (process) == TRUE)
 		*code = process_handle->exitstatus;
-	} else {
-		*code = STILL_ACTIVE;
-	}
 	
 	return(TRUE);
 }
