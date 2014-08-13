@@ -28,8 +28,8 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class DnsTest
 	{
-		private String site1Name = "mono-project.com",
-			site1Dot = "96.126.105.110",
+		private String site1Name = "xamarin.com",
+			site1Dot = "50.19.126.231",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "unlikely.xamarin.com";
@@ -44,7 +44,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.IsTrue (entry.HostName == "www.mono-project.com" || entry.HostName == "mono-project.com");
+			Assert.IsTrue (entry.HostName == "www.xamarin.com" || entry.HostName == "xamarin.com");
 		}
 
 		void GetHostByNameCallback (IAsyncResult ar)
@@ -191,7 +191,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void GetHostByName ()
 		{
-			SubTestGetHostByName ("www.mono-project.com", site1Dot);
+			SubTestGetHostByName ("www.xamarin.com", site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
 				var entry = Dns.GetHostByName (noneExistingSite);
