@@ -595,6 +595,10 @@ namespace Microsoft.Build.Internal
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
 			var projectToBuild = new ProjectInstance (ProjectRootElement.Create (XmlReader.Create (projectFileName)), globalPropertiesThatMakeSense, toolsVersion, Projects);
+			// Not very sure if ALL of these properties should be added, but some are certainly needed. 
+			foreach (var p in this.project.Properties.Where (p => !globalProperties.Contains (p.Name)))
+				projectToBuild.SetProperty (p.Name, p.EvaluatedValue);
+			
 			IDictionary<string,TargetResult> outs;
 			var ret = projectToBuild.Build (targetNames ?? new string [] {"Build"}, Projects.Loggers, out outs);
 			foreach (var p in outs)
