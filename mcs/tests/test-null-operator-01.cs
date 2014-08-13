@@ -97,10 +97,9 @@ class C
 
     static int TestGeneric<T> (T t) where T : class, I
     {
-        // FIXME:
-        //var t1 = t?.Method ();
-        //if (t1 != null)
-        //  return 1;
+        var t1 = t?.Method ();
+        if (t1 != null)
+            return 1;
 
         T[] at = null;
         var t2 = at?.Length;
