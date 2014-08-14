@@ -23,8 +23,8 @@ read_entry (FILE *in, void **data)
 		return SGEN_PROTOCOL_EOF;
 	switch (TYPE (type)) {
 	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
-	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
-	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollectionBegin); break;
+	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollectionEnd); break;
 	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
 	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: size = 0; break;
 	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStopping); break;
@@ -117,13 +117,15 @@ print_entry (int type, void *data)
 		break;
 	}
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
-		SGenProtocolCollection *entry = data;
+		SGenProtocolCollectionBegin *entry = data;
 		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
 		break;
 	}
 	case SGEN_PROTOCOL_COLLECTION_END: {
-		SGenProtocolCollection *entry = data;
-		printf ("collection end %d generation %d\n", entry->index, entry->generation);
+		SGenProtocolCollectionEnd *entry = data;
+		long long scanned = entry->num_scanned_objects;
+		long long unique = entry->num_unique_scanned_objects;
+		printf ("collection end %d generation %d scanned %lld unique %lld %0.2f%%\n", entry->index, entry->generation, scanned, unique, unique ? 100.0 * (double) scanned / (double) unique : 0.0);
 		break;
 	}
 	case SGEN_PROTOCOL_CONCURRENT_START: {
