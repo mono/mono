@@ -1345,6 +1345,7 @@ namespace Mono.CSharp
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
+					int brackets = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
@@ -1365,6 +1366,13 @@ namespace Mono.CSharp
 						case Token.OP_GENERICS_LT_DECL:
 						case Token.GENERIC_DIMENSION:
 							++generics;
+							continue;
+						case Token.OPEN_BRACKET:
+						case Token.OPEN_BRACKET_EXPR:
+							++brackets;
+							continue;
+						case Token.CLOSE_BRACKET:
+							--brackets;
 							continue;
 						case Token.CLOSE_PARENS:
 							if (parens > 0) {
@@ -1395,7 +1403,7 @@ namespace Mono.CSharp
 							continue;
 
 						if (ntoken == Token.COMMA) {
-							if (generics != 0)
+							if (generics != 0 || brackets != 0)
 								continue;
 
 							PopPosition ();
