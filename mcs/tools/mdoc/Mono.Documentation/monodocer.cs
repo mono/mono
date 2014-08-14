@@ -1626,7 +1626,7 @@ class MDocUpdater : MDocCommand
 			}
 		}
 		if (!done) {
-			if (existing.Count () == 0) {
+			if (!existing.Any ()) {
 				var newNode = makeNewNode ();
 				if (shouldDuplicate && addedOldApiStyle) {
 					newNode.AddApiStyle (ApiStyle.New);

@@ -147,9 +147,6 @@ public class MDocAssembler : MDocCommand {
 		}
 		l.Add (file);
 	}
-
-
-
 }
 
 	/// <summary>
@@ -164,13 +161,15 @@ public class MDocAssembler : MDocCommand {
 
 		/// <param name="ns">The namespace that is being dropped.</param>
 		/// <param name="style">The style that is being dropped.</param>
-		public MDocFileSource(string ns, ApiStyle style) {
+		public MDocFileSource(string ns, ApiStyle style) 
+		{
 			droppedNamespace = ns;
 			shouldDropNamespace = !string.IsNullOrWhiteSpace (ns);
 			styleToDrop = style;
 		}
 
-		public XmlReader GetIndexReader(string path) {
+		public XmlReader GetIndexReader(string path) 
+		{
 			XDocument doc = XDocument.Load (path);
 
 			DropApiStyle (doc, path);
@@ -186,7 +185,8 @@ public class MDocAssembler : MDocCommand {
 			return XmlReader.Create (io);
 		}
 
-		public XElement GetNamespaceElement(string path) {
+		public XElement GetNamespaceElement(string path) 
+		{
 			var element = XElement.Load (path);
 
 			var attributes = element.Descendants ().Concat(new XElement[] { element }).SelectMany (n => n.Attributes ());
@@ -197,7 +197,8 @@ public class MDocAssembler : MDocCommand {
 			return element;
 		}
 
-		void DropApiStyle(XDocument doc, string path) {
+		void DropApiStyle(XDocument doc, string path) 
+		{
 			string styleString = styleToDrop.ToString ().ToLower ();
 			var items = doc
 				.Descendants ()
@@ -305,7 +306,8 @@ public class MDocAssembler : MDocCommand {
 			DropNS (attributes, textNodes);
 		}
 
-		void DropNS(IEnumerable<XAttribute> attributes, IEnumerable<XText> textNodes) {
+		void DropNS(IEnumerable<XAttribute> attributes, IEnumerable<XText> textNodes) 
+		{
 			if (!shouldDropNamespace) {
 				return;
 			}
@@ -328,7 +330,8 @@ public class MDocAssembler : MDocCommand {
 		/// <param name="nsName">This is the type's name in the processed XML content. 
 		/// If dropping the namespace, we'll need to append it so that it's found in the source.</param>
 		/// <param name="typeName">Type name.</param>
-		public string GetTypeXmlPath(string basePath, string nsName, string typeName) {
+		public string GetTypeXmlPath(string basePath, string nsName, string typeName) 
+		{
 			string nsNameToUse = nsName;
 			if (shouldDropNamespace) {
 				nsNameToUse = string.Format ("{0}.{1}", droppedNamespace, nsName);
@@ -365,7 +368,8 @@ public class MDocAssembler : MDocCommand {
 
 		/// <returns>The namespace for path, with the dropped namespace so it can be used to pick the right file if we're dropping it.</returns>
 		/// <param name="ns">This namespace will already have "dropped" the namespace.</param>
-		public string GetNamespaceXmlPath(string basePath, string ns) {
+		public string GetNamespaceXmlPath(string basePath, string ns) 
+		{
 			string nsNameToUse = ns;
 			if (shouldDropNamespace) {
 				nsNameToUse = string.Format ("{0}.{1}", droppedNamespace, ns);
@@ -384,7 +388,8 @@ public class MDocAssembler : MDocCommand {
 			}
 		}
 
-		public XDocument GetTypeDocument(string path) {
+		public XDocument GetTypeDocument(string path) 
+		{
 			var doc = XDocument.Load (path);
 			DropApiStyle (doc, path);
 			DropNSFromDocument (doc);
@@ -407,5 +412,4 @@ public class MDocAssembler : MDocCommand {
 			}
 		}
 	}
-
 }
