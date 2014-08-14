@@ -305,8 +305,6 @@ namespace System {
 		{
 			if (state.elements.delimiter != Uri.SchemeDelimiter && state.elements.scheme != Uri.UriSchemeMailto)
 				return state.remaining.Length > 0;
-
-			string part = state.remaining;
 			
 			return ParseUser (state) &&
 				ParseHost (state) &&

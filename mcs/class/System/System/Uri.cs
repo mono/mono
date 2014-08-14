@@ -69,7 +69,6 @@ namespace System {
 		// o  UNC is supported, as starts with "\\" for windows,
 		//    or "//" with unix.
 
-		private bool isUnixFilePath;
 		private string source;
 		private string scheme = String.Empty;
 		private string host = String.Empty;
@@ -79,7 +78,6 @@ namespace System {
 		private string fragment = String.Empty;
 		private string userinfo;
 		private bool isUnc;
-		private bool isOpaquePart;
 		private bool isAbsoluteUri = true;
 		private long scope_id;
 
@@ -1239,7 +1237,6 @@ namespace System {
 
 		private void ParseAsUnixAbsoluteFilePath (string uriString)
 		{
-			isUnixFilePath = true;
 			scheme = UriSchemeFile;
 			port = -1;
 			fragment = String.Empty;
@@ -1350,7 +1347,6 @@ namespace System {
 
 			isAbsoluteUri = elements.isAbsoluteUri;
 			isUnc = elements.isUnc;
-			isUnixFilePath = elements.isUnixFilePath;
 			scope_id = elements.scopeId;
 
 			return null;
@@ -1625,10 +1621,7 @@ namespace System {
 
 		private string GetOpaqueWiseSchemeDelimiter ()
 		{
-			if (isOpaquePart)
-				return ":";
-			else
-				return GetSchemeDelimiter (scheme);
+			return GetSchemeDelimiter (scheme);
 		}
 
 		[Obsolete]
