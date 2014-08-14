@@ -88,7 +88,7 @@ namespace System {
 				return elements.host;
 			case UriComponents.Port: {
 				int p = elements.port;
-				if (p != null && p >= 0 && p != dp)
+				if (p >= 0 && p != dp)
 					return p.ToString (CultureInfo.InvariantCulture);
 				return String.Empty;
 			}
@@ -144,7 +144,7 @@ namespace System {
 
 			if ((components & UriComponents.Port) != 0) {
 				int p = elements.port;
-				if (p != null && p >= 0 && p != dp) {
+				if (p >= 0 && p != dp) {
 					sb.Append (":");
 					sb.Append (elements.port);
 				}
