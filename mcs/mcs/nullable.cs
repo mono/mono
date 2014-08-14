@@ -1135,24 +1135,35 @@ namespace Mono.CSharp.Nullable
 				if (right.IsNull)
 					return ReducedExpression.Create (left, this);
 
-				if (Convert.ImplicitConversionExists (ec, right, unwrap.Type)) {
-					left = unwrap;
-					ltype = left.Type;
-
-					//
-					// If right is a dynamic expression, the result type is dynamic
-					//
-					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-						type = right.Type;
-
-						// Need to box underlying value type
-						left = Convert.ImplicitBoxingConversion (left, ltype, type);
+				Expression conv;
+				if (right.Type.IsNullableType) {
+					conv = right.Type == ltype ? right : Convert.ImplicitNulableConversion (ec, right, ltype);
+					if (conv != null) {
+						right = conv;
+						type = ltype;
 						return this;
 					}
+				} else {
+					conv = Convert.ImplicitConversion (ec, right, unwrap.Type, loc);
+					if (conv != null) {
+						left = unwrap;
+						ltype = left.Type;
 
-					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = ltype;
-					return this;
+						//
+						// If right is a dynamic expression, the result type is dynamic
+						//
+						if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+							type = right.Type;
+
+							// Need to box underlying value type
+							left = Convert.ImplicitBoxingConversion (left, ltype, type);
+							return this;
+						}
+
+						right = conv;
+						type = ltype;
+						return this;
+					}
 				}
 			} else if (TypeSpec.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
