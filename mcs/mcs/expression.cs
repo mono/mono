@@ -6283,7 +6283,7 @@ namespace Mono.CSharp
 
 			if (mg == null) {
 				if (expr_type != null && expr_type.IsDelegate) {
-					invoke = new DelegateInvocation (member_expr, arguments, loc);
+					invoke = new DelegateInvocation (member_expr, arguments, conditional_access_receiver, loc);
 					invoke = invoke.Resolve (ec);
 					if (invoke == null || !dynamic_arg)
 						return invoke;
