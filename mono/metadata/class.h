@@ -212,6 +212,9 @@ mono_class_get_userdata      (MonoClass* klass);
 void
 mono_class_set_userdata      (MonoClass* klass, void* userdata);
 
+int
+mono_class_get_userdata_offset ();
+
 /* MonoClassField accessors */
 const char*
 mono_field_get_name   (MonoClassField *field);
