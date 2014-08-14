@@ -1076,8 +1076,7 @@ class MDocUpdater : MDocCommand
 		
 		MyXmlNodeList todelete = new MyXmlNodeList ();
 		
-		var docNodes = docEnum.GetDocumentationMembers (basefile, type).ToArray();
-		foreach (DocsNodeInfo info in docNodes) {
+		foreach (DocsNodeInfo info in docEnum.GetDocumentationMembers (basefile, type)) {
 			XmlElement oldmember  = info.Node;
 			MemberReference oldmember2 = info.Member;
 			string sig = oldmember2 != null ? memberFormatters [0].GetDeclaration (oldmember2) : null;
@@ -3461,6 +3460,7 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 					if (membersDepth != ecmadocs.Depth - 1 || ecmadocs.NodeType != XmlNodeType.Element)
 						continue;
 					DocumentationMember dm = new DocumentationMember (ecmadocs);
+					
 					string xp = MDocUpdater.GetXPathForMember (dm);
 					XmlElement oldmember = (XmlElement) basefile.SelectSingleNode (xp);
 					MemberReference m;
