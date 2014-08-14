@@ -723,6 +723,7 @@ namespace Mono.CSharp
 					case Token.BYTE:
 					case Token.CHAR:
 					case Token.DECIMAL:
+					case Token.DOUBLE:
 					case Token.FLOAT:
 					case Token.LONG:
 					case Token.OBJECT:
@@ -1266,8 +1267,10 @@ namespace Mono.CSharp
 			current_token = Token.NONE;
 			int next_token;
 			int parens = 0;
+			int generics = 0;
 
-			switch (xtoken ()) {
+			var nt = xtoken ();
+			switch (nt) {
 			case Token.DOT:
 			case Token.OPEN_BRACKET_EXPR:
 				next_token = Token.INTERR_OPERATOR;
@@ -1298,7 +1301,14 @@ namespace Mono.CSharp
 				next_token = -1;
 				++parens;
 				break;
-				
+
+			case Token.OP_GENERICS_LT:
+			case Token.OP_GENERICS_LT_DECL:
+			case Token.GENERIC_DIMENSION:
+				next_token = -1;
+				++generics;
+				break;
+
 			default:
 				next_token = -1;
 				break;
@@ -1324,6 +1334,12 @@ namespace Mono.CSharp
 					++parens;
 					goto default;
 
+				case Token.OP_GENERICS_LT:
+				case Token.OP_GENERICS_LT_DECL:
+				case Token.GENERIC_DIMENSION:
+					++generics;
+					goto default;
+
 				default:
 					int ntoken;
 					int interrs = 1;
@@ -1345,9 +1361,23 @@ namespace Mono.CSharp
 						case Token.CLOSE_BRACE:
 							--braces;
 							continue;
+						case Token.OP_GENERICS_LT:
+						case Token.OP_GENERICS_LT_DECL:
+						case Token.GENERIC_DIMENSION:
+							++generics;
+							continue;
 						case Token.CLOSE_PARENS:
 							if (parens > 0) {
 								--parens;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+
+						case Token.OP_GENERICS_GT:
+							if (generics > 0) {
+								--generics;
 								continue;
 							}
 
@@ -1363,6 +1393,14 @@ namespace Mono.CSharp
 
 						if (parens != 0)
 							continue;
+
+						if (ntoken == Token.COMMA) {
+							if (generics != 0)
+								continue;
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+						}
 						
 						if (ntoken == Token.COLON) {
 							if (++colons == interrs)
