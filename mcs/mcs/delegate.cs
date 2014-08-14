@@ -850,13 +850,15 @@ namespace Mono.CSharp {
 	class DelegateInvocation : ExpressionStatement
 	{
 		readonly Expression InstanceExpr;
+		readonly bool conditionalAccessReceiver;
 		Arguments arguments;
 		MethodSpec method;
 		
-		public DelegateInvocation (Expression instance_expr, Arguments args, Location loc)
+		public DelegateInvocation (Expression instance_expr, Arguments args, bool conditionalAccessReceiver, Location loc)
 		{
 			this.InstanceExpr = instance_expr;
 			this.arguments = args;
+			this.conditionalAccessReceiver = conditionalAccessReceiver;
 			this.loc = loc;
 		}
 
@@ -897,12 +899,19 @@ namespace Mono.CSharp {
 				return null;
 
 			type = method.ReturnType;
+			if (conditionalAccessReceiver)
+				type = LiftMemberType (ec, type);
+
 			eclass = ExprClass.Value;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			if (conditionalAccessReceiver) {
+				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
+			}
+
 			//
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
@@ -910,13 +919,25 @@ namespace Mono.CSharp {
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpr;
 			call.Emit (ec, method, arguments, loc);
+
+			if (conditionalAccessReceiver)
+				ec.CloseConditionalAccess (type.IsNullableType && type !=  method.ReturnType ? type : null);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
+			if (conditionalAccessReceiver) {
+				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ()) {
+					Statement = true
+				};
+			}
+
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpr;
 			call.EmitStatement (ec, method, arguments, loc);
+
+			if (conditionalAccessReceiver)
+				ec.CloseConditionalAccess (null);
 		}
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
