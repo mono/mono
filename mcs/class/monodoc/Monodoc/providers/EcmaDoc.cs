@@ -585,11 +585,11 @@ namespace Monodoc.Providers
 			var summary = docs.Element("summary") ?? new XElement("summary");
 			var remarks = docs.Element("remarks") ?? new XElement("remarks");
 			return new XElement ("class",
-                     new XAttribute ("name", name ?? string.Empty),
-                     new XAttribute ("fullname", fullName ?? string.Empty),
-                     new XAttribute ("assembly", assemblyName ?? string.Empty),
-                     summary,
-                     remarks);
+				 new XAttribute ("name", name ?? string.Empty),
+				 new XAttribute ("fullname", fullName ?? string.Empty),
+				 new XAttribute ("assembly", assemblyName ?? string.Empty),
+				 summary,
+				 remarks);
 		}
 	}
 }
