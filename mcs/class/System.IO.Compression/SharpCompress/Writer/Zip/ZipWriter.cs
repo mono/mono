@@ -132,7 +132,7 @@ namespace SharpCompress.Writer.Zip
             if (pos >= 0)
                 filename = filename.Remove(0, pos + 1);
 
-            return filename.Trim('/');
+            return filename;
         }
 
         private int WriteHeader(string filename, DateTime? modificationTime)
