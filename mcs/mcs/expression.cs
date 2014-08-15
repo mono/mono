@@ -9482,10 +9482,7 @@ namespace Mono.CSharp
 				return indexer;
 			}
 
-			if (type != InternalType.ErrorType) {
-				ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-					type.GetSignatureForError ());
-			}
+			Error_CannotApplyIndexing (ec, type, loc);
 
 			return null;
 		}
@@ -9496,6 +9493,14 @@ namespace Mono.CSharp
 				Expr.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall (ec, "ArrayIndex", args);
+		}
+
+		public static void Error_CannotApplyIndexing (ResolveContext rc, TypeSpec type, Location loc)
+		{
+			if (type != InternalType.ErrorType) {
+				rc.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+					type.GetSignatureForError ());
+			}
 		}
 
 		public override bool HasConditionalAccess ()
@@ -9864,19 +9869,24 @@ namespace Mono.CSharp
 	//
 	// Indexer access expression
 	//
-	sealed class IndexerExpr : PropertyOrIndexerExpr<IndexerSpec>, OverloadResolver.IBaseMembersProvider
+	class IndexerExpr : PropertyOrIndexerExpr<IndexerSpec>, OverloadResolver.IBaseMembersProvider
 	{
 		IList<MemberSpec> indexers;
 		Arguments arguments;
 		TypeSpec queried_type;
 		
 		public IndexerExpr (IList<MemberSpec> indexers, TypeSpec queriedType, ElementAccess ea)
-			: base (ea.Location)
+			: this (indexers, queriedType, ea.Expr, ea.Arguments, ea.Location)
+		{
+		}
+
+		public IndexerExpr (IList<MemberSpec> indexers, TypeSpec queriedType, Expression instance, Arguments args, Location loc)
+			: base (loc)
 		{
 			this.indexers = indexers;
 			this.queried_type = queriedType;
-			this.InstanceExpression = ea.Expr;
-			this.arguments = ea.Arguments;
+			this.InstanceExpression = instance;
+			this.arguments = args;
 		}
 
 		#region Properties
@@ -10801,6 +10811,12 @@ namespace Mono.CSharp
 		{
 			this.Name = name;
 		}
+
+		public bool IsDictionaryInitializer {
+			get {
+				return Name == null;
+			}
+		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
@@ -10837,49 +10853,8 @@ namespace Mono.CSharp
 			if (source == null)
 				return EmptyExpressionStatement.Instance;
 
-			var t = ec.CurrentInitializerVariable.Type;
-			if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (ec.CurrentInitializerVariable));
-				target = new DynamicMemberBinder (Name, args, loc);
-			} else {
-
-				var member = MemberLookup (ec, false, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
-				if (member == null) {
-					member = Expression.MemberLookup (ec, true, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
-
-					if (member != null) {
-						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
-						ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
-						return null;
-					}
-				}
-
-				if (member == null) {
-					Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
-					return null;
-				}
-
-				var me = member as MemberExpr;
-				if (me is EventExpr) {
-					me = me.ResolveMemberAccess (ec, null, null);
-				} else if (!(member is PropertyExpr || member is FieldExpr)) {
-					ec.Report.Error (1913, loc,
-						"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
-						member.GetSignatureForError ());
-
-					return null;
-				}
-
-				if (me.IsStatic) {
-					ec.Report.Error (1914, loc,
-						"Static field or property `{0}' cannot be assigned in an object initializer",
-						me.GetSignatureForError ());
-				}
-
-				target = me;
-				me.InstanceExpression = ec.CurrentInitializerVariable;
-			}
+			if (!ResolveElement (ec))
+				return null;
 
 			if (source is CollectionOrObjectInitializers) {
 				Expression previous = ec.CurrentInitializerVariable;
@@ -10903,6 +10878,55 @@ namespace Mono.CSharp
 				source.Emit (ec);
 			else
 				base.EmitStatement (ec);
+		}
+
+		protected virtual bool ResolveElement (ResolveContext rc)
+		{
+			var t = rc.CurrentInitializerVariable.Type;
+			if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (rc.CurrentInitializerVariable));
+				target = new DynamicMemberBinder (Name, args, loc);
+			} else {
+
+				var member = MemberLookup (rc, false, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
+				if (member == null) {
+					member = Expression.MemberLookup (rc, true, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
+
+					if (member != null) {
+						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
+						ErrorIsInaccesible (rc, member.GetSignatureForError (), loc);
+						return false;
+					}
+				}
+
+				if (member == null) {
+					Error_TypeDoesNotContainDefinition (rc, loc, t, Name);
+					return false;
+				}
+
+				var me = member as MemberExpr;
+				if (me is EventExpr) {
+					me = me.ResolveMemberAccess (rc, null, null);
+				} else if (!(member is PropertyExpr || member is FieldExpr)) {
+					rc.Report.Error (1913, loc,
+						"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
+						member.GetSignatureForError ());
+
+					return false;
+				}
+
+				if (me.IsStatic) {
+					rc.Report.Error (1914, loc,
+						"Static field or property `{0}' cannot be assigned in an object initializer",
+						me.GetSignatureForError ());
+				}
+
+				target = me;
+				me.InstanceExpression = rc.CurrentInitializerVariable;
+			}
+
+			return true;
 		}
 	}
 	
@@ -10983,6 +11007,40 @@ namespace Mono.CSharp
 			base.expr = new AddMemberAccess (ec.CurrentInitializerVariable, loc);
 
 			return base.DoResolve (ec);
+		}
+	}
+
+	class DictionaryElementInitializer : ElementInitializer
+	{
+		readonly Arguments args;
+
+		public DictionaryElementInitializer (List<Expression> arguments, Expression initializer, Location loc)
+			: base (null, initializer, loc)
+		{
+			this.args = new Arguments (arguments.Count);
+			foreach (var arg in arguments)
+				this.args.Add (new Argument (arg));
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			ec.Report.Error (8074, loc, "Expression tree cannot contain a dictionary initializer");
+			return null;
+		}
+
+		protected override bool ResolveElement (ResolveContext rc)
+		{
+			var init = rc.CurrentInitializerVariable;
+			var type = init.Type;
+
+			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
+			if (indexers == null && type.BuiltinType != BuiltinTypeSpec.Type.Dynamic) {
+				ElementAccess.Error_CannotApplyIndexing (rc, type, loc);
+				return false;
+			}
+
+			target = new IndexerExpr (indexers, type, init, args, loc).Resolve (rc);
+			return true;
 		}
 	}
 	
@@ -11072,8 +11130,9 @@ namespace Mono.CSharp
 				if (i == 0) {
 					if (element_initializer != null) {
 						element_names = new List<string> (initializers.Count);
-						element_names.Add (element_initializer.Name);
-					} else if (initializer is CompletingExpression){
+						if (!element_initializer.IsDictionaryInitializer)
+							element_names.Add (element_initializer.Name);
+					} else if (initializer is CompletingExpression) {
 						initializer.Resolve (ec);
 						throw new InternalErrorException ("This line should never be reached");
 					} else {
@@ -11096,7 +11155,7 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					if (!is_collection_initialization) {
+					if (!is_collection_initialization && !element_initializer.IsDictionaryInitializer) {
 						if (element_names.Contains (element_initializer.Name)) {
 							ec.Report.Error (1912, element_initializer.Location,
 								"An object initializer includes more than one member `{0}' initialization",
