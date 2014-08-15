@@ -33,6 +33,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System.Data.Services.Providers
 {
@@ -40,10 +41,10 @@ namespace System.Data.Services.Providers
 	public class ResourceType
 	{
 		string nameSpace;
-		
+		List<ResourceProperty> resourceProperties;
+
 		public bool IsMediaLinkEntry {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;
 		}
 
 		public Type InstanceType {
@@ -59,7 +60,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public ReadOnlyCollection <ResourceProperty> Properties {
-			get { throw new NotImplementedException (); }
+			get { return new ReadOnlyCollection<ResourceProperty> (resourceProperties); }
 		}
 
 		public ReadOnlyCollection <ResourceProperty> PropertiesDeclaredOnThisType {
@@ -88,6 +89,9 @@ namespace System.Data.Services.Providers
 					return String.Empty;
 				return nameSpace;
 			}
+			private set {
+				nameSpace = value;
+			}
 		}
 
 		public bool IsAbstract {
@@ -95,8 +99,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public bool IsOpenType {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;
 		}
 
 		public bool CanReflectOnInstanceType {
@@ -104,8 +107,7 @@ namespace System.Data.Services.Providers
 		}
 
 		public object CustomState {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get; set;
 		}
 
 		public bool IsReadOnly {
@@ -123,6 +125,9 @@ namespace System.Data.Services.Providers
 			if (instanceType.IsValueType)
 				throw new ArgumentException ("Clr type for the resource type cannot be a value type.");
 			
+			this.IsOpenType = false;
+			this.IsMediaLinkEntry = false;
+			this.IsReadOnly = false;
 			this.InstanceType = instanceType;
 			this.ResourceTypeKind = resourceTypeKind;
 			this.BaseType = baseType;
@@ -131,21 +136,59 @@ namespace System.Data.Services.Providers
 			else
 				this.FullName = namespaceName + "." + name;
 			this.Name = name;
-			this.nameSpace = namespaceName;
+			this.Namespace = namespaceName;
 			this.IsAbstract = isAbstract;
 
 			// Appears to always be true
 			this.CanReflectOnInstanceType = true;
+
+			this.resourceProperties = new List<ResourceProperty> ();
+		}
+
+		private ResourceType ()
+		{
 		}
 
 		public static ResourceType GetPrimitiveResourceType (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type.IsValueType == false || type.IsPrimitive == false)
+				return null;
+
+			ResourceType resourceType = new ResourceType ();
+			resourceType.IsOpenType = false;
+			resourceType.IsMediaLinkEntry = false;
+			resourceType.IsReadOnly = true;
+			resourceType.InstanceType = type;
+			resourceType.ResourceTypeKind = ResourceTypeKind.Primitive;
+			resourceType.BaseType = null;
+			resourceType.Name = type.Name;
+			resourceType.Namespace = type.Namespace;
+			resourceType.FullName = type.FullName;
+			resourceType.IsAbstract = false;
+			resourceType.CanReflectOnInstanceType = true;
+			resourceType.resourceProperties = new List<ResourceProperty> ();
+
+			return resourceType;
 		}
 
 		public void AddProperty (ResourceProperty property)
 		{
-			throw new NotImplementedException ();
+			if (property == null)
+				throw new ArgumentNullException ("Value cannot be null.");
+
+			foreach (var pr in resourceProperties) {
+				if (pr.Name == property.Name) {
+					StringBuilder sb = new StringBuilder ("Property with name '");
+					sb.Append (property.Name);
+					sb.Append ("' already exists in type '");
+					sb.Append (this.FullName);
+					sb.Append ("'. Please make sure that there is no property with the same name defined in one of the ancestor types.");
+
+					throw new InvalidOperationException (sb.ToString ());
+				}
+			}
+
+			this.resourceProperties.Add (property);
 		}
 
 		public void AddEntityPropertyMappingAttribute (EntityPropertyMappingAttribute attribute)
