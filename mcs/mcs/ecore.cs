@@ -766,6 +766,9 @@ namespace Mono.CSharp {
 					break;
 				case MemberKind.MissingType:
 				case MemberKind.InternalCompilerType:
+// LAMESPEC: dynamic is not really object
+//					if (type.BuiltinType == BuiltinTypeSpec.Type.Object)
+//						goto default;
 					break;
 				default:
 					rc.Report.SymbolRelatedToPreviousError (type);

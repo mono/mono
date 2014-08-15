@@ -65343,6 +65343,69 @@
       </method>
     </type>
   </test>
+  <test name="test-dictinit-01.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>181</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 get_Item(System.String)" attrs="2182">
+        <size>21</size>
+      </method>
+      <method name="Void set_Item(System.String, Int32)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-dictinit-02.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>182</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="C get_Item(System.String)" attrs="2182">
+        <size>50</size>
+      </method>
+      <method name="Void set_Item(System.String, C)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-dictinit-03.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>196</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.Object get_Item(System.String)" attrs="2182">
+        <size>26</size>
+      </method>
+      <method name="Void set_Item(System.String, System.Object)" attrs="2182">
+        <size>81</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="test-ex-filter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
