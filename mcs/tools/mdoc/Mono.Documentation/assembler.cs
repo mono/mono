@@ -87,7 +87,7 @@ public class MDocAssembler : MDocCommand {
 					list.Add (ecma);
 					sort = true;
 				}
-				ecma.FileSource = new MDocFileSource(droppedNamespace, string.IsNullOrWhiteSpace(droppedNamespace) ? ApiStyle.New : ApiStyle.Old) {
+				ecma.FileSource = new MDocFileSource(droppedNamespace, string.IsNullOrWhiteSpace(droppedNamespace) ? ApiStyle.Unified : ApiStyle.Classic) {
 					ReplaceNativeTypes = replaceNTypes
 				};
 				foreach (string dir in formats [format])
@@ -210,7 +210,7 @@ public class MDocAssembler : MDocCommand {
 				element.Remove ();
 			}
 
-			if (styleToDrop == ApiStyle.Old && ReplaceNativeTypes) {
+			if (styleToDrop == ApiStyle.Classic && ReplaceNativeTypes) {
 				RewriteCrefsIfNecessary (doc, path);
 			}
 		}
@@ -244,22 +244,22 @@ public class MDocAssembler : MDocCommand {
 						// look in the refDoc for the memberName, and match on parameters and # of type parameters
 						var overloads = refDoc.XPathSelectElements ("//Member[@MemberName='" + memberName + "']").ToArray ();
 						// Do some initial filtering to find members that could potentially match (based on parameter and typeparam counts)
-						var members = overloads.Where (e => reference.MemberArgumentsCount == e.XPathSelectElements ("Parameters/Parameter[not(@apistyle) or @apistyle='old']").Count () && reference.GenericMemberArgumentsCount == e.XPathSelectElements ("TypeParameters/TypeParameter[not(@apistyle) or @apistyle='old']").Count ()).Select (m => new {
+						var members = overloads.Where (e => reference.MemberArgumentsCount == e.XPathSelectElements ("Parameters/Parameter[not(@apistyle) or @apistyle='classic']").Count () && reference.GenericMemberArgumentsCount == e.XPathSelectElements ("TypeParameters/TypeParameter[not(@apistyle) or @apistyle='classic']").Count ()).Select (m => new {
 							Node = m,
 							AllParameters = m.XPathSelectElements ("Parameters/Parameter").ToArray (),
-							Parameters = m.XPathSelectElements ("Parameters/Parameter[not(@apistyle) or @apistyle='old']").ToArray (),
-							NewParameters = m.XPathSelectElements ("Parameters/Parameter[@apistyle='new']").ToArray ()
+							Parameters = m.XPathSelectElements ("Parameters/Parameter[not(@apistyle) or @apistyle='classic']").ToArray (),
+							NewParameters = m.XPathSelectElements ("Parameters/Parameter[@apistyle='unified']").ToArray ()
 						}).ToArray ();
 						// now find the member that matches on types
 						var member = members.FirstOrDefault (m => reference.MemberArguments.All (r => m.Parameters.Any (mp => mp.Attribute ("Type").Value.Contains (r.TypeName))));
 						if (member == null || member.NewParameters.Length == 0)
 							continue;
 						foreach (var arg in reference.MemberArguments) {
-							// find the "old" parameter
+							// find the "classic" parameter
 							var oldParam = member.Parameters.First (p => p.Attribute ("Type").Value.Contains (arg.TypeName));
 							var newParam = member.NewParameters.FirstOrDefault (p => oldParam.Attribute ("Name").Value == p.Attribute ("Name").Value);
 							if (newParam != null) {
-								// this means there was a change based, and we should convert this cref
+								// this means there was a change made, and we should try to convert this cref
 								arg.TypeName = NativeTypeManager.ConvertToNativeType (arg.TypeName);
 							}
 						}
