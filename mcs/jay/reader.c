@@ -1281,9 +1281,10 @@ loop:
 
 	if ((lineno - (a_lineno + comment_lines)) > 2)
 	{
-		char mname[20];
-		char line_define[256];
+		char mname[28];
+		char *line_define;
 
+		// the maximum size of of an unsigned int in characters is 20, with 8 for 'case_()\0'
 		sprintf(mname, "case_%d()", nrules - 2);
 
 		putc(' ', f); putc(' ', f);
@@ -1300,6 +1301,7 @@ loop:
 			methods = REALLOC (methods, maxmethods*sizeof(char *));
 		}
 
+		line_define = NEW2(snprintf(NULL, 0, line_format, a_lineno, input_file_name)+1, char);
 		sprintf(line_define, line_format, a_lineno, input_file_name);
 
 		mbody = NEW2(5+strlen(line_define)+1+strlen(mname)+strlen(buffer)+1, char);
@@ -1309,6 +1311,8 @@ loop:
 		strcat(mbody, line_define);
 		strcat(mbody, buffer);
 		methods[nmethods++] = mbody;
+
+		FREE(line_define);
 	}
 	else
 	{
