@@ -19380,6 +19380,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-622.cs">
+    <type name="CY">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void M[TO]()" attrs="486">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -65379,27 +65397,6 @@
       </method>
       <method name="Void set_Item(System.String, C)" attrs="2182">
         <size>15</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-dictinit-03.cs">
-    <type name="Program">
-      <method name="Int32 Main()" attrs="145">
-        <size>196</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="System.Object get_Item(System.String)" attrs="2182">
-        <size>26</size>
-      </method>
-      <method name="Void set_Item(System.String, System.Object)" attrs="2182">
-        <size>81</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
