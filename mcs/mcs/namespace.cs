@@ -311,6 +311,12 @@ namespace Mono.CSharp {
 			if (arity == 0 && mode == LookupMode.Normal)
 				cached_types.Add (name, best);
 
+			if (best != null) {
+				var dep = best.GetMissingDependencies ();
+				if (dep != null)
+					ImportedTypeDefinition.Error_MissingDependency (ctx, dep, loc);
+			}
+
 			return best;
 		}
 
