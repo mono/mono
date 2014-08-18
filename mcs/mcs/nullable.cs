@@ -435,6 +435,12 @@ namespace Mono.CSharp.Nullable
 		{
 		}
 
+		public override bool IsNull {
+			get {
+				return expr.IsNull;
+			}
+		}
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return unwrap.ContainsEmitWithAwait ();

@@ -15031,7 +15031,7 @@
   <test name="gtest-435.cs">
     <type name="testcase.Program">
       <method name="Int32 Main()" attrs="150">
-        <size>371</size>
+        <size>405</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18459,7 +18459,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>531</size>
+        <size>603</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
