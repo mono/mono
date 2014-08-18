@@ -3753,7 +3753,8 @@ namespace Mono.CSharp
 						return lifted.Resolve (rc);
 					}
 				} else if (rtype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (rtype).IsEnum) {
-					if (left.IsNull) {
+					Nullable.Unwrap unwrap = null;
+					if (left.IsNull || right.IsNull) {
 						if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 							left = Convert.ImplicitConversion (rc, left, rtype, left.Location);
 
@@ -3763,8 +3764,12 @@ namespace Mono.CSharp
 						if ((oper & Operator.BitwiseMask) != 0)
 							return Nullable.LiftedNull.CreateFromExpression (rc, this);
 
+						if (right.IsNull)
+							return CreateLiftedValueTypeResult (rc, left.Type);
+
 						// Equality operators are valid between E? and null
 						expr = left;
+						unwrap = new Nullable.Unwrap (right);
 					} else {
 						expr = Convert.ImplicitConversion (rc, left, Nullable.NullableInfo.GetUnderlyingType (rtype), loc);
 						if (expr == null)
@@ -3775,10 +3780,12 @@ namespace Mono.CSharp
 						var lifted = new Nullable.LiftedBinaryOperator (this);
 						lifted.Left = expr;
 						lifted.Right = right;
+						lifted.UnwrapRight = unwrap;
 						return lifted.Resolve (rc);
 					}
 				} else if (ltype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (ltype).IsEnum) {
-					if (right.IsNull) {
+					Nullable.Unwrap unwrap = null;
+					if (right.IsNull || left.IsNull) {
 						if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 							right = Convert.ImplicitConversion (rc, right, ltype, right.Location);
 
@@ -3788,8 +3795,12 @@ namespace Mono.CSharp
 						if ((oper & Operator.BitwiseMask) != 0)
 							return Nullable.LiftedNull.CreateFromExpression (rc, this);
 
+						if (left.IsNull)
+							return CreateLiftedValueTypeResult (rc, right.Type);
+
 						// Equality operators are valid between E? and null
 						expr = right;
+						unwrap = new Nullable.Unwrap (left);
 					} else {
 						expr = Convert.ImplicitConversion (rc, right, Nullable.NullableInfo.GetUnderlyingType (ltype), loc);
 						if (expr == null)
@@ -3799,6 +3810,7 @@ namespace Mono.CSharp
 					if (expr != null) {
 						var lifted = new Nullable.LiftedBinaryOperator (this);
 						lifted.Left = left;
+						lifted.UnwrapLeft = unwrap;
 						lifted.Right = expr;
 						return lifted.Resolve (rc);
 					}
@@ -4345,24 +4357,27 @@ namespace Mono.CSharp
 
 				if (left.IsNull || right.IsNull) {
 					//
-					// The lifted operator produces the value false if one or both operands are null for
-					// relational operators.
-					//
-					if ((oper & Operator.ComparisonMask) != 0) {
-						//
-						// CSC BUG: This should be different warning, csc reports CS0458 with bool? which is wrong
-						// because return type is actually bool
-						//
-						// For some reason CSC does not report this warning for equality operators
-						//
-						return CreateLiftedValueTypeResult (rc, left.IsNull ? ptypes [1] : ptypes [0]);
-					}
-
 					// The lifted operator produces a null value if one or both operands are null
 					//
 					if ((oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0) {
 						type = oper_method.ReturnType;
 						return Nullable.LiftedNull.CreateFromExpression (rc, this);
+					}
+
+					//
+					// The lifted operator produces the value false if one or both operands are null for
+					// relational operators.
+					//
+					if ((oper & Operator.RelationalMask) != 0) {
+						//
+						// CSC BUG: This should be different warning, csc reports CS0458 with bool? which is wrong
+						// because return type is actually bool
+						//
+						return CreateLiftedValueTypeResult (rc, left.IsNull ? ptypes [1] : ptypes [0]);
+					}
+
+					if ((oper & Operator.EqualityMask) != 0 && ((left.IsNull && !right.Type.IsNullableType) || !left.Type.IsNullableType)) {
+						return CreateLiftedValueTypeResult (rc, left.IsNull ? ptypes [1] : ptypes [0]);
 					}
 				}
 
