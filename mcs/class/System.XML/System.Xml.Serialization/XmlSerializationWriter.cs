@@ -315,6 +315,8 @@ namespace System.Xml.Serialization
 					if (isNullable)
 						WriteNullTagEncoded (name, ns);
 				}
+				else if (any)
+					WriteXmlNode (node);
 				else
 				{
 					Writer.WriteStartElement (name, ns);
@@ -335,6 +337,8 @@ namespace System.Xml.Serialization
 					if (isNullable)
 						WriteNullTagLiteral (name, ns);
 				}
+				else if (any)
+					WriteXmlNode (node);
 				else
 				{
 					Writer.WriteStartElement (name, ns);
