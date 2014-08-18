@@ -108,6 +108,7 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor1_Interval_Max ()
 		{
 #if NET_2_0
@@ -132,10 +133,98 @@ namespace MonoTests.System.Timers
 			}
 #else
 			timer = new Timer (0x80000000);
-			Assert.AreEqual (0x80000000, timer.Interval, "#1");
-			timer = new Timer (double.MaxValue);
-			Assert.AreEqual (double.MaxValue, timer.Interval, "#2");
 #endif
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor1_Interval_Max_2 ()
+		{
+			timer = new Timer (double.MaxValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor1_Interval_Min_1 ()
+		{
+			timer = new Timer (0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor1_Interval_Min_2 ()
+		{
+			timer = new Timer (-5);
+		}
+
+		[Test]
+		public void Interval_TooHigh_Disabled_NoThrow ()
+		{
+			timer.Interval = double.MaxValue;
+			Assert.AreEqual (double.MaxValue, timer.Interval, "#3");
+		}
+
+		[Test]
+		public void Interval_TooHigh_ThrowOnEnabled ()
+		{
+			timer.Interval = 0x80000000;
+			Assert.AreEqual (0x80000000, timer.Interval, "#1");
+			try {
+				timer.Enabled = true;
+				Assert.Fail ("#2");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
+				Assert.IsFalse (timer.Enabled);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Interval_TooHigh_Enabled_Throw ()
+		{
+			timer.Interval = 100;
+			timer.Enabled = true;
+			timer.Interval = double.MaxValue;
+		}
+
+		[Test]
+		public void DoubleClose_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			timer.Close ();
+		}
+
+		[Test]
+		public void DisposedMeansDisabled_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			Assert.IsFalse (timer.Enabled);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed_ThrowOnEnabled ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			timer.Enabled = false;
+		}
+
+		[Test]
+		public void Elapsed_DontFireIfDisposed ()
+		{
+			timer.Interval = 500;
+			var countElapsedCalls = 0;
+			timer.Elapsed += (_, __) => { countElapsedCalls++; };
+			timer.Start ();
+			timer.Close ();
+			ST.Thread.Sleep (500);
+			Assert.AreEqual (countElapsedCalls, 0);
 		}
 
 		[Test]
