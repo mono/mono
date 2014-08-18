@@ -3276,5 +3276,41 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual ("test", obj.Text);
 			}
 		}
+
+		public class SubNoParameterlessConstructor : NoParameterlessConstructor
+		{
+			public SubNoParameterlessConstructor ()
+				: base ("")
+			{
+			}
+		}
+
+		public class NoParameterlessConstructor
+		{
+			[XmlElement ("Text")]
+			public string Text;
+
+			public NoParameterlessConstructor (string parameter)
+			{
+			}
+		}
+
+		[Test]
+		public void BaseClassWithoutParameterlessConstructor ()
+		{
+			var ser = new XmlSerializer (typeof (SubNoParameterlessConstructor));
+
+			var obj = new SubNoParameterlessConstructor {
+				Text = "test",
+			};
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (SubNoParameterlessConstructor) ser.Deserialize (r);
+					Assert.AreEqual (obj.Text, desObj.Text);
+				}
+			}
+		}
 	}
 }
