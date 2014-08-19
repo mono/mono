@@ -50624,6 +50624,19 @@
       </method>
     </type>
   </test>
+  <test name="test-904.cs">
+    <type name="Test">
+      <method name="Boolean Foo(Int32 ByRef)" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>172</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-91.cs">
     <type name="Abstract">
       <method name="Void .ctor()" attrs="6276">
