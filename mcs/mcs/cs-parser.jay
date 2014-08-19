@@ -1819,11 +1819,16 @@ property_declaration
 		var property = new Property (current_type, type, (Modifiers) $2,
 			(MemberName) $4, (Attributes) $1);
 
-		if (type.Type != null && type.Type.Kind == MemberKind.Void)
-			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", property.GetSignatureForError ());
-
 		property.Get = new Property.GetMethod (property, Modifiers.COMPILER_GENERATED, null, property.Location);
 		property.Get.Block = (ToplevelBlock) $6;
+
+		if (current_container.Kind == MemberKind.Interface) {
+			report.Error (531, property.Get.Block.StartLocation,
+				"`{0}': interface members cannot have a definition", property.GetSignatureForError ());
+		}
+
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
+			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", property.GetSignatureForError ());
 
 		current_type.AddMember (property);
 
