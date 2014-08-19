@@ -3424,8 +3424,13 @@ namespace Mono.CSharp {
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (InstanceExpression != null)
+			if (InstanceExpression != null) {
 				InstanceExpression.FlowAnalysis (fc);
+
+				if (ConditionalAccess) {
+					fc.BranchConditionalAccessDefiniteAssignment ();
+				}
+			}
 		}
 
 		protected void ResolveConditionalAccessReceiver (ResolveContext rc)
@@ -3662,6 +3667,13 @@ namespace Mono.CSharp {
 
 		public override bool IsStatic {
 			get { return true; }
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (ConditionalAccess) {
+				fc.BranchConditionalAccessDefiniteAssignment ();
+			}
 		}
 
 		//
@@ -6259,6 +6271,9 @@ namespace Mono.CSharp {
 			}
 
 			base.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		public override int GetHashCode ()
@@ -6732,6 +6747,14 @@ namespace Mono.CSharp {
 			if (await_source_arg != null) {
 				await_source_arg.Release (ec);
 			}
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			base.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		protected override Expression OverloadResolve (ResolveContext rc, Expression right_side)

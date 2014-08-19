@@ -602,9 +602,13 @@ namespace Mono.CSharp {
 				ec.CloseConditionalAccess (null);
 		}
 
-		public override void FlowAnalysis (FlowAnalysisContext fc) {
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
 			base.FlowAnalysis (fc);
 			method_group.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
