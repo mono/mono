@@ -611,6 +611,16 @@ namespace Mono.CSharp
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
+			FlowAnalysis (fc, false);
+		}
+
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			FlowAnalysis (fc, true);
+		}
+
+		void FlowAnalysis (FlowAnalysisContext fc, bool conditional)
+		{
 			if (Oper == Operator.AddressOf) {
 				var vr = Expr as VariableReference;
 				if (vr != null && vr.VariableInfo != null)
@@ -619,12 +629,14 @@ namespace Mono.CSharp
 				return;
 			}
 
-			Expr.FlowAnalysis (fc);
+			if (Oper == Operator.LogicalNot && conditional) {
+				Expr.FlowAnalysisConditional (fc);
 
-			if (Oper == Operator.LogicalNot) {
 				var temp = fc.DefiniteAssignmentOnTrue;
 				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse;
 				fc.DefiniteAssignmentOnFalse = temp;
+			} else {
+				Expr.FlowAnalysis (fc);
 			}
 		}
 
@@ -2621,42 +2633,43 @@ namespace Mono.CSharp
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
+			//
+			// Optimized version when on-true/on-false data are not needed
+			//
 			if ((oper & Operator.LogicalMask) == 0) {
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 				left.FlowAnalysis (fc);
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 				right.FlowAnalysis (fc);
 				return;
 			}
 
-			//
-			// Optimized version when on-true/on-false data are not needed
-			//
-			bool set_on_true_false;
-			if (fc.DefiniteAssignmentOnTrue == null && fc.DefiniteAssignmentOnFalse == null) {
-				fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignment;
-				set_on_true_false = false;
-			} else {
-				set_on_true_false = true;
-			}
-
-			left.FlowAnalysis (fc);
+			left.FlowAnalysisConditional (fc);
 			var left_fc_ontrue = fc.DefiniteAssignmentOnTrue;
 			var left_fc_onfalse = fc.DefiniteAssignmentOnFalse;
 
 			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment = new DefiniteAssignmentBitSet (
 				oper == Operator.LogicalOr ? left_fc_onfalse : left_fc_ontrue);
-			right.FlowAnalysis (fc);
+			right.FlowAnalysisConditional (fc);
 
-			if (!set_on_true_false) {
-				if (oper == Operator.LogicalOr)
-					fc.DefiniteAssignment = (left_fc_onfalse | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_ontrue;
-				else
-					fc.DefiniteAssignment = (left_fc_ontrue | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_onfalse;
+			if (oper == Operator.LogicalOr)
+				fc.DefiniteAssignment = (left_fc_onfalse | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_ontrue;
+			else
+				fc.DefiniteAssignment = (left_fc_ontrue | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_onfalse;
+		}
 
-				fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignmentOnTrue = null;
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			if ((oper & Operator.LogicalMask) == 0) {
+				base.FlowAnalysisConditional (fc);
 				return;
 			}
+
+			left.FlowAnalysisConditional (fc);
+			var left_fc_ontrue = fc.DefiniteAssignmentOnTrue;
+			var left_fc_onfalse = fc.DefiniteAssignmentOnFalse;
+
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment = new DefiniteAssignmentBitSet (
+				oper == Operator.LogicalOr ? left_fc_onfalse : left_fc_ontrue);
+			right.FlowAnalysisConditional (fc);
 
 			var lc = left as Constant;
 			if (oper == Operator.LogicalOr) {
@@ -5557,24 +5570,38 @@ namespace Mono.CSharp
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+			expr.FlowAnalysisConditional (fc);
+			var expr_true = fc.DefiniteAssignmentOnTrue;
+			var expr_false = fc.DefiniteAssignmentOnFalse;
 
-			expr.FlowAnalysis (fc);
-			var da_true = fc.DefiniteAssignmentOnTrue;
-			var da_false = fc.DefiniteAssignmentOnFalse;
-
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (da_true);
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_true);
 			true_expr.FlowAnalysis (fc);
 			var true_fc = fc.DefiniteAssignment;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (da_false);
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_false);
 			false_expr.FlowAnalysis (fc);
 
 			fc.DefiniteAssignment &= true_fc;
-			if (fc.DefiniteAssignmentOnTrue != null)
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignment;
-			if (fc.DefiniteAssignmentOnFalse != null)
-				fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+		}
+
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysisConditional (fc);
+			var expr_true = fc.DefiniteAssignmentOnTrue;
+			var expr_false = fc.DefiniteAssignmentOnFalse;
+
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_true);
+			true_expr.FlowAnalysisConditional (fc);
+			var true_fc = fc.DefiniteAssignment;
+			var true_da_true = fc.DefiniteAssignmentOnTrue;
+			var true_da_false = fc.DefiniteAssignmentOnFalse;
+
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_false);
+			false_expr.FlowAnalysisConditional (fc);
+
+			fc.DefiniteAssignment &= true_fc;
+			fc.DefiniteAssignmentOnTrue = true_da_true & fc.DefiniteAssignmentOnTrue;
+			fc.DefiniteAssignmentOnFalse = true_da_false & fc.DefiniteAssignmentOnFalse;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
