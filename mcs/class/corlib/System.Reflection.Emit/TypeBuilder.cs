@@ -810,7 +810,6 @@ namespace System.Reflection.Emit
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
 			if (interfaces != null) {
 				foreach (var iface in interfaces) {
-					Console.WriteLine (iface.Attributes);
 					if (iface.IsNestedPrivate && iface.Assembly != Assembly)
 						throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is implements the inaccessible interface '" + iface.FullName + "'.");
 				}
