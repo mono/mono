@@ -1,4 +1,4 @@
-// CS0165:
+// CS0165: Use of unassigned local variable `a'
 // Line: 17
 
 class Test
