@@ -384,28 +384,26 @@ namespace System.IO {
 				var changes = new List<kevent> ();
 				var outEvents = new List<kevent> ();
 
-				foreach (KeyValuePair<int, KeventData> kv in fdsDict) {
-					var change = new kevent {
-						ident = kv.Key,
-						filter = EventFilter.Vnode,
-						flags = EventFlags.Add | EventFlags.Enable | EventFlags.Clear,
-						fflags = FilterFlags.VNodeDelete | FilterFlags.VNodeExtend | FilterFlags.VNodeRename | FilterFlags.VNodeAttrib | FilterFlags.VNodeLink | FilterFlags.VNodeRevoke | FilterFlags.VNodeWrite,
-						data = IntPtr.Zero,
-						udata = IntPtr.Zero
-					};
+				lock (this) {
+					foreach (KeyValuePair<int, KeventData> kv in fdsDict) {
+						var change = new kevent {
+							ident = kv.Key,
+							filter = EventFilter.Vnode,
+							flags = EventFlags.Add | EventFlags.Enable | EventFlags.Clear,
+							fflags = FilterFlags.VNodeDelete | FilterFlags.VNodeExtend | FilterFlags.VNodeRename | FilterFlags.VNodeAttrib | FilterFlags.VNodeLink | FilterFlags.VNodeRevoke | FilterFlags.VNodeWrite,
+							data = IntPtr.Zero,
+							udata = IntPtr.Zero
+						};
 
-					changes.Add (change);
-					outEvents.Add (new kevent());
+						changes.Add (change);
+						outEvents.Add (new kevent());
+					}
 				}
 
 				if (changes.Count > 0) {
-					int numEvents = 0;
 					var out_array = outEvents.ToArray ();
-
-					lock (this) {
-						kevent[] changes_array = changes.ToArray ();
-						numEvents = kevent (conn, changes_array, changes_array.Length, out_array, out_array.Length, IntPtr.Zero);
-					}
+					kevent[] changes_array = changes.ToArray ();
+					int numEvents = kevent (conn, changes_array, changes_array.Length, out_array, out_array.Length, IntPtr.Zero);
 
 					for (var i = 0; i < numEvents; i++) {
 						var kevt = out_array [i];
