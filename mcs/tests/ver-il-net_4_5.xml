@@ -50213,6 +50213,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void Test8()" attrs="145">
+        <size>51</size>
+      </method>
     </type>
   </test>
   <test name="test-881.cs">

@@ -995,6 +995,16 @@ namespace Mono.CSharp {
 		{
 		}
 
+		//
+		// Special version of flow analysis for expressions which can return different
+		// on-true and on-false result. Used by &&, ||, ?: expressions
+		//
+		public virtual void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			FlowAnalysis (fc);
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+		}
+
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
