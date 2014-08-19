@@ -2641,26 +2641,36 @@ namespace Mono.CSharp
 			}
 
 			left.FlowAnalysis (fc);
-			var left_fc = fc.DefiniteAssignment;
 			var left_fc_ontrue = fc.DefiniteAssignmentOnTrue;
 			var left_fc_onfalse = fc.DefiniteAssignmentOnFalse;
 
 			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment = new DefiniteAssignmentBitSet (
 				oper == Operator.LogicalOr ? left_fc_onfalse : left_fc_ontrue);
 			right.FlowAnalysis (fc);
-			fc.DefiniteAssignment = left_fc;
 
 			if (!set_on_true_false) {
+				if (oper == Operator.LogicalOr)
+					fc.DefiniteAssignment = (left_fc_onfalse | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_ontrue;
+				else
+					fc.DefiniteAssignment = (left_fc_ontrue | (fc.DefiniteAssignmentOnFalse & fc.DefiniteAssignmentOnTrue)) & left_fc_onfalse;
+
 				fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignmentOnTrue = null;
 				return;
 			}
 
+			var lc = left as Constant;
 			if (oper == Operator.LogicalOr) {
-				fc.DefiniteAssignmentOnTrue = new DefiniteAssignmentBitSet (left_fc_ontrue);
 				fc.DefiniteAssignmentOnFalse = left_fc_onfalse | fc.DefiniteAssignmentOnFalse;
+				if (lc != null && lc.IsDefaultValue)
+					fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse;
+				else
+					fc.DefiniteAssignmentOnTrue = new DefiniteAssignmentBitSet (left_fc_ontrue & (left_fc_onfalse | fc.DefiniteAssignmentOnTrue));
 			} else {
 				fc.DefiniteAssignmentOnTrue = left_fc_ontrue | fc.DefiniteAssignmentOnTrue;
-				fc.DefiniteAssignmentOnFalse = new DefiniteAssignmentBitSet (left_fc_onfalse);
+				if (lc != null && !lc.IsDefaultValue)
+					fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignmentOnTrue;
+				else
+					fc.DefiniteAssignmentOnFalse = new DefiniteAssignmentBitSet ((left_fc_ontrue | fc.DefiniteAssignmentOnFalse) & left_fc_onfalse);
 			}
 		}
 
