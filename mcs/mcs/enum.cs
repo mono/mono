@@ -64,11 +64,12 @@ namespace Mono.CSharp {
 			if (expr is EnumConstant)
 				expr = ((EnumConstant) expr).Child;
 
-			var underlying = ((Enum) Parent).UnderlyingType;
+			var en = (Enum)Parent;
+			var underlying = en.UnderlyingType;
 			if (expr != null) {
 				expr = expr.ImplicitConversionRequired (rc, underlying);
 				if (expr != null && !IsValidEnumType (expr.Type)) {
-					Enum.Error_1008 (Location, Report);
+					en.Error_UnderlyingType (Location);
 					expr = null;
 				}
 			}
@@ -217,7 +218,7 @@ namespace Mono.CSharp {
 			AddMember (em);
 		}
 
-		public static void Error_1008 (Location loc, Report Report)
+		public void Error_UnderlyingType (Location loc)
 		{
 			Report.Error (1008, loc,
 				"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
@@ -225,7 +226,21 @@ namespace Mono.CSharp {
 
 		protected override void DoDefineContainer ()
 		{
-			((EnumSpec) spec).UnderlyingType = underlying_type_expr == null ? Compiler.BuiltinTypes.Int : underlying_type_expr.Type;
+			TypeSpec ut;
+			if (underlying_type_expr != null) {
+				ut = underlying_type_expr.ResolveAsType (this);
+				if (!EnumSpec.IsValidUnderlyingType (ut)) {
+					Error_UnderlyingType (underlying_type_expr.Location);
+					ut = null;
+				}
+			} else {
+				ut = null;
+			}
+
+			if (ut == null)
+				ut = Compiler.BuiltinTypes.Int;
+
+			((EnumSpec) spec).UnderlyingType = ut;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);

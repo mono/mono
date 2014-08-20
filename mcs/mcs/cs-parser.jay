@@ -2754,10 +2754,6 @@ opt_enum_base
 	: /* empty */
 	| COLON type
 	 {
-	 	var te = $2 as TypeExpression;
-		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
-			Enum.Error_1008 (GetLocation ($2), report);
-		}
 		$$ = $2;
 	 }
 	| COLON error
