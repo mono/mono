@@ -85,9 +85,9 @@ namespace MonoTests.System.Timers
 			try {
 				new Timer (-1);
 				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// Invalid value -1 for parameter interval
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsTrue (ex as ArgumentException != null, "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
@@ -99,9 +99,9 @@ namespace MonoTests.System.Timers
 			try {
 				new Timer (0);
 				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// Invalid value 0 for parameter interval
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsTrue (ex as ArgumentException != null, "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
@@ -113,9 +113,9 @@ namespace MonoTests.System.Timers
 			try {
 				new Timer (0x80000000);
 				Assert.Fail ("#A1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// Invalid value 2147483648 for parameter interval
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsTrue (ex as ArgumentException != null, "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
 			}
@@ -123,33 +123,42 @@ namespace MonoTests.System.Timers
 			try {
 				new Timer (double.MaxValue);
 				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// Invalid value 1.79769313486232E+308 for parameter interval
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsTrue (ex as ArgumentException != null, "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor1_Interval_Max_2 ()
 		{
-			timer = new Timer (double.MaxValue);
+			try {
+				timer = new Timer (double.MaxValue);
+			} catch (Exception ex) {
+				Assert.IsTrue (ex as ArgumentException != null);
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor1_Interval_Min_1 ()
 		{
-			timer = new Timer (0);
+			try {
+				timer = new Timer (0);
+			} catch (Exception ex) {
+				Assert.IsTrue (ex as ArgumentException != null);
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor1_Interval_Min_2 ()
 		{
-			timer = new Timer (-5);
+			try {
+				timer = new Timer (-5);
+			} catch (Exception ex) {
+				Assert.IsTrue (ex as ArgumentException != null);
+			}
 		}
 
 		[Test]
@@ -168,18 +177,21 @@ namespace MonoTests.System.Timers
 				timer.Enabled = true;
 				Assert.Fail ("#2");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
-				Assert.IsFalse (timer.Enabled);
+				Assert.IsTrue (ex as ArgumentException != null, "#3");
+				Assert.IsTrue (timer.Enabled); //MS weirdness zone: timer.Enabled = true throws and yet timer.Enabled becomes true, as if the Timer was started ... And we follow their lead.
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Interval_TooHigh_Enabled_Throw ()
 		{
 			timer.Interval = 100;
 			timer.Enabled = true;
-			timer.Interval = double.MaxValue;
+			try {
+				timer.Interval = double.MaxValue;
+			} catch (Exception ex) {
+				Assert.IsTrue (ex as ArgumentException != null);
+			}
 		}
 
 		[Test]
@@ -192,7 +204,34 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		public void DisposedMeansDisabled_NoThrow ()
+		public void DoubleDispose_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			timer.Dispose ();
+		}
+
+		[Test]
+		public void DisposeClose_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			timer.Close ();
+		}
+
+		[Test]
+		public void CloseDispose_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			timer.Dispose ();
+		}
+
+		[Test]
+		public void ClosedMeansDisabled_NoThrow ()
 		{
 			timer.Interval = 100;
 			timer.Start ();
@@ -201,13 +240,132 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed_ThrowOnEnabled ()
+		public void DisposedMeansDisabled_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			Assert.IsFalse (timer.Enabled);
+		}
+
+		[Test]
+		public void Closed_AfterStart_NoThrowOnEnabledTrue ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			timer.Enabled = true;
+		}
+
+		[Test]
+		public void Closed_AfterStart_NoThrowOnEnabledFalse ()
 		{
 			timer.Interval = 100;
 			timer.Start ();
 			timer.Close ();
 			timer.Enabled = false;
+		}
+
+		[Test]
+		public void Closed_AfterStart_ChangeInterval_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Close ();
+			timer.Interval = 500;
+			Assert.AreEqual (500, timer.Interval);
+		}
+
+		[Test]
+		public void Closed_NotStarted_ChangeInterval_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Close ();
+			timer.Interval = 500;
+			Assert.AreEqual (500, timer.Interval);
+		}
+
+		[Test]
+		public void Closed_NotStarted_NoThrowOnEnabledTrue ()
+		{
+			timer.Interval = 100;
+			timer.Close ();
+			timer.Enabled = true;
+		}
+
+		[Test]
+		public void Closed_NotStarted_NoThrowOnEnabledFalse ()
+		{
+			timer.Interval = 100;
+			timer.Close ();
+			timer.Enabled = false;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed_AfterStart_ThrowOnEnabledTrue ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			timer.Enabled = true;
+		}
+
+		[Test]
+		public void Disposed_AfterStart_NoThrowOnEnabledFalse ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			timer.Enabled = false;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed_NotStarted_ThrowOnEnabledTrue ()
+		{
+			timer.Interval = 100;
+			timer.Dispose ();
+			timer.Enabled = true;
+		}
+
+		[Test]
+		public void Disposed_NotStarted_NoThrowOnEnabledFalse ()
+		{
+			timer.Interval = 100;
+			timer.Dispose ();
+			timer.Enabled = false;
+		}
+
+		[Test]
+		public void Disposed_AfterStart_ChangeInterval_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Start ();
+			timer.Dispose ();
+			timer.Interval = 500;
+			Assert.AreEqual (500, timer.Interval);
+		}
+
+		[Test]
+		public void Disposed_NotStarted_ChangeInterval_NoThrow ()
+		{
+			timer.Interval = 100;
+			timer.Dispose ();
+			timer.Interval = 500;
+			Assert.AreEqual (500, timer.Interval);
+		}
+
+		[Test]
+		public void Elapsed_DontFireIfClosed ()
+		{
+			timer.Interval = 500;
+			var countElapsedCalls = 0;
+			timer.Elapsed += (_, __) => { countElapsedCalls++; };
+			timer.Start ();
+			timer.Close ();
+			ST.Thread.Sleep (500);
+			Assert.AreEqual (countElapsedCalls, 0);
 		}
 
 		[Test]
@@ -217,7 +375,7 @@ namespace MonoTests.System.Timers
 			var countElapsedCalls = 0;
 			timer.Elapsed += (_, __) => { countElapsedCalls++; };
 			timer.Start ();
-			timer.Close ();
+			timer.Dispose ();
 			ST.Thread.Sleep (500);
 			Assert.AreEqual (countElapsedCalls, 0);
 		}
@@ -247,9 +405,9 @@ namespace MonoTests.System.Timers
 			try {
 				timer.Interval = -1;
 				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// '0' is not a valid value for 'Interval'. 'Interval' must be greater than 0
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsTrue (ex as ArgumentException != null, "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
@@ -261,9 +419,9 @@ namespace MonoTests.System.Timers
 			try {
 				timer.Interval = 0;
 				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
+			} catch (Exception ex) {
 				// '0' is not a valid value for 'Interval'. 'Interval' must be greater than 0
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsTrue (ex as ArgumentException != null, "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}

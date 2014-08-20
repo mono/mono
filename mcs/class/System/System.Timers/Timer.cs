@@ -44,6 +44,7 @@ namespace System.Timers
 		object _lock = new object ();
 		ISynchronizeInvoke so;
 		bool enabled;
+		bool closed;
 
 		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
@@ -80,25 +81,27 @@ namespace System.Timers
 		{
 			get {
 				lock (_lock)
-					return enabled && timer != null;
+					return enabled && !closed && timer != null;
 			}
 			set {
 				lock (_lock) {
-					if (timer == null)
-						throw new ObjectDisposedException (GetType ().ToString (), "The object has been disposed");
-                    
-					if (enabled == value)
-						return;
-
 					if (value) {
+						if (timer == null)
+							throw new ObjectDisposedException (GetType ().ToString (), "The object has been disposed");
+						if (closed || enabled)
+							return;
+						enabled = true;
 						// As per MS docs (throw this only when the timer becomes enabled): http://msdn.microsoft.com/en-us/library/system.timers.timer.enabled(v=vs.110).aspx
 						if (interval > Int32.MaxValue)
 							throw new ArgumentException ("Invalid value: " + interval, "interval");
-						enabled = true;
 						timer.Change ((int)interval, autoReset ? (int)interval : 0);
 					} else {
+						if (!enabled)
+							return;
 						enabled = false;
-						timer.Change (Timeout.Infinite, Timeout.Infinite);
+						//if one of Close() or Dispose() was called, we don't do anything here
+						if (!closed && timer != null)
+							timer.Change (Timeout.Infinite, Timeout.Infinite);
 					}
 				}
 			}
@@ -120,12 +123,11 @@ namespace System.Timers
 					throw new ArgumentException ("Invalid value: " + value);
 
 				lock (_lock) {
-					if (timer == null)
-						return;
+					//can always be set, according to the MS implementation
 					interval = value;
 					//call Change only if enabled, otherwise it will be called when Enabled = true, see the comment above on throwing ArgumentException
-					if (enabled)
-						timer.Change ((int)interval, autoReset? (int)interval: 0);
+					if (Enabled)
+						timer.Change ((int)interval, autoReset ? (int)interval : 0);
 				}
 			}
 		}
@@ -138,7 +140,7 @@ namespace System.Timers
 
 		[DefaultValue(null)]
 		[TimersDescriptionAttribute("The object used to marshal the event handler calls issued " +
-					    "when an interval has elapsed.")]
+						"when an interval has elapsed.")]
 		[Browsable (false)]
 		public ISynchronizeInvoke SynchronizingObject
 		{
@@ -153,8 +155,11 @@ namespace System.Timers
 
 		public void Close ()
 		{
-			lock (_lock)
-				Dispose (true);
+			lock (_lock) {
+				closed = true;
+				if (timer != null)
+					timer.Dispose ();
+			}
 		}
 
 		public void EndInit ()
@@ -174,7 +179,7 @@ namespace System.Timers
 
 		protected override void Dispose (bool disposing)
 		{
-			// Could call Close() twice
+			// Could call Dispose() twice
 			if (timer == null)
 				return;
 
@@ -182,8 +187,7 @@ namespace System.Timers
 			// fields. If not, all fields will have been
 			// nulled by the GC during finalization, so
 			// trying to lock on _lock will blow up.
-			if (disposing)
-			{
+			if (disposing) {
 				timer.Dispose ();
 				timer = null;
 			}
@@ -198,17 +202,10 @@ namespace System.Timers
 				return;
 			ElapsedEventHandler events = timer.Elapsed;
 
-			try
-			{
-				if (!timer.autoReset)
-					timer.Enabled = false; //this could throw ObjectDisposed if timer.Close() was just called, after the check for Enabled above
-			}
-			catch (ObjectDisposedException) {
-				//Probably the Elapsed event should not fire if this Timer is found here to be closed
-				return;
-			}
+			if (!timer.autoReset)
+				timer.Enabled = false;
 
-			//If another thread calls Close() when this thread is right here (of further down), the Elapsed event might get called once more after this Timer was Closed()
+			//If another thread calls Close() or Dispose() when this thread is right here (of further down), the Elapsed event might get called once more after this Timer was Closed() or Disposed()
 			//It's not a problem, it happens with all Timers, but it's good to know...
 
 			if (events == null)
