@@ -1364,7 +1364,7 @@ namespace System.Threading.Tasks
 		
 		bool IAsyncResult.CompletedSynchronously {
 			get {
-				return true;
+				return false;
 			}
 		}
 
