@@ -3312,5 +3312,27 @@ namespace MonoTests.System.XmlSerialization
 				}
 			}
 		}
+
+		public class ClassWithXmlAnyElement
+		{
+			[XmlAnyElement ("Contents")]
+			public XmlNode Contents;
+		}
+
+		[Test] // bug #3211
+		public void TestClassWithXmlAnyElement ()
+		{
+			var d = new XmlDocument ();
+			var e = d.CreateElement ("Contents");
+			e.AppendChild (d.CreateElement ("SomeElement"));
+
+			var c = new ClassWithXmlAnyElement {
+				Contents = e,
+			};
+
+			var ser = new XmlSerializer (typeof (ClassWithXmlAnyElement));
+			using (var sw = new StringWriter ())
+				ser.Serialize (sw, c);
+		}
 	}
 }
