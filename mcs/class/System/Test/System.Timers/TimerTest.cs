@@ -108,10 +108,8 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor1_Interval_Max ()
 		{
-#if NET_2_0
 			try {
 				new Timer (0x80000000);
 				Assert.Fail ("#A1");
@@ -131,9 +129,6 @@ namespace MonoTests.System.Timers
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
-#else
-			timer = new Timer (0x80000000);
-#endif
 		}
 
 		[Test]
