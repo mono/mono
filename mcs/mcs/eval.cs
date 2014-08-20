@@ -1359,7 +1359,7 @@ namespace Mono.CSharp
 			}
 
 			base.EmitStatement(ec);
-
+/*
 #if STATIC
 			throw new NotSupportedException ();
 #else
@@ -1388,6 +1388,7 @@ namespace Mono.CSharp
 					null, assignType, Location.Null, source.StartLocation, false);
 			}
 #endif
+*/
 		}
 	}
 
