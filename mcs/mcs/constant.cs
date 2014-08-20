@@ -2031,8 +2031,6 @@ namespace Mono.CSharp {
 	}
 
 	public class StringConstant : Constant {
-		public readonly string Value;
-
 		public StringConstant (BuiltinTypes types, string s, Location loc)
 			: this (types.String, s, loc)
 		{
@@ -2046,6 +2044,13 @@ namespace Mono.CSharp {
 
 			Value = s;
 		}
+
+		protected StringConstant (Location loc)
+			: base (loc)
+		{
+		}
+
+		public string Value { get; protected set; }
 
 		public override object GetValue ()
 		{
@@ -2126,6 +2131,113 @@ namespace Mono.CSharp {
 				return new NullConstant (type, loc);
 
 			return base.ConvertImplicitly (type);
+		}
+	}
+
+	class NameOf : StringConstant
+	{
+		readonly SimpleName name;
+
+		public NameOf (SimpleName name)
+			: base (name.Location)
+		{
+			this.name = name;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotSupportedException ();
+		}
+
+		bool ResolveArgumentExpression (ResolveContext rc, Expression expr)
+		{
+			var sn = expr as SimpleName;
+			if (sn != null) {
+				Value = sn.Name;
+
+				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
+					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
+
+				if (sn.HasTypeArguments) {
+					// TODO: csc compatible but unhelpful error message
+					rc.Report.Error (1001, loc, "Identifier expected");
+					return true;
+				}
+
+				sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity);
+				return true;
+			}
+
+			var ma = expr as MemberAccess;
+			if (ma != null) {
+				FullNamedExpression fne = ma.LeftExpression as ATypeNameExpression;
+				if (fne == null) {
+					var qam = ma as QualifiedAliasMember;
+					if (qam == null)
+						return false;
+
+					fne = qam.CreateExpressionFromAlias (rc);
+					if (fne == null)
+						return true;
+				}
+
+				Value = ma.Name;
+
+				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
+					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
+
+				if (ma.HasTypeArguments) {
+					// TODO: csc compatible but unhelpful error message
+					rc.Report.Error (1001, loc, "Identifier expected");
+					return true;
+				}
+					
+				var left = fne.ResolveAsTypeOrNamespace (rc, true);
+				if (left == null)
+					return true;
+
+				var ns = left as NamespaceExpression;
+				if (ns != null) {
+					FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, ma.Name, 0, LookupMode.NameOf, loc);
+					if (retval == null)
+						ns.Error_NamespaceDoesNotExist (rc, ma.Name, 0);
+
+					return true;
+				}
+
+				if (left.Type.IsGenericOrParentIsGeneric && left.Type.GetDefinition () != left.Type) {
+					rc.Report.Error (8071, loc, "Type arguments are not allowed in the nameof operator");
+				}
+
+				var mexpr = MemberLookup (rc, false, left.Type, ma.Name, 0, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity, loc);
+				if (mexpr == null) {
+					ma.Error_IdentifierNotFound (rc, left.Type);
+					return true;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public Expression ResolveOverload (ResolveContext rc, Arguments args)
+		{
+			if (args == null || args.Count != 1) {
+				name.Error_NameDoesNotExist (rc);
+				return null;
+			}
+
+			var arg = args [0];
+			var res = ResolveArgumentExpression (rc, arg.Expr);
+			if (!res) {
+				name.Error_NameDoesNotExist (rc);
+				return null;
+			}
+
+			type = rc.BuiltinTypes.String;
+			eclass = ExprClass.Value;
+			return this;
 		}
 	}
 
@@ -2314,6 +2426,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return side_effect.ContainsEmitWithAwait ();
+		}
+
 		public override object GetValue ()
 		{
 			return value.GetValue ();
@@ -2339,6 +2456,11 @@ namespace Mono.CSharp {
 		{
 			side_effect.EmitSideEffect (ec);
 			value.EmitSideEffect (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			side_effect.FlowAnalysis (fc);
 		}
 
 		public override bool IsDefaultValue {

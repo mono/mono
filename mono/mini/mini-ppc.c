@@ -12,6 +12,7 @@
 #include "mini.h"
 #include <string.h>
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-proclib.h>
@@ -61,9 +62,9 @@ enum {
 #define BREAKPOINT_SIZE (PPC_LOAD_SEQUENCE_LENGTH + 4)
 
 /* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
-#define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
-static CRITICAL_SECTION mini_arch_mutex;
+#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
+static mono_mutex_t mini_arch_mutex;
 
 int mono_exc_esp_offset = 0;
 static int tls_mode = TLS_MODE_DETECT;
@@ -391,14 +392,14 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 			code = mono_ppc_create_pre_code_ftnptr (code);
 
 		/* Replace the this argument with the target */
-		ppc_ldptr (code, ppc_r0, G_STRUCT_OFFSET (MonoDelegate, method_ptr), ppc_r3);
+		ppc_ldptr (code, ppc_r0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr), ppc_r3);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* it's a function descriptor */
 		/* Can't use ldptr as it doesn't work with r0 */
 		ppc_ldptr_indexed (code, ppc_r0, 0, ppc_r0);
 #endif
 		ppc_mtctr (code, ppc_r0);
-		ppc_ldptr (code, ppc_r3, G_STRUCT_OFFSET (MonoDelegate, target), ppc_r3);
+		ppc_ldptr (code, ppc_r3, MONO_STRUCT_OFFSET (MonoDelegate, target), ppc_r3);
 		ppc_bcctr (code, PPC_BR_ALWAYS, 0);
 
 		g_assert ((code - start) <= size);
@@ -412,7 +413,7 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 		if (!aot)
 			code = mono_ppc_create_pre_code_ftnptr (code);
 
-		ppc_ldptr (code, ppc_r0, G_STRUCT_OFFSET (MonoDelegate, method_ptr), ppc_r3);
+		ppc_ldptr (code, ppc_r0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr), ppc_r3);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* it's a function descriptor */
 		ppc_ldptr_indexed (code, ppc_r0, 0, ppc_r0);
@@ -508,6 +509,12 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		cache [sig->param_count] = start;
 	}
 	return start;
+}
+
+gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
+{
+	return NULL;
 }
 
 gpointer
@@ -613,7 +620,7 @@ mono_arch_init (void)
 	if (mono_cpu_count () > 1)
 		cpu_hw_caps |= PPC_SMP_CAPABLE;
 
-	InitializeCriticalSection (&mini_arch_mutex);
+	mono_mutex_init_recursive (&mini_arch_mutex);
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
@@ -628,7 +635,7 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	DeleteCriticalSection (&mini_arch_mutex);
+	mono_mutex_destroy (&mini_arch_mutex);
 }
 
 /*
@@ -2429,6 +2436,7 @@ loop_start:
 		case OP_IDIV_IMM:
 		case OP_IREM_IMM:
 		case OP_IREM_UN_IMM:
+		CASE_PPC64 (OP_LREM_IMM) {
 			NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_alloc_ireg (cfg);
@@ -2441,9 +2449,12 @@ loop_start:
 				ins->opcode = OP_IDIV_UN;
 			else if (ins->opcode == OP_IREM_UN_IMM)
 				ins->opcode = OP_IREM_UN;
+			else if (ins->opcode == OP_LREM_IMM)
+				ins->opcode = OP_LREM;
 			last_ins = temp;
 			/* handle rem separately */
 			goto loop_start;
+		}
 		case OP_IREM:
 		case OP_IREM_UN:
 		CASE_PPC64 (OP_LREM)
@@ -4384,22 +4395,36 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				ppc_mr (code, ins->dreg, ins->sreg1);
 			break;
-		case OP_ATOMIC_ADD_NEW_I4:
-		case OP_ATOMIC_ADD_NEW_I8: {
-			guint8 *loop = code, *branch;
+		case OP_ATOMIC_ADD_I4:
+		CASE_PPC64 (OP_ATOMIC_ADD_I8) {
+			int location = ins->inst_basereg;
+			int addend = ins->sreg2;
+			guint8 *loop, *branch;
 			g_assert (ins->inst_offset == 0);
-			if (ins->opcode == OP_ATOMIC_ADD_NEW_I4)
-				ppc_lwarx (code, ppc_r0, 0, ins->inst_basereg);
+
+			loop = code;
+			ppc_sync (code);
+			if (ins->opcode == OP_ATOMIC_ADD_I4)
+				ppc_lwarx (code, ppc_r0, 0, location);
+#ifdef __mono_ppc64__
 			else
-				ppc_ldarx (code, ppc_r0, 0, ins->inst_basereg);
-			ppc_add (code, ppc_r0, ppc_r0, ins->sreg2);
-			if (ins->opcode == OP_ATOMIC_ADD_NEW_I4)
-				ppc_stwcxd (code, ppc_r0, 0, ins->inst_basereg);
+				ppc_ldarx (code, ppc_r0, 0, location);
+#endif
+
+			ppc_add (code, ppc_r0, ppc_r0, addend);
+
+			if (ins->opcode == OP_ATOMIC_ADD_I4)
+				ppc_stwcxd (code, ppc_r0, 0, location);
+#ifdef __mono_ppc64__
 			else
-				ppc_stdcxd (code, ppc_r0, 0, ins->inst_basereg);
+				ppc_stdcxd (code, ppc_r0, 0, location);
+#endif
+
 			branch = code;
 			ppc_bc (code, PPC_BR_FALSE, PPC_BR_EQ, 0);
 			ppc_patch (branch, loop);
+
+			ppc_sync (code);
 			ppc_mr (code, ins->dreg, ppc_r0);
 			break;
 		}
@@ -4426,16 +4451,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			guint8 *start, *not_equal, *lost_reservation;
 
 			start = code;
+			ppc_sync (code);
 			if (ins->opcode == OP_ATOMIC_CAS_I4)
 				ppc_lwarx (code, ppc_r0, 0, location);
 #ifdef __mono_ppc64__
 			else
 				ppc_ldarx (code, ppc_r0, 0, location);
 #endif
-			ppc_cmp (code, 0, ins->opcode == OP_ATOMIC_CAS_I4 ? 0 : 1, ppc_r0, comparand);
 
+			ppc_cmp (code, 0, ins->opcode == OP_ATOMIC_CAS_I4 ? 0 : 1, ppc_r0, comparand);
 			not_equal = code;
 			ppc_bc (code, PPC_BR_FALSE, PPC_BR_EQ, 0);
+
 			if (ins->opcode == OP_ATOMIC_CAS_I4)
 				ppc_stwcxd (code, value, 0, location);
 #ifdef __mono_ppc64__
@@ -4446,8 +4473,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			lost_reservation = code;
 			ppc_bc (code, PPC_BR_FALSE, PPC_BR_EQ, 0);
 			ppc_patch (lost_reservation, start);
-
 			ppc_patch (not_equal, code);
+
+			ppc_sync (code);
 			ppc_mr (code, ins->dreg, ppc_r0);
 			break;
 		}
@@ -5537,8 +5565,6 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 {
 }
 
-#ifdef MONO_ARCH_HAVE_IMT
-
 #define CMP_SIZE (PPC_LOAD_SEQUENCE_LENGTH + 4)
 #define BR_SIZE 4
 #define LOADSTORE_SIZE 4
@@ -5694,7 +5720,6 @@ mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 
 	return (MonoMethod*)(gsize) r [MONO_ARCH_IMT_REG];
 }
-#endif
 
 MonoVTable*
 mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
@@ -5941,3 +5966,19 @@ mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
 }
 
 #endif
+
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	switch (opcode) {
+	case OP_ATOMIC_ADD_I4:
+	case OP_ATOMIC_CAS_I4:
+#ifdef TARGET_POWERPC64
+	case OP_ATOMIC_ADD_I8:
+	case OP_ATOMIC_CAS_I8:
+#endif
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}

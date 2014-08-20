@@ -33,7 +33,7 @@ namespace Mono.CSharp.Nullable
 			this.loc = loc;
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext ec)
+		public override TypeSpec ResolveAsType (IMemberContext ec, bool allowUnboundTypeArguments = false)
 		{
 			eclass = ExprClass.Type;
 
@@ -85,8 +85,14 @@ namespace Mono.CSharp.Nullable
 
 		public static TypeSpec GetEnumUnderlyingType (ModuleContainer module, TypeSpec nullableEnum)
 		{
+			return MakeType (module, EnumSpec.GetUnderlyingType (GetUnderlyingType (nullableEnum)));
+		}
+
+		public static TypeSpec MakeType (ModuleContainer module, TypeSpec underlyingType)
+		{
 			return module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (module,
-				new[] { EnumSpec.GetUnderlyingType (GetUnderlyingType (nullableEnum)) });
+				new[] { underlyingType });
+
 		}
 	}
 
@@ -185,6 +191,11 @@ namespace Mono.CSharp.Nullable
 			call.InstanceExpression = this;
 
 			call.EmitPredefined (ec, NullableInfo.GetHasValue (expr.Type), null);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			expr.EmitSideEffect (ec);
 		}
 
 		public override Expression EmitToField (EmitContext ec)
@@ -422,6 +433,12 @@ namespace Mono.CSharp.Nullable
 		public LiftedConversion (Expression expr, Expression unwrap, TypeSpec type)
 			: this (expr, unwrap as Unwrap, type)
 		{
+		}
+
+		public override bool IsNull {
+			get {
+				return expr.IsNull;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
@@ -696,7 +713,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			if (!type.IsNullableType)
-				type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { type });
+				type = NullableInfo.MakeType (rc.Module, type);
 
 			return Wrap.Create (expr, type);
 		}
@@ -1124,24 +1141,35 @@ namespace Mono.CSharp.Nullable
 				if (right.IsNull)
 					return ReducedExpression.Create (left, this);
 
-				if (Convert.ImplicitConversionExists (ec, right, unwrap.Type)) {
-					left = unwrap;
-					ltype = left.Type;
-
-					//
-					// If right is a dynamic expression, the result type is dynamic
-					//
-					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-						type = right.Type;
-
-						// Need to box underlying value type
-						left = Convert.ImplicitBoxingConversion (left, ltype, type);
+				Expression conv;
+				if (right.Type.IsNullableType) {
+					conv = right.Type == ltype ? right : Convert.ImplicitNulableConversion (ec, right, ltype);
+					if (conv != null) {
+						right = conv;
+						type = ltype;
 						return this;
 					}
+				} else {
+					conv = Convert.ImplicitConversion (ec, right, unwrap.Type, loc);
+					if (conv != null) {
+						left = unwrap;
+						ltype = left.Type;
 
-					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = ltype;
-					return this;
+						//
+						// If right is a dynamic expression, the result type is dynamic
+						//
+						if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+							type = right.Type;
+
+							// Need to box underlying value type
+							left = Convert.ImplicitBoxingConversion (left, ltype, type);
+							return this;
+						}
+
+						right = conv;
+						type = ltype;
+						return this;
+					}
 				}
 			} else if (TypeSpec.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
@@ -1192,6 +1220,12 @@ namespace Mono.CSharp.Nullable
 				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
+
+			if (TypeSpec.IsValueType (left.Type) && !left.Type.IsNullableType) {
+				Warning_UnreachableExpression (ec, right.Location);
+				return ReducedExpression.Create (left, this, false).Resolve (ec);
+			}
+
 			type = rtype;
 			return this;
 		}

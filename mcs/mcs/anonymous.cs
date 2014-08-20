@@ -1321,16 +1321,28 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
-				ec.Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
+			if (rc.HasSet (ResolveContext.Options.ConstantScope)) {
+				rc.Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
 
 			//
-			// Set class type, set type
+			// Update top-level block generated duting parsing with actual top-level block
 			//
+			if (rc.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer) && rc.CurrentMemberDefinition.Parent.PartialContainer.PrimaryConstructorParameters != null) {
+				var tb = rc.ConstructorBlock.ParametersBlock.TopBlock;
+				if (Block.TopBlock != tb) {
+					Block b = Block;
+					while (b.Parent != Block.TopBlock && b != Block.TopBlock)
+						b = b.Parent;
+
+					b.Parent = tb;
+					tb.IncludeBlock (Block, Block.TopBlock);
+					b.ParametersBlock.TopBlock = tb;
+				}
+			}
 
 			eclass = ExprClass.Value;
 
@@ -1341,7 +1353,7 @@ namespace Mono.CSharp {
 			// 
 			type = InternalType.AnonymousMethod;
 
-			if (!DoResolveParameters (ec))
+			if (!DoResolveParameters (rc))
 				return null;
 
 			return this;
@@ -1357,9 +1369,12 @@ namespace Mono.CSharp {
 			// nothing, as we only exist to not do anything.
 		}
 
-		public static void Error_AddressOfCapturedVar (ResolveContext ec, IVariableReference var, Location loc)
+		public static void Error_AddressOfCapturedVar (ResolveContext rc, IVariableReference var, Location loc)
 		{
-			ec.Report.Error (1686, loc,
+			if (rc.CurrentAnonymousMethod is AsyncInitializer)
+				return;
+
+			rc.Report.Error (1686, loc,
 				"Local variable or parameter `{0}' cannot have their address taken and be used inside an anonymous method, lambda expression or query expression",
 				var.Name);
 		}
@@ -1723,6 +1738,7 @@ namespace Mono.CSharp {
 			Modifiers modifiers;
 			TypeDefinition parent = null;
 			TypeParameters hoisted_tparams = null;
+			ParametersCompiled method_parameters = parameters;
 
 			var src_block = Block.Original.Explicit;
 			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
@@ -1770,6 +1786,14 @@ namespace Mono.CSharp {
 					parent = storey = ec.CurrentAnonymousMethod.Storey;
 
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
+
+				//
+				// Convert generated method to closed delegate method where unused
+				// this argument is generated during compilation which speeds up dispatch
+				// by about 25%
+				//
+				method_parameters = ParametersCompiled.Prefix (method_parameters,
+					new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
 			}
 
 			if (storey == null && hoisted_tparams == null)
@@ -1795,7 +1819,7 @@ namespace Mono.CSharp {
 
 			return new AnonymousMethodMethod (parent,
 				this, storey, new TypeExpression (ReturnType, Location), modifiers,
-				member_name, parameters);
+				member_name, method_parameters);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1824,7 +1848,7 @@ namespace Mono.CSharp {
 			}
 
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
-			if (is_static && am_cache == null) {
+			if (is_static && am_cache == null && !ec.IsStaticConstructor) {
 				//
 				// Creates a field cache to store delegate instance if it's not generic
 				//

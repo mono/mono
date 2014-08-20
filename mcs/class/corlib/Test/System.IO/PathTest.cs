@@ -545,6 +545,16 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (Environment.CurrentDirectory, Path.GetFullPath ("."), "#03");
 			Assert.AreEqual (Path.Combine (Environment.CurrentDirectory, "hey"),
 					     Path.GetFullPath ("hey"), "#04");
+			Assert.AreEqual ("/", Path.GetFullPath ("/"), "#01");
+
+			string curdir = Directory.GetCurrentDirectory ();
+			try {
+				Directory.SetCurrentDirectory ("/");
+				Assert.AreEqual ("/test.txt", Path.GetFullPath ("test.txt"), "xambug #833");
+			}
+			finally {
+				Directory.SetCurrentDirectory (curdir);
+			}
 		}
 
 		[Test]

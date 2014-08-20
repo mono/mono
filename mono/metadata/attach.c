@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <inttypes.h>
 #include <pwd.h>
 #include <errno.h>
 #include <netdb.h>
@@ -98,9 +99,9 @@ static gboolean stop_receiver_thread;
 
 static gboolean needs_to_start, started;
 
-#define agent_lock() EnterCriticalSection (&agent_mutex)
-#define agent_unlock() LeaveCriticalSection (&agent_mutex)
-static CRITICAL_SECTION agent_mutex;
+#define agent_lock() mono_mutex_lock (&agent_mutex)
+#define agent_unlock() mono_mutex_unlock (&agent_mutex)
+static mono_mutex_t agent_mutex;
 
 static void transport_connect (void);
 
@@ -192,7 +193,7 @@ mono_attach_parse_options (char *options)
 void
 mono_attach_init (void)
 {
-	InitializeCriticalSection (&agent_mutex);
+	mono_mutex_init_recursive (&agent_mutex);
 
 	config.enabled = TRUE;
 }
@@ -220,7 +221,7 @@ mono_attach_start (void)
 	 * by creating it is to enable the attach mechanism if the process receives a 
 	 * SIGQUIT signal, which can only be sent by the owner/root.
 	 */
-	snprintf (path, sizeof (path), "/tmp/.mono_attach_pid%d", getpid ());
+	snprintf (path, sizeof (path), "/tmp/.mono_attach_pid%"PRIdMAX"", (intmax_t) getpid ());
 	fd = open (path, O_RDONLY);
 	if (fd == -1)
 		return FALSE;
@@ -405,7 +406,7 @@ ipc_connect (void)
 		}
 	}
 
-	filename = g_strdup_printf ("%s/.mono-%d", directory, getpid ());
+	filename = g_strdup_printf ("%s/.mono-%"PRIdMAX"", directory, (intmax_t) getpid ());
 	unlink (filename);
 
 	/* Bind a name to the socket.   */
@@ -440,7 +441,7 @@ ipc_connect (void)
 
 	ipc_filename = g_strdup (filename);
 
-	server_uri = g_strdup_printf ("unix://%s/.mono-%d?/vm", directory, getpid ());
+	server_uri = g_strdup_printf ("unix://%s/.mono-%"PRIdMAX"?/vm", directory, (intmax_t) getpid ());
 
 	g_free (filename);
 	g_free (directory);

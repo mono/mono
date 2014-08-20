@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 	{
 		class EnumTypeExpr : TypeExpr
 		{
-			public override TypeSpec ResolveAsType (IMemberContext ec)
+			public override TypeSpec ResolveAsType (IMemberContext ec, bool allowUnboundTypeArguments)
 			{
 				type = ec.CurrentType;
 				eclass = ExprClass.Type;

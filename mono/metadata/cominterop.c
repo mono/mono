@@ -14,6 +14,7 @@
 #include "object.h"
 #include "loader.h"
 #include "cil-coff.h"
+#include "metadata/abi-details.h"
 #include "metadata/cominterop.h"
 #include "metadata/marshal.h"
 #include "metadata/method-builder.h"
@@ -75,9 +76,9 @@ enum {
 #undef OPDEF
 
 /* This mutex protects the various cominterop related caches in MonoImage */
-#define mono_cominterop_lock() EnterCriticalSection (&cominterop_mutex)
-#define mono_cominterop_unlock() LeaveCriticalSection (&cominterop_mutex)
-static CRITICAL_SECTION cominterop_mutex;
+#define mono_cominterop_lock() mono_mutex_lock (&cominterop_mutex)
+#define mono_cominterop_unlock() mono_mutex_unlock (&cominterop_mutex)
+static mono_mutex_t cominterop_mutex;
 
 /* STDCALL on windows, CDECL everywhere else to work with XPCOM and MainWin COM */
 #ifdef  HOST_WIN32
@@ -534,7 +535,7 @@ mono_cominterop_init (void)
 {
 	const char* com_provider_env;
 
-	InitializeCriticalSection (&cominterop_mutex);
+	mono_mutex_init_recursive (&cominterop_mutex);
 
 	com_provider_env = g_getenv ("MONO_COM");
 	if (com_provider_env && !strcmp(com_provider_env, "MS"))
@@ -566,7 +567,7 @@ mono_cominterop_init (void)
 void
 mono_cominterop_cleanup (void)
 {
-	DeleteCriticalSection (&cominterop_mutex);
+	mono_mutex_destroy (&cominterop_mutex);
 }
 
 void
@@ -695,11 +696,11 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 		// load src
 		mono_mb_emit_ldloc (mb, 0);	
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoTransparentProxy, rp));
+		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoTransparentProxy, rp));
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
 
 		/* load the RCW from the ComInteropProxy*/
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoComInteropProxy, com_object));
+		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoComInteropProxy, com_object));
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
 
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
@@ -1002,11 +1003,11 @@ mono_cominterop_get_invoke (MonoMethod *method)
 	/* get real proxy object, which is a ComInteropProxy in this case*/
 	temp_obj = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
 	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoTransparentProxy, rp));
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoTransparentProxy, rp));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 
 	/* load the RCW from the ComInteropProxy*/
-	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoComInteropProxy, com_object));
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoComInteropProxy, com_object));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 
 	/* load args and make the call on the RCW */
@@ -1034,7 +1035,7 @@ mono_cominterop_get_invoke (MonoMethod *method)
 			cache_proxy = mono_class_get_method_from_name (com_interop_proxy_class, "CacheProxy", 0);
 
 		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoTransparentProxy, rp));
+		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoTransparentProxy, rp));
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
 		mono_mb_emit_managed_call (mb, cache_proxy, NULL);
 	}

@@ -37,6 +37,7 @@
 #include <sys/wait.h>  /* for WIFEXITED, WEXITSTATUS */
 #endif
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -138,7 +139,7 @@ typedef struct MonoAotModule {
 	MonoDl *sofile;
 
 	JitInfoMap *async_jit_info_table;
-	CRITICAL_SECTION mutex;
+	mono_mutex_t mutex;
 } MonoAotModule;
 
 typedef struct {
@@ -148,9 +149,9 @@ typedef struct {
 } TrampolinePage;
 
 static GHashTable *aot_modules;
-#define mono_aot_lock() EnterCriticalSection (&aot_mutex)
-#define mono_aot_unlock() LeaveCriticalSection (&aot_mutex)
-static CRITICAL_SECTION aot_mutex;
+#define mono_aot_lock() mono_mutex_lock (&aot_mutex)
+#define mono_aot_unlock() mono_mutex_unlock (&aot_mutex)
+static mono_mutex_t aot_mutex;
 
 /* 
  * Maps assembly names to the mono_aot_module_<NAME>_info symbols in the
@@ -198,9 +199,9 @@ static GHashTable *aot_jit_icall_hash;
 #define USE_PAGE_TRAMPOLINES 0
 #endif
 
-#define mono_aot_page_lock() EnterCriticalSection (&aot_page_mutex)
-#define mono_aot_page_unlock() LeaveCriticalSection (&aot_page_mutex)
-static CRITICAL_SECTION aot_page_mutex;
+#define mono_aot_page_lock() mono_mutex_lock (&aot_page_mutex)
+#define mono_aot_page_unlock() mono_mutex_unlock (&aot_page_mutex)
+static mono_mutex_t aot_page_mutex;
 
 static void
 init_plt (MonoAotModule *info);
@@ -212,13 +213,13 @@ init_plt (MonoAotModule *info);
 static inline void
 amodule_lock (MonoAotModule *amodule)
 {
-	EnterCriticalSection (&amodule->mutex);
+	mono_mutex_lock (&amodule->mutex);
 }
 
 static inline void
 amodule_unlock (MonoAotModule *amodule)
 {
-	LeaveCriticalSection (&amodule->mutex);
+	mono_mutex_unlock (&amodule->mutex);
 }
 
 /*
@@ -488,7 +489,6 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 			serial = decode_value (p, &p);
 		}
 
-		// FIXME: Memory management
 		t = g_new0 (MonoType, 1);
 		t->type = type;
 		if (container) {
@@ -496,7 +496,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 			g_assert (serial == 0);
 		} else {
 			/* Anonymous */
-			MonoGenericParam *par = (MonoGenericParam*)g_new0 (MonoGenericParamFull, 1);
+			MonoGenericParam *par = (MonoGenericParam*)mono_image_alloc0 (module->assembly->image, sizeof (MonoGenericParamFull));
 			par->num = num;
 			par->serial = serial;
 			// FIXME:
@@ -1341,7 +1341,7 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 
 	*aot_name = NULL;
 
-	if (assembly->image->dynamic)
+	if (image_is_dynamic (assembly->image))
 		return NULL;
 
 	create_cache_structure ();
@@ -1583,7 +1583,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		 */
 		return;
 
-	if (assembly->image->dynamic || assembly->ref_only)
+	if (image_is_dynamic (assembly->image) || assembly->ref_only)
 		return;
 
 	if (mono_security_cas_enabled ())
@@ -1677,8 +1677,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		align_int64 = align;
 	}
 #else
-	align_double = __alignof__ (double);
-	align_int64 = __alignof__ (gint64);
+	align_double = MONO_ABI_ALIGNOF (double);
+	align_int64 = MONO_ABI_ALIGNOF (gint64);
 #endif
 
 	/* Sanity check */
@@ -1701,7 +1701,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	amodule->method_to_code = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	amodule->blob = blob;
 
-	InitializeCriticalSection (&amodule->mutex);
+	mono_mutex_init_recursive (&amodule->mutex);
 
 	/* Read image table */
 	{
@@ -1932,8 +1932,8 @@ mono_aot_register_module (gpointer *aot_info)
 void
 mono_aot_init (void)
 {
-	InitializeCriticalSection (&aot_mutex);
-	InitializeCriticalSection (&aot_page_mutex);
+	mono_mutex_init_recursive (&aot_mutex);
+	mono_mutex_init_recursive (&aot_page_mutex);
 	aot_modules = g_hash_table_new (NULL, NULL);
 
 #ifndef __native_client__
@@ -2291,11 +2291,11 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain,
 		mono_domain_alloc0_lock_free (domain, MONO_SIZEOF_JIT_INFO + (sizeof (MonoJitExceptionInfo) * (ei_len + nested_len)) + extra_size);
 
 	jinfo->code_size = code_len;
-	jinfo->used_regs = mono_cache_unwind_info (info.unw_info, info.unw_info_len);
+	jinfo->unwind_info = mono_cache_unwind_info (info.unw_info, info.unw_info_len);
 	jinfo->d.method = method;
 	jinfo->code_start = code;
 	jinfo->domain_neutral = 0;
-	/* This signals that used_regs points to a normal cached unwind info */
+	/* This signals that unwind_info points to a normal cached unwind info */
 	jinfo->from_aot = 0;
 	jinfo->num_clauses = ei_len + nested_len;
 
@@ -2377,7 +2377,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 {
 	int i, buf_len, num_clauses, len;
 	MonoJitInfo *jinfo;
-	guint used_int_regs, flags;
+	guint unwind_info, flags;
 	gboolean has_generic_jit_info, has_dwarf_unwind_info, has_clauses, has_seq_points, has_try_block_holes, has_arch_eh_jit_info;
 	gboolean from_llvm, has_gc_map;
 	guint8 *p;
@@ -2400,13 +2400,10 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 	has_arch_eh_jit_info = (flags & 128) != 0;
 
 	if (has_dwarf_unwind_info) {
-		guint32 offset;
-
-		offset = decode_value (p, &p);
-		g_assert (offset < (1 << 30));
-		used_int_regs = offset;
+		unwind_info = decode_value (p, &p);
+		g_assert (unwind_info < (1 << 30));
 	} else {
-		used_int_regs = decode_value (p, &p);
+		unwind_info = decode_value (p, &p);
 	}
 	if (has_generic_jit_info)
 		generic_info_size = sizeof (MonoGenericJitInfo);
@@ -2498,17 +2495,28 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		}
 
 		jinfo->code_size = code_len;
-		jinfo->used_regs = used_int_regs;
+		jinfo->unwind_info = unwind_info;
 		jinfo->d.method = method;
 		jinfo->code_start = code;
 		jinfo->domain_neutral = 0;
 		jinfo->from_aot = 1;
 	}
 
+	/*
+	 * Set all the 'has' flags, the mono_jit_info_get () functions depends on this to
+	 * compute the addresses of data blocks.
+	 */
+	if (has_generic_jit_info)
+		jinfo->has_generic_jit_info = 1;
+	if (has_arch_eh_jit_info)
+		jinfo->has_arch_eh_info = 1;
+	if (has_try_block_holes)
+		jinfo->has_try_block_holes = 1;
+
 	if (has_try_block_holes) {
 		MonoTryBlockHoleTableJitInfo *table;
 
-		jinfo->has_try_block_holes = 1;
+		g_assert (jinfo->has_try_block_holes);
 
 		table = mono_jit_info_get_try_block_hole_table_info (jinfo);
 		g_assert (table);
@@ -2525,7 +2533,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 	if (has_arch_eh_jit_info) {
 		MonoArchEHJitInfo *eh_info;
 
-		jinfo->has_arch_eh_info = 1;
+		g_assert (jinfo->has_arch_eh_info);
 
 		eh_info = mono_jit_info_get_arch_eh_info (jinfo);
 		eh_info->stack_size = decode_value (p, &p);
@@ -2543,7 +2551,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		MonoGenericJitInfo *gi;
 		int len;
 
-		jinfo->has_generic_jit_info = 1;
+		g_assert (jinfo->has_generic_jit_info);
 
 		gi = mono_jit_info_get_generic_jit_info (jinfo);
 		g_assert (gi);
@@ -2688,7 +2696,8 @@ mono_aot_get_unwind_info (MonoJitInfo *ji, guint32 *unwind_info_len)
 		mono_aot_unlock ();
 	}
 
-	p = amodule->unwind_info + ji->used_regs;
+	/* The upper 16 bits of ji->unwind_info might contain the epilog offset */
+	p = amodule->unwind_info + (ji->unwind_info & 0xffff);
 	*unwind_info_len = decode_value (p, &p);
 	return p;
 }
@@ -3021,7 +3030,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 			goto cleanup;
 		break;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		ji->data.del_tramp = mono_mempool_alloc0 (mp, sizeof (MonoClassMethodPair));
+		ji->data.del_tramp = mono_mempool_alloc0 (mp, sizeof (MonoDelegateClassMethodPair));
 		ji->data.del_tramp->klass = decode_klass_ref (aot_module, p, &p);
 		if (!ji->data.del_tramp->klass)
 			goto cleanup;
@@ -3030,6 +3039,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 			if (!ji->data.del_tramp->method)
 				goto cleanup;
 		}
+		ji->data.del_tramp->virtual = decode_value (p, &p) ? TRUE : FALSE;
 		break;
 	case MONO_PATCH_INFO_IMAGE:
 		ji->data.image = load_image (aot_module, decode_value (p, &p), TRUE);

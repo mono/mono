@@ -25,7 +25,7 @@ net_1_1_java_SUBDIRS = \
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting
 
-common_dirs := \
+net_2_0_dirs := \
 	corlib				\
 	System				\
 	System.XML			\
@@ -78,14 +78,11 @@ common_dirs := \
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
 	Mono.Debugger.Soft		\
-	SystemWebTestShim
-
-net_2_0_dirs := \
+	SystemWebTestShim			\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
-	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
 	System.IdentityModel		\
@@ -179,7 +176,6 @@ net_4_0_dirs := \
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Activation \
-	System.ServiceModel \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
@@ -241,7 +237,7 @@ xbuild_4_0_dirs := \
 	$(xbuild_2_0_dirs)	\
 	Microsoft.Build
 
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
+net_2_0_SUBDIRS := $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs) $(monotouch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
@@ -249,13 +245,13 @@ mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 xammac_SUBDIRS := $(mobile_dirs) $(xammac_dirs)
 net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
-net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
+net_4_0_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
+net_4_5_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
+SUBDIRS = $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_4_0_dirs)
 

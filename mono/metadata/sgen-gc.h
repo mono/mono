@@ -49,6 +49,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <mono/metadata/sgen-gray.h>
 #include <mono/metadata/sgen-hash-table.h>
 #include <mono/metadata/sgen-bridge.h>
+#include <mono/metadata/sgen-protocol.h>
 
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.
@@ -57,7 +58,8 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
  */
 typedef enum {
 	CLEAR_AT_GC,
-	CLEAR_AT_TLAB_CREATION
+	CLEAR_AT_TLAB_CREATION,
+	CLEAR_AT_TLAB_CREATION_DEBUG
 } NurseryClearPolicy;
 
 NurseryClearPolicy sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
@@ -346,26 +348,52 @@ typedef struct {
  */
 #define SGEN_LOAD_VTABLE(addr) ((*(mword*)(addr)) & ~SGEN_VTABLE_BITS_MASK)
 
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj)
+{
 #if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
-#define GRAY_OBJECT_ENQUEUE sgen_gray_object_enqueue
-#define GRAY_OBJECT_DEQUEUE(queue,o) ((o) = sgen_gray_object_dequeue ((queue)))
+	sgen_gray_object_enqueue (queue, obj);
 #else
-#define GRAY_OBJECT_ENQUEUE(queue,o) do {				\
-		if (G_UNLIKELY (!(queue)->first || (queue)->first->end == SGEN_GRAY_QUEUE_SECTION_SIZE)) \
-			sgen_gray_object_enqueue ((queue), (o));	\
-		else							\
-			(queue)->first->objects [(queue)->first->end++] = (o); \
-		PREFETCH ((o));						\
-	} while (0)
-#define GRAY_OBJECT_DEQUEUE(queue,o) do {				\
-		if (!(queue)->first)					\
-			(o) = NULL;					\
-		else if (G_UNLIKELY ((queue)->first->end == 1))		\
-			(o) = sgen_gray_object_dequeue ((queue));		\
-		else							\
-			(o) = (queue)->first->objects [--(queue)->first->end]; \
-	} while (0)
+	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
+		sgen_gray_object_enqueue (queue, obj);
+	} else {
+		HEAVY_STAT (gc_stats.gray_queue_enqueue_fast_path ++);
+
+		*++queue->cursor = obj;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_enqueue (queue, queue->cursor, obj);
 #endif
+	}
+
+	PREFETCH (obj);
+#endif
+}
+
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj)
+{
+#if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
+	*obj = sgen_gray_object_enqueue (queue);
+#else
+	if (!queue->first) {
+		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
+
+		*obj = NULL;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor, *obj);
+#endif
+	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
+		*obj = sgen_gray_object_dequeue (queue);
+	} else {
+		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
+
+		*obj = *queue->cursor--;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
+#endif
+	}
+#endif
+}
 
 /*
 List of what each bit on of the vtable gc bits means. 
@@ -717,7 +745,7 @@ void sgen_marksweep_conc_init (SgenMajorCollector *collector) MONO_INTERNAL;
 SgenMajorCollector* sgen_get_major_collector (void) MONO_INTERNAL;
 
 
-typedef struct {
+typedef struct _SgenRemeberedSet {
 	void (*wbarrier_set_field) (MonoObject *obj, gpointer field_ptr, MonoObject* value);
 	void (*wbarrier_set_arrayref) (MonoArray *arr, gpointer slot_ptr, MonoObject* value);
 	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
@@ -818,7 +846,7 @@ void sgen_bridge_processing_stw_step (void) MONO_INTERNAL;
 void sgen_bridge_processing_finish (int generation) MONO_INTERNAL;
 void sgen_register_test_bridge_callbacks (const char *bridge_class_name) MONO_INTERNAL;
 gboolean sgen_is_bridge_object (MonoObject *obj) MONO_INTERNAL;
-MonoGCBridgeObjectKind sgen_bridge_class_kind (MonoClass *class) MONO_INTERNAL;
+MonoGCBridgeObjectKind sgen_bridge_class_kind (MonoClass *klass) MONO_INTERNAL;
 void sgen_mark_bridge_object (MonoObject *obj) MONO_INTERNAL;
 void sgen_bridge_register_finalized_object (MonoObject *object) MONO_INTERNAL;
 void sgen_bridge_describe_pointer (MonoObject *object) MONO_INTERNAL;
@@ -930,8 +958,6 @@ struct _LOSObject {
 	char data [MONO_ZERO_LEN_ARRAY];
 };
 
-#define ARRAY_OBJ_INDEX(ptr,array,elem_size) (((char*)(ptr) - ((char*)(array) + G_STRUCT_OFFSET (MonoArray, vector))) / (elem_size))
-
 extern LOSObject *los_object_list;
 extern mword los_memory_usage;
 
@@ -1012,24 +1038,43 @@ extern __thread char *stack_end;
 #endif
 
 #ifdef HAVE_KW_THREAD
-#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
+
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), (key));		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_NEXT_ADDR);		\
 	} while (0)
+
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
+	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
+	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_TEMP_END);		\
+	} while (0)
+
 #else
 
 #if defined(__APPLE__) || defined (HOST_WIN32)
-#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
 	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
-	mono_mb_emit_icon ((mb), G_STRUCT_OFFSET (SgenThreadInfo, member));	\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next_addr));	\
 	mono_mb_emit_byte ((mb), CEE_ADD);		\
 	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
 	} while (0)
+
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
+	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
+	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));	\
+	mono_mb_emit_byte ((mb), CEE_ADD);		\
+	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
+	} while (0)
+
 #else
-#define EMIT_TLS_ACCESS(mb,member,key)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
 #endif
 
 #endif
@@ -1037,7 +1082,6 @@ extern __thread char *stack_end;
 /* Other globals */
 
 extern GCMemSection *nursery_section;
-extern int stat_major_gcs;
 extern guint32 collect_before_allocs;
 extern guint32 verify_before_allocs;
 extern gboolean has_per_allocation_action;

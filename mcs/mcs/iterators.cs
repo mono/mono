@@ -74,6 +74,9 @@ namespace Mono.CSharp
 
 		public void RegisterResumePoint ()
 		{
+			if (resume_pc != 0)
+				return;
+
 			if (inside_try_block == null) {
 				resume_pc = machine_initializer.AddResumePoint (this);
 			} else {
@@ -723,7 +726,7 @@ namespace Mono.CSharp
 		//
 		// The state as we generate the machine
 		//
-		Label move_next_ok;
+		protected Label move_next_ok;
 		protected Label move_next_error;
 		LocalBuilder skip_finally;
 		protected LocalBuilder current_pc;
@@ -827,7 +830,14 @@ namespace Mono.CSharp
 
 			BodyEnd = ec.DefineLabel ();
 
+			var async_init = this as AsyncInitializer;
+			if (async_init != null)
+				ec.BeginExceptionBlock ();
+
 			block.EmitEmbedded (ec);
+
+			if (async_init != null)
+				async_init.EmitCatchBlock (ec);
 
 			ec.MarkLabel (BodyEnd);
 
@@ -839,6 +849,8 @@ namespace Mono.CSharp
 				ec.EmitInt (0);
 				ec.Emit (OpCodes.Ret);
 			}
+
+			ec.MarkLabel (move_next_ok);
 		}
 
 		void EmitMoveNext (EmitContext ec)
@@ -895,19 +907,7 @@ namespace Mono.CSharp
 			ec.MarkLabel (BodyEnd);
 
 			if (async_init != null) {
-				var catch_value = LocalVariable.CreateCompilerGenerated (ec.Module.Compiler.BuiltinTypes.Exception, block, Location);
-
-				ec.BeginCatchBlock (catch_value.Type);
-				catch_value.EmitAssign (ec);
-
-				ec.EmitThis ();
-				ec.EmitInt ((int) IteratorStorey.State.After);
-				ec.Emit (OpCodes.Stfld, storey.PC.Spec);
-
-				((AsyncTaskStorey) async_init.Storey).EmitSetException (ec, new LocalVariableReference (catch_value, Location));
-
-				ec.Emit (OpCodes.Leave, move_next_ok);
-				ec.EndExceptionBlock ();
+				async_init.EmitCatchBlock (ec);
 			}
 
 			ec.Mark (Block.Original.EndLocation);

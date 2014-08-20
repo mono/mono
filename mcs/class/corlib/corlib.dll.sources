@@ -264,6 +264,7 @@ System/TimeZone.cs
 ../System.Core/System/TimeZoneInfo.AdjustmentRule.cs
 ../System.Core/System/TimeZoneInfo.Android.cs
 ../System.Core/System/TimeZoneInfo.MonoTouch.cs
+../System.Core/System/TimeZoneInfo.Serialization.cs
 ../System.Core/System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
@@ -1525,6 +1526,8 @@ System.Text/EncoderFallbackException.cs
 System.Text/EncoderReplacementFallback.cs
 System.Text/EncoderReplacementFallbackBuffer.cs
 System.Text/Encoding.cs
+System.Text/EncodingEncoder.cs
+System.Text/EncodingDecoder.cs
 System.Text/EncodingInfo.cs
 System.Text/Latin1Encoding.cs
 System.Text/MLangCodePageEncoding.cs

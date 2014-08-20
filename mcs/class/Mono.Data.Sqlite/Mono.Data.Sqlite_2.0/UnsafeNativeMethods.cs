@@ -142,6 +142,13 @@ namespace Mono.Data.Sqlite
     internal static extern int sqlite3_create_function(IntPtr db, byte[] strName, int nArgs, int nType, IntPtr pvUser, SQLiteCallback func, SQLiteCallback fstep, SQLiteFinalCallback ffinal);
 
 #if !PLATFORM_COMPACTFRAMEWORK
+		[DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+		[DllImport(SQLITE_DLL)]
+#endif
+		internal static extern int sqlite3_create_function_v2(IntPtr db, byte[] strName, int nArgs, int nType, IntPtr pvUser, SQLiteCallback func, SQLiteCallback fstep, SQLiteFinalCallback ffinal, SQLiteFinalCallback fdestroy);
+
+#if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
 #else
     [DllImport(SQLITE_DLL)]
@@ -692,7 +699,14 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern int sqlite3_config (SQLiteConfig config);
-		
+
+#if !PLATFORM_COMPACTFRAMEWORK
+		[DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+		[DllImport(SQLITE_DLL)]
+#endif
+		internal static extern IntPtr sqlite3_user_data (IntPtr context);
+
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
 #else

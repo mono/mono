@@ -3238,9 +3238,9 @@ extern gboolean SetFileAttributes (const gunichar2 *name, guint32 attrs)
 	 * catch that case here.
 	 */
 	if (attrs & FILE_ATTRIBUTE_READONLY) {
-		result = _wapi_chmod (utf8_name, buf.st_mode & ~(S_IWRITE | S_IWOTH | S_IWGRP));
+		result = _wapi_chmod (utf8_name, buf.st_mode & ~(S_IWUSR | S_IWOTH | S_IWGRP));
 	} else {
-		result = _wapi_chmod (utf8_name, buf.st_mode | S_IWRITE);
+		result = _wapi_chmod (utf8_name, buf.st_mode | S_IWUSR);
 	}
 
 	/* Ignore the other attributes for now */
@@ -4260,6 +4260,7 @@ guint32 GetDriveType(const gunichar2 *root_path_name)
 	return (drive_type);
 }
 
+#if defined (PLATFORM_MACOSX) || defined (__linux__) || defined(PLATFORM_BSD) || defined(__native_client__) || defined(__FreeBSD_kernel__)
 static gchar*
 get_fstypename (gchar *utfpath)
 {
@@ -4287,7 +4288,6 @@ get_fstypename (gchar *utfpath)
 }
 
 /* Linux has struct statfs which has a different layout */
-#if defined (PLATFORM_MACOSX) || defined (__linux__) || defined(PLATFORM_BSD) || defined(__native_client__)
 gboolean
 GetVolumeInformation (const gunichar2 *path, gunichar2 *volumename, int volumesize, int *outserial, int *maxcomp, int *fsflags, gunichar2 *fsbuffer, int fsbuffersize)
 {

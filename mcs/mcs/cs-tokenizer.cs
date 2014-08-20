@@ -202,7 +202,6 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_where;
-		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
@@ -319,11 +318,6 @@ namespace Mono.CSharp
 		public bool ConstraintsParsing {
 			get { return handle_where; }
 			set { handle_where = value; }
-		}
-
-		public bool TypeOfParsing {
-			get { return handle_typeof; }
-			set { handle_typeof = value; }
 		}
 	
 		public XmlCommentState doc_state {
@@ -729,6 +723,7 @@ namespace Mono.CSharp
 					case Token.BYTE:
 					case Token.CHAR:
 					case Token.DECIMAL:
+					case Token.DOUBLE:
 					case Token.FLOAT:
 					case Token.LONG:
 					case Token.OBJECT:
@@ -1144,7 +1139,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		bool parse_less_than ()
+		bool parse_less_than (ref int genericDimension)
 		{
 		start:
 			int the_token = token ();
@@ -1181,10 +1176,23 @@ namespace Mono.CSharp
 			case Token.VOID:
 				break;
 			case Token.OP_GENERICS_GT:
+				genericDimension = 1;
+				return true;
 			case Token.IN:
 			case Token.OUT:
 				return true;
+			case Token.COMMA:
+				do {
+					++genericDimension;
+					the_token = token ();
+				} while (the_token == Token.COMMA);
 
+				if (the_token == Token.OP_GENERICS_GT) {
+					++genericDimension;
+					return true;
+				}
+
+				return false;
 			default:
 				return false;
 			}
@@ -1198,7 +1206,7 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than ())
+				if (!parse_less_than (ref genericDimension))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -1214,22 +1222,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		bool parse_generic_dimension (out int dimension)
-		{
-			dimension = 1;
-
-		again:
-			int the_token = token ();
-			if (the_token == Token.OP_GENERICS_GT)
-				return true;
-			else if (the_token == Token.COMMA) {
-				dimension++;
-				goto again;
-			}
-
-			return false;
-		}
-		
 		public int peek_token ()
 		{
 			int the_token;
@@ -1260,13 +1252,8 @@ namespace Mono.CSharp
 				return Token.OP_COALESCING;
 			}
 
-			switch (current_token) {
-			case Token.CLOSE_PARENS:
-			case Token.TRUE:
-			case Token.FALSE:
-			case Token.NULL:
-			case Token.LITERAL:
-				return Token.INTERR;
+			if (d == '.') {
+				return Token.INTERR_OPERATOR;
 			}
 
 			if (d != ' ') {
@@ -1279,7 +1266,15 @@ namespace Mono.CSharp
 			PushPosition ();
 			current_token = Token.NONE;
 			int next_token;
-			switch (xtoken ()) {
+			int parens = 0;
+			int generics = 0;
+
+			var nt = xtoken ();
+			switch (nt) {
+			case Token.DOT:
+			case Token.OPEN_BRACKET_EXPR:
+				next_token = Token.INTERR_OPERATOR;
+				break;
 			case Token.LITERAL:
 			case Token.TRUE:
 			case Token.FALSE:
@@ -1299,7 +1294,21 @@ namespace Mono.CSharp
 			case Token.COLON:
 				next_token = Token.INTERR_NULLABLE;
 				break;
-				
+
+			case Token.OPEN_PARENS:
+			case Token.OPEN_PARENS_CAST:
+			case Token.OPEN_PARENS_LAMBDA:
+				next_token = -1;
+				++parens;
+				break;
+
+			case Token.OP_GENERICS_LT:
+			case Token.OP_GENERICS_LT_DECL:
+			case Token.GENERIC_DIMENSION:
+				next_token = -1;
+				++generics;
+				break;
+
 			default:
 				next_token = -1;
 				break;
@@ -1317,14 +1326,26 @@ namespace Mono.CSharp
 					
 				case Token.COLON:
 					next_token = Token.INTERR;
-					break;							
-					
+					break;
+
+				case Token.OPEN_PARENS:
+				case Token.OPEN_PARENS_CAST:
+				case Token.OPEN_PARENS_LAMBDA:
+					++parens;
+					goto default;
+
+				case Token.OP_GENERICS_LT:
+				case Token.OP_GENERICS_LT_DECL:
+				case Token.GENERIC_DIMENSION:
+					++generics;
+					goto default;
+
 				default:
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
-					int parens = 0;
+					int brackets = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
@@ -1341,10 +1362,35 @@ namespace Mono.CSharp
 						case Token.CLOSE_BRACE:
 							--braces;
 							continue;
-						case Token.CLOSE_PARENS:
-							if (parens > 0)
-								--parens;
+						case Token.OP_GENERICS_LT:
+						case Token.OP_GENERICS_LT_DECL:
+						case Token.GENERIC_DIMENSION:
+							++generics;
 							continue;
+						case Token.OPEN_BRACKET:
+						case Token.OPEN_BRACKET_EXPR:
+							++brackets;
+							continue;
+						case Token.CLOSE_BRACKET:
+							--brackets;
+							continue;
+						case Token.CLOSE_PARENS:
+							if (parens > 0) {
+								--parens;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+
+						case Token.OP_GENERICS_GT:
+							if (generics > 0) {
+								--generics;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
 						}
 
 						if (braces != 0)
@@ -1355,6 +1401,14 @@ namespace Mono.CSharp
 
 						if (parens != 0)
 							continue;
+
+						if (ntoken == Token.COMMA) {
+							if (generics != 0 || brackets != 0)
+								continue;
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+						}
 						
 						if (ntoken == Token.COLON) {
 							if (++colons == interrs)
@@ -3651,22 +3705,20 @@ namespace Mono.CSharp
 		int TokenizeLessThan ()
 		{
 			int d;
-			if (handle_typeof) {
-				PushPosition ();
-				if (parse_generic_dimension (out d)) {
-					val = d;
-					DiscardPosition ();
-					return Token.GENERIC_DIMENSION;
-				}
-				PopPosition ();
-			}
 
 			// Save current position and parse next token.
 			PushPosition ();
-			if (parse_less_than ()) {
+			int generic_dimension = 0;
+			if (parse_less_than (ref generic_dimension)) {
 				if (parsing_generic_declaration && (parsing_generic_declaration_doc || token () != Token.DOT)) {
 					d = Token.OP_GENERICS_LT_DECL;
 				} else {
+					if (generic_dimension > 0) {
+						val = generic_dimension;
+						DiscardPosition ();
+						return Token.GENERIC_DIMENSION;
+					}
+
 					d = Token.OP_GENERICS_LT;
 				}
 				PopPosition ();

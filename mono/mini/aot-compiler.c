@@ -43,6 +43,7 @@
 #include <sys/stat.h>
 
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -111,7 +112,7 @@ struct _ReadOnlyValue {
 		gpointer ptr;
 	} value;
 };
-static ReadOnlyValue *readonly_values = NULL;
+static ReadOnlyValue *readonly_values;
 
 typedef struct MonoAotOptions {
 	char *outfile;
@@ -205,7 +206,7 @@ typedef struct MonoAotCompile {
 	MonoAotStats stats;
 	int method_index;
 	char *static_linking_symbol;
-	CRITICAL_SECTION mutex;
+	mono_mutex_t mutex;
 	gboolean use_bin_writer;
 	gboolean gas_line_numbers;
 	MonoImageWriter *w;
@@ -253,8 +254,8 @@ typedef struct {
 	gboolean jit_used, llvm_used;
 } MonoPltEntry;
 
-#define mono_acfg_lock(acfg) EnterCriticalSection (&((acfg)->mutex))
-#define mono_acfg_unlock(acfg) LeaveCriticalSection (&((acfg)->mutex))
+#define mono_acfg_lock(acfg) mono_mutex_lock (&((acfg)->mutex))
+#define mono_acfg_unlock(acfg) mono_mutex_unlock (&((acfg)->mutex))
 
 /* This points to the current acfg in LLVM mode */
 static MonoAotCompile *llvm_acfg;
@@ -2665,8 +2666,10 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 		case MONO_WRAPPER_LDFLDA:
 		case MONO_WRAPPER_STFLD:
 		case MONO_WRAPPER_ISINST: {
-			MonoClass *proxy_class = mono_marshal_get_wrapper_info (method);
-			encode_klass_ref (acfg, proxy_class, p, &p);
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+			g_assert (info);
+			encode_klass_ref (acfg, info->d.proxy.klass, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_LDFLD_REMOTE:
@@ -5042,6 +5045,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		} else {
 			encode_value (0, p, &p);
 		}
+		encode_value (patch_info->data.del_tramp->virtual, p, &p);
 		break;
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
@@ -5324,16 +5328,25 @@ emit_exception_debug_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	if (use_unwind_ops) {
 		guint32 encoded_len;
 		guint8 *encoded;
+		guint32 unwind_desc;
 
-		/* 
-		 * This is a duplicate of the data in the .debug_frame section, but that
-		 * section cannot be accessed using the dl interface.
-		 */
 		encoded = mono_unwind_ops_encode (cfg->unwind_ops, &encoded_len);
-		encode_value (get_unwind_info_offset (acfg, encoded, encoded_len), p, &p);
-		g_free (encoded);
+
+		unwind_desc = get_unwind_info_offset (acfg, encoded, encoded_len);
+		g_assert (unwind_desc < 0xffff);
+		if (cfg->has_unwind_info_for_epilog) {
+			/*
+			 * The lower 16 bits identify the unwind descriptor, the upper 16 bits contain the offset of
+			 * the start of the epilog from the end of the method.
+			 */
+			g_assert (cfg->code_size - cfg->epilog_begin < 0xffff);
+			encode_value (((cfg->code_size - cfg->epilog_begin) << 16) | unwind_desc, p, &p);
+			g_free (encoded);
+		} else {
+			encode_value (unwind_desc, p, &p);
+		}
 	} else {
-		encode_value (jinfo->used_regs, p, &p);
+		encode_value (jinfo->unwind_info, p, &p);
 	}
 
 	/*Encode the number of holes before the number of clauses to make decoding easier*/
@@ -8259,8 +8272,8 @@ emit_file_info (MonoAotCompile *acfg)
 		emit_int32 (acfg, align);
 	}
 #else
-	emit_int32 (acfg, __alignof__ (double));
-	emit_int32 (acfg, __alignof__ (gint64));
+	emit_int32 (acfg, MONO_ABI_ALIGNOF (double));
+	emit_int32 (acfg, MONO_ABI_ALIGNOF (gint64));
 #endif
 	emit_int32 (acfg, MONO_TRAMPOLINE_NUM);
 	emit_int32 (acfg, acfg->tramp_page_size);
@@ -8698,7 +8711,7 @@ acfg_create (MonoAssembly *ass, guint32 opts)
 	acfg->klass_blob_hash = g_hash_table_new (NULL, NULL);
 	acfg->method_blob_hash = g_hash_table_new (NULL, NULL);
 	acfg->plt_entry_debug_sym_cache = g_hash_table_new (g_str_hash, g_str_equal);
-	InitializeCriticalSection (&acfg->mutex);
+	mono_mutex_init_recursive (&acfg->mutex);
 
 	return acfg;
 }

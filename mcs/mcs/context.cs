@@ -21,7 +21,8 @@ namespace Mono.CSharp
 	{
 		Normal = 0,
 		Probing = 1,
-		IgnoreAccessibility = 2
+		IgnoreAccessibility = 2,
+		NameOf = 3
 	}
 
 	//
@@ -187,6 +188,8 @@ namespace Mono.CSharp
 			TryScope = 1 << 14,
 
 			TryWithCatchScope = 1 << 15,
+
+			ConditionalAccessReceiver = 1 << 16,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
@@ -665,8 +668,6 @@ namespace Mono.CSharp
 			ConstructorScope = 1 << 3,
 
 			AsyncBody = 1 << 4,
-
-			HoistedReturnResult = 1 << 5
 		}
 
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements

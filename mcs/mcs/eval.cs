@@ -25,6 +25,11 @@ namespace Mono.CSharp
 {
 
 	/// <summary>
+	/// Experimental!
+	/// </summary>
+	public delegate void ValueModificationHandler (string variableName, int row, int column, object value);
+
+	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
 	///   expressions dynamically.
 	/// </summary>
@@ -71,6 +76,8 @@ namespace Mono.CSharp
 		readonly ModuleContainer module;
 		readonly ReflectionImporter importer;
 		readonly CompilationSourceFile source_file;
+
+		int? listener_id;
 		
 		public Evaluator (CompilerContext ctx)
 		{
@@ -291,6 +298,30 @@ namespace Mono.CSharp
 			return compiled;
 		}
 
+		static MethodInfo listener_proxy_value;
+		internal void EmitValueChangedCallback (EmitContext ec, string name, TypeSpec type, Location loc)
+		{
+			if (listener_id == null)
+				listener_id = ListenerProxy.Register (ModificationListener);
+
+			if (listener_proxy_value == null)
+				listener_proxy_value = typeof (ListenerProxy).GetMethod ("ValueChanged");
+
+#if STATIC
+			throw new NotSupportedException ();
+#else
+			// object value, int row, int col, string name, int listenerId
+			if (type.IsStructOrEnum)
+				ec.Emit (OpCodes.Box, type);
+
+			ec.EmitInt (loc.Row);
+			ec.EmitInt (loc.Column);
+			ec.Emit (OpCodes.Ldstr, name);
+			ec.EmitInt (listener_id.Value);
+			ec.Emit (OpCodes.Call, listener_proxy_value);
+#endif
+		}
+
 		/// <summary>
 		///   Evaluates and expression or statement and returns any result values.
 		/// </summary>
@@ -341,6 +372,11 @@ namespace Mono.CSharp
 				Console.WriteLine ("Interrupted!\n{0}", e);
 			} finally {
 				invoking = false;
+
+				if (listener_id != null) {
+					ListenerProxy.Unregister (listener_id.Value);
+					listener_id = null;
+				}
 			}
 
 			//
@@ -447,6 +483,11 @@ namespace Mono.CSharp
 
 			return result;
 		}
+
+		/// <summary>
+		/// Experimental!
+		/// </summary>
+		public ValueModificationHandler ModificationListener { get; set; }
 
 		enum InputKind {
 			EOF,
@@ -737,6 +778,7 @@ namespace Mono.CSharp
 			}
 			
 			module.EmitContainer ();
+
 			if (Report.Errors != 0){
 				if (undo != null)
 					undo.ExecuteUndo ();
@@ -1257,5 +1299,38 @@ namespace Mono.CSharp
 			undo_actions = null;
 		}
 	}
-	
+
+	static class ListenerProxy
+	{
+		static readonly Dictionary<int, ValueModificationHandler> listeners = new Dictionary<int, ValueModificationHandler> ();
+
+		static int counter;
+
+		public static int Register (ValueModificationHandler listener)
+		{
+			lock (listeners) {
+				var id = counter++;
+				listeners.Add (id, listener);
+				return id;
+			}
+		}
+
+		public static void Unregister (int listenerId)
+		{
+			lock (listeners) {
+				listeners.Remove (listenerId);
+			}
+		}
+
+		public static void ValueChanged (object value, int row, int col, string name, int listenerId)
+		{
+			ValueModificationHandler action;
+			lock (listeners) {
+				if (!listeners.TryGetValue (listenerId, out action))
+					return;
+			}
+
+			action (name, row, col, value);
+		}
+	}
 }

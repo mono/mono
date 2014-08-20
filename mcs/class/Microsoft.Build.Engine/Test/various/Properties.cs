@@ -176,6 +176,22 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		public void InstanceMembersOnStaticMethod ()
+		{
+			string documentString = @"
+					<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+						<PropertyGroup>
+							<Prop1>$([System.String]::Concat('a', 'bb', 'c').Length.GetHashCode ())</Prop1>
+
+						</PropertyGroup>
+					</Project>
+				";
+
+			proj.LoadXml (documentString);
+			Assert.AreEqual (4.GetHashCode ().ToString (), proj.GetEvaluatedProperty ("Prop1"), "#1");
+		}
+
+		[Test]
 		public void MSBuildPropertyFunctions ()
 		{
 			string documentString = @"
@@ -190,6 +206,23 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 			Assert.AreEqual ("6.6", proj.GetEvaluatedProperty ("Prop1"), "#1");
-		}		
+		}
+
+		[Test]
+		public void Constructor ()
+		{
+			string documentString = @"
+					<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+						<PropertyGroup>
+							<NumberOne>0.6</NumberOne>
+							<NumberTwo>6</NumberTwo>
+							<Prop1>$([System.String]::new('value').EndsWith ('ue'))</Prop1>
+						</PropertyGroup>
+					</Project>
+				";
+
+			proj.LoadXml (documentString);
+			Assert.AreEqual ("True", proj.GetEvaluatedProperty ("Prop1"), "#1");
+		}
 	}
 }

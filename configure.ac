@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.6.1],
+AC_INIT(mono, [3.8.1],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -36,20 +36,15 @@ case $host_os in
 *cygwin* ) LN_S='cp -p';;
 esac
 
-dnl
-dnl libgc checks
-dnl
-
-gc_headers=no
-gc=included
-gc_msg="included Boehm"
-use_included_gc=no
+#
+# libgc defaults
+#
 libgc_configure_args=
 
 if test -d $srcdir/libgc ; then
-  gc_default=included
+  libgc_default=included
 else
-  gc_default=boehm
+  libgc_default=boehm
 fi
 
 # These variables are the CPPFLAGS/CFLAGS passed to libgc's configure
@@ -121,14 +116,15 @@ case "$host" in
 		fi
 		HOST_CC="gcc"
 		# Windows 2000 is required that includes Internet Explorer 5.01
-		CPPFLAGS="$CPPFLAGS -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
+		CPPFLAGS="$CPPFLAGS -DWINVER=0x0502 -D_WIN32_WINNT=0x0502 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
 		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
 		libgc_threads=win32
-		gc_default=included
+		libgc_default=included
 		with_sigaltstack=no
+		with_tls=pthread
 		LN_S=cp
 		# This forces libgc to use the DllMain based thread registration code on win32
 		libgc_configure_args="$libgc_configure_args --enable-win32-dllmain=yes"
@@ -143,6 +139,17 @@ case "$host" in
 		need_link_unlink=yes
 		libdl="-ldl"
 		libgc_threads=pthreads
+		with_sigaltstack=no
+		use_sigposix=yes
+		;;
+	*-*-kfreebsd*-gnu)
+		host_win32=no
+		CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP -DUSE_MUNMAP -DTHREAD_LOCAL_ALLOC -pthread"
+		libmono_cflags="-D_REENTRANT -DTHREAD_LOCAL_ALLOC -pthread"
+		libmono_ldflags="-lpthread -pthread"
+		libdl="-ldl"
+		libgc_threads=pthreads
+		need_link_unlink=yes
 		with_sigaltstack=no
 		use_sigposix=yes
 		;;
@@ -181,7 +188,7 @@ case "$host" in
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=
-		gc_default=boehm
+		libgc_default=boehm
 		libgc_threads=pthreads
 		with_sigaltstack=no
 		use_sigposix=yes
@@ -256,7 +263,7 @@ case "$host" in
 		libmono_cflags="-D_REENTRANT"
 		libdl=
 		libgc_threads=pthreads
-		gc_default=boehm
+		libgc_default=boehm
 		use_sigposix=yes
 		ikvm_native=no
 		AC_DEFINE(DISABLE_SOCKETS,1,[Disable sockets support])
@@ -361,6 +368,7 @@ fi
 AC_SUBST(extra_runtime_ldflags)
 AM_CONDITIONAL(HOST_WIN32, test x$host_win32 = xyes)
 AM_CONDITIONAL(TARGET_WIN32, test x$target_win32 = xyes)
+AM_CONDITIONAL(PLATFORM_GNU, echo x$target_os | grep -q -- -gnu)
 AM_CONDITIONAL(PLATFORM_LINUX, echo x$target_os | grep -q linux)
 AM_CONDITIONAL(PLATFORM_DARWIN, test x$platform_darwin = xyes)
 AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
@@ -649,18 +657,6 @@ if test "x$USE_NLS" = "xyes"; then
    fi
 fi
 
-AC_ARG_WITH([libgdiplus], 
-	[  --with-libgdiplus=installed|sibling|<path>	Override the libgdiplus used for System.Drawing tests (defaults to installed)], 
-	[], [with_libgdiplus=installed])
-
-case $with_libgdiplus in
-no|installed) libgdiplus_loc= ;;
-yes|sibling) libgdiplus_loc=`cd ../libgdiplus && pwd`/src/libgdiplus.la ;;
-/*) libgdiplus_loc=$with_libgdiplus ;;
-*) libgdiplus_loc=`pwd`/$with_libgdiplus ;;
-esac
-AC_SUBST([libgdiplus_loc])
-
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
 pkg_config_path=
@@ -698,8 +694,6 @@ AC_SUBST(GMODULE_CFLAGS)
 AC_SUBST(GMODULE_LIBS)
 AC_SUBST(BUILD_GLIB_CFLAGS)
 AC_SUBST(BUILD_GLIB_LIBS)
-
-AC_ARG_WITH(gc,   [  --with-gc=boehm,included,none  Controls the Boehm GC config, default=included],[gc=$with_gc],[gc=$gc_default])
 
 # Enable support for fast thread-local storage
 # Some systems have broken support, so we allow to disable it.
@@ -1008,22 +1002,28 @@ AC_TRY_COMPILE([
    AC_MSG_RESULT(no)
 ])
 
+dnl
+dnl Boehm GC configuration
+dnl
+
+AC_ARG_WITH(libgc,   [  --with-gc=boehm,included,none  Controls the Boehm GC config, default=included],[libgc=$with_gc],[libgc=$libgc_default])
+
+AC_ARG_ENABLE(boehm, [  --disable-boehm            Disable the Boehm GC.], support_boehm=$enableval,support_boehm=${support_boehm:-yes})
+AM_CONDITIONAL(SUPPORT_BOEHM, test x$support_boehm = xyes)
+
 AC_ARG_ENABLE(parallel-mark, [  --enable-parallel-mark     Enables GC Parallel Marking], enable_parallel_mark=$enableval, enable_parallel_mark=$parallel_mark)
 if test x$enable_parallel_mark = xyes; then
 	libgc_configure_args="$libgc_configure_args --enable-parallel-mark"
 fi
 
-AC_ARG_ENABLE(boehm, [  --disable-boehm            Disable the Boehm GC.], support_boehm=$enableval,support_boehm=${support_boehm:-yes})
-AM_CONDITIONAL(SUPPORT_BOEHM, test x$support_boehm = xyes)
-
-dnl
-dnl Boehm GC configuration
-dnl
+gc_headers=no
+gc_msg=""
+use_included_gc=no
 LIBGC_CPPFLAGS=
 LIBGC_LIBS=
 LIBGC_STATIC_LIBS=
 libgc_dir=
-case "x$gc" in
+case "x$libgc" in
 	xboehm|xbohem|xyes)
 		AC_CHECK_HEADERS(gc.h gc/gc.h, gc_headers=yes)
 		AC_CHECK_LIB(gc, GC_malloc, found_boehm="yes",,$libdl)
@@ -1056,17 +1056,18 @@ case "x$gc" in
 		fi
 
 		# check whether we need to explicitly allow
-               	# thread registering
-               	AC_CHECK_LIB(gc, GC_allow_register_threads, found_allow_register_threads="yes",,$libdl)
-               	if test "x$found_allow_register_threads" = "xyes"; then
-                        AC_DEFINE(HAVE_GC_ALLOW_REGISTER_THREADS, 1, [GC requires thread registration])
-               	fi
-
+		# thread registering
+		AC_CHECK_LIB(gc, GC_allow_register_threads, found_allow_register_threads="yes",,$libdl)
+		if test "x$found_allow_register_threads" = "xyes"; then
+		   AC_DEFINE(HAVE_GC_ALLOW_REGISTER_THREADS, 1, [GC requires thread registration])
+		fi
 		;;
 
 	xincluded)
 		use_included_gc=yes
-		libgc_dir=libgc
+		if test "x$support_boehm" = "xyes"; then
+			libgc_dir=libgc
+		fi
 
 		LIBGC_CPPFLAGS='-I$(top_srcdir)/libgc/include'
 		LIBGC_LIBS='$(top_builddir)/libgc/libmonogc.la'
@@ -1079,7 +1080,7 @@ case "x$gc" in
 			CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DGC_BUILD -DGC_NOT_DLL"
 		fi
 
-		gc_msg="bundled Boehm GC with typed GC"
+		gc_msg="Included Boehm GC with typed GC"
 		if test x$enable_parallel_mark = xyes; then
 			AC_DEFINE_UNQUOTED(DEFAULT_GC_NAME, "Included Boehm (with typed GC and Parallel Mark)", [GC description])
 			gc_msg="$gc_msg and parallel mark"
@@ -1116,7 +1117,7 @@ AC_SUBST(libgc_dir)
 AC_SUBST(BOEHM_DEFINES)
 
 dnl
-dnl End of libgc checks
+dnl End of Boehm GC Configuration
 dnl
 
 dnl *************************************
@@ -1531,30 +1532,6 @@ if test x$target_win32 = xno; then
 	AC_CHECK_FUNC(gethostbyaddr, , AC_CHECK_LIB(nsl, gethostbyaddr, LIBS="$LIBS -lnsl"))
 
 	AC_CHECK_FUNCS(inet_pton inet_aton)
-
-	dnl ***********************************************
-	dnl *** Checks for size of sockaddr_un.sun_path ***
-	dnl ***********************************************
-	# AC_CHECK_SIZEOF can't cope with struct members :-(
-	AC_MSG_CHECKING(size of sockaddr_un.sun_path)
-	AC_CACHE_VAL(mono_cv_sizeof_sunpath,
-		[AC_TRY_RUN([
-			#include <sys/types.h>
-			#include <stdio.h>
-			#include <sys/un.h>
-
-			int main(void) {
-				struct sockaddr_un sock_un;
-				FILE *f=fopen("conftestval", "w");
-				if(!f) exit(1);
-				fprintf(f, "%d\n", sizeof(sock_un.sun_path));
-				exit(0);
-			}
-		], mono_cv_sizeof_sunpath=`cat conftestval`,
-		   mono_cv_sizeof_sunpath=0,
-		   mono_cv_sizeof_sunpath=0)])dnl
-	AC_MSG_RESULT($mono_cv_sizeof_sunpath)
-	AC_DEFINE_UNQUOTED(MONO_SIZEOF_SUNPATH, $mono_cv_sizeof_sunpath, [Sizeof sock_un.sun_path])
 
 	dnl *****************************
 	dnl *** Checks for libxnet    ***
@@ -2172,7 +2149,6 @@ else
 			AC_MSG_RESULT(no)
 		])
 	])
-	AC_CHECK_FUNCS(GetProcessId)
 	AC_CHECK_DECLS(InterlockedExchange64, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(InterlockedCompareExchange64, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(InterlockedDecrement64, [], [], [[#include <windows.h>]])
@@ -2180,6 +2156,16 @@ else
 	AC_CHECK_DECLS(InterlockedAdd, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(InterlockedAdd64, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(__readfsdword, [], [], [[#include <windows.h>]])
+
+	AC_MSG_CHECKING(for GetProcessId)
+	AC_TRY_COMPILE([#include <windows.h>], [
+		GetProcessId (0);
+	], [
+	   AC_MSG_RESULT(yes)
+	   AC_DEFINE(HAVE_GETPROCESSID)
+	], [
+	   AC_MSG_RESULT(no)
+	])
 fi
 
 dnl socklen_t check
@@ -2519,7 +2505,9 @@ INTL="libc.so.6"
 SQLITE="libsqlite.so.0"
 SQLITE3="libsqlite3.so.0"
 X11="libX11.so"
-XINERAMA="libXinerama.so"
+GDKX11="libgdk-x11-2.0.so.0"
+GTKX11="libgtk-x11-2.0.so.0"
+XINERAMA="libXinerama.so.1"
 
 sizeof_register="SIZEOF_VOID_P"
 
@@ -2589,7 +2577,7 @@ case "$host" in
 			sgen_supported=true
 			AOT_SUPPORTED="yes"
 			;;
-		  darwin*|openbsd*|freebsd*)
+		  openbsd*|freebsd*|kfreebsd-gnu*)
 			sgen_supported=true
 		        ;;
 		esac
@@ -2607,7 +2595,14 @@ case "$host" in
 			sgen_supported=true
 			AOT_SUPPORTED="yes"
 			;;
-		  darwin*|openbsd*|freebsd*)
+		  darwin*)
+			sgen_supported=true
+			AOT_SUPPORTED="yes"
+			;;
+		  openbsd*|freebsd*|kfreebsd-gnu*)
+			sgen_supported=true
+			;;
+		  mingw*)
 			sgen_supported=true
 			;;
 		esac
@@ -2681,8 +2676,6 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
-		# libgc's gc_locks.h depends on this
-	    CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC"
 		sgen_supported=true
 		;;
 	arm*-linux*)
@@ -2749,7 +2742,6 @@ if test "x$host" != "x$target"; then
 		sizeof_register=8
 		target_byte_order=G_BIG_ENDIAN
 		;;
-
    powerpc64-xbox360-linux-gnu)
 		TARGET=POWERPC64
 		arch_target=powerpc64
@@ -2974,10 +2966,17 @@ case "$host" in
 	SQLITE="libsqlite.0.dylib"
 	SQLITE3="libsqlite3.0.dylib"
 	X11="libX11.dylib"
+	GDKX11="libgdk-x11-2.0.dylib"
+	GTKX11="libgtk-x11-2.0.dylib"
 	;;
      *-*-*netbsd*)
 	LIBC="libc.so.12"
 	INTL="libintl.so.0"
+	;;
+     *-*-kfreebsd*-gnu)
+	LIBC="libc.so.0.1"
+	INTL="libc.so.0.1"
+	X11="libX11.so.6"
 	;;
     *-*-*freebsd*)
     	LIBC="libc.so"
@@ -3005,20 +3004,8 @@ case "$host" in
 	done
 	
 	if test "x$X11" = "xlibX11.so"; then
-		AC_MSG_WARN([Could not find X development libs. Do you have the -devel package installed? Assuming libX11.so.6...]);
+		AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
 		X11=libX11.so.6
-	fi
-	AC_MSG_CHECKING(for the soname of libXinerama.so)
-	for i in $x_libraries $dlsearch_path; do
-		for r in 1 2 3; do
-			if test -f $i/libXinerama.so.$r; then
-				XINERAMA=libXinerama.so.$r
-				AC_MSG_RESULT($XINERAMA)
-			fi
-		done
-	done
-	if test "x$XINERAMA" = "xlibXinerama.so"; then
-		AC_MSG_WARN([Could not find Xinerama development libs. Support for multiple monitors might not work...]);
 	fi
 	;;
 esac
@@ -3026,24 +3013,32 @@ esac
 
 AC_SUBST(libsuffix)
 
-if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
-	if test "x$with_tls" = "x__thread"; then
-		#
-		# On some linux distributions, TLS works in executables, but linking 
-		# against a shared library containing TLS fails with:
-		# undefined reference to `__tls_get_addr'
-		#
-		rm -f conftest.c conftest.so conftest
-		echo "static __thread int foo; int main () { foo = 5; return 0; }" > conftest.c
-		$CC -fPIC --shared -o conftest.so conftest.c > /dev/null 2>&1
-		$CC -o conftest conftest.so > /dev/null 2>&1
-		if test ! -f conftest; then
-		   AC_MSG_WARN([Disabling usage of __thread.]);
-		   with_tls=pthread
-		fi
-		rm -f conftest.c conftest.so conftest
-	fi
-fi
+AC_ARG_WITH([libgdiplus],
+	[  --with-libgdiplus=installed|sibling|<path>	Override the libgdiplus used for System.Drawing tests (defaults to installed)],
+	[], [with_libgdiplus=installed])
+
+# default install location
+libgdiplus_install_loc=libgdiplus${libsuffix}
+case $with_libgdiplus in
+    no|installed)
+    libgdiplus_loc=
+    ;;
+
+    yes|sibling)
+    libgdiplus_loc=`cd ../libgdiplus && pwd`/src/libgdiplus.la
+    ;;
+
+    /*) # absolute path, assume it is an install location
+    libgdiplus_loc=$with_libgdiplus
+    libgdiplus_install_loc=$with_libgdiplus
+    ;;
+
+    *)
+    libgdiplus_loc=`pwd`/$with_libgdiplus
+    ;;
+esac
+AC_SUBST([libgdiplus_loc])
+AC_SUBST([libgdiplus_install_loc])
 
 AC_ARG_ENABLE(icall-symbol-map,[  --enable-icall-symbol-map Generate tables which map icall functions to their C symbols], icall_symbol_map=$enableval, icall_symbol_map=no)
 if test "x$icall_symbol_map" = "xyes"; then
@@ -3210,7 +3205,7 @@ if test ${ACCESS_UNALIGNED} = no; then
 	CPPFLAGS="$CPPFLAGS -DNO_UNALIGNED_ACCESS"
 fi
 
-case "x$gc" in
+case "x$libgc" in
 	xincluded)
 		# Pass CPPFLAGS to libgc configure
 		# We should use a separate variable for this to avoid passing useless and
@@ -3228,7 +3223,9 @@ case "x$gc" in
 		# (infinite recursion, undefined parking behavior, etc)
 		TMP_CPPFLAGS=`echo $TMP_CPPFLAGS | sed -e 's/-finstrument-for-thread-suspension//g'`
 		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$TMP_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
-		AC_CONFIG_SUBDIRS(libgc)
+		if test "x$support_boehm" = "xyes"; then
+			AC_CONFIG_SUBDIRS(libgc)
+		fi
 		;;
 esac
 
@@ -3362,13 +3359,15 @@ AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 
 AM_CONDITIONAL(JIT_SUPPORTED, test x$JIT_SUPPORTED = xyes)
 AM_CONDITIONAL(INTERP_SUPPORTED, test x$interp_wanted = xtrue)
-AM_CONDITIONAL(INCLUDED_LIBGC, test x$gc = xincluded)
+AM_CONDITIONAL(INCLUDED_LIBGC, test x$libgc = xincluded)
 
 AC_SUBST(LIBC)
 AC_SUBST(INTL)
 AC_SUBST(SQLITE)
 AC_SUBST(SQLITE3)
 AC_SUBST(X11)
+AC_SUBST(GDKX11)
+AC_SUBST(GTKX11)
 AC_SUBST(XINERAMA)
 AC_DEFINE_UNQUOTED(ARCHITECTURE,"$arch_target",[The architecture this is running on])
 AC_SUBST(arch_target)
@@ -3709,11 +3708,6 @@ fi
 	   enable_system_aot=yes
 	fi
 
-	if test "x$enable_loadedllvm" = "xyes"; then
-	   # This seems to fail on the x86 buildbots
-	   enable_system_aot=no
-	fi
-
     if test x$host_win32 = xno -a x$enable_system_aot = xyes; then
       echo "ENABLE_AOT = 1" >> $mcs_topdir/build/config.make
     fi
@@ -3775,6 +3769,8 @@ echo "
         mcs source:    $mcsdir
 
    Engine:
+	Host:	       $host
+	Target:	       $target
 	GC:	       $gc_msg 
 	TLS:           $with_tls
 	SIGALTSTACK:   $with_sigaltstack

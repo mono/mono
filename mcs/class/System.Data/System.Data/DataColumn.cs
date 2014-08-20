@@ -474,7 +474,7 @@ namespace System.Data {
 		public string Expression {
 			get { return _expression; }
 			set {
-				if (value == null)
+				if (value == null || value.Trim () == string.Empty)
 					value = String.Empty;
 
 				CompileExpression (value);

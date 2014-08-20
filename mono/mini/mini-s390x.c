@@ -246,8 +246,8 @@ if (ins->inst_target_bb->native_offset) { 					\
 #define JUMP_SIZE	6
 #define ENABLE_WRONG_METHOD_CHECK 0
 
-#define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
-#define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
+#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
 
 /*========================= End of Defines =========================*/
 
@@ -260,6 +260,7 @@ if (ins->inst_target_bb->native_offset) { 					\
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/profiler-private.h>
@@ -409,7 +410,7 @@ static gpointer bp_trigger_page;
 
 breakpoint_t breakpointCode;
 
-static CRITICAL_SECTION mini_arch_mutex;
+static mono_mutex_t mini_arch_mutex;
 
 /*====================== End of Global Variables ===================*/
 
@@ -1259,7 +1260,7 @@ mono_arch_init (void)
 {
 	guint8 *code;
 
-	InitializeCriticalSection (&mini_arch_mutex);
+	mono_mutex_init_recursive (&mini_arch_mutex);
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ);
@@ -1290,7 +1291,7 @@ mono_arch_cleanup (void)
 		mono_vfree (ss_trigger_page, mono_pagesize ());
 	if (bp_trigger_page)
 		mono_vfree (bp_trigger_page, mono_pagesize ());
-	DeleteCriticalSection (&mini_arch_mutex);
+	mono_mutex_destroy (&mini_arch_mutex);
 }
 
 /*========================= End of Function ========================*/
@@ -4529,15 +4530,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lgr (code, ins->dreg, s390_r1);
 		}
 			break;	
-		case OP_ATOMIC_ADD_NEW_I8: {
-			s390_lgr (code, s390_r1, ins->sreg2);
-			s390_lg  (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_agr (code, s390_r1, s390_r0);
-			s390_csg (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -10);
-			s390_lgr (code, ins->dreg, s390_r1);
-		}
-			break;	
 		case OP_ATOMIC_EXCHANGE_I8: {
 			s390_lg  (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
 			s390_csg (code, s390_r0, ins->sreg2, ins->inst_basereg, ins->inst_offset);
@@ -4546,15 +4538,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;	
 		case OP_ATOMIC_ADD_I4: {
-			s390_lgfr(code, s390_r1, ins->sreg2);
-			s390_lgf (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_agr (code, s390_r1, s390_r0);
-			s390_cs  (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -9);
-			s390_lgfr(code, ins->dreg, s390_r1);
-		}
-			break;	
-		case OP_ATOMIC_ADD_NEW_I4: {
 			s390_lgfr(code, s390_r1, ins->sreg2);
 			s390_lgf (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
 			s390_agr (code, s390_r1, s390_r0);
@@ -5616,8 +5599,8 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 		start = code = mono_global_codeman_reserve (size);
 
 		/* Replace the this argument with the target */
-		s390_lg   (code, s390_r1, 0, s390_r2, G_STRUCT_OFFSET(MonoDelegate, method_ptr));
-		s390_lg   (code, s390_r2, 0, s390_r2, G_STRUCT_OFFSET(MonoDelegate, target));
+		s390_lg   (code, s390_r1, 0, s390_r2, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		s390_lg   (code, s390_r2, 0, s390_r2, MONO_STRUCT_OFFSET (MonoDelegate, target));
 		s390_br   (code, s390_r1);
 		g_assert ((code - start) <= size);
 
@@ -5628,7 +5611,7 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 		size = 32 + param_count * 8;
 		start = code = mono_global_codeman_reserve (size);
 
-		s390_lg   (code, s390_r1, 0, s390_r2, G_STRUCT_OFFSET(MonoDelegate, method_ptr));
+		s390_lg   (code, s390_r1, 0, s390_r2, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		/* slide down the arguments */
 		for (i = 0; i < param_count; ++i) {
 			s390_lgr (code, (s390_r2 + i), (s390_r2 + i + 1));
@@ -5739,6 +5722,22 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		cache [sig->param_count] = start;
 	}
 	return start;
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name		- mono_arch_get_delegate_virtual_invoke_impl.       */
+/*                                                                  */
+/* Function	- 						    */
+/*		                               			    */
+/*------------------------------------------------------------------*/
+
+gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
+{
+	return NULL;
 }
 
 /*========================= End of Function ========================*/
@@ -6138,3 +6137,17 @@ mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
 /*========================= End of Function ========================*/
 
 #endif
+
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	switch (opcode) {
+	case OP_ATOMIC_ADD_I4:
+	case OP_ATOMIC_ADD_I8:
+	case OP_ATOMIC_EXCHANGE_I4:
+	case OP_ATOMIC_EXCHANGE_I8:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}

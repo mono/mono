@@ -43,6 +43,7 @@ namespace System.Timers
 		System.Threading.Timer timer;
 		object _lock = new object ();
 		ISynchronizeInvoke so;
+		bool enabled;
 
 		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
@@ -55,10 +56,11 @@ namespace System.Timers
 		public Timer (double interval)
 		{
 			// MSBUG: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=296761
-			if (interval > 0x7FFFFFFF)
+			if (interval <= 0 || interval > 0x7FFFFFFF)
 				throw new ArgumentException ("Invalid value: " + interval, "interval");
 
 			autoReset = true;
+			timer = new System.Threading.Timer (Callback, this, Timeout.Infinite, Timeout.Infinite); //disabled
 			Interval = interval;
 		}
 
@@ -78,19 +80,25 @@ namespace System.Timers
 		{
 			get {
 				lock (_lock)
-					return timer != null;
+					return enabled && timer != null;
 			}
 			set {
 				lock (_lock) {
-					bool enabled = timer != null;
+					if (timer == null)
+						throw new ObjectDisposedException (GetType ().ToString (), "The object has been disposed");
+                    
 					if (enabled == value)
 						return;
 
 					if (value) {
-						timer = new System.Threading.Timer (Callback, this, (int)interval, autoReset ? (int)interval: 0);
+						// As per MS docs (throw this only when the timer becomes enabled): http://msdn.microsoft.com/en-us/library/system.timers.timer.enabled(v=vs.110).aspx
+						if (interval > Int32.MaxValue)
+							throw new ArgumentException ("Invalid value: " + interval, "interval");
+						enabled = true;
+						timer.Change ((int)interval, autoReset ? (int)interval : 0);
 					} else {
-						timer.Dispose ();
-						timer = null;
+						enabled = false;
+						timer.Change (Timeout.Infinite, Timeout.Infinite);
 					}
 				}
 			}
@@ -107,10 +115,16 @@ namespace System.Timers
 				// The doc says 'less than 0', but 0 also throws the exception
 				if (value <= 0)
 					throw new ArgumentException ("Invalid value: " + value);
+				// As per MS docs (throw only if enabled, otherwise postpone throwing until it becomes enabled): http://msdn.microsoft.com/en-us/library/system.timers.timer.interval(v=vs.110).aspx
+				if (value > Int32.MaxValue && enabled)
+					throw new ArgumentException ("Invalid value: " + value);
 
 				lock (_lock) {
+					if (timer == null)
+						return;
 					interval = value;
-					if (timer != null)
+					//call Change only if enabled, otherwise it will be called when Enabled = true, see the comment above on throwing ArgumentException
+					if (enabled)
 						timer.Change ((int)interval, autoReset? (int)interval: 0);
 				}
 			}
@@ -139,7 +153,8 @@ namespace System.Timers
 
 		public void Close ()
 		{
-			Enabled = false;
+			lock (_lock)
+				Dispose (true);
 		}
 
 		public void EndInit ()
@@ -159,12 +174,19 @@ namespace System.Timers
 
 		protected override void Dispose (bool disposing)
 		{
+			// Could call Close() twice
+			if (timer == null)
+				return;
+
 			// If we're disposing explicitly, clear all
 			// fields. If not, all fields will have been
 			// nulled by the GC during finalization, so
 			// trying to lock on _lock will blow up.
 			if (disposing)
-				Close ();
+			{
+				timer.Dispose ();
+				timer = null;
+			}
 
 			base.Dispose (disposing);
 		}
@@ -175,8 +197,20 @@ namespace System.Timers
 			if (timer.Enabled == false)
 				return;
 			ElapsedEventHandler events = timer.Elapsed;
-			if (!timer.autoReset)
-				timer.Enabled = false;
+
+			try
+			{
+				if (!timer.autoReset)
+					timer.Enabled = false; //this could throw ObjectDisposed if timer.Close() was just called, after the check for Enabled above
+			}
+			catch (ObjectDisposedException) {
+				//Probably the Elapsed event should not fire if this Timer is found here to be closed
+				return;
+			}
+
+			//If another thread calls Close() when this thread is right here (of further down), the Elapsed event might get called once more after this Timer was Closed()
+			//It's not a problem, it happens with all Timers, but it's good to know...
+
 			if (events == null)
 				return;
 

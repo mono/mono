@@ -222,8 +222,7 @@ namespace Mono.CSharp {
 			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
 		}
 
-		static readonly string[] attribute_targets = new string[] { "param" };
-		static readonly string[] attribute_targets_primary = new string[] { "param", "field" };
+		static readonly string[] attribute_targets = new [] { "param" };
 
 		FullNamedExpression texpr;
 		Modifier modFlags;
@@ -234,7 +233,6 @@ namespace Mono.CSharp {
 		protected int idx;
 		public bool HasAddressTaken;
 
-		Constructor primary_constructor;
 		TemporaryVariableReference expr_tree_variable;
 
 		HoistedParameter hoisted_variant;
@@ -309,7 +307,7 @@ namespace Mono.CSharp {
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return primary_constructor != null ? attribute_targets_primary : attribute_targets;
+				return attribute_targets;
 			}
 		}
 
@@ -317,12 +315,6 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
-			if (a.Target == AttributeTargets.Field) {
-				var field = MemberCache.FindMember (primary_constructor.Spec.DeclaringType, MemberFilter.Field (name, parameter_type), BindingRestriction.DeclaredOnly);
-				((Field)field.MemberDefinition).ApplyAttributeBuilder (a, ctor, cdata, pa);
-				return;
-			}
-
 			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
 				a.Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
@@ -399,10 +391,6 @@ namespace Mono.CSharp {
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
 
-			var ctor = rc.CurrentMemberDefinition as Constructor;
-			if (ctor != null && ctor.IsPrimaryConstructor)
-				primary_constructor = ctor;
-
 			parameter_type = texpr.ResolveAsType (rc);
 			if (parameter_type == null)
 				return null;
@@ -465,7 +453,7 @@ namespace Mono.CSharp {
 
 				if (atype == pa.CallerLineNumberAttribute) {
 					caller_type = rc.BuiltinTypes.Int;
-					if (caller_type != parameter_type && !Convert.ImplicitNumericConversionExists (caller_type, parameter_type)) {
+					if (caller_type != parameter_type && !Convert.ImplicitStandardConversionExists (new IntConstant (caller_type, int.MaxValue, Location.Null), parameter_type)) {
 						rc.Report.Error (4017, attr.Location,
 							"The CallerLineNumberAttribute attribute cannot be applied because there is no standard conversion from `{0}' to `{1}'",
 							caller_type.GetSignatureForError (), parameter_type.GetSignatureForError ());
@@ -787,6 +775,11 @@ namespace Mono.CSharp {
 		{
 			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve ();
 			return new TypeExpression (p_type, location);
+		}
+
+		public void SetIndex (int index)
+		{
+			idx = index;
 		}
 
 		public void Warning_UselessOptionalParameter (Report Report)
@@ -1151,6 +1144,23 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (parameters, types);
 		}
 
+		public static ParametersCompiled Prefix (ParametersCompiled parameters, Parameter p, TypeSpec type)
+		{
+			var ptypes = new TypeSpec [parameters.Count + 1];
+			ptypes [0] = type;
+			Array.Copy (parameters.Types, 0, ptypes, 1, parameters.Count);
+
+			var param = new Parameter [ptypes.Length];
+			param [0] = p;
+			for (int i = 0; i < parameters.Count; ++i) {
+				var pi = parameters [i];
+				param [i + 1] = pi;
+				pi.SetIndex (i + 1);
+			}
+
+			return ParametersCompiled.CreateFullyResolved (param, ptypes);
+		}
+
 		//
 		// TODO: This does not fit here, it should go to different version of AParametersCollection
 		// as the underlying type is not Parameter and some methods will fail to cast
@@ -1409,9 +1419,11 @@ namespace Mono.CSharp {
 			expr = Child;
 
 			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsDefaultStruct))) {
-				rc.Report.Error (1736, Location,
-					"The expression being assigned to optional parameter `{0}' must be a constant or default value",
-					p.Name);
+				if (!(expr is ErrorExpression)) {
+					rc.Report.Error (1736, Location,
+						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+						p.Name);
+				}
 
 				return;
 			}

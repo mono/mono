@@ -3833,8 +3833,7 @@ namespace System.Windows.Forms
 		{
 			Size item_size = ItemSize;
 			for (int i = 0; i < items.Count; i++) {
-				Point item_location = GetItemLocation (i);
-				Rectangle item_rect = new Rectangle (item_location, item_size);
+				Rectangle item_rect = items [i].Bounds;
 				if (item_rect.Contains (x, y))
 					return items [i];
 			}

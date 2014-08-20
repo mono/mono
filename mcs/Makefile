@@ -24,7 +24,6 @@ centum_tests := \
 	class/System.XML					\
 	class/Commons.Xml.Relaxng				\
 	class/Cscompmgd						\
-	class/Microsoft.JScript					\
 	class/Mono.Posix					\
 	class/Mono.Security					\
 	class/System.Design					\
@@ -83,7 +82,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then make -C ../runtime; fi
+	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then $(MAKE) -C ../runtime; fi
 
 # fun specialty targets
 

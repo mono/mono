@@ -5,6 +5,7 @@ System/Funcs.cs
 System/InvalidTimeZoneException.cs
 System/TimeZoneInfo.AdjustmentRule.cs
 System/TimeZoneInfo.cs
+System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
 System/Util.cs

@@ -15,6 +15,7 @@
 #include <string.h>
 #include <asm/cachectl.h>
 
+#include <mono/metadata/abi-details.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-mmap.h>
@@ -56,9 +57,9 @@ enum {
 };
 
 /* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
-#define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
-static CRITICAL_SECTION mini_arch_mutex;
+#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
+static mono_mutex_t mini_arch_mutex;
 
 int mono_exc_esp_offset = 0;
 static int tls_mode = TLS_MODE_DETECT;
@@ -551,8 +552,8 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		start = code = mono_global_codeman_reserve (16);
 
 		/* Replace the this argument with the target */
-		mips_lw (code, mips_temp, mips_a0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
-		mips_lw (code, mips_a0, mips_a0, G_STRUCT_OFFSET (MonoDelegate, target));
+		mips_lw (code, mips_temp, mips_a0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		mips_lw (code, mips_a0, mips_a0, MONO_STRUCT_OFFSET (MonoDelegate, target));
 		mips_jr (code, mips_temp);
 		mips_nop (code);
 
@@ -565,7 +566,7 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		size = 16 + param_count * 4;
 		start = code = mono_global_codeman_reserve (size);
 
-		mips_lw (code, mips_temp, mips_a0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		mips_lw (code, mips_temp, mips_a0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		/* slide down the arguments */
 		for (i = 0; i < param_count; ++i) {
 			mips_move (code, mips_a0 + i, mips_a0 + i + 1);
@@ -669,6 +670,12 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 }
 
 gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
+{
+	return NULL;
+}
+
+gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 {
 	g_assert(regs);
@@ -700,7 +707,7 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	InitializeCriticalSection (&mini_arch_mutex);
+	mono_mutex_init_recursive (&mini_arch_mutex);
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
@@ -713,7 +720,7 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	DeleteCriticalSection (&mini_arch_mutex);
+	mono_mutex_destroy (&mini_arch_mutex);
 }
 
 /*
@@ -5844,8 +5851,6 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 	return ctx->sc_regs [reg];
 }
 
-#ifdef MONO_ARCH_HAVE_IMT
-
 #define ENABLE_WRONG_METHOD_CHECK 0
 
 #define MIPS_LOAD_SEQUENCE_LENGTH	8
@@ -5999,7 +6004,6 @@ mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 {
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
-#endif
 
 MonoVTable*
 mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
@@ -6142,3 +6146,9 @@ mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
 }
 
 #endif /* MONO_ARCH_SOFT_DEBUG_SUPPORTED */
+
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}

@@ -276,9 +276,15 @@ endif
 
 # Create monow.exe, linked for the 'windows' subsystem
 if HOST_WIN32
+if SUPPORT_BOEHM
 monow_LDADD = $(mono_boehm_LDADD)
 monow_LDFLAGS = $(mono_boehm_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_boehm_SOURCES)
+else
+monow_LDADD = $(mono_sgen_LDADD)
+monow_LDFLAGS = $(mono_sgen_LDFLAGS) -mwindows
+monow_SOURCES = $(mono_sgen_SOURCES)
+endif
 endif
 
 genmdesc_SOURCES = \
@@ -426,7 +432,8 @@ common_sources = \
 	xdebug.c			\
 	mini-llvm.h			\
 	mini-llvm-cpp.h	\
-	alias-analysis.c
+	alias-analysis.c	\
+	mini-cross-helpers.c
 
 test_sources = 			\
 	basic-calls.cs 		\

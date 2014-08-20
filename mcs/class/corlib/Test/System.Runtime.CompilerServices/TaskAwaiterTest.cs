@@ -44,14 +44,15 @@ namespace MonoTests.System.Runtime.CompilerServices
 		class Scheduler : TaskScheduler
 		{
 			string name;
+			int ic, qc;
 
 			public Scheduler (string name)
 			{
 				this.name = name;
 			}
 
-			public int InlineCalls { get; set; }
-			public int QueueCalls { get; set; }
+			public int InlineCalls { get { return ic; } }
+			public int QueueCalls { get { return qc; } }
 
 			protected override IEnumerable<Task> GetScheduledTasks ()
 			{
@@ -60,7 +61,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			protected override void QueueTask (Task task)
 			{
-				++QueueCalls;
+				Interlocked.Increment (ref qc);
 				ThreadPool.QueueUserWorkItem (o => {
 					TryExecuteTask (task);
 				});
@@ -68,7 +69,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 			{
-				++InlineCalls;
+				Interlocked.Increment (ref ic);
 				return false;
 			}
 		}
@@ -102,6 +103,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 		string progress;
 		SynchronizationContext sc;
+		ManualResetEvent mre;
 
 		[SetUp]
 		public void Setup ()
@@ -176,7 +178,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 			Assert.IsTrue (t.Wait (3000), "#0");
 			Assert.AreEqual (0, t.Result, "#1");
 			Assert.AreEqual (0, b.InlineCalls, "#2b");
-			Assert.AreEqual (2, a.QueueCalls, "#3a");
+			Assert.IsTrue (a.QueueCalls == 1 || a.QueueCalls == 2, "#3a");
 			Assert.AreEqual (1, b.QueueCalls, "#3b");
 		}
 
@@ -270,12 +272,15 @@ namespace MonoTests.System.Runtime.CompilerServices
 		[Test]
 		public void CompletionOnDifferentCustomSynchronizationContext ()
 		{
+			mre = new ManualResetEvent (false);
 			progress = "";
 			var syncContext = new SingleThreadSynchronizationContext ();
 			SynchronizationContext.SetSynchronizationContext (syncContext);
 
 			syncContext.Post (delegate {
-				Go2 (syncContext);
+				Task t = new Task (delegate() { });
+				Go2 (syncContext, t);
+				t.Start ();
 			}, null);
 
 			// Custom message loop
@@ -286,21 +291,30 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Thread.Sleep (0);
 			}
 
-			Assert.AreEqual ("132", progress);
+			Assert.AreEqual ("13xa2", progress);
 		}
 
-		async void Go2 (SynchronizationContext ctx)
+		async void Go2 (SynchronizationContext ctx, Task t)
 		{
-			await Wait2 (ctx);
+			await Wait2 (ctx, t);
 
-			progress += "2";
+			progress += "a";
+
+			if (mre.WaitOne (5000))
+				progress += "2";
+			else
+				progress += "b";
 		}
 
-		async Task Wait2 (SynchronizationContext ctx)
+		async Task Wait2 (SynchronizationContext ctx, Task t)
 		{
-			await Task.Delay (10); // Force block suspend/return
+			await t; // Force block suspend/return
 
-			ctx.Post (l => progress += "3", null);
+			ctx.Post (l => {
+				progress += "3";
+				mre.Set ();
+				progress += "x";
+			}, null);
 
 			progress += "1";
 

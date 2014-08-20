@@ -289,7 +289,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 34
+#define MINOR_VERSION 36
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -401,7 +401,9 @@ typedef enum {
 
 typedef enum {
 	INVOKE_FLAG_DISABLE_BREAKPOINTS = 1,
-	INVOKE_FLAG_SINGLE_THREADED = 2
+	INVOKE_FLAG_SINGLE_THREADED = 2,
+	INVOKE_FLAG_RETURN_OUT_THIS = 4,
+	INVOKE_FLAG_RETURN_OUT_ARGS = 8
 } InvokeFlags;
 
 typedef enum {
@@ -694,8 +696,8 @@ static mono_mutex_t debugger_thread_exited_mutex;
 static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
-static SingleStepReq *ss_req = NULL;
-static gpointer ss_invoke_addr = NULL;
+static SingleStepReq *ss_req;
+static gpointer ss_invoke_addr;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -721,9 +723,9 @@ static gboolean buffer_replies;
 static ReplyPacket reply_packets [128];
 int nreply_packets;
 
-#define dbg_lock() EnterCriticalSection (&debug_mutex)
-#define dbg_unlock() LeaveCriticalSection (&debug_mutex)
-static CRITICAL_SECTION debug_mutex;
+#define dbg_lock() mono_mutex_lock (&debug_mutex)
+#define dbg_unlock() mono_mutex_unlock (&debug_mutex)
+static mono_mutex_t debug_mutex;
 
 static void transport_init (void);
 static void transport_connect (const char *address);
@@ -959,7 +961,7 @@ mono_debugger_agent_parse_options (char *options)
 void
 mono_debugger_agent_init (void)
 {
-	InitializeCriticalSection (&debug_mutex);
+	mono_mutex_init_recursive (&debug_mutex);
 
 	if (!agent_config.enabled)
 		return;
@@ -1435,6 +1437,41 @@ register_socket_transport (void)
 	register_transport (&trans);
 }
 
+/*
+ * socket_fd_transport_connect:
+ *
+ */
+static void
+socket_fd_transport_connect (const char *address)
+{
+	int res;
+
+	res = sscanf (address, "%d", &conn_fd);
+	if (res != 1) {
+		fprintf (stderr, "debugger-agent: socket-fd transport address is invalid: '%s'\n", address);
+		exit (1);
+	}
+
+	if (!transport_handshake ())
+		exit (1);
+}
+
+static void
+register_socket_fd_transport (void)
+{
+	DebuggerTransport trans;
+
+	/* This is the same as the 'dt_socket' transport, but receives an already connected socket fd */
+	trans.name = "socket-fd";
+	trans.connect = socket_fd_transport_connect;
+	trans.close1 = socket_transport_close1;
+	trans.close2 = socket_transport_close2;
+	trans.send = socket_transport_send;
+	trans.recv = socket_transport_recv;
+
+	register_transport (&trans);
+}
+
 #endif /* DISABLE_SOCKET_TRANSPORT */
 
 /*
@@ -1473,6 +1510,7 @@ transport_init (void)
 
 #ifndef DISABLE_SOCKET_TRANSPORT
 	register_socket_transport ();
+	register_socket_fd_transport ();
 #endif
 
 	for (i = 0; i < ntransports; ++i) {
@@ -6559,9 +6597,14 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			err = decode_value (sig->params [i], domain, (guint8*)&args [i], p, &p, end);
 			if (err)
 				break;
-
 			if (args [i] && ((MonoObject*)args [i])->vtable->domain != domain)
 				NOT_IMPLEMENTED;
+
+			if (sig->params [i]->byref) {
+				arg_buf [i] = g_alloca (sizeof (mgreg_t));
+				*(gpointer*)arg_buf [i] = args [i];
+				args [i] = arg_buf [i];
+			}
 		} else {
 			arg_buf [i] = g_alloca (mono_class_instance_size (mono_class_from_mono_type (sig->params [i])));
 			err = decode_value (sig->params [i], domain, arg_buf [i], p, &p, end);
@@ -6582,7 +6625,6 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	/* 
 	 * Add an LMF frame to link the stack frames on the invoke method with our caller.
 	 */
-	/* FIXME: Move this to arch specific code */
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (invoke->has_ctx) {
 		MonoLMF **lmf_addr;
@@ -6611,7 +6653,14 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		buffer_add_byte (buf, 0);
 		buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &exc, domain);
 	} else {
-		buffer_add_byte (buf, 1);
+		gboolean out_this = FALSE;
+		gboolean out_args = FALSE;
+
+		if ((invoke->flags & INVOKE_FLAG_RETURN_OUT_THIS) && CHECK_PROTOCOL_VERSION (2, 35))
+			out_this = TRUE;
+		if ((invoke->flags & INVOKE_FLAG_RETURN_OUT_ARGS) && CHECK_PROTOCOL_VERSION (2, 35))
+			out_args = TRUE;
+		buffer_add_byte (buf, 1 + (out_this ? 2 : 0) + (out_args ? 4 : 0));
 		if (sig->ret->type == MONO_TYPE_VOID) {
 			if (!strcmp (m->name, ".ctor") && !m->klass->valuetype) {
 				buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &this, domain);
@@ -6634,6 +6683,21 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			}
 		} else {
 			NOT_IMPLEMENTED;
+		}
+		if (out_this)
+			/* Return the new value of the receiver after the call */
+			buffer_add_value (buf, &m->klass->byval_arg, this_buf, domain);
+		if (out_args) {
+			buffer_add_int (buf, nargs);
+			for (i = 0; i < nargs; ++i) {
+				if (MONO_TYPE_IS_REFERENCE (sig->params [i]))
+					buffer_add_value (buf, sig->params [i], &args [i], domain);
+				else if (sig->params [i]->byref)
+					/* add_value () does an indirection */
+					buffer_add_value (buf, sig->params [i], &arg_buf [i], domain);
+				else
+					buffer_add_value (buf, sig->params [i], arg_buf [i], domain);
+			}
 		}
 	}
 
@@ -7694,7 +7758,7 @@ buffer_add_cattr_arg (Buffer *buf, MonoType *t, MonoDomain *domain, MonoObject *
 		buffer_add_value (buf, t, mono_object_unbox (val), domain);
 }
 
-static void
+static int
 buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass *attr_klass, MonoCustomAttrInfo *cinfo)
 {
 	int i, j;
@@ -7702,7 +7766,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 
 	if (!cinfo) {
 		buffer_add_int (buf, 0);
-		return;
+		return ERR_NONE;
 	}
 
 	for (i = 0; i < cinfo->num_attrs; ++i) {
@@ -7720,7 +7784,11 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 			MonoError error;
 
 			mono_reflection_create_custom_attr_data_args (image, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
-			g_assert (mono_error_ok (&error));
+			if (!mono_error_ok (&error)) {
+				DEBUG(2, fprintf (log_file, "[dbg] mono_reflection_create_custom_attr_data_args () failed with: '%s'\n", mono_error_get_message (&error)));
+				mono_error_cleanup (&error);
+				return ERR_LOADER_ERROR;
+			}
 
 			buffer_add_methodid (buf, domain, attr->ctor);
 
@@ -7763,6 +7831,8 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 			g_free (arginfo);
 		}
 	}
+
+	return ERR_NONE;
 }
 
 /* FIXME: Code duplication with icall.c */
@@ -7945,7 +8015,9 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		cinfo = mono_custom_attrs_from_class (klass);
 
-		buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		if (err)
+			return err;
 		break;
 	}
 	case CMD_TYPE_GET_FIELD_CATTRS: {
@@ -7962,7 +8034,9 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		cinfo = mono_custom_attrs_from_field (klass, field);
 
-		buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		if (err)
+			return err;
 		break;
 	}
 	case CMD_TYPE_GET_PROPERTY_CATTRS: {
@@ -7979,7 +8053,9 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		cinfo = mono_custom_attrs_from_property (klass, prop);
 
-		buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
+		if (err)
+			return err;
 		break;
 	}
 	case CMD_TYPE_GET_VALUES:
@@ -8590,7 +8666,9 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 
 		cinfo = mono_custom_attrs_from_method (method);
 
-		buffer_add_cattrs (buf, domain, method->klass->image, attr_klass, cinfo);
+		err = buffer_add_cattrs (buf, domain, method->klass->image, attr_klass, cinfo);
+		if (err)
+			return err;
 		break;
 	}
 	case CMD_METHOD_MAKE_GENERIC_METHOD: {
@@ -9689,6 +9767,12 @@ gboolean
 mono_debugger_agent_debug_log_is_enabled (void)
 {
 	return FALSE;
+}
+
+void
+mono_debugger_agent_unhandled_exception (MonoException *exc)
+{
+	g_assert_not_reached ();
 }
 
 #endif

@@ -167,9 +167,6 @@ struct MonoLMF {
 	 * If the third lowest bit is set, then this is a MonoLMFTramp structure.
 	 */
 	gpointer    previous_lmf;
-#ifdef HOST_WIN32
-	gpointer    lmf_addr;
-#endif
 #if defined(__default_codegen__) || defined(HOST_WIN32)
 	guint64     rip;
 #elif defined(__native_client_codegen__)
@@ -177,17 +174,8 @@ struct MonoLMF {
 	/* this allows the structure to match for 32-bit compilers.    */
 	guint64     rip __attribute__ ((aligned(8)));
 #endif
-	guint64     rbx;
 	guint64     rbp;
 	guint64     rsp;
-	guint64     r12;
-	guint64     r13;
-	guint64     r14;
-	guint64     r15;
-#ifdef HOST_WIN32
-	guint64     rdi;
-	guint64     rsi;
-#endif
 };
 
 /* LMF structure used by the JIT trampolines */
@@ -202,6 +190,7 @@ typedef struct MonoCompileArch {
 	gint32 reg_save_area_offset;
 	gint32 stack_alloc_size;
 	gint32 sp_fp_offset;
+	guint32 saved_iregs;
 	gboolean omit_fp, omit_fp_computed, no_pushes;
 	gpointer cinfo;
 	gint32 async_point_count;
@@ -213,6 +202,28 @@ typedef struct MonoCompileArch {
 	gpointer ss_trigger_page_var;
 	gpointer lmf_var;
 } MonoCompileArch;
+
+
+
+#ifdef HOST_WIN32
+#define PARAM_REGS 4
+#else
+#define PARAM_REGS 6
+#endif
+
+/* Structure used by the sequence points in AOTed code */
+typedef struct {
+	gpointer ss_trigger_page;
+	gpointer bp_trigger_page;
+	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
+} SeqPointInfo;
+
+typedef struct {
+	mgreg_t regs [PARAM_REGS];
+	mgreg_t res;
+	guint8 *ret;
+} DynCallArgs;
+
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->rax = (gsize)exc; } while (0)
 
@@ -298,7 +309,7 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_NOMAP32BIT
 
-#elif defined (__FreeBSD__)
+#elif defined (__FreeBSD__) || defined(__FreeBSD_kernel__)
 
 #define REG_RAX 7
 #define REG_RCX 4
@@ -345,11 +356,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_ATOMIC_ADD 1
-#define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
-#define MONO_ARCH_HAVE_ATOMIC_CAS 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
-#define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_HAVE_TLS_GET (mono_amd64_have_tls_get ())
 #define MONO_ARCH_IMT_REG AMD64_R10
 #define MONO_ARCH_IMT_SCRATCH_REG AMD64_R11

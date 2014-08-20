@@ -25,11 +25,13 @@ System/LdapStyleUriParserTest.cs
 System/NetPipeStyleUriParserTest.cs
 System/NetTcpStyleUriParserTest.cs
 System/NewsStyleUriParserTest.cs
+System/StringTester.cs
 System/UriBuilderTest.cs
 System/UriParserTest.cs
 System/UriTest.cs
 System/UriTest2.cs
 System/UriTest3.cs
+System/UriPermutationsTest.cs
 System/UriTypeConverterTest.cs
 System.CodeDom/CodeArgumentReferenceExpressionTest.cs
 System.CodeDom/CodeArrayCreateExpressionTest.cs
@@ -246,6 +248,7 @@ System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/SocketAsyncEventArgsTest.cs
+System.Net.Sockets/SocketConnectAsyncTest.cs
 System.Net.Sockets/UdpClientTest.cs
 System.Net.Sockets/SocketAsyncTest.cs
 System.Net.Mail/LinkedResourceTest.cs

@@ -57,6 +57,8 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: size = sizeof (SGenProtocolDislinkProcessStaged); break;
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: size = sizeof (SGenProtocolDomainUnload); break;
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: size = sizeof (SGenProtocolDomainUnload); break;
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
 	default: assert (0);
 	}
 
@@ -71,211 +73,8 @@ read_entry (FILE *in, void **data)
 	return (int)type;
 }
 
-#define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
-
-static void
-print_entry (int type, void *data)
-{
-	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_COLLECTION_FORCE: {
-		SGenProtocolCollectionForce *entry = data;
-		printf ("%s collection force generation %d\n", WORKER_PREFIX (type), entry->generation);
-		break;
-	}
-	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
-		SGenProtocolCollection *entry = data;
-		printf ("%s collection begin %d generation %d\n", WORKER_PREFIX (type), entry->index, entry->generation);
-		break;
-	}
-	case SGEN_PROTOCOL_COLLECTION_END: {
-		SGenProtocolCollection *entry = data;
-		printf ("%s collection end %d generation %d\n", WORKER_PREFIX (type), entry->index, entry->generation);
-		break;
-	}
-	case SGEN_PROTOCOL_CONCURRENT_START: {
-		printf ("%s concurrent start\n", WORKER_PREFIX (type));
-		break;
-	}
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: {
-		printf ("%s concurrent update or finish\n", WORKER_PREFIX (type));
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_STOPPING: {
-		SGenProtocolWorldStopping *entry = data;
-		printf ("%s world stopping timestamp %lld\n", WORKER_PREFIX (type), entry->timestamp);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_STOPPED: {
-		SGenProtocolWorldStopped *entry = data;
-		long long total = entry->total_major_cards + entry->total_los_cards;
-		long long marked = entry->marked_major_cards + entry->marked_los_cards;
-		printf ("%s world stopped timestamp %lld total %lld marked %lld %0.2f%%\n", WORKER_PREFIX (type), entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_RESTARTING: {
-		SGenProtocolWorldRestarting *entry = data;
-		long long total = entry->total_major_cards + entry->total_los_cards;
-		long long marked = entry->marked_major_cards + entry->marked_los_cards;
-		printf ("%s world restarting generation %d timestamp %lld total %lld marked %lld %0.2f%%\n", WORKER_PREFIX (type), entry->generation, entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_RESTARTED: {
-		SGenProtocolWorldRestarted *entry = data;
-		printf ("%s world restarted generation %d timestamp %lld\n", WORKER_PREFIX (type), entry->generation, entry->timestamp);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC: {
-		SGenProtocolAlloc *entry = data;
-		printf ("%s alloc obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC_PINNED: {
-		SGenProtocolAlloc *entry = data;
-		printf ("%s alloc pinned obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
-		SGenProtocolAlloc *entry = data;
-		printf ("%s alloc degraded obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_COPY: {
-		SGenProtocolCopy *entry = data;
-		printf ("%s copy from %p to %p vtable %p size %d\n", WORKER_PREFIX (type), entry->from, entry->to, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_PIN: {
-		SGenProtocolPin *entry = data;
-		printf ("%s pin obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_MARK: {
-		SGenProtocolMark *entry = data;
-		printf ("%s mark obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_SCAN_BEGIN: {
-		SGenProtocolScanBegin *entry = data;
-		printf ("%s scan_begin obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
-		SGenProtocolScanVTypeBegin *entry = data;
-		printf ("%s scan_vtype_begin obj %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_WBARRIER: {
-		SGenProtocolWBarrier *entry = data;
-		printf ("%s wbarrier ptr %p value %p value_vtable %p\n", WORKER_PREFIX (type), entry->ptr, entry->value, entry->value_vtable);
-		break;
-	}
-	case SGEN_PROTOCOL_GLOBAL_REMSET: {
-		SGenProtocolGlobalRemset *entry = data;
-		printf ("%s global_remset ptr %p value %p value_vtable %p\n", WORKER_PREFIX (type), entry->ptr, entry->value, entry->value_vtable);
-		break;
-	}
-	case SGEN_PROTOCOL_PTR_UPDATE: {
-		SGenProtocolPtrUpdate *entry = data;
-		printf ("%s ptr_update ptr %p old_value %p new_value %p vtable %p size %d\n", WORKER_PREFIX (type),
-				entry->ptr, entry->old_value, entry->new_value, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CLEANUP: {
-		SGenProtocolCleanup *entry = data;
-		printf ("%s cleanup ptr %p vtable %p size %d\n", WORKER_PREFIX (type), entry->ptr, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_EMPTY: {
-		SGenProtocolEmpty *entry = data;
-		printf ("%s empty start %p size %d\n", WORKER_PREFIX (type), entry->start, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_SUSPEND: {
-		SGenProtocolThreadSuspend *entry = data;
-		printf ("%s thread_suspend thread %p ip %p\n", WORKER_PREFIX (type), entry->thread, entry->stopped_ip);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_RESTART: {
-		SGenProtocolThreadRestart *entry = data;
-		printf ("%s thread_restart thread %p\n", WORKER_PREFIX (type), entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_REGISTER: {
-		SGenProtocolThreadRegister *entry = data;
-		printf ("%s thread_register thread %p\n", WORKER_PREFIX (type), entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_UNREGISTER: {
-		SGenProtocolThreadUnregister *entry = data;
-		printf ("%s thread_unregister thread %p\n", WORKER_PREFIX (type), entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_MISSING_REMSET: {
-		SGenProtocolMissingRemset *entry = data;
-		printf ("%s missing_remset obj %p obj_vtable %p offset %d value %p value_vtable %p value_pinned %d\n", WORKER_PREFIX (type),
-				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
-		break;
-	}
-	case SGEN_PROTOCOL_CARD_SCAN: {
-		SGenProtocolCardScan *entry = data;
-		printf ("%s card_scan start %p size %d\n", WORKER_PREFIX (type), entry->start, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CEMENT: {
-		SGenProtocolCement *entry = data;
-		printf ("%s cement obj %p vtable %p size %d\n", WORKER_PREFIX (type), entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CEMENT_RESET: {
-		printf ("%s cement_reset\n", WORKER_PREFIX (type));
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE: {
-		SGenProtocolDislinkUpdate *entry = data;
-		printf ("%s dislink_update link %p obj %p staged %d", WORKER_PREFIX (type), entry->link, entry->obj, entry->staged);
-		if (entry->obj)
-			printf (" track %d\n", entry->track);
-		else
-			printf ("\n");
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
-		SGenProtocolDislinkUpdateStaged *entry = data;
-		printf ("%s dislink_update_staged link %p obj %p index %d", WORKER_PREFIX (type), entry->link, entry->obj, entry->index);
-		if (entry->obj)
-			printf (" track %d\n", entry->track);
-		else
-			printf ("\n");
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
-		SGenProtocolDislinkProcessStaged *entry = data;
-		printf ("%s dislink_process_staged link %p obj %p index %d\n", WORKER_PREFIX (type), entry->link, entry->obj, entry->index);
-		break;
-	}
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: {
-		SGenProtocolDomainUnload *entry = data;
-		printf ("%s dislink_unload_begin domain %p\n", WORKER_PREFIX (type), entry->domain);
-		break;
-	}
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: {
-		SGenProtocolDomainUnload *entry = data;
-		printf ("%s dislink_unload_end domain %p\n", WORKER_PREFIX (type), entry->domain);
-		break;
-	}
-	default:
-		assert (0);
-	}
-}
-
 static gboolean
-matches_interval (gpointer ptr, gpointer start, int size)
-{
-	return ptr >= start && (char*)ptr < (char*)start + size;
-}
-
-static gboolean
-is_match (gpointer ptr, int type, void *data)
+is_always_match (int type)
 {
 	switch (TYPE (type)) {
 	case SGEN_PROTOCOL_COLLECTION_FORCE:
@@ -294,7 +93,234 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_CEMENT_RESET:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END:
+	case SGEN_PROTOCOL_GRAY_ENQUEUE:
+	case SGEN_PROTOCOL_GRAY_DEQUEUE:
 		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
+#define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
+
+static void
+print_entry (int type, void *data)
+{
+	const char *always_prefix = is_always_match (type) ? "  " : "";
+	printf ("%s%s ", WORKER_PREFIX (type), always_prefix);
+
+	switch (TYPE (type)) {
+	case SGEN_PROTOCOL_COLLECTION_FORCE: {
+		SGenProtocolCollectionForce *entry = data;
+		printf ("collection force generation %d\n", entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
+		SGenProtocolCollection *entry = data;
+		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_COLLECTION_END: {
+		SGenProtocolCollection *entry = data;
+		printf ("collection end %d generation %d\n", entry->index, entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_START: {
+		printf ("concurrent start\n");
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: {
+		printf ("concurrent update or finish\n");
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_STOPPING: {
+		SGenProtocolWorldStopping *entry = data;
+		printf ("world stopping timestamp %lld\n", entry->timestamp);
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_STOPPED: {
+		SGenProtocolWorldStopped *entry = data;
+		long long total = entry->total_major_cards + entry->total_los_cards;
+		long long marked = entry->marked_major_cards + entry->marked_los_cards;
+		printf ("world stopped timestamp %lld total %lld marked %lld %0.2f%%\n", entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_RESTARTING: {
+		SGenProtocolWorldRestarting *entry = data;
+		long long total = entry->total_major_cards + entry->total_los_cards;
+		long long marked = entry->marked_major_cards + entry->marked_los_cards;
+		printf ("world restarting generation %d timestamp %lld total %lld marked %lld %0.2f%%\n", entry->generation, entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_RESTARTED: {
+		SGenProtocolWorldRestarted *entry = data;
+		printf ("world restarted generation %d timestamp %lld\n", entry->generation, entry->timestamp);
+		break;
+	}
+	case SGEN_PROTOCOL_ALLOC: {
+		SGenProtocolAlloc *entry = data;
+		printf ("alloc obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_ALLOC_PINNED: {
+		SGenProtocolAlloc *entry = data;
+		printf ("alloc pinned obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
+		SGenProtocolAlloc *entry = data;
+		printf ("alloc degraded obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_COPY: {
+		SGenProtocolCopy *entry = data;
+		printf ("copy from %p to %p vtable %p size %d\n", entry->from, entry->to, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_PIN: {
+		SGenProtocolPin *entry = data;
+		printf ("pin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_MARK: {
+		SGenProtocolMark *entry = data;
+		printf ("mark obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		printf ("scan_begin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
+		SGenProtocolScanVTypeBegin *entry = data;
+		printf ("scan_vtype_begin obj %p size %d\n", entry->obj, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_WBARRIER: {
+		SGenProtocolWBarrier *entry = data;
+		printf ("wbarrier ptr %p value %p value_vtable %p\n", entry->ptr, entry->value, entry->value_vtable);
+		break;
+	}
+	case SGEN_PROTOCOL_GLOBAL_REMSET: {
+		SGenProtocolGlobalRemset *entry = data;
+		printf ("global_remset ptr %p value %p value_vtable %p\n", entry->ptr, entry->value, entry->value_vtable);
+		break;
+	}
+	case SGEN_PROTOCOL_PTR_UPDATE: {
+		SGenProtocolPtrUpdate *entry = data;
+		printf ("ptr_update ptr %p old_value %p new_value %p vtable %p size %d\n",
+				entry->ptr, entry->old_value, entry->new_value, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CLEANUP: {
+		SGenProtocolCleanup *entry = data;
+		printf ("cleanup ptr %p vtable %p size %d\n", entry->ptr, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_EMPTY: {
+		SGenProtocolEmpty *entry = data;
+		printf ("empty start %p size %d\n", entry->start, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_THREAD_SUSPEND: {
+		SGenProtocolThreadSuspend *entry = data;
+		printf ("thread_suspend thread %p ip %p\n", entry->thread, entry->stopped_ip);
+		break;
+	}
+	case SGEN_PROTOCOL_THREAD_RESTART: {
+		SGenProtocolThreadRestart *entry = data;
+		printf ("thread_restart thread %p\n", entry->thread);
+		break;
+	}
+	case SGEN_PROTOCOL_THREAD_REGISTER: {
+		SGenProtocolThreadRegister *entry = data;
+		printf ("thread_register thread %p\n", entry->thread);
+		break;
+	}
+	case SGEN_PROTOCOL_THREAD_UNREGISTER: {
+		SGenProtocolThreadUnregister *entry = data;
+		printf ("thread_unregister thread %p\n", entry->thread);
+		break;
+	}
+	case SGEN_PROTOCOL_MISSING_REMSET: {
+		SGenProtocolMissingRemset *entry = data;
+		printf ("missing_remset obj %p obj_vtable %p offset %d value %p value_vtable %p value_pinned %d\n",
+				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
+		break;
+	}
+	case SGEN_PROTOCOL_CARD_SCAN: {
+		SGenProtocolCardScan *entry = data;
+		printf ("card_scan start %p size %d\n", entry->start, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		printf ("cement obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CEMENT_RESET: {
+		printf ("cement_reset\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		printf ("dislink_update link %p obj %p staged %d", entry->link, entry->obj, entry->staged);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
+		SGenProtocolDislinkUpdateStaged *entry = data;
+		printf ("dislink_update_staged link %p obj %p index %d", entry->link, entry->obj, entry->index);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
+		SGenProtocolDislinkProcessStaged *entry = data;
+		printf ("dislink_process_staged link %p obj %p index %d\n", entry->link, entry->obj, entry->index);
+		break;
+	}
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: {
+		SGenProtocolDomainUnload *entry = data;
+		printf ("dislink_unload_begin domain %p\n", entry->domain);
+		break;
+	}
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: {
+		SGenProtocolDomainUnload *entry = data;
+		printf ("dislink_unload_end domain %p\n", entry->domain);
+		break;
+	}
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		printf ("enqueue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
+		break;
+	}
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		printf ("dequeue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
+		break;
+	}
+	default:
+		assert (0);
+	}
+}
+
+static gboolean
+matches_interval (gpointer ptr, gpointer start, int size)
+{
+	return ptr >= start && (char*)ptr < (char*)start + size;
+}
+
+static gboolean
+is_match (gpointer ptr, int type, void *data)
+{
+	switch (TYPE (type)) {
 	case SGEN_PROTOCOL_ALLOC:
 	case SGEN_PROTOCOL_ALLOC_PINNED:
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
@@ -367,7 +393,17 @@ is_match (gpointer ptr, int type, void *data)
 		SGenProtocolDislinkProcessStaged *entry = data;
 		return ptr == entry->obj || ptr == entry->link;
 	}
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		return ptr == entry->cursor || ptr == entry->value;
+	}
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		return ptr == entry->cursor || ptr == entry->value;
+	}
 	default:
+		if (is_always_match (type))
+			return TRUE;
 		assert (0);
 	}
 }

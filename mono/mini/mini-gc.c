@@ -15,14 +15,9 @@
 //#if 0
 #if defined(MONO_ARCH_GC_MAPS_SUPPORTED)
 
+#include <mono/metadata/sgen-conf.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-counters.h>
-
-#if SIZEOF_VOID_P == 4
-typedef guint32 mword;
-#else
-typedef guint64 mword;
-#endif
 
 #define SIZEOF_SLOT ((int)sizeof (mgreg_t))
 
@@ -441,6 +436,8 @@ static int callee_saved_regs [] = { ARMREG_V1, ARMREG_V2, ARMREG_V3, ARMREG_V4, 
 static int callee_saved_regs [] = { };
 #elif defined(TARGET_S390X)
 static int callee_saved_regs [] = { s390_r6, s390_r7, s390_r8, s390_r9, s390_r10, s390_r11, s390_r12, s390_r13, s390_r14 };
+#elif defined(TARGET_POWERPC)
+static int callee_saved_regs [] = { ppc_r6, ppc_r7, ppc_r8, ppc_r9, ppc_r10, ppc_r11, ppc_r12, ppc_r13, ppc_r14 };
 #endif
 
 static guint32
@@ -1108,7 +1105,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
  * pass.
  */
 static void
-precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
+precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end, void *gc_data)
 {
 	int findex, i;
 	FrameInfo *fi;
@@ -1146,7 +1143,7 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 					MonoObject *obj = *ptr;
 					if (obj) {
 						DEBUG (fprintf (logfile, "\tref %s0x%x(fp)=%p: %p ->", (guint8*)ptr >= (guint8*)fi->fp ? "" : "-", ABS ((int)((gssize)ptr - (gssize)fi->fp)), ptr, obj));
-						*ptr = mono_gc_scan_object (obj);
+						*ptr = mono_gc_scan_object (obj, gc_data);
 						DEBUG (fprintf (logfile, " %p.\n", *ptr));
 					} else {
 						DEBUG (fprintf (logfile, "\tref %s0x%x(fp)=%p: %p.\n", (guint8*)ptr >= (guint8*)fi->fp ? "" : "-", ABS ((int)((gssize)ptr - (gssize)fi->fp)), ptr, obj));
@@ -1187,7 +1184,7 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 
 			if (obj) {
 				DEBUG (fprintf (logfile, "\treg %s saved at %p: %p ->", mono_arch_regname (fi->regs [i]), ptr, obj));
-				*ptr = mono_gc_scan_object (obj);
+				*ptr = mono_gc_scan_object (obj, gc_data);
 				DEBUG (fprintf (logfile, " %p.\n", *ptr));
 			} else {
 				DEBUG (fprintf (logfile, "\treg %s saved at %p: %p\n", mono_arch_regname (fi->regs [i]), ptr, obj));
@@ -1215,7 +1212,7 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
  * structure filled up by thread_suspend_func. 
  */
 static void
-thread_mark_func (gpointer user_data, guint8 *stack_start, guint8 *stack_end, gboolean precise)
+thread_mark_func (gpointer user_data, guint8 *stack_start, guint8 *stack_end, gboolean precise, void *gc_data)
 {
 	TlsData *tls = user_data;
 
@@ -1226,7 +1223,7 @@ thread_mark_func (gpointer user_data, guint8 *stack_start, guint8 *stack_end, gb
 	if (!precise)
 		conservative_pass (tls, stack_start, stack_end);
 	else
-		precise_pass (tls, stack_start, stack_end);
+		precise_pass (tls, stack_start, stack_end, gc_data);
 }
 
 #ifndef DISABLE_JIT

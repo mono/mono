@@ -1254,7 +1254,7 @@ namespace MonoTests.System.Runtime.Caching
 							
 				// add some short duration entries
 				for (int i = 0; i < HEAP_RESIZE_SHORT_ENTRIES; i++) {
-					var expireAt = DateTimeOffset.Now.AddSeconds (1);
+					var expireAt = DateTimeOffset.Now.AddSeconds (3);
 					mc.Add ("short-" + i, i.ToString (), expireAt);
 				}
 				
@@ -1262,20 +1262,20 @@ namespace MonoTests.System.Runtime.Caching
 							
 				// add some long duration entries				
 				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {
-					var expireAt = DateTimeOffset.Now.AddSeconds (10);
+					var expireAt = DateTimeOffset.Now.AddSeconds (12);
 					mc.Add ("long-" + i, i.ToString (), expireAt);
 				}															
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_SHORT_ENTRIES, mc.GetCount(), "#CS3");
 				
 				// wait for the cache thread to expire the short duration items, this will also shrink the size of the cache
-				global::System.Threading.Thread.Sleep (3 * 1000);
+				global::System.Threading.Thread.Sleep (5 * 1000);
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS4");	
 				
 				// add some new items into the cache, this will grow the cache again
 				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {				
-					mc.Add("final-" + i, i.ToString (), DateTimeOffset.Now.AddSeconds (2));
+					mc.Add("final-" + i, i.ToString (), DateTimeOffset.Now.AddSeconds (4));
 				}			
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS5");	

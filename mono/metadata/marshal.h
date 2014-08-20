@@ -160,6 +160,10 @@ typedef struct {
 	MonoMethod *method;
 } ArrayAccessorWrapperInfo;
 
+typedef struct {
+	MonoClass *klass;
+} ProxyWrapperInfo;
+
 /*
  * This structure contains additional information to uniquely identify a given wrapper
  * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
@@ -188,13 +192,15 @@ typedef struct {
 		ICallWrapperInfo icall;
 		/* ARRAY_ACCESSOR */
 		ArrayAccessorWrapperInfo array_accessor;
+		/* PROXY_ISINST etc. */
+		ProxyWrapperInfo proxy;
 	} d;
 } WrapperInfo;
 
 G_BEGIN_DECLS
 
 /*type of the function pointer of methods returned by mono_marshal_get_runtime_invoke*/
-typedef MonoObject *(*RuntimeInvokeFunction) (MonoObject *this, void **params, MonoObject **exc, void* compiled_method);
+typedef MonoObject *(*RuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
 
 typedef void (*RuntimeInvokeDynamicFunction) (void *args, MonoObject **exc, void* compiled_method);
 
@@ -299,7 +305,7 @@ MonoMethod *
 mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual) MONO_INTERNAL;
+mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual) MONO_INTERNAL;
 
 MonoMethod*
 mono_marshal_get_runtime_invoke_dynamic (void) MONO_INTERNAL;
@@ -368,7 +374,7 @@ MonoMethod *
 mono_marshal_get_array_accessor_wrapper (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *class, MonoClass *iface,
+mono_marshal_get_generic_array_helper (MonoClass *klass, MonoClass *iface,
 				       gchar *name, MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *

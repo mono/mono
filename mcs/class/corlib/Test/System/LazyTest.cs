@@ -273,6 +273,7 @@ namespace MonoTests.System
 		public void ConcurrentInitialization ()
 		{
 			var init = new AutoResetEvent (false);
+			var e1_set = new AutoResetEvent (false);
 
 			var lazy = new Lazy<string> (() => {
 				init.Set ();
@@ -286,6 +287,7 @@ namespace MonoTests.System
 					string value = lazy.Value;
 				} catch (Exception ex) {
 					e1 = ex;
+					e1_set.Set ();
 				}
 			});
 			thread.Start ();
@@ -306,8 +308,9 @@ namespace MonoTests.System
 				e3 = ex;
 			}
 
-			Assert.AreSame (e1, e2, "#2");
-			Assert.AreSame (e1, e3, "#3");
+			Assert.IsTrue (e1_set.WaitOne (3000), "#2");
+			Assert.AreSame (e1, e2, "#3");
+			Assert.AreSame (e1, e3, "#4");
 		}
 
 	}

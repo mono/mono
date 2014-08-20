@@ -639,6 +639,62 @@ namespace MonoTests.System.ComponentModel
 			
 			Assert.AreEqual (1, count, "1");
 		}
+
+		private class Person : INotifyPropertyChanged
+		{
+			private string _lastName;
+			private string _firstName;
+
+			public string FirstName {
+				get { return _firstName; }
+				set {
+					_firstName = value;
+					OnPropertyChanged ("FirstName"); // string matches property name
+				}
+			}
+
+			public string LastName {
+				get { return _lastName; }
+				set {
+					_lastName = value;
+					OnPropertyChanged ("Apepe"); // string doesn't match property name
+				}
+			}
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			protected virtual void OnPropertyChanged (string propertyName = null)
+			{
+				PropertyChangedEventHandler handler = PropertyChanged;
+				if (handler != null)
+					handler (this, new PropertyChangedEventArgs (propertyName));
+			}
+		}
+
+		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=20672
+		public void Bug20672 ()
+		{
+			string changedPropertyName = string.Empty;
+			bool isEventRaised = false;
+			bool? hasPropertyDescriptor = false;
+
+			var persons = new BindingList<Person>();
+			persons.Add (new Person() { FirstName = "Stefaan", LastName = "de Vogelaere" });
+			persons.Add (new Person() { FirstName = "Christophe", LastName = "De Langhe" });
+			persons.ListChanged += (object sender, ListChangedEventArgs e) => {
+			    isEventRaised = true;
+			    hasPropertyDescriptor = e.PropertyDescriptor != null;
+			};
+
+			//if the OnPropertyChanged string matches a valid property name, PropertyDescriptor should be generated
+			persons[0].FirstName = "Stefan";
+			Assert.IsTrue (isEventRaised);
+			Assert.IsTrue ((bool) hasPropertyDescriptor, "#1");
+
+			//if the OnPropertyChanged string doesn't match a valid property name, no PropertyDescriptor should be generated
+			persons[0].LastName = "de le Vulu";
+			Assert.IsFalse ((bool) hasPropertyDescriptor, "#2");
+		}
 	}
 }
 

@@ -13,6 +13,7 @@
 #include "mono/utils/mono-property-hash.h"
 #include "mono/utils/mono-value-hash.h"
 #include <mono/utils/mono-error.h>
+#include "mono/utils/mono-conc-hashtable.h"
 
 struct _MonoType {
 	union {
@@ -224,7 +225,7 @@ struct _MonoImage {
 	/*
 	 * Indexed by fielddef and memberref tokens
 	 */
-	GHashTable *field_cache; /*protected by the image lock*/
+	MonoConcurrentHashTable *field_cache; /*protected by the image lock*/
 
 	/* indexed by typespec tokens. */
 	GHashTable *typespec_cache;
@@ -248,7 +249,7 @@ struct _MonoImage {
 
 	GHashTable *szarray_cache;
 	/* This has a separate lock to improve scalability */
-	CRITICAL_SECTION szarray_cache_lock;
+	mono_mutex_t szarray_cache_lock;
 
 	/*
 	 * indexed by MonoMethodSignature 
@@ -345,7 +346,7 @@ struct _MonoImage {
 	 * No other runtime locks must be taken while holding this lock.
 	 * It's meant to be used only to mutate and query structures part of this image.
 	 */
-	CRITICAL_SECTION    lock;
+	mono_mutex_t    lock;
 };
 
 /*
@@ -361,7 +362,7 @@ typedef struct {
 
 	GHashTable *gclass_cache, *ginst_cache, *gmethod_cache, *gsignature_cache;
 
-	CRITICAL_SECTION    lock;
+	mono_mutex_t    lock;
 
 	/*
 	 * Memory for generic instances owned by this image set should be allocated from
@@ -524,6 +525,26 @@ struct _MonoMethodSignature {
 
 #define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
+static inline gboolean
+image_is_dynamic (MonoImage *image)
+{
+#ifdef DISABLE_REFLECTION_EMIT
+	return FALSE;
+#else
+	return image->dynamic;
+#endif
+}
+
+static inline gboolean
+assembly_is_dynamic (MonoAssembly *assembly)
+{
+#ifdef DISABLE_REFLECTION_EMIT
+	return FALSE;
+#else
+	return assembly->dynamic;
+#endif
+}
+
 /* for use with allocated memory blocks (assumes alignment is to 8 bytes) */
 guint mono_aligned_addr_hash (gconstpointer ptr) MONO_INTERNAL;
 
@@ -577,7 +598,7 @@ void
 mono_remove_image_unload_hook (MonoImageUnloadFunc func, gpointer user_data) MONO_INTERNAL;
 
 void
-mono_image_append_class_to_reflection_info_set (MonoClass *class) MONO_INTERNAL;
+mono_image_append_class_to_reflection_info_set (MonoClass *klass) MONO_INTERNAL;
 
 gpointer
 mono_image_set_alloc  (MonoImageSet *set, guint size) MONO_INTERNAL;

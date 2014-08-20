@@ -68,7 +68,6 @@ typedef struct MonoCompileArch {
 #ifdef __mono_ppc64__
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
-#define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define PPC_USES_FUNCTION_DESCRIPTOR
 
 #ifndef __mono_ilp32__
@@ -95,7 +94,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_BIGMUL_INTRINS 1
-#define MONO_ARCH_HAVE_ATOMIC_CAS 1
+#define MONO_ARCH_GC_MAPS_SUPPORTED 1
 
 /* Parameters used by the register allocator */
 #define MONO_ARCH_CALLEE_REGS ((0xff << ppc_r3) | (1 << ppc_r11) | (1 << ppc_r12))
@@ -171,7 +170,6 @@ typedef struct MonoCompileArch {
 #endif /* HAVE_WORKING_SIGALTSTACK */
 
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-#define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_IMT_REG ppc_r12
 
 #define MONO_ARCH_VTABLE_REG	ppc_r12

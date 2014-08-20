@@ -58,6 +58,8 @@ namespace MonoTests.System.IO.Compression
 				var nullEntry = archive.GetEntry("nonexisting");
 				Assert.IsNull(nullEntry);
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -75,6 +77,8 @@ namespace MonoTests.System.IO.Compression
 
 				Assert.Fail();
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -90,6 +94,8 @@ namespace MonoTests.System.IO.Compression
 				var nullEntry = archive.GetEntry("nonexisting");
 				Assert.IsNull(nullEntry);
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -104,6 +110,8 @@ namespace MonoTests.System.IO.Compression
 
 				var foo = entry.Open();
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -125,6 +133,8 @@ namespace MonoTests.System.IO.Compression
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNull(entry);
 			}
+
+			File.Delete ("delete.zip");
 		}
 
 		[Test]
@@ -146,6 +156,8 @@ namespace MonoTests.System.IO.Compression
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNull(entry);
 			}
+
+			File.Delete ("delete.zip");
 		}
 
 		[Test]
@@ -154,18 +166,31 @@ namespace MonoTests.System.IO.Compression
 			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Create),
 				ZipArchiveMode.Create))
 			{
+				var dir = archive.CreateEntry("foobar/");
+
 				var entry = archive.CreateEntry("foo.txt");
 				using (var stream = entry.Open())
 				{
+					using (var streamWriter = new StreamWriter(stream))
+						streamWriter.Write("foo");
 				}
 			}
 
 			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Open),
 				ZipArchiveMode.Read))
 			{
+				Assert.IsNotNull(archive.GetEntry("foobar/"));
+
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNotNull(entry);
+
+				var streamReader = new StreamReader(entry.Open());
+				var text = streamReader.ReadToEnd();
+
+				Assert.AreEqual("foo", text);
 			}
+
+			File.Delete ("create.zip");
 		}
 
 		[Test]
@@ -184,6 +209,8 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foobar/bar.txt", entries[3].FullName);
 				Assert.AreEqual("foobar/foo.txt", entries[4].FullName);
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -202,6 +229,8 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foobar/bar.txt", entries[3].FullName);
 				Assert.AreEqual("foobar/foo.txt", entries[4].FullName);
 			}
+
+			File.Delete ("test.zip");
 		}
 
 		[Test]
@@ -219,6 +248,8 @@ namespace MonoTests.System.IO.Compression
 				
 				Assert.Fail();				
 			}
+
+			File.Delete ("test.zip");
 		}
 	}
 }

@@ -10,12 +10,14 @@
 	<dllmap dll="i:odbc32.dll" target="libiodbc.dylib" os="osx"/>
 	<dllmap dll="oci" target="libclntsh@libsuffix@" os="!windows"/>
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@" os="!windows"/>
-	<dllmap dll="MonoPosixHelper" target="libMonoPosixHelper@libsuffix@" os="!windows" />
+	<dllmap dll="MonoPosixHelper" target="@prefix@/lib/libMonoPosixHelper@libsuffix@" os="!windows" />
 	<dllmap dll="i:msvcrt" target="@LIBC@" os="!windows"/>
 	<dllmap dll="i:msvcrt.dll" target="@LIBC@" os="!windows"/>
 	<dllmap dll="sqlite" target="@SQLITE@" os="!windows"/>
 	<dllmap dll="sqlite3" target="@SQLITE3@" os="!windows"/>
 	<dllmap dll="libX11" target="@X11@" os="!windows" />
+	<dllmap dll="libgdk-x11-2.0" target="@GDKX11@" os="!windows"/>
+	<dllmap dll="libgtk-x11-2.0" target="@GTKX11@" os="!windows"/>
 	<dllmap dll="libXinerama" target="@XINERAMA@" os="!windows" />
 	<dllmap dll="libcairo-2.dll" target="libcairo.so.2" os="!windows"/>
 	<dllmap dll="libcairo-2.dll" target="libcairo.2.dylib" os="osx"/>
@@ -27,8 +29,8 @@
 		<dllentry dll="__Internal" name="MoveMemory" target="mono_win32_compat_MoveMemory"/>
 		<dllentry dll="__Internal" name="ZeroMemory" target="mono_win32_compat_ZeroMemory"/>
 	</dllmap>
-	<dllmap dll="gdiplus" target="@prefix@/lib/libgdiplus@libsuffix@" os="!windows"/>
-	<dllmap dll="gdiplus.dll" target="@prefix@/lib/libgdiplus@libsuffix@"  os="!windows"/>
-	<dllmap dll="gdi32" target="@prefix@/lib/libgdiplus@libsuffix@" os="!windows"/>
-	<dllmap dll="gdi32.dll" target="@prefix@/lib/libgdiplus@libsuffix@" os="!windows"/>
+	<dllmap dll="gdiplus" target="@libgdiplus_install_loc@" os="!windows"/>
+	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
+	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
+	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
 </configuration>

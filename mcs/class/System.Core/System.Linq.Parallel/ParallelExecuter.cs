@@ -230,18 +230,23 @@ namespace System.Linq.Parallel
 				var implementerToken = options.ImplementerToken;
 
 				try {
+					// Avoid cache thrashing of locals array
+					var local = locals [index];
+
 					if (seedFunc == null) {
 						if (!enumerator.MoveNext ())
 							return;
-						locals[index] = (U)(object)enumerator.Current;
+						local = (U)(object)enumerator.Current;
 					}
 
 					while (enumerator.MoveNext ()) {
 						if (implementerToken.IsCancellationRequested)
 							break;
 						token.ThrowIfCancellationRequested ();
-						locals[index] = localCall (locals[index], enumerator.Current);
+						local = localCall (local, enumerator.Current);
 					}
+
+					locals [index] = local;
 				} finally {
 					enumerator.Dispose ();
 				}

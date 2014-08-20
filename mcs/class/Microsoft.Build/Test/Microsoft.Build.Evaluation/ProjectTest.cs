@@ -143,12 +143,12 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void BuildCSharpTargetGetFrameworkPaths ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
-            var proj = new Project (root);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
 			root.FullPath = "ProjectTest.BuildCSharpTargetGetFrameworkPaths.proj";
 			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {/*new ConsoleLogger ()*/}));
 		}
@@ -156,14 +156,14 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void ProperiesMustBeDistinct ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <AssemblyName>Foo</AssemblyName>
     <OutputPath>Test</OutputPath>
   </PropertyGroup>
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
 			var proj = new Project (root);
 			var list = new List<ProjectProperty> ();
@@ -175,14 +175,14 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void BuildCSharpTargetBuild ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <AssemblyName>Foo</AssemblyName>
   </PropertyGroup>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
 			var proj = new Project (root, null, "4.0");
 			Assert.IsFalse (proj.Build ("Build", new ILogger [] {/*new ConsoleLogger (LoggerVerbosity.Diagnostic)*/})); // missing mandatory properties
@@ -191,7 +191,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void EvaluateItemConditionThenIgnored ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <P></P>
   </PropertyGroup>
@@ -214,7 +214,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		public void EvaluateSamePropertiesInOrder ()
 		{
 			// used in Microsoft.Common.targets
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <BaseIntermediateOutputPath Condition=""'$(BaseIntermediateOutputPath)' == ''"">obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
@@ -256,14 +256,14 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void CreateProjectInstance ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <AssemblyName>Foo</AssemblyName>
   </PropertyGroup>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			var proj = new Project (root, null, "4.0");
 			var inst = proj.CreateProjectInstance ();
 			Assert.AreEqual ("4.0", inst.ToolsVersion, "#1");
@@ -272,26 +272,26 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void LoadCaseInsensitive ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <AssemblyName>Foo</AssemblyName>
   </PropertyGroup>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.Targets' />
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			new Project (root, null, "4.0");
 		}
 		
 		[Test]
 		public void SameNameTargets ()
 		{
-            string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Target Name='Foo'><Message Text='This should not be written' /></Target>
   <Target Name='Foo'><Message Text='This will be written' /></Target>
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			var proj = new Project (root, null, "4.0");
 			var sw = new StringWriter ();
 			proj.Build (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
@@ -326,4 +326,3 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 	}
 }
-

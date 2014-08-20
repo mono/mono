@@ -3223,5 +3223,94 @@ namespace MonoTests.System.XmlSerialization
 			SoapReflectionImporter importer = new SoapReflectionImporter (ao, defaultNamespace);
 			return importer.ImportTypeMapping (type);
 		}
+
+		[XmlSchemaProvider (null, IsAny = true)]
+		public class AnySchemaProviderClass : IXmlSerializable {
+
+			public string Text;
+
+			void IXmlSerializable.WriteXml (XmlWriter writer)
+			{
+				writer.WriteElementString ("text", Text);
+			}
+
+			void IXmlSerializable.ReadXml (XmlReader reader)
+			{
+				Text = reader.ReadElementString ("text");
+			}
+
+			XmlSchema IXmlSerializable.GetSchema ()
+			{
+				return null;
+			}
+		}
+
+		[Test]
+		public void SerializeAnySchemaProvider ()
+		{
+			string expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				Environment.NewLine + "<text>test</text>";
+
+			var ser = new XmlSerializer (typeof (AnySchemaProviderClass));
+
+			var obj = new AnySchemaProviderClass {
+				Text = "test",
+			};
+
+			using (var t = new StringWriter ()) {
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expected, t.ToString ());
+			}
+		}
+
+		[Test]
+		public void DeserializeAnySchemaProvider ()
+		{
+			string expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				Environment.NewLine + "<text>test</text>";
+
+			var ser = new XmlSerializer (typeof (AnySchemaProviderClass));
+
+			using (var t = new StringReader (expected)) {
+				var obj = (AnySchemaProviderClass) ser.Deserialize (t);
+				Assert.AreEqual ("test", obj.Text);
+			}
+		}
+
+		public class SubNoParameterlessConstructor : NoParameterlessConstructor
+		{
+			public SubNoParameterlessConstructor ()
+				: base ("")
+			{
+			}
+		}
+
+		public class NoParameterlessConstructor
+		{
+			[XmlElement ("Text")]
+			public string Text;
+
+			public NoParameterlessConstructor (string parameter)
+			{
+			}
+		}
+
+		[Test]
+		public void BaseClassWithoutParameterlessConstructor ()
+		{
+			var ser = new XmlSerializer (typeof (SubNoParameterlessConstructor));
+
+			var obj = new SubNoParameterlessConstructor {
+				Text = "test",
+			};
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (SubNoParameterlessConstructor) ser.Deserialize (r);
+					Assert.AreEqual (obj.Text, desObj.Text);
+				}
+			}
+		}
 	}
 }

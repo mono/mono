@@ -31,6 +31,7 @@
 
 using System.Globalization;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace System {
 	
@@ -77,12 +78,10 @@ namespace System {
 
 		public int CompareTo (int value)
 		{
-			if (m_value == value)
-				return 0;
-			if (m_value > value)
-				return 1;
-			else
-				return -1;
+			return
+				m_value == value ? 0 :
+				m_value > value ? 1 :
+				-1;
 		}
 
 		public bool Equals (int obj)

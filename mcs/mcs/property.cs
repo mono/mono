@@ -732,12 +732,14 @@ namespace Mono.CSharp
 		{
 			readonly Property property;
 
-			public BackingField (Property p)
+			public BackingField (Property p, bool readOnly)
 				: base (p.Parent, p.type_expr,
 				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
 				this.property = p;
+				if (readOnly)
+					ModFlags |= Modifiers.READONLY;
 			}
 
 			public Property OriginalProperty {
@@ -766,6 +768,8 @@ namespace Mono.CSharp
 		{
 		}
 
+		public Expression Initializer { get; set; }
+
 		public override void Accept (StructuralVisitor visitor)
 		{
 			visitor.Visit (this);
@@ -784,9 +788,15 @@ namespace Mono.CSharp
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			backing_field = new BackingField (this);
+			backing_field = new BackingField (this, Initializer != null && Set == null);
 			if (!backing_field.Define ())
 				return;
+
+			if (Initializer != null) {
+				backing_field.Initializer = Initializer;
+				Parent.RegisterFieldForInitialization (backing_field, new FieldInitializer (backing_field, Initializer, Location));
+				backing_field.ModFlags |= Modifiers.READONLY;
+			}
 
 			Parent.PartialContainer.Members.Add (backing_field);
 
@@ -802,11 +812,15 @@ namespace Mono.CSharp
 			Get.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
 			Return r = new Return (fe, Get.Location);
 			Get.Block.AddStatement (r);
+			Get.ModFlags |= Modifiers.COMPILER_GENERATED;
 
 			// Create set block
-			Set.Block = new ToplevelBlock (Compiler, Set.ParameterInfo, Location.Null);
-			Assign a = new SimpleAssign (fe, new SimpleName ("value", Location.Null), Location.Null);
-			Set.Block.AddStatement (new StatementExpression (a, Set.Location));
+			if (Set != null) {
+				Set.Block = new ToplevelBlock (Compiler, Set.ParameterInfo, Location.Null);
+				Assign a = new SimpleAssign (fe, new SimpleName ("value", Location.Null), Location.Null);
+				Set.Block.AddStatement (new StatementExpression (a, Set.Location));
+				Set.ModFlags |= Modifiers.COMPILER_GENERATED;
+			}
 		}
 
 		public override bool Define ()
@@ -816,13 +830,37 @@ namespace Mono.CSharp
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
-			if (!IsInterface && (ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
-				AccessorSecond != null && Get.Block == null && Set.Block == null) {
-				if (Compiler.Settings.Version <= LanguageVersion.ISO_2)
-					Report.FeatureIsNotAvailable (Compiler, Location, "automatically implemented properties");
+			bool auto = AccessorFirst.Block == null && (AccessorSecond == null || AccessorSecond.Block == null) &&
+				(ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0;
 
-				Get.ModFlags |= Modifiers.COMPILER_GENERATED;
-				Set.ModFlags |= Modifiers.COMPILER_GENERATED;
+			if (Initializer != null) {
+				if (!auto)
+					Report.Error (8050, Location, "`{0}': Only auto-implemented properties can have initializers",
+						GetSignatureForError ());
+
+				if (IsInterface)
+					Report.Error (8053, Location, "`{0}': Properties inside interfaces cannot have initializers",
+						GetSignatureForError ());
+
+				if (Compiler.Settings.Version < LanguageVersion.V_6)
+					Report.FeatureIsNotAvailable (Compiler, Location, "auto-implemented property initializer");
+			}
+
+			if (auto) {
+				if (Get == null) {
+					Report.Error (8052, Location, "Auto-implemented property `{0}' must have get accessor",
+						GetSignatureForError ());
+					return false;
+				}
+
+				if (Initializer == null && AccessorSecond == null) {
+					Report.Error (8051, Location, "Auto-implemented property `{0}' must have set accessor or initializer",
+						GetSignatureForError ());
+				}
+
+				if (Compiler.Settings.Version < LanguageVersion.V_3 && Initializer == null)
+					Report.FeatureIsNotAvailable (Compiler, Location, "auto-implemented properties");
+
 				CreateAutomaticProperty ();
 			}
 

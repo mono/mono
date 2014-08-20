@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -83,7 +86,53 @@ namespace Mono.Debugger.Soft
 		}
 
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
+			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			var outThis = result.OutThis as StructMirror;
+			if (outThis != null) {
+				SetFields (outThis.Fields);
+			}
+			return result.Result;
 		}
+
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			var outThis = result.OutThis as StructMirror;
+			if (outThis != null) {
+				SetFields (outThis.Fields);
+			}
+			return result;
+		}
+
+#if NET_4_5
+		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<Value> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethod (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<InvokeResult> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (ObjectMirror.EndInvokeMethodInternalWithResult (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+#endif
 	}
 }

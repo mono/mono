@@ -1487,10 +1487,10 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOADR8_MEMBASE:
 		case OP_ATOMIC_EXCHANGE_I4:
 		case OP_ATOMIC_EXCHANGE_I8:
-		case OP_ATOMIC_ADD_NEW_I4:
-		case OP_ATOMIC_ADD_NEW_I8:
-		case OP_ATOMIC_ADD_IMM_NEW_I4:
-		case OP_ATOMIC_ADD_IMM_NEW_I8:
+		case OP_ATOMIC_ADD_I4:
+		case OP_ATOMIC_ADD_I8:
+		case OP_ATOMIC_ADD_IMM_I4:
+		case OP_ATOMIC_ADD_IMM_I8:
 			/* There are no membase instructions on ia64 */
 			if (ins->inst_offset == 0) {
 				break;
@@ -2934,12 +2934,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER:
 			ia64_mf (code);
 			break;
-		case OP_ATOMIC_ADD_IMM_NEW_I4:
+		case OP_ATOMIC_ADD_IMM_I4:
 			g_assert (ins->inst_offset == 0);
 			ia64_fetchadd4_acq_hint (code, ins->dreg, ins->inst_basereg, ins->inst_imm, 0);
 			ia64_adds_imm (code, ins->dreg, ins->inst_imm, ins->dreg);
 			break;
-		case OP_ATOMIC_ADD_IMM_NEW_I8:
+		case OP_ATOMIC_ADD_IMM_I8:
 			g_assert (ins->inst_offset == 0);
 			ia64_fetchadd8_acq_hint (code, ins->dreg, ins->inst_basereg, ins->inst_imm, 0);
 			ia64_adds_imm (code, ins->dreg, ins->inst_imm, ins->dreg);
@@ -2951,7 +2951,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ATOMIC_EXCHANGE_I8:
 			ia64_xchg8_hint (code, ins->dreg, ins->inst_basereg, ins->sreg2, 0);
 			break;
-		case OP_ATOMIC_ADD_NEW_I4: {
+		case OP_ATOMIC_ADD_I4: {
 			guint8 *label, *buf;
 
 			/* From libatomic_ops */
@@ -2971,7 +2971,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ia64_add (code, ins->dreg, GP_SCRATCH_REG, ins->sreg2);
 			break;
 		}
-		case OP_ATOMIC_ADD_NEW_I8: {
+		case OP_ATOMIC_ADD_I8: {
 			guint8 *label, *buf;
 
 			/* From libatomic_ops */
@@ -4526,8 +4526,6 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 {
 }
 
-#ifdef MONO_ARCH_HAVE_IMT
-
 /*
  * LOCKING: called with the domain lock held
  */
@@ -4638,7 +4636,6 @@ mono_arch_emit_imt_argument (MonoCompile *cfg, MonoCallInst *call, MonoInst *imt
 {
 	/* Done by the implementation of the CALL_MEMBASE opcodes */
 }
-#endif
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -4648,6 +4645,12 @@ mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 
 gpointer
 mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	return NULL;
+}
+
+gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
 {
 	return NULL;
 }
@@ -4669,9 +4672,9 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			guint32 opcode;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
-				opcode = OP_ATOMIC_ADD_IMM_NEW_I4;
+				opcode = OP_ATOMIC_ADD_IMM_I4;
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
-				opcode = OP_ATOMIC_ADD_IMM_NEW_I8;
+				opcode = OP_ATOMIC_ADD_IMM_I8;
 			else
 				g_assert_not_reached ();
 			MONO_INST_NEW (cfg, ins, opcode);
@@ -4684,9 +4687,9 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			guint32 opcode;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
-				opcode = OP_ATOMIC_ADD_IMM_NEW_I4;
+				opcode = OP_ATOMIC_ADD_IMM_I4;
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
-				opcode = OP_ATOMIC_ADD_IMM_NEW_I8;
+				opcode = OP_ATOMIC_ADD_IMM_I8;
 			else
 				g_assert_not_reached ();
 			MONO_INST_NEW (cfg, ins, opcode);
@@ -4708,9 +4711,9 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 			if (is_imm) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
-					opcode = OP_ATOMIC_ADD_IMM_NEW_I4;
+					opcode = OP_ATOMIC_ADD_IMM_I4;
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
-					opcode = OP_ATOMIC_ADD_IMM_NEW_I8;
+					opcode = OP_ATOMIC_ADD_IMM_I8;
 				else
 					g_assert_not_reached ();
 
@@ -4719,12 +4722,12 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				ins->inst_basereg = args [0]->dreg;
 				ins->inst_offset = 0;
 				ins->inst_imm = imm;
-				ins->type = (opcode == OP_ATOMIC_ADD_IMM_NEW_I4) ? STACK_I4 : STACK_I8;
+				ins->type = (opcode == OP_ATOMIC_ADD_IMM_I4) ? STACK_I4 : STACK_I8;
 			} else {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
-					opcode = OP_ATOMIC_ADD_NEW_I4;
+					opcode = OP_ATOMIC_ADD_I4;
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
-					opcode = OP_ATOMIC_ADD_NEW_I8;
+					opcode = OP_ATOMIC_ADD_I8;
 				else
 					g_assert_not_reached ();
 
@@ -4733,7 +4736,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				ins->inst_basereg = args [0]->dreg;
 				ins->inst_offset = 0;
 				ins->sreg2 = args [1]->dreg;
-				ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
+				ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
 			}
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
@@ -4753,4 +4756,18 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	/* FIXME: implement */
 	g_assert_not_reached ();
+}
+
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	switch (opcode) {
+	case OP_ATOMIC_ADD_I4:
+	case OP_ATOMIC_ADD_I8:
+	case OP_ATOMIC_EXCHANGE_I4:
+	case OP_ATOMIC_EXCHANGE_I8:
+		return TRUE;
+	default:
+		return FALSE;
+	}
 }

@@ -165,7 +165,6 @@ namespace MonoTests.System.Web.UI.Adapters
 			pd.SaveStateComplete = RenderPostBackEvent_OnSaveStateComplete;
 			t.Invoker = new PageInvoker (pd);
 			string html = t.Run ();
-			File.WriteAllText("response.html", html);
 		}
 		
 		public static void RenderPostBackEvent_OnSaveStateComplete (Page p)

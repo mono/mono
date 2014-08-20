@@ -231,7 +231,7 @@ namespace System.Net.Sockets
 			else if (op == SocketAsyncOperation.Disconnect)
 				args.DisconnectCallback (ares);
 			else if (op == SocketAsyncOperation.Connect)
-				args.ConnectCallback ();
+				args.ConnectCallback (ares);
 			/*
 			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 			else if (op == Socket.SocketOperation.SendPackets)
@@ -254,10 +254,12 @@ namespace System.Net.Sockets
 			}
 		}
 
-		void ConnectCallback ()
+		void ConnectCallback (IAsyncResult ares)
 		{
 			try {
-				SocketError = (SocketError) Worker.result.error;
+				curSocket.EndConnect (ares);
+ 			} catch (SocketException se) {
+				SocketError = se.SocketErrorCode;
 			} finally {
 				OnCompleted (this);
 			}

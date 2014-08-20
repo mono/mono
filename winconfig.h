@@ -12,6 +12,14 @@
 #error Unknown architecture
 #endif
 
+#if _WIN32_WINNT < 0x0502
+/* Required for Vectored Exception Handling.
+   Interlocked* functions are also not available in XP SP1 and below
+*/
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0502
+#endif /* _WIN32_WINNT < 0x0502 */
+
 /*
  * Features that are not required in the Windows port
  */
@@ -556,9 +564,6 @@
 
 /* Enable the allocation and indexing of arrays greater than Int32.MaxValue */
 /* #undef MONO_BIG_ARRAYS */
-
-/* Sizeof sock_un.sun_path */
-/* #undef MONO_SIZEOF_SUNPATH */
 
 /* Xen-specific behaviour */
 /* #define MONO_XEN_OPT 1 */

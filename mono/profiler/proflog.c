@@ -803,14 +803,14 @@ gc_resize (MonoProfiler *profiler, int64_t new_size) {
 	EXIT_LOG (logbuffer);
 }
 
-#define MAX_FRAMES 16
+#define MAX_FRAMES 32
 typedef struct {
 	int count;
 	MonoMethod* methods [MAX_FRAMES];
 	int32_t il_offsets [MAX_FRAMES];
 	int32_t native_offsets [MAX_FRAMES];
 } FrameData;
-static int num_frames = MAX_FRAMES / 2;
+static int num_frames = MAX_FRAMES;
 
 static mono_bool
 walk_stack (MonoMethod *method, int32_t native_offset, int32_t il_offset, mono_bool managed, void* data)
@@ -1338,6 +1338,7 @@ add_code_pointer (uintptr_t ip)
 	num_code_pages += add_code_page (code_pages, size_code_pages, ip & CPAGE_MASK);
 }
 
+#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
 static void
 dump_ubin (const char *filename, uintptr_t load_addr, uint64_t offset, uintptr_t size)
 {
@@ -1355,6 +1356,7 @@ dump_ubin (const char *filename, uintptr_t load_addr, uint64_t offset, uintptr_t
 	memcpy (logbuffer->data, filename, len);
 	logbuffer->data += len;
 }
+#endif
 
 static void
 dump_usym (const char *name, uintptr_t value, uintptr_t size)

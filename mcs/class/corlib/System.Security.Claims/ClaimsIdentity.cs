@@ -49,6 +49,10 @@ namespace System.Security.Claims {
 			: this (claims: null, authenticationType: null, nameType: null, roleType: null)
 		{ }
 		
+		public ClaimsIdentity(IEnumerable<Claim> claims)
+			: this (claims: claims, authenticationType: null, nameType: null, roleType: null)
+		{ }
+		
 		public ClaimsIdentity (string authenticationType)
 			: this (claims: null, authenticationType: authenticationType, nameType: null, roleType: null)
 		{ }
@@ -97,14 +101,15 @@ namespace System.Security.Claims {
 				foreach (var c in ci.Claims)
 					this.claims.Add (c);
 				
-				if (claims != null) {
-					foreach (var c in claims)
-						this.claims.Add (c);
-				}
 				Label = ci.Label;
 				NameClaimType = ci.NameClaimType;
 				RoleClaimType = ci.RoleClaimType;
 				auth_type = ci.AuthenticationType;
+			}
+
+			if (claims != null) {
+				foreach (var c in claims)
+					this.claims.Add (c);
 			}
 		}
 

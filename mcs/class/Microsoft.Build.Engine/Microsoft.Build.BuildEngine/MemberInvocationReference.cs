@@ -63,10 +63,16 @@ namespace Microsoft.Build.BuildEngine
 		{
 			var flags = BindingFlags.IgnoreCase | BindingFlags.Public;
 			object target;
+			string member_name = name;
 
 			if (Instance == null) {
 				target = null;
-				flags |= BindingFlags.Static;
+				if (string.Equals (member_name, "new", StringComparison.OrdinalIgnoreCase)) {
+					member_name = ConstructorInfo.ConstructorName;
+					flags |= BindingFlags.CreateInstance | BindingFlags.Instance;
+				} else {
+					flags |= BindingFlags.Static;
+				}
 			} else {
 				var mir = Instance as MemberInvocationReference;
 				if (mir != null) {
@@ -91,14 +97,14 @@ namespace Microsoft.Build.BuildEngine
 			} else {
 				flags |= BindingFlags.InvokeMethod;
 				ExpandArguments (project, options);
-				args = PrepareMethodArguments (flags);
+				args = PrepareMethodArguments (member_name, flags);
 				if (args == null)
 					throw new InvalidProjectFileException (string.Format ("Method '{0}({1})' arguments cannot be evaluated'", name, string.Join (", ", Arguments.ToArray ())));
 			}
 
 			object value;
 			try {
-				value = type.InvokeMember (name, flags, null, target, args, CultureInfo.InvariantCulture);
+				value = type.InvokeMember (member_name, flags, null, target, args, CultureInfo.InvariantCulture);
 			} catch (MissingFieldException) {
 				//
 				// It can be field/constant instead of a property
@@ -106,7 +112,7 @@ namespace Microsoft.Build.BuildEngine
 				if (args == null && Instance == null) {
 					flags &= ~BindingFlags.GetProperty;
 					flags |= BindingFlags.GetField;
-					value = type.InvokeMember (name, flags, null, null, null, CultureInfo.InvariantCulture);
+					value = type.InvokeMember (member_name, flags, null, null, null, CultureInfo.InvariantCulture);
 				} else {
 					throw;
 				}
@@ -132,9 +138,9 @@ namespace Microsoft.Build.BuildEngine
 			}
 		}
 
-		object[] PrepareMethodArguments (BindingFlags flags)
+		object[] PrepareMethodArguments (string name, BindingFlags flags)
 		{
-			var candidates = type.GetMember (name, MemberTypes.Method, flags);
+			var candidates = type.GetMember (name, MemberTypes.Method | MemberTypes.Constructor, flags);
 			object[] args = null;
 			ParameterInfo[] best = null;
 			foreach (MethodBase candidate in candidates) {

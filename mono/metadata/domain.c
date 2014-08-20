@@ -93,9 +93,9 @@ static gboolean debug_domain_unload;
 
 gboolean mono_dont_free_domains;
 
-#define mono_appdomains_lock() EnterCriticalSection (&appdomains_mutex)
-#define mono_appdomains_unlock() LeaveCriticalSection (&appdomains_mutex)
-static CRITICAL_SECTION appdomains_mutex;
+#define mono_appdomains_lock() mono_mutex_lock (&appdomains_mutex)
+#define mono_appdomains_unlock() mono_mutex_unlock (&appdomains_mutex)
+static mono_mutex_t appdomains_mutex;
 
 static MonoDomain *mono_root_domain = NULL;
 
@@ -856,13 +856,13 @@ mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end)
 {
 	MonoJitInfo *ji;
 
-	mono_appdomains_lock ();
+	g_assert (mono_root_domain);
+	mono_domain_lock (mono_root_domain);
 
 	/*
 	 * We reuse MonoJitInfoTable to store AOT module info,
 	 * this gives us async-safe lookup.
 	 */
-	g_assert (mono_root_domain);
 	if (!mono_root_domain->aot_modules) {
 		mono_root_domain->num_jit_info_tables ++;
 		mono_root_domain->aot_modules = jit_info_table_new (mono_root_domain);
@@ -874,7 +874,7 @@ mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end)
 	ji->code_size = (guint8*)end - (guint8*)start;
 	jit_info_table_add (mono_root_domain, &mono_root_domain->aot_modules, ji);
 
-	mono_appdomains_unlock ();
+	mono_domain_unlock (mono_root_domain);
 }
 
 void
@@ -985,6 +985,16 @@ mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji)
 	}
 }
 
+static int
+try_block_hole_table_size (MonoJitInfo *ji)
+{
+	MonoTryBlockHoleTableJitInfo *table;
+
+	table = mono_jit_info_get_try_block_hole_table_info (ji);
+	g_assert (table);
+	return sizeof (MonoTryBlockHoleTableJitInfo) + table->num_holes * sizeof (MonoTryBlockHoleJitInfo);
+}
+
 MonoArchEHJitInfo*
 mono_jit_info_get_arch_eh_info (MonoJitInfo *ji)
 {
@@ -993,7 +1003,7 @@ mono_jit_info_get_arch_eh_info (MonoJitInfo *ji)
 		if (ji->has_generic_jit_info)
 			ptr += sizeof (MonoGenericJitInfo);
 		if (ji->has_try_block_holes)
-			ptr += sizeof (MonoTryBlockHoleTableJitInfo);
+			ptr += try_block_hole_table_size (ji);
 		return (MonoArchEHJitInfo*)ptr;
 	} else {
 		return NULL;
@@ -1008,7 +1018,7 @@ mono_jit_info_get_cas_info (MonoJitInfo *ji)
 		if (ji->has_generic_jit_info)
 			ptr += sizeof (MonoGenericJitInfo);
 		if (ji->has_try_block_holes)
-			ptr += sizeof (MonoTryBlockHoleTableJitInfo);
+			ptr += try_block_hole_table_size (ji);
 		if (ji->has_arch_eh_info)
 			ptr += sizeof (MonoArchEHJitInfo);
 		return (MonoMethodCasInfo*)ptr;
@@ -1294,10 +1304,10 @@ mono_domain_create (void)
 	domain->finalizable_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	domain->ftnptrs_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
-	InitializeCriticalSection (&domain->lock);
-	InitializeCriticalSection (&domain->assemblies_lock);
-	InitializeCriticalSection (&domain->jit_code_hash_lock);
-	InitializeCriticalSection (&domain->finalizable_objects_hash_lock);
+	mono_mutex_init_recursive (&domain->lock);
+	mono_mutex_init_recursive (&domain->assemblies_lock);
+	mono_mutex_init_recursive (&domain->jit_code_hash_lock);
+	mono_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
 
 	domain->method_rgctx_hash = NULL;
 
@@ -1371,7 +1381,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	MONO_FAST_TLS_INIT (tls_appdomain);
 	mono_native_tls_alloc (&appdomain_thread_id, NULL);
 
-	InitializeCriticalSection (&appdomains_mutex);
+	mono_mutex_init_recursive (&appdomains_mutex);
 
 	mono_metadata_init ();
 	mono_images_init ();
@@ -1779,7 +1789,7 @@ mono_cleanup (void)
 	mono_metadata_cleanup ();
 
 	mono_native_tls_free (appdomain_thread_id);
-	DeleteCriticalSection (&appdomains_mutex);
+	mono_mutex_destroy (&appdomains_mutex);
 
 #ifndef HOST_WIN32
 	wapi_cleanup ();
@@ -2013,7 +2023,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	/* Close dynamic assemblies first, since they have no ref count */
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = tmp->data;
-		if (!ass->image || !ass->image->dynamic)
+		if (!ass->image || !image_is_dynamic (ass->image))
 			continue;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
@@ -2024,7 +2034,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		MonoAssembly *ass = tmp->data;
 		if (!ass)
 			continue;
-		if (!ass->image || ass->image->dynamic)
+		if (!ass->image || image_is_dynamic (ass->image))
 			continue;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
@@ -2127,10 +2137,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		domain->ftnptrs_hash = NULL;
 	}
 
-	DeleteCriticalSection (&domain->finalizable_objects_hash_lock);
-	DeleteCriticalSection (&domain->assemblies_lock);
-	DeleteCriticalSection (&domain->jit_code_hash_lock);
-	DeleteCriticalSection (&domain->lock);
+	mono_mutex_destroy (&domain->finalizable_objects_hash_lock);
+	mono_mutex_destroy (&domain->assemblies_lock);
+	mono_mutex_destroy (&domain->jit_code_hash_lock);
+	mono_mutex_destroy (&domain->lock);
 	domain->setup = NULL;
 
 	mono_gc_deregister_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED));

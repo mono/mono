@@ -9,7 +9,7 @@ class C
 
 	static bool Bar (object t)
 	{
-		return Bar is object;
+		return t is object;
 	}
 }
 

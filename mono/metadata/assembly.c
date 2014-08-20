@@ -170,9 +170,9 @@ mono_set_corlib_data (void *data, size_t size)
 #endif
 
 /* This protects loaded_assemblies and image->references */
-#define mono_assemblies_lock() EnterCriticalSection (&assemblies_mutex)
-#define mono_assemblies_unlock() LeaveCriticalSection (&assemblies_mutex)
-static CRITICAL_SECTION assemblies_mutex;
+#define mono_assemblies_lock() mono_mutex_lock (&assemblies_mutex)
+#define mono_assemblies_unlock() mono_mutex_unlock (&assemblies_mutex)
+static mono_mutex_t assemblies_mutex;
 
 /* If defined, points to the bundled assembly information */
 const MonoBundledAssembly **bundles;
@@ -582,7 +582,7 @@ compute_base (char *path)
 		return NULL;
 
 	/* Not a well known Mono executable, we are embedded, cant guess the base  */
-	if (strcmp (p, "/mono") && strcmp (p, "/mono-sgen") && strcmp (p, "/pedump") && strcmp (p, "/monodis") && strcmp (p, "/mint") && strcmp (p, "/monodiet"))
+	if (strcmp (p, "/mono") && strcmp (p, "/mono-boehm") && strcmp (p, "/mono-sgen") && strcmp (p, "/pedump") && strcmp (p, "/monodis"))
 		return NULL;
 	    
 	*p = 0;
@@ -739,7 +739,7 @@ mono_assemblies_init (void)
 	check_path_env ();
 	check_extra_gac_path_env ();
 
-	InitializeCriticalSection (&assemblies_mutex);
+	mono_mutex_init_recursive (&assemblies_mutex);
 	mono_mutex_init (&assembly_binding_mutex);
 }
 
@@ -3024,7 +3024,7 @@ mono_assembly_release_gc_roots (MonoAssembly *assembly)
 	if (assembly == NULL || assembly == REFERENCE_MISSING)
 		return;
 
-	if (assembly->dynamic) {
+	if (assembly_is_dynamic (assembly)) {
 		int i;
 		MonoDynamicImage *dynimg = (MonoDynamicImage *)assembly->image;
 		for (i = 0; i < dynimg->image.module_count; ++i)
@@ -3087,7 +3087,7 @@ mono_assembly_close_finish (MonoAssembly *assembly)
 	if (assembly->image)
 		mono_image_close_finish (assembly->image);
 
-	if (assembly->dynamic) {
+	if (assembly_is_dynamic (assembly)) {
 		g_free ((char*)assembly->aname.culture);
 	} else {
 		g_free (assembly);
@@ -3142,7 +3142,7 @@ mono_assemblies_cleanup (void)
 {
 	GSList *l;
 
-	DeleteCriticalSection (&assemblies_mutex);
+	mono_mutex_destroy (&assemblies_mutex);
 	mono_mutex_destroy (&assembly_binding_mutex);
 
 	for (l = loaded_assembly_bindings; l; l = l->next) {
