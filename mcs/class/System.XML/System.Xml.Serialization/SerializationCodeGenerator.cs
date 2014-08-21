@@ -653,9 +653,9 @@ namespace System.Xml.Serialization
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode)
 			{
 				if (_format == SerializationFormat.Literal)
-					WriteLine ("WriteElementLiteral (ob, \"\", \"\", true, " + typeMap.IsAny + ");");
+					WriteLine ("WriteElementLiteral (ob, \"\", \"\", true, " + GetLiteral(typeMap.IsAny) + ");");
 				else 
-					WriteLine ("WriteElementEncoded (ob, \"\", \"\", true, " + typeMap.IsAny + ");");
+					WriteLine ("WriteElementEncoded (ob, \"\", \"\", true, " + GetLiteral(typeMap.IsAny) + ");");
 					
 				GenerateEndHook ();
 				WriteLineUni ("}");
@@ -666,7 +666,7 @@ namespace System.Xml.Serialization
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteLine ("WriteSerializable (ob, element, namesp, isNullable, " + !typeMap.IsAny + ");");
+				WriteLine ("WriteSerializable (ob, element, namesp, isNullable, " + GetLiteral(!typeMap.IsAny) + ");");
 				
 				GenerateEndHook ();
 				WriteLineUni ("}");
