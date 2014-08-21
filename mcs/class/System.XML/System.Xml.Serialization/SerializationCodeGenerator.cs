@@ -1371,9 +1371,11 @@ namespace System.Xml.Serialization
 						else
 							WriteLine ("return ReadXmlNode (false);");
 					} else {
-						WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
-						WriteLine ("throw CreateUnknownNodeException();");
-						Unindent ();
+						if (!typeMap.IsAny) {
+							WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
+							WriteLine ("throw CreateUnknownNodeException();");
+							Unindent ();
+						}
 
 						WriteLine ("return " + GetReadObjectCall (typeMap, GetLiteral(typeMap.IsNullable), "true") + ";");
 					}
@@ -1384,12 +1386,15 @@ namespace System.Xml.Serialization
 					WriteLine ("Reader.MoveToContent();");
 					WriteLine ("if (Reader.NodeType == System.Xml.XmlNodeType.Element) ");
 					WriteLineInd ("{");
-					WriteLineInd ("if (Reader.LocalName == " + GetLiteral(typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
+					if (!typeMap.IsAny)
+						WriteLineInd ("if (Reader.LocalName == " + GetLiteral(typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
 					WriteLine ("ob = ReadReferencedElement();");
 					Unindent ();
-					WriteLineInd ("else ");
-					WriteLine ("throw CreateUnknownNodeException();");
-					Unindent ();
+					if (!typeMap.IsAny) {
+						WriteLineInd ("else ");
+						WriteLine ("throw CreateUnknownNodeException();");
+						Unindent ();
+					}
 					WriteLineUni ("}");
 					WriteLineInd ("else ");
 					WriteLine ("UnknownNode(null);");
@@ -2466,10 +2471,14 @@ namespace System.Xml.Serialization
 			WriteLine ("Reader.MoveToContent ();");
 			WriteLine ("if (Reader.NodeType == XmlNodeType.Element)");
 			WriteLineInd ("{");
-			WriteLine ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
+			if (!typeMap.IsAny)
+				WriteLineInd ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
 			WriteLine (String.Format ("\treturn ({0}) ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true));", typeMap.TypeData.CSharpFullName));
-			WriteLine ("else");
-			WriteLine ("\tthrow CreateUnknownNodeException ();");
+			Unindent ();
+			if (!typeMap.IsAny) {
+				WriteLine ("else");
+				WriteLine ("\tthrow CreateUnknownNodeException ();");
+			}
 			WriteLineUni ("}");
 			WriteLine ("else UnknownNode (null);");
 			WriteLine ("");
