@@ -32,6 +32,9 @@
 
 using System;
 using System.Xml;
+#if !WINDOWS_STORE_APP
+using TypeUtil = System.Type;
+#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema

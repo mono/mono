@@ -15,7 +15,7 @@ endif
 
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac, $(PROFILE))
 
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Core.dll -nowarn:0618,0612,0642
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
 endif
