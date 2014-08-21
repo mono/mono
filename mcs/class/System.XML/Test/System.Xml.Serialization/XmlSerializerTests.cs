@@ -34,6 +34,7 @@ using System.Xml;
 using System.Data;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Reflection;
 #if NET_2_0
 using System.Collections.Generic;
 #endif
@@ -3333,6 +3334,56 @@ namespace MonoTests.System.XmlSerialization
 			var ser = new XmlSerializer (typeof (ClassWithXmlAnyElement));
 			using (var sw = new StringWriter ())
 				ser.Serialize (sw, c);
+		}
+	}
+
+	// Test generated serialization code.
+	public class XmlSerializerGeneratorTests : XmlSerializerTests {
+
+		private FieldInfo backgroundGeneration;
+		private FieldInfo generationThreshold;
+		private FieldInfo generatorFallback;
+
+		private bool backgroundGenerationOld;
+		private int generationThresholdOld;
+		private bool generatorFallbackOld;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			// Make sure XmlSerializer static constructor is called
+			XmlSerializer.FromTypes (new Type [] {});
+
+			const BindingFlags binding = BindingFlags.Static | BindingFlags.NonPublic;
+			backgroundGeneration = typeof (XmlSerializer).GetField ("backgroundGeneration", binding);
+			generationThreshold = typeof (XmlSerializer).GetField ("generationThreshold", binding);
+			generatorFallback = typeof (XmlSerializer).GetField ("generatorFallback", binding);
+
+			if (backgroundGeneration == null)
+				Assert.Ignore ("Unable to access field backgroundGeneration");
+			if (generationThreshold == null)
+				Assert.Ignore ("Unable to access field generationThreshold");
+			if (generatorFallback == null)
+				Assert.Ignore ("Unable to access field generatorFallback");
+
+			backgroundGenerationOld = (bool) backgroundGeneration.GetValue (null);
+			generationThresholdOld = (int) generationThreshold.GetValue (null);
+			generatorFallbackOld = (bool) generatorFallback.GetValue (null);
+
+			backgroundGeneration.SetValue (null, false);
+			generationThreshold.SetValue (null, 0);
+			generatorFallback.SetValue (null, false);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (backgroundGeneration == null || generationThreshold == null || generatorFallback == null)
+				return;
+
+			backgroundGeneration.SetValue (null, backgroundGenerationOld);
+			generationThreshold.SetValue (null, generationThresholdOld);
+			generatorFallback.SetValue (null, generatorFallbackOld);
 		}
 	}
 }
