@@ -1769,6 +1769,10 @@ namespace System {
 
 			if ((uri1 == null) && (uri2 == null))
 				return 0;
+			if (uri1 == null)
+				return -1;
+			if (uri2 == null)
+				return 1;
 
 			string s1 = uri1.GetComponents (partsToCompare, compareFormat);
 			string s2 = uri2.GetComponents (partsToCompare, compareFormat);
