@@ -145,7 +145,6 @@ namespace System.Xml.Serialization
 				else {
 					generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
 					backgroundGeneration = (generationThreshold != 0);
-					if (generationThreshold < 1) generationThreshold = 1;
 				}
 			}
 #endif
@@ -664,7 +663,7 @@ namespace System.Xml.Serialization
 			bool generate = false;
 			lock (serializerData)
 			{
-				generate = (++serializerData.UsageCount == generationThreshold);
+				generate = (serializerData.UsageCount++ == generationThreshold);
 			}
 			
 			if (generate)
