@@ -971,7 +971,7 @@ namespace System.Xml.Serialization
 		
 		void GenerateWriteAnyElementContent (XmlTypeMapMemberAnyElement member, string memberValue)
 		{
-			bool singleElement = (member.TypeData.Type == typeof (XmlElement));
+			bool singleElement = (member.TypeData.Type == typeof (XmlElement) || member.TypeData.Type == typeof (XmlNode));
 			string var, var2;
 			
 			var = GetObTempVar ();
