@@ -1107,6 +1107,7 @@ public class StringTest
 		Assert.AreEqual ("typedef struct _MonoObject { ... } MonoObject;", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"), "Escaped bracket");
 		Assert.AreEqual ("Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"), "With Slash");
 		Assert.AreEqual ("Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"), "With BackSlash");
+		Assert.AreEqual ("{d} ", string.Format ("{{{0:d}} }", 100));
 	}
 
 	[Test] // Format (String, Object)
